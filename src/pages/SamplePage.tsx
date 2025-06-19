@@ -153,19 +153,35 @@ export default function SamplePage() {
 
       <div className="p-4 md:p-8 lg:mr-80">
         <h2 className="text-2xl font-bold text-center mb-6">資産管理ダッシュボード</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <div className="bg-white rounded-xl shadow p-4 mb-6">
+          <h3 className="text-lg font-semibold mb-2">総資産時系列推移</h3>
+          <ResponsiveContainer width="100%" height={280}>
+            <LineChart data={enrichedData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="year" />
+              <YAxis tickFormatter={(v) => `¥${(v / 1_000_000).toFixed(0)}M`} />
+              <Tooltip formatter={(v: number) => `¥${v.toLocaleString()}`} />
+              <Legend />
+              <Line type="monotone" dataKey="現金" stroke={COLORS.現金} strokeWidth={3} dot={false} />
+              <Line type="monotone" dataKey="NISA" stroke={COLORS.NISA} strokeWidth={3} dot={false} />
+              <Line type="monotone" dataKey="iDeCo" stroke={COLORS.iDeCo} strokeWidth={3} dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div className="bg-white rounded-xl shadow p-4">
-            <h3 className="text-lg font-semibold mb-2">総資産時系列推移</h3>
+            <h3 className="text-lg font-semibold mb-2">積立元本推移（〜2050年）</h3>
             <ResponsiveContainer width="100%" height={240}>
-              <LineChart data={enrichedData}>
+              <LineChart data={enrichedData.filter((d) => d.year <= 2050)}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="year" />
                 <YAxis tickFormatter={(v) => `¥${(v / 1_000_000).toFixed(0)}M`} />
                 <Tooltip formatter={(v: number) => `¥${v.toLocaleString()}`} />
                 <Legend />
-                <Line type="monotone" dataKey="現金" stroke={COLORS.現金} strokeWidth={3} dot={false} />
-                <Line type="monotone" dataKey="NISA" stroke={COLORS.NISA} strokeWidth={3} dot={false} />
-                <Line type="monotone" dataKey="iDeCo" stroke={COLORS.iDeCo} strokeWidth={3} dot={false} />
+                <Line type="monotone" dataKey="NISA" stroke="#6366F1" strokeWidth={3} dot={false} />
+                <Line type="monotone" dataKey="iDeCo" stroke="#06B6D4" strokeWidth={3} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -191,52 +207,37 @@ export default function SamplePage() {
               </PieChart>
             </ResponsiveContainer>
           </div>
+        </div>
 
-          <div className="bg-white rounded-xl shadow p-4 md:col-span-2">
-            <h3 className="text-lg font-semibold mb-2">積立元本推移（〜2050年）</h3>
-            <ResponsiveContainer width="100%" height={240}>
-              <LineChart data={enrichedData.filter((d) => d.year <= 2050)}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="year" />
-                <YAxis tickFormatter={(v) => `¥${(v / 1_000_000).toFixed(0)}M`} />
-                <Tooltip formatter={(v: number) => `¥${v.toLocaleString()}`} />
-                <Legend />
-                <Line type="monotone" dataKey="NISA" stroke="#6366F1" strokeWidth={3} dot={false} />
-                <Line type="monotone" dataKey="iDeCo" stroke="#06B6D4" strokeWidth={3} dot={false} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div className="bg-white rounded-xl shadow p-4 overflow-x-auto md:col-span-2">
-            <h3 className="text-lg font-semibold mb-2">資産詳細テーブル</h3>
-            <div className="overflow-x-auto max-h-[360px] overflow-y-scroll">
-              <table className="min-w-full table-auto text-sm">
-                <thead className="sticky top-0 bg-gray-100 z-10">
-                  <tr className="bg-gray-100 text-gray-700">
-                    <th className="px-2 py-1">年</th>
-                    <th className="px-2 py-1">現金</th>
-                    <th className="px-2 py-1">NISA</th>
-                    <th className="px-2 py-1">iDeCo</th>
-                    <th className="px-2 py-1">総資産</th>
-                    <th className="px-2 py-1">NISA積立</th>
-                    <th className="px-2 py-1">iDeCo積立</th>
+        <div className="bg-white rounded-xl shadow p-4 overflow-x-auto">
+          <h3 className="text-lg font-semibold mb-2">資産詳細テーブル</h3>
+          <div className="overflow-x-auto max-h-[360px] overflow-y-scroll">
+            <table className="min-w-full table-auto text-sm">
+              <thead className="sticky top-0 bg-gray-100 z-10">
+                <tr className="bg-gray-100 text-gray-700">
+                  <th className="px-2 py-1">年</th>
+                  <th className="px-2 py-1">現金</th>
+                  <th className="px-2 py-1">NISA</th>
+                  <th className="px-2 py-1">iDeCo</th>
+                  <th className="px-2 py-1">総資産</th>
+                  <th className="px-2 py-1">NISA積立</th>
+                  <th className="px-2 py-1">iDeCo積立</th>
+                </tr>
+              </thead>
+              <tbody>
+                {enrichedData.map((d) => (
+                  <tr key={d.year} className="text-right border-b">
+                    <td className="px-2 py-1 text-left">{d.year}</td>
+                    <td className="px-2 py-1">{d.現金.toLocaleString()}</td>
+                    <td className="px-2 py-1">{d.NISA.toLocaleString()}</td>
+                    <td className="px-2 py-1">{d.iDeCo.toLocaleString()}</td>
+                    <td className="px-2 py-1 font-semibold">{d.総資産.toLocaleString()}</td>
+                    <td className="px-2 py-1">{d['NISA']?.toLocaleString() ?? '-'}</td>
+                    <td className="px-2 py-1">{d['iDeCo']?.toLocaleString() ?? '-'}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {enrichedData.map((d) => (
-                    <tr key={d.year} className="text-right border-b">
-                      <td className="px-2 py-1 text-left">{d.year}</td>
-                      <td className="px-2 py-1">{d.現金.toLocaleString()}</td>
-                      <td className="px-2 py-1">{d.NISA.toLocaleString()}</td>
-                      <td className="px-2 py-1">{d.iDeCo.toLocaleString()}</td>
-                      <td className="px-2 py-1 font-semibold">{d.総資産.toLocaleString()}</td>
-                      <td className="px-2 py-1">{d['NISA']?.toLocaleString() ?? '-'}</td>
-                      <td className="px-2 py-1">{d['iDeCo']?.toLocaleString() ?? '-'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
