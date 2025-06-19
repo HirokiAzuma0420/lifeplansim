@@ -230,8 +230,8 @@ export default function SamplePage() {
                       <td className="px-2 py-1">{d.NISA.toLocaleString()}</td>
                       <td className="px-2 py-1">{d.iDeCo.toLocaleString()}</td>
                       <td className="px-2 py-1 font-semibold">{d.総資産.toLocaleString()}</td>
-                      <td className="px-2 py-1">{d['NISA積立']?.toLocaleString() ?? '-'}</td>
-                      <td className="px-2 py-1">{d['iDeCo積立']?.toLocaleString() ?? '-'}</td>
+                      <td className="px-2 py-1">{d['NISA']?.toLocaleString() ?? '-'}</td>
+                      <td className="px-2 py-1">{d['iDeCo']?.toLocaleString() ?? '-'}</td>
                     </tr>
                   ))}
                 </tbody>
