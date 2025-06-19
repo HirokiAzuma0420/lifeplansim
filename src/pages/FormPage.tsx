@@ -29,9 +29,8 @@ const FormPage: React.FC = () => {
 
       <section className="px-4 py-5">
         <h1 className="text-xl font-bold text-left mb-4">積立の設定</h1>
-        <InputField label="401k 積立額（円）" />
-        <InputField label="HSA 積立額（円）" />
-        <InputField label="IRA 積立額（円）" />
+        <InputField label="NISA 積立額（円）" />
+        <InputField label="iDeCo 積立額（円）" />
       </section>
 
       <section className="px-4 py-5">
