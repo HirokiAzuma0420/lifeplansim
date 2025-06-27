@@ -13,7 +13,7 @@ export const getAssetGrade = (amount: number) => {
       color: '#1976d2',
       commenttitle: '非常に優れた積立状況です！',
       comment: 'このままいけば老後は安泰。年金との取崩しを考えても安定した資産を持ち続けられます！',
-      image: '../public/ranks/a.png',
+      image: '{`${import.meta.env.BASE_URL}ranks/a.png`}',
     };
   if (amount >= 10000000)
     return {
