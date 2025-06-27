@@ -1,54 +1,77 @@
-# React + TypeScript + Vite
+# ライフプラン資産シミュレーター
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+このプロジェクトは、ライフプランに基づく資産形成と取り崩しのシミュレーションを可視化するWebアプリケーションです。元はPower BIで構築されたBIダッシュボードをベースに、React + TypeScript によるモダンなWebアプリとして再設計を進めています。
 
-Currently, two official plugins are available:
+## 🛠️ 技術スタック
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **フロントエンド**: React + TypeScript + Vite
+- **グラフ描画**: Recharts
+- **スタイリング**: Tailwind CSS
+- **パッケージ管理**: npm
+- **ルーティング**: React Router
 
-## Expanding the ESLint configuration
+## 📊 機能概要
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### シミュレーション対象
+- 現金
+- NISA（少額投資非課税制度）
+- iDeCo（個人型確定拠出年金）
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### 主な表示内容
+- 現金／NISA／iDeCoの**時系列推移グラフ**
+- 総資産（現金＋NISA＋iDeCo）の**推移グラフ**
+- 年齢別の**積立元本グラフ**
+- 最新年の**資産保有割合（円グラフ）**
+- 年次ごとの資産内訳テーブル
+- サイドメニューによるユーザー設定編集（年齢、収支、積立額など）
+
+### 編集可能な項目
+- 現在年齢／退職年齢
+- 年間収入・支出
+- NISA/iDeCoの積立額
+- 各種利回り／インフレ率／医療費増加率
+- 初期取り崩し率
+
+## 📁 ディレクトリ構成
+
+```
+├─ src/
+│  ├─ App.tsx             # アプリルート
+│  ├─ main.tsx            # エントリーポイント
+│  ├─ pages/
+│  │  ├─ TopPage.tsx
+│  │  ├─ FormPage.tsx
+│  │  └─ SamplePage.tsx   # メインダッシュボード画面
+│  ├─ assets/
+│  │  └─ sampleData.ts    # 現在はモックデータを使用
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🔄 今後の展望
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- Power BIのデータモデル（PBIP）との整合統合
+- モックデータからの脱却 → 実データ読み込みロジックの実装
+- シナリオ別シミュレーション（変動利回りなど）
+- スマホ対応UIのブラッシュアップ
+- データ保存・ロード機能の追加
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+## 📷 スクリーンショット
+
+> ※後日 `public/Topview.png` などをここに反映可能です。
+
+---
+
+## 📦 セットアップ方法
+
+```bash
+# 依存のインストール
+npm install
+
+# 開発サーバ起動
+npm run dev
 ```
+
+---
+
+## 🧑‍💻 ライセンス
+
+このプロジェクトは社内利用・検証目的で開発されています（外部公開時は適宜ライセンス明示）。

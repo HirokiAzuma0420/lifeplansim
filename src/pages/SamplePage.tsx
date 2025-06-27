@@ -1,5 +1,7 @@
 import {
   LineChart,
+  AreaChart,
+  Area,
   Line,
   XAxis,
   YAxis,
@@ -15,6 +17,7 @@ import { useState } from 'react';
 import { data } from '../assets/sampleData';
 import { useNavigate } from 'react-router-dom';
 import { Pencil } from 'lucide-react';
+import { getAssetGrade } from '../assets/getAssetGrade';
 
 const COLORS = {
   現金: '#3B82F6',
@@ -57,6 +60,8 @@ export default function SamplePage() {
     setEditFields((prev) => ({ ...prev, [key]: false }));
   };
 
+const rankInfo = getAssetGrade(latest.総資産);
+
   return (
     <div className="relative bg-gray-100 min-h-screen">
       <button
@@ -75,11 +80,7 @@ export default function SamplePage() {
         ≡
       </button>
 
-      <div
-        className={`fixed top-0 right-0 h-full w-72 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-40 overflow-y-auto
-        lg:fixed lg:top-0 lg:right-0 lg:h-screen lg:translate-x-0 lg:w-80
-        ${menuOpen ? 'translate-x-0' : 'translate-x-full'}`}
-      >
+      <div className={`fixed top-0 right-0 h-full w-72 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-40 overflow-y-auto lg:fixed lg:top-0 lg:right-0 lg:h-screen lg:translate-x-0 lg:w-80 ${menuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
         <div className="p-6 text-center">
           <button
             className="lg:hidden absolute top-4 right-4 w-8 h-8 bg-gray-200 rounded-full text-lg"
@@ -154,22 +155,71 @@ export default function SamplePage() {
       <div className="p-4 md:p-8 lg:mr-80">
         <h2 className="text-2xl font-bold text-center mb-6">資産管理ダッシュボード</h2>
 
-        <div className="bg-white rounded-xl shadow p-4 mb-6">
-          <h3 className="text-lg font-semibold mb-2">総資産時系列推移</h3>
+        <div className="bg-white rounded-xl shadow p-6 mb-6 relative">
+          <h3 className="text-lg font-semibold mb-2">総資産推移</h3>
+          {/* ランク表示カード */}
+          <div className="w-full flex justify-center">
+            <div className="bg-white p-6 mb-6 relative">
+              <div className="flex items-center space-x-4 p-4 bg-white">
+                <div className="flex items-center space-x-3">
+                  <div className="font-mono text-9xl font-extrabold" style={{ color: rankInfo.color }}>
+                    {rankInfo.rank}
+                  </div>
+                  {/* コメント */}
+                  <div className="font-bold text-base text-gray-700">{rankInfo.commenttitle}<br/>
+                  <span className="font-normal text-sm text-base text-gray-700">{rankInfo.comment}</span>
+                  </div>
+                </div>
+
+                {/* イラスト */}
+                <div className="w-40 h-40 ml-auto">
+                  <img
+                    src={rankInfo.image}
+                    alt="ランクイラスト"
+                    className="object-contain w-full h-full"
+                  />
+                </div>
+
+              </div>
+            </div>
+          </div>
+          {/* グラフ本体 */}
           <ResponsiveContainer width="100%" height={280}>
-            <LineChart data={enrichedData}>
+            <AreaChart data={enrichedData} stackOffset="none">
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="year" />
               <YAxis tickFormatter={(v) => `¥${(v / 1_000_000).toFixed(0)}M`} />
-              <Tooltip formatter={(v: number) => `¥${v.toLocaleString()}`} />
+              <Tooltip
+                content={({ payload, label }) => {
+                  if (!payload || payload.length === 0) return null;
+                  const total = payload.reduce(
+                    (sum, entry) => sum + (typeof entry.value === 'number' ? entry.value : 0),
+                    0
+                  );
+                  return (
+                    <div className="bg-white p-2 border rounded text-sm shadow">
+                      <p className="font-bold">{label}年</p>
+                      {payload.map((entry, index) => {
+                        const value = entry.value;
+                        return (
+                          <p key={index} style={{ color: entry.color }}>
+                            {entry.name}: ¥{typeof value === 'number' ? value.toLocaleString() : '―'}
+                          </p>
+                        );
+                      })}
+                      <hr className="my-1" />
+                      <p className="font-semibold">総資産: ¥{total.toLocaleString()}</p>
+                    </div>
+                  );
+                }}
+              />
               <Legend />
-              <Line type="monotone" dataKey="現金" stroke={COLORS.現金} strokeWidth={3} dot={false} />
-              <Line type="monotone" dataKey="NISA" stroke={COLORS.NISA} strokeWidth={3} dot={false} />
-              <Line type="monotone" dataKey="iDeCo" stroke={COLORS.iDeCo} strokeWidth={3} dot={false} />
-            </LineChart>
+              <Area type="monotone" dataKey="現金" stackId="1" stroke={COLORS.現金} fill={COLORS.現金} />
+              <Area type="monotone" dataKey="NISA" stackId="1" stroke={COLORS.NISA} fill={COLORS.NISA} />
+              <Area type="monotone" dataKey="iDeCo" stackId="1" stroke={COLORS.iDeCo} fill={COLORS.iDeCo} />
+            </AreaChart>
           </ResponsiveContainer>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div className="bg-white rounded-xl shadow p-4">
             <h3 className="text-lg font-semibold mb-2">積立元本推移（〜2050年）</h3>
