@@ -64,10 +64,9 @@ type CustomIncomeMarkerProps = {
   xValue: string;
   yValue: number;
   deviation: number;
-  topPercent: number;
 };
 
-function CustomIncomeMarker({ xAxis, yAxis, xValue, yValue, deviation, topPercent }: CustomIncomeMarkerProps) {
+function CustomIncomeMarker({ xAxis, yAxis, xValue, yValue, deviation}: CustomIncomeMarkerProps) {
   const xBand = xAxis.scale(xValue) + (xAxis.scale.bandwidth ? xAxis.scale.bandwidth() / 2 : 0);
   const yPos = yAxis.scale(yValue);
   return (
@@ -192,7 +191,6 @@ function IncomePositionChart({ age, income }: { age: number; income: number }) {
                     xValue={userBracket.収入階級}
                     yValue={userBracket.count}
                     deviation={deviation}
-                    topPercent={topPercent}
                   />
                 );
               }}
