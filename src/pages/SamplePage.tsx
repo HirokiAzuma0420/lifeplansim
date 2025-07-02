@@ -344,7 +344,7 @@ function SavingsPositionChart({ age, income, savings }: { age: number; income: n
         </span>
       </h3>
       <ResponsiveContainer width="100%" height={400} >
-        <BarChart data={chartData} margin={{ top: 60, right: 20, bottom: 100, left: 60 }}>
+        <BarChart data={chartData} margin={{ top: 60, right: 20, bottom: 50, left: 10 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="金融資産額" angle={-60} textAnchor="end" height={120} interval={0} />
           <YAxis label={{ value: '割合 (%)', angle: -90, position: 'outsideLeft' }} />
