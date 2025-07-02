@@ -259,15 +259,15 @@ const processedSavings = (savingsDistribution as unknown as SavingsDistribution)
     return acc;
 }, {} as Record<string, Record<string, RawAssetGroup[]>>);
 
-function formatNumber(n: number): string {
-    return n.toLocaleString();
+function formatNumberForKeys(n: number): string {
+  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 function createAssetLabel(min: number, max: number | null): string {
-    if (min === 0 && max === 0) return '非保有';
-    if (min === 1 && max === 99) return '100万未満';
-    if (max === null) return `${formatNumber(min)}万以上`;
-    return `${formatNumber(min)}～${formatNumber(max)}万`;
+    if (min === 0 && max === 0) return '金融資産非保有';
+    if (min === 1 && max === 99) return '100万円未満';
+    if (max === null) return `${formatNumberForKeys(min)}万円以上`;
+    return `${formatNumberForKeys(min)}～${formatNumberForKeys(max + 1)}万円未満`;
 }
 
 function SavingsPositionChart({ age, income, savings }: { age: number; income: number; savings: number }) {
@@ -277,34 +277,90 @@ function SavingsPositionChart({ age, income, savings }: { age: number; income: n
   const distributionAssetGroups = processedSavings[ageBracket]?.[incomeBracket];
 
   if (!distributionAssetGroups) {
+    console.log(`金融資産の分布データがありません (検索キー: 年齢=${ageBracket}, 収入=${incomeBracket})`);
     return <div className="text-red-500 p-4 bg-red-50 rounded-lg">金融資産の分布データがありません (検索キー: 年齢={ageBracket}, 収入={incomeBracket})</div>;
   }
 
   const chartData = distributionAssetGroups.map(group => {
     const label = createAssetLabel(group.min, group.max);
+    const midpoint = savingsMidpoints[label] ?? 0;
+    console.log(`ChartData item: label=${label}, midpoint=${midpoint}`);
     return {
       金融資産額: label,
       割合: group.percent,
-      midpoint: savingsMidpoints[label] ?? 0,
+      midpoint: midpoint,
     };
   });
 
   const savingsInMan = savings / 10000;
+  console.log("Savings in Man (万円):", savingsInMan);
 
-  const userBracket = chartData.find(b => {
-      const s = b.金融資産額;
-      if (s === '金融資産非保有') return savingsInMan <= 0;
-      if (s === '100万円未満') return savingsInMan > 0 && savingsInMan < 100;
-      if (s === '3,000万円以上') return savingsInMan >= 3000;
-      if (s.includes('～')) {
-          const parts = s.replace(/万円未満?|万円以上/g, '').replace(/,/g, '').split('～');
-          const low = parseInt(parts[0]);
-          if (parts.length === 1) return savingsInMan >= low;
-          const high = parseInt(parts[1]);
-          return savingsInMan >= low && savingsInMan < high;
-      }
-      return false;
+  const userBracket = distributionAssetGroups.find(group => {
+    const min = group.min;
+    const max = group.max;
+    let isMatch = false;
+
+    if (min === 0 && max === 0) { // Financial assets not held
+      isMatch = savingsInMan <= 0;
+    } else if (min === 1 && max === 99) { // Less than 100万円
+      isMatch = savingsInMan > 0 && savingsInMan < 100;
+    } else if (max === null) { // 3,000万円以上
+      isMatch = savingsInMan >= min;
+    } else { // Other ranges
+      isMatch = savingsInMan >= min && savingsInMan < max;
+    }
+    console.log(`  Checking group: min=${min}, max=${max}, isMatch=${isMatch}`);
+    return isMatch;
   });
+
+  console.log("Found userBracket:", userBracket);
+
+  // If userBracket is not found, it means the user's savings fall outside the defined brackets.
+  // In this case, we should not display the marker.
+  if (!userBracket) {
+    console.log("User bracket not found.");
+    return (
+      <div className="bg-white rounded-xl shadow p-4 mb-6">
+        <h3 className="text-lg font-semibold mb-2">
+          同年代・同年収における金融資産の位置<br />
+          <span className="text-sm text-gray-600">
+            あなたの金融資産は分布範囲外です。
+          </span>
+        </h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={chartData} margin={{ top: 60, right: 20, bottom: 40, left: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="金融資産額" angle={-30} textAnchor="end" height={80} interval={0} />
+            <YAxis label={{ value: '割合 (%)', angle: -90, position: 'insideLeft' }} />
+            <Tooltip
+              content={({ active, payload, label }) => {
+                if (!active || !payload || payload.length === 0) return null;
+                const percent = payload[0].value as number;
+                return (
+                  <div className="bg-white p-2 border rounded text-sm shadow">
+                    <p className="font-bold">{label}</p>
+                    <p className="text-gray-600">{percent.toFixed(1)}%</p>
+                  </div>
+                );
+              }}
+            />
+            <Bar dataKey="割合" fill="#8884d8" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    );
+  }
+
+  // Find the corresponding chartData item for the found userBracket
+  const userBracketLabel = createAssetLabel(userBracket.min, userBracket.max);
+  console.log("User bracket label:", userBracketLabel);
+  const userChartDataItem = chartData.find(item => item.金融資産額 === userBracketLabel);
+  console.log("Found userChartDataItem:", userChartDataItem);
+
+  if (!userChartDataItem) {
+    console.log("User chart data item not found.");
+    return <div className="text-red-500 p-4 bg-red-50 rounded-lg">ユーザーの金融資産データが見つかりません。</div>;
+  }
 
   const totalWeight = chartData.reduce((sum, b) => sum + b.割合, 0);
   const mean = chartData.reduce((sum, b) => sum + b.midpoint * b.割合, 0) / totalWeight;
@@ -313,6 +369,8 @@ function SavingsPositionChart({ age, income, savings }: { age: number; income: n
   const userZ = stdDev === 0 ? 0 : (savingsInMan - mean) / stdDev;
   const deviation = Math.round(userZ * 10 + 50);
 
+  console.log("Deviation:", deviation);
+
   let cumulativePercent = 0;
   const percentileData = chartData.map(d => {
       const lowerBound = cumulativePercent;
@@ -320,23 +378,23 @@ function SavingsPositionChart({ age, income, savings }: { age: number; income: n
       return { ...d, lowerBound, upperBound: cumulativePercent };
   });
 
-  const userPercentileBracket = percentileData.find(b => b.金融資産額 === userBracket?.金融資産額);
+  const userPercentileBracket = percentileData.find(b => b.金融資産額 === userChartDataItem.金融資産額);
   const percentile = userPercentileBracket ? userPercentileBracket.lowerBound + userPercentileBracket.割合 / 2 : 0;
   const topPercent = Math.round(100 - percentile);
 
   return (
-    <div className="bg-white rounded-xl shadow p-4 mb-6">
+    <div className="bg-white rounded-xl shadow p-3 mb-6">
       <h3 className="text-lg font-semibold mb-2">
         同年代・同年収における金融資産の位置<br />
         <span className="text-sm text-gray-600">
           あなたの金融資産は <strong className="text-blue-600">上位 {topPercent}%</strong> に位置しています
         </span>
       </h3>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={chartData} margin={{ top: 60, right: 20, bottom: 40, left: 0 }}>
+      <ResponsiveContainer width="100%" height={400} >
+        <BarChart data={chartData} margin={{ top: 60, right: 20, bottom: 50, left: 10 }}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="金融資産額" angle={-30} textAnchor="end" height={80} interval={0} />
-          <YAxis label={{ value: '割合 (%)', angle: -90, position: 'insideLeft' }} />
+          <XAxis dataKey="金融資産額" angle={-60} textAnchor="end" height={120} interval={0} />
+          <YAxis label={{ value: '割合 (%)', angle: -90, position: 'outsideLeft' }} />
           <Tooltip
             content={({ active, payload, label }) => {
               if (!active || !payload || payload.length === 0) return null;
@@ -350,21 +408,21 @@ function SavingsPositionChart({ age, income, savings }: { age: number; income: n
             }}
           />
           <Bar dataKey="割合" fill="#8884d8" />
-          {userBracket && (
+          {userBracket && userChartDataItem && (
             <Customized
               component={({ xAxisMap, yAxisMap }: {
                 xAxisMap?: Record<string, AxisWithScale>;
                 yAxisMap?: Record<string, AxisWithScale>;
               }) => {
-                if (!xAxisMap || !yAxisMap || !userBracket) return null;
+                if (!xAxisMap || !yAxisMap || !userChartDataItem) return null;
                 const xAxis = Object.values(xAxisMap)[0];
                 const yAxis = Object.values(yAxisMap)[0];
                 return (
                   <CustomIncomeMarker
                     xAxis={xAxis}
                     yAxis={yAxis}
-                    xValue={userBracket.金融資産額}
-                    yValue={userBracket.割合}
+                    xValue={userChartDataItem.金融資産額}
+                    yValue={userChartDataItem.割合}
                     deviation={deviation}
                   />
                 );
@@ -389,6 +447,7 @@ export default function SamplePage() {
   const latest = enrichedData[enrichedData.length - 1];
 
   const [formData, setFormData] = useState(() => ({
+    totalAsset: latest.総資産.toString(), 
     age: '35',
     retireAge: '65',
     income: '6000000',
@@ -400,7 +459,6 @@ export default function SamplePage() {
     inflation: '1.5',
     medical: '2.0',
     withdrawRate: '4.0',
-    totalAsset: latest.総資産.toString(), // Initialize with calculated total asset
   }));
 
   const currentTotalAsset = parseFloat(formData.totalAsset) || latest.総資産;
