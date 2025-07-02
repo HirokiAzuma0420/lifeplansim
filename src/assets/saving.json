@@ -1,0 +1,2774 @@
+[
+  {
+    "ageRange": "20歳代",
+    "incomeRange": "収入はな い",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 80.0
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 0.0
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 6.7
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 6.7
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 0.0
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 0.0
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 0.0
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 0.0
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 0.0
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 0.0
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 6.7
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 0.0
+      }
+    ]
+  },
+  {
+    "ageRange": "20歳代",
+    "incomeRange": "300万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 38.2
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 32.4
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 8.8
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 2.9
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 5.9
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 2.9
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 5.9
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 0.0
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 0.0
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 0.0
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 0.0
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 2.9
+      }
+    ]
+  },
+  {
+    "ageRange": "20歳代",
+    "incomeRange": "300～500万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 44.7
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 23.7
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 10.6
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 5.3
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 5.3
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 2.6
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 5.3
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 0.0
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 0.0
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 0.0
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 2.6
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 0.0
+      }
+    ]
+  },
+  {
+    "ageRange": "20歳代",
+    "incomeRange": "500～750万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 29.1
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 23.6
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 12.7
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 14.5
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 3.7
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 7.2
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 3.7
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 3.7
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 0.0
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 0.0
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 1.8
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 0.0
+      }
+    ]
+  },
+  {
+    "ageRange": "20歳代",
+    "incomeRange": "750～1,000万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 7.1
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 21.5
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 14.3
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 7.1
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 14.3
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 7.1
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 7.1
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 7.1
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 7.1
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 0.0
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 7.1
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 0.0
+      }
+    ]
+  },
+  {
+    "ageRange": "20歳代",
+    "incomeRange": "1,000～1,200万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 50.0
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 16.7
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 0.0
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 16.7
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 0.0
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 16.7
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 0.0
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 0.0
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 0.0
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 0.0
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 0.0
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 0.0
+      }
+    ]
+  },
+  {
+    "ageRange": "20歳代",
+    "incomeRange": "1,200万円以上",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 33.3
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 0.0
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 0.0
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 0.0
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 0.0
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 0.0
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 0.0
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 33.3
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 33.3
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 0.0
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 0.0
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 0.0
+      }
+    ]
+  },
+  {
+    "ageRange": "30歳代",
+    "incomeRange": "収入はな い",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 85.7
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 0.0
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 7.2
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 0.0
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 3.5
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 0.0
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 0.0
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 3.5
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 0.0
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 0.0
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 0.0
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 0.0
+      }
+    ]
+  },
+  {
+    "ageRange": "30歳代",
+    "incomeRange": "300万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 47.3
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 19.1
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 13.5
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 9.0
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 2.2
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 2.2
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 0.0
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 3.4
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 1.1
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 1.1
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 1.1
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 0.0
+      }
+    ]
+  },
+  {
+    "ageRange": "30歳代",
+    "incomeRange": "300～500万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 31.9
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 17.8
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 11.0
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 9.8
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 8.0
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 4.9
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 5.5
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 3.6
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 4.3
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 0.6
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 0.6
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 1.8
+      }
+    ]
+  },
+  {
+    "ageRange": "30歳代",
+    "incomeRange": "500～750万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 23.3
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 12.9
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 11.0
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 7.6
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 6.7
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 5.2
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 11.0
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 6.1
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 7.2
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 1.9
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 3.8
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 3.4
+      }
+    ]
+  },
+  {
+    "ageRange": "30歳代",
+    "incomeRange": "750～1,000万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 13.8
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 10.8
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 6.2
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 9.2
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 7.7
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 9.2
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 7.7
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 9.2
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 13.8
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 3.0
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 1.5
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 7.7
+      }
+    ]
+  },
+  {
+    "ageRange": "30歳代",
+    "incomeRange": "1,000～1,200万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 21.8
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 0.0
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 4.3
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 0.0
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 4.3
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 4.3
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 13.0
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 8.7
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 8.7
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 4.3
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 13.0
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 17.5
+      }
+    ]
+  },
+  {
+    "ageRange": "30歳代",
+    "incomeRange": "1,200万円以上",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 7.7
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 0.0
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 10.3
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 7.7
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 0.0
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 2.6
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 7.7
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 7.7
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 17.9
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 12.8
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 7.7
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 17.9
+      }
+    ]
+  },
+  {
+    "ageRange": "40歳代",
+    "incomeRange": "収入はな い",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 87.5
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 4.1
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 8.4
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 0.0
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 0.0
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 0.0
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 0.0
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 0.0
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 0.0
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 0.0
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 0.0
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 0.0
+      }
+    ]
+  },
+  {
+    "ageRange": "40歳代",
+    "incomeRange": "300万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 50.7
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 16.2
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 9.2
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 3.5
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 4.9
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 4.9
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 4.9
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 1.4
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 2.9
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 0.0
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 0.7
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 0.7
+      }
+    ]
+  },
+  {
+    "ageRange": "40歳代",
+    "incomeRange": "300～500万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 32.9
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 14.8
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 16.2
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 7.1
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 5.7
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 2.9
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 6.2
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 5.7
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 4.2
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 2.4
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 0.9
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 0.9
+      }
+    ]
+  },
+  {
+    "ageRange": "40歳代",
+    "incomeRange": "500～750万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 24.6
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 8.9
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 8.1
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 4.1
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 7.5
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 5.3
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 11.4
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 6.6
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 6.3
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 4.5
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 8.1
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 4.7
+      }
+    ]
+  },
+  {
+    "ageRange": "40歳代",
+    "incomeRange": "750～1,000万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 12.7
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 8.5
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 7.1
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 7.1
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 5.0
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 2.2
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 9.9
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 9.9
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 17.0
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 5.0
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 7.8
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 7.8
+      }
+    ]
+  },
+  {
+    "ageRange": "40歳代",
+    "incomeRange": "1,000～1,200万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 8.0
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 0.0
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 4.8
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 8.0
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 3.2
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 6.5
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 1.6
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 6.5
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 19.4
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 8.0
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 12.9
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 20.9
+      }
+    ]
+  },
+  {
+    "ageRange": "40歳代",
+    "incomeRange": "1,200万円以上",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 12.2
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 3.1
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 4.6
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 3.1
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 7.7
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 1.5
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 3.1
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 4.6
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 9.3
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 6.2
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 7.7
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 36.8
+      }
+    ]
+  },
+  {
+    "ageRange": "50歳代",
+    "incomeRange": "収入はな い",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 67.7
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 12.9
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 3.2
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 3.2
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 3.2
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 0.0
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 6.5
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 0.0
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 0.0
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 0.0
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 0.0
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 3.2
+      }
+    ]
+  },
+  {
+    "ageRange": "50歳代",
+    "incomeRange": "300万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 49.3
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 15.4
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 6.6
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 0.7
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 1.4
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 3.7
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 3.7
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 2.2
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 5.1
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 2.2
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 3.0
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 6.6
+      }
+    ]
+  },
+  {
+    "ageRange": "50歳代",
+    "incomeRange": "300～500万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 42.6
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 9.9
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 7.3
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 7.3
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 7.3
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 3.7
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 4.2
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 5.7
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 4.7
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 3.1
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 1.0
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 3.1
+      }
+    ]
+  },
+  {
+    "ageRange": "50歳代",
+    "incomeRange": "500～750万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 22.6
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 10.2
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 6.6
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 5.0
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 4.7
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 4.7
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 9.0
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 6.3
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 10.7
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 4.7
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 6.3
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 9.3
+      }
+    ]
+  },
+  {
+    "ageRange": "50歳代",
+    "incomeRange": "750～1,000万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 18.7
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 4.3
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 6.5
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 2.8
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 3.6
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 6.5
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 6.5
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 5.8
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 14.4
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 6.5
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 9.3
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 15.1
+      }
+    ]
+  },
+  {
+    "ageRange": "50歳代",
+    "incomeRange": "1,000～1,200万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 12.5
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 6.3
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 7.5
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 1.2
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 2.5
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 2.5
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 7.5
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 8.7
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 11.2
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 6.3
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 11.2
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 22.5
+      }
+    ]
+  },
+  {
+    "ageRange": "50歳代",
+    "incomeRange": "1,200万円以上",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 7.3
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 7.3
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 7.3
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 3.1
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 2.1
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 2.1
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 0.0
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 8.3
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 14.5
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 6.3
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 8.3
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 33.3
+      }
+    ]
+  },
+  {
+    "ageRange": "60歳代",
+    "incomeRange": "収入はな い",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 72.2
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 13.8
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 2.7
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 5.6
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 0.0
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 0.0
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 0.0
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 0.0
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 0.0
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 0.0
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 0.0
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 5.6
+      }
+    ]
+  },
+  {
+    "ageRange": "60歳代",
+    "incomeRange": "300万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 33.2
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 10.9
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 6.1
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 7.6
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 4.3
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 3.8
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 9.0
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 6.1
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 3.8
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 2.4
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 4.3
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 8.5
+      }
+    ]
+  },
+  {
+    "ageRange": "60歳代",
+    "incomeRange": "300～500万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 21.3
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 5.9
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 5.1
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 3.4
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 3.1
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 1.7
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 7.9
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 10.3
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 10.0
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 7.6
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 8.2
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 15.5
+      }
+    ]
+  },
+  {
+    "ageRange": "60歳代",
+    "incomeRange": "500～750万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 14.5
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 4.0
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 6.1
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 4.8
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 4.8
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 1.7
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 7.9
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 7.1
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 6.5
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 6.5
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 13.6
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 22.4
+      }
+    ]
+  },
+  {
+    "ageRange": "60歳代",
+    "incomeRange": "750～1,000万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 12.0
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 5.0
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 2.0
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 2.0
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 0.0
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 0.0
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 7.0
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 4.0
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 8.0
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 4.0
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 20.0
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 36.1
+      }
+    ]
+  },
+  {
+    "ageRange": "60歳代",
+    "incomeRange": "1,000～1,200万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 7.7
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 0.0
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 0.0
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 0.0
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 3.9
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 0.0
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 3.9
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 7.7
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 9.6
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 7.7
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 17.3
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 42.3
+      }
+    ]
+  },
+  {
+    "ageRange": "60歳代",
+    "incomeRange": "1,200万円以上",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 11.3
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 1.4
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 1.4
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 4.2
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 0.0
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 2.8
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 7.0
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 1.4
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 7.0
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 7.0
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 5.6
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 50.8
+      }
+    ]
+  },
+  {
+    "ageRange": "70歳代",
+    "incomeRange": "収入はな い",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 82.3
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 0.0
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 0.0
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 0.0
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 5.9
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 0.0
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 0.0
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 0.0
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 0.0
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 11.7
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 0.0
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 0.0
+      }
+    ]
+  },
+  {
+    "ageRange": "70歳代",
+    "incomeRange": "300万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 30.4
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 8.7
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 7.7
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 6.7
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 4.2
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 3.4
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 7.7
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 3.9
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 9.1
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 6.0
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 5.3
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 7.0
+      }
+    ]
+  },
+  {
+    "ageRange": "70歳代",
+    "incomeRange": "300～500万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 16.2
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 5.3
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 5.8
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 3.7
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 5.8
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 2.6
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 7.0
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 6.5
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 10.3
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 8.1
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 9.2
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 19.5
+      }
+    ]
+  },
+  {
+    "ageRange": "70歳代",
+    "incomeRange": "500～750万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 12.9
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 4.0
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 3.0
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 4.0
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 4.9
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 1.4
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 5.9
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 9.9
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 10.9
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 4.9
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 7.9
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 30.2
+      }
+    ]
+  },
+  {
+    "ageRange": "70歳代",
+    "incomeRange": "750～1,000万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 8.2
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 3.3
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 0.0
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 3.3
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 3.3
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 3.3
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 5.0
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 3.3
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 18.1
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 9.8
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 8.2
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 34.4
+      }
+    ]
+  },
+  {
+    "ageRange": "70歳代",
+    "incomeRange": "1,000～1,200万円未満",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 8.3
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 8.3
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 4.2
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 0.0
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 0.0
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 0.0
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 0.0
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 4.2
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 12.5
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 8.3
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 16.7
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 37.5
+      }
+    ]
+  },
+  {
+    "ageRange": "70歳代",
+    "incomeRange": "1,200万円以上",
+    "assetGroups": [
+      {
+        "min": 0,
+        "max": 0,
+        "percent": 11.7
+      },
+      {
+        "min": 1,
+        "max": 99,
+        "percent": 3.0
+      },
+      {
+        "min": 100,
+        "max": 199,
+        "percent": 3.0
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "percent": 5.9
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "percent": 3.0
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "percent": 3.0
+      },
+      {
+        "min": 500,
+        "max": 699,
+        "percent": 0.0
+      },
+      {
+        "min": 700,
+        "max": 999,
+        "percent": 3.0
+      },
+      {
+        "min": 1000,
+        "max": 1499,
+        "percent": 14.7
+      },
+      {
+        "min": 1500,
+        "max": 1999,
+        "percent": 0.0
+      },
+      {
+        "min": 2000,
+        "max": 2999,
+        "percent": 0.0
+      },
+      {
+        "min": 3000,
+        "max": null,
+        "percent": 52.8
+      }
+    ]
+  }
+]

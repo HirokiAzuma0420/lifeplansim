@@ -22,6 +22,7 @@ import { useNavigate } from 'react-router-dom';
 import { Pencil } from 'lucide-react';
 import { getAssetGrade } from '../assets/getAssetGrade';
 import incomeDistribution from '../assets/tingin.json';
+import savingsDistribution from '../assets/saving.json';
 
 const COLORS = {
   現金: '#3B82F6',
@@ -202,11 +203,192 @@ function IncomePositionChart({ age, income }: { age: number; income: number }) {
   );
 }
 
+const savingsMidpoints: { [key: string]: number } = {
+  '金融資産非保有': 0,
+  '100万円未満': 50,
+  '100～200万円未満': 150,
+  '200～300万円未満': 250,
+  '300～400万円未満': 350,
+  '400～500万円未満': 450,
+  '500～700万円未満': 600,
+  '700～1,000万円未満': 850,
+  '1,000～1,500万円未満': 1250,
+  '1,500～2,000万円未満': 1750,
+  '2,000～3,000万円未満': 2500,
+  '3,000万円以上': 3500, // Assumption for open-ended
+};
+
+function getSavingsAgeBracket(age: number): string {
+  if (age < 30) return '20歳代';
+  if (age < 40) return '30歳代';
+  if (age < 50) return '40歳代';
+  if (age < 60) return '50歳代';
+  if (age < 70) return '60歳代';
+  return '70歳代以上';
+}
+
+function getIncomeBracketForSavings(income: number): string {
+    const incomeInMan = income / 10000;
+    if (incomeInMan < 300) return '300万円未満';
+    if (incomeInMan < 500) return '300～500万円未満';
+    if (incomeInMan < 750) return '500～750万円未満';
+    if (incomeInMan < 1000) return '750～1,000万円未満';
+    if (incomeInMan < 1200) return '1,000～1,200万円未満';
+    return '1,200万円以上';
+}
+
+type RawAssetGroup = {
+    min: number;
+    max: number | null;
+    percent: number;
+};
+
+type SavingsDataItem = {
+    ageRange: string;
+    incomeRange: string;
+    assetGroups: RawAssetGroup[];
+};
+
+type SavingsDistribution = SavingsDataItem[];
+
+const processedSavings = (savingsDistribution as unknown as SavingsDistribution).reduce((acc, item) => {
+    if (!acc[item.ageRange]) {
+        acc[item.ageRange] = {};
+    }
+    acc[item.ageRange][item.incomeRange] = item.assetGroups;
+    return acc;
+}, {} as Record<string, Record<string, RawAssetGroup[]>>);
+
+function formatNumber(n: number): string {
+    return n.toLocaleString();
+}
+
+function createAssetLabel(min: number, max: number | null): string {
+    if (min === 0 && max === 0) return '金融資産非保有';
+    if (min === 1 && max === 99) return '100万円未満';
+    if (max === null) return `${formatNumber(min)}万円以上`;
+    return `${formatNumber(min)}～${formatNumber(max)}万円未満`;
+}
+
+function SavingsPositionChart({ age, income, savings }: { age: number; income: number; savings: number }) {
+  const ageBracket = getSavingsAgeBracket(age);
+  const incomeBracket = getIncomeBracketForSavings(income);
+  
+  const distributionAssetGroups = processedSavings[ageBracket]?.[incomeBracket];
+
+  if (!distributionAssetGroups) {
+    return <div className="text-red-500 p-4 bg-red-50 rounded-lg">金融資産の分布データがありません (検索キー: 年齢={ageBracket}, 収入={incomeBracket})</div>;
+  }
+
+  const chartData = distributionAssetGroups.map(group => {
+    const label = createAssetLabel(group.min, group.max);
+    return {
+      金融資産額: label,
+      割合: group.percent,
+      midpoint: savingsMidpoints[label] ?? 0,
+    };
+  });
+
+  const savingsInMan = savings / 10000;
+
+  const userBracket = chartData.find(b => {
+      const s = b.金融資産額;
+      if (s === '金融資産非保有') return savingsInMan <= 0;
+      if (s === '100万円未満') return savingsInMan > 0 && savingsInMan < 100;
+      if (s === '3,000万円以上') return savingsInMan >= 3000;
+      if (s.includes('～')) {
+          const parts = s.replace(/万円未満?|万円以上/g, '').replace(/,/g, '').split('～');
+          const low = parseInt(parts[0]);
+          if (parts.length === 1) return savingsInMan >= low;
+          const high = parseInt(parts[1]);
+          return savingsInMan >= low && savingsInMan < high;
+      }
+      return false;
+  });
+
+  const totalWeight = chartData.reduce((sum, b) => sum + b.割合, 0);
+  const mean = chartData.reduce((sum, b) => sum + b.midpoint * b.割合, 0) / totalWeight;
+  const stdDev = Math.sqrt(chartData.reduce((sum, b) => sum + Math.pow(b.midpoint - mean, 2) * b.割合, 0) / totalWeight);
+
+  const userZ = stdDev === 0 ? 0 : (savingsInMan - mean) / stdDev;
+  const deviation = Math.round(userZ * 10 + 50);
+
+  let cumulativePercent = 0;
+  const percentileData = chartData.map(d => {
+      const lowerBound = cumulativePercent;
+      cumulativePercent += d.割合;
+      return { ...d, lowerBound, upperBound: cumulativePercent };
+  });
+
+  const userPercentileBracket = percentileData.find(b => b.金融資産額 === userBracket?.金融資産額);
+  const percentile = userPercentileBracket ? userPercentileBracket.lowerBound + userPercentileBracket.割合 / 2 : 0;
+  const topPercent = Math.round(100 - percentile);
+
+  return (
+    <div className="bg-white rounded-xl shadow p-4 mb-6">
+      <h3 className="text-lg font-semibold mb-2">
+        同年代・同年収における金融資産の位置<br />
+        <span className="text-sm text-gray-600">
+          あなたの金融資産は <strong className="text-blue-600">上位 {topPercent}%</strong> に位置しています
+        </span>
+      </h3>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={chartData} margin={{ top: 60, right: 20, bottom: 40, left: 0 }}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="金融資産額" angle={-30} textAnchor="end" height={80} interval={0} />
+          <YAxis label={{ value: '割合 (%)', angle: -90, position: 'insideLeft' }} />
+          <Tooltip
+            content={({ active, payload, label }) => {
+              if (!active || !payload || payload.length === 0) return null;
+              const percent = payload[0].value as number;
+              return (
+                <div className="bg-white p-2 border rounded text-sm shadow">
+                  <p className="font-bold">{label}</p>
+                  <p className="text-gray-600">{percent.toFixed(1)}%</p>
+                </div>
+              );
+            }}
+          />
+          <Bar dataKey="割合" fill="#8884d8" />
+          {userBracket && (
+            <Customized
+              component={({ xAxisMap, yAxisMap }: {
+                xAxisMap?: Record<string, AxisWithScale>;
+                yAxisMap?: Record<string, AxisWithScale>;
+              }) => {
+                if (!xAxisMap || !yAxisMap || !userBracket) return null;
+                const xAxis = Object.values(xAxisMap)[0];
+                const yAxis = Object.values(yAxisMap)[0];
+                return (
+                  <CustomIncomeMarker
+                    xAxis={xAxis}
+                    yAxis={yAxis}
+                    xValue={userBracket.金融資産額}
+                    yValue={userBracket.割合}
+                    deviation={deviation}
+                  />
+                );
+              }}
+            />
+          )}
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
 export default function SamplePage() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [editFields, setEditFields] = useState<Record<string, boolean>>({});
-  const [formData, setFormData] = useState({
+  const enrichedData = data.map((d) => ({
+    ...d,
+    総資産: d.現金 + d.NISA + d.iDeCo,
+  }));
+
+  const latest = enrichedData[enrichedData.length - 1];
+
+  const [formData, setFormData] = useState(() => ({
     age: '35',
     retireAge: '65',
     income: '6000000',
@@ -218,14 +400,11 @@ export default function SamplePage() {
     inflation: '1.5',
     medical: '2.0',
     withdrawRate: '4.0',
-  });
-
-  const enrichedData = data.map((d) => ({
-    ...d,
-    総資産: d.現金 + d.NISA + d.iDeCo,
+    totalAsset: latest.総資産.toString(), // Initialize with calculated total asset
   }));
 
-  const latest = enrichedData[enrichedData.length - 1];
+  const currentTotalAsset = parseFloat(formData.totalAsset) || latest.総資産;
+
   const pieData = [
     { name: '現金', value: latest.現金 },
     { name: 'NISA', value: latest.NISA },
@@ -237,7 +416,7 @@ export default function SamplePage() {
     setEditFields((prev) => ({ ...prev, [key]: false }));
   };
 
-  const rankInfo = getAssetGrade(latest.総資産);
+  const rankInfo = getAssetGrade(currentTotalAsset);
 
   return (
     <div className="relative bg-gray-100 min-h-screen">
@@ -272,9 +451,9 @@ export default function SamplePage() {
           <h2 className="text-lg font-bold">Mark Devid</h2>
 
           <div className="bg-blue-50 rounded-lg p-4 mb-4">
-            <p className="text-sm text-gray-500">現在の総資産</p>
+            <p className="text-sm text-gray-500">現時点での総資産</p>
             <p className="text-xl font-semibold text-blue-600">
-              ¥{latest.総資産.toLocaleString()}
+              ¥{currentTotalAsset.toLocaleString()}
             </p>
           </div>
 
@@ -299,6 +478,7 @@ export default function SamplePage() {
                         value={val}
                         onChange={(e) => setFormData((prev) => ({ ...prev, [key]: e.target.value }))}
                         className="w-full border px-2 py-1 text-sm rounded"
+                        type={key === 'totalAsset' || key === 'income' || key === 'expense' || key === 'nisa' || key === 'ideco' ? 'number' : 'text'}
                       />
                       <button
                         onClick={() => handleSave(key)}
@@ -308,7 +488,7 @@ export default function SamplePage() {
                       </button>
                     </div>
                   ) : (
-                    <p>{val}</p>
+                    <p>{key === 'totalAsset' || key === 'income' || key === 'expense' || key === 'nisa' || key === 'ideco' ? parseInt(val).toLocaleString() : val}</p>
                   )}
                 </div>
                 {!editFields[key] && (
@@ -337,6 +517,12 @@ export default function SamplePage() {
           income={parseInt(formData.income)}
         />
 
+        <SavingsPositionChart
+          age={parseInt(formData.age)}
+          income={parseInt(formData.income)}
+          savings={currentTotalAsset}
+        />
+
         <div className="bg-white rounded-xl shadow p-6 mb-6 relative">
           <h3 className="text-lg font-semibold mb-2">総資産推移</h3>
           {/* ランク表示カード */}
@@ -349,7 +535,7 @@ export default function SamplePage() {
                   </div>
                   {/* コメント */}
                   <div className="font-bold text-base text-gray-700">{rankInfo.commenttitle}<br/>
-                  <span className="font-normal text-sm text-base text-gray-700">{rankInfo.comment}</span>
+                  <span className="font-normal text-sm text-gray-700">{rankInfo.comment}</span>
                   </div>
                 </div>
 
@@ -489,4 +675,5 @@ const labelMap: Record<string, string> = {
   inflation: 'インフレ率（％）',
   medical: '医療費の増加率（％）',
   withdrawRate: '初期取り崩し率（％）',
+  totalAsset: '総資産金額（円）',
 };
