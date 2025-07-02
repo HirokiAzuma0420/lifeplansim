@@ -264,10 +264,10 @@ function formatNumber(n: number): string {
 }
 
 function createAssetLabel(min: number, max: number | null): string {
-    if (min === 0 && max === 0) return '金融資産非保有';
-    if (min === 1 && max === 99) return '100万円未満';
-    if (max === null) return `${formatNumber(min)}万円以上`;
-    return `${formatNumber(min)}～${formatNumber(max)}万円未満`;
+    if (min === 0 && max === 0) return '非保有';
+    if (min === 1 && max === 99) return '100万未満';
+    if (max === null) return `${formatNumber(min)}万以上`;
+    return `${formatNumber(min)}-${formatNumber(max)}万`;
 }
 
 function SavingsPositionChart({ age, income, savings }: { age: number; income: number; savings: number }) {
