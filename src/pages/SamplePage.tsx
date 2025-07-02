@@ -277,14 +277,12 @@ function SavingsPositionChart({ age, income, savings }: { age: number; income: n
   const distributionAssetGroups = processedSavings[ageBracket]?.[incomeBracket];
 
   if (!distributionAssetGroups) {
-    console.log(`金融資産の分布データがありません (検索キー: 年齢=${ageBracket}, 収入=${incomeBracket})`);
     return <div className="text-red-500 p-4 bg-red-50 rounded-lg">金融資産の分布データがありません (検索キー: 年齢={ageBracket}, 収入={incomeBracket})</div>;
   }
 
   const chartData = distributionAssetGroups.map(group => {
     const label = createAssetLabel(group.min, group.max);
     const midpoint = savingsMidpoints[label] ?? 0;
-    console.log(`ChartData item: label=${label}, midpoint=${midpoint}`);
     return {
       金融資産額: label,
       割合: group.percent,
@@ -293,7 +291,6 @@ function SavingsPositionChart({ age, income, savings }: { age: number; income: n
   });
 
   const savingsInMan = savings / 10000;
-  console.log("Savings in Man (万円):", savingsInMan);
 
   const userBracket = distributionAssetGroups.find(group => {
     const min = group.min;
@@ -309,57 +306,15 @@ function SavingsPositionChart({ age, income, savings }: { age: number; income: n
     } else { // Other ranges
       isMatch = savingsInMan >= min && savingsInMan < max;
     }
-    console.log(`  Checking group: min=${min}, max=${max}, isMatch=${isMatch}`);
     return isMatch;
   });
 
-  console.log("Found userBracket:", userBracket);
-
-  // If userBracket is not found, it means the user's savings fall outside the defined brackets.
-  // In this case, we should not display the marker.
-  if (!userBracket) {
-    console.log("User bracket not found.");
-    return (
-      <div className="bg-white rounded-xl shadow p-4 mb-6">
-        <h3 className="text-lg font-semibold mb-2">
-          同年代・同年収における金融資産の位置<br />
-          <span className="text-sm text-gray-600">
-            あなたの金融資産は分布範囲外です。
-          </span>
-        </h3>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={chartData} margin={{ top: 60, right: 20, bottom: 40, left: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="金融資産額" angle={-30} textAnchor="end" height={80} interval={0} />
-            <YAxis label={{ value: '割合 (%)', angle: -90, position: 'insideLeft' }} />
-            <Tooltip
-              content={({ active, payload, label }) => {
-                if (!active || !payload || payload.length === 0) return null;
-                const percent = payload[0].value as number;
-                return (
-                  <div className="bg-white p-2 border rounded text-sm shadow">
-                    <p className="font-bold">{label}</p>
-                    <p className="text-gray-600">{percent.toFixed(1)}%</p>
-                  </div>
-                );
-              }}
-            />
-            <Bar dataKey="割合" fill="#8884d8" />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-    );
-  }
-
   // Find the corresponding chartData item for the found userBracket
-  const userBracketLabel = createAssetLabel(userBracket.min, userBracket.max);
-  console.log("User bracket label:", userBracketLabel);
-  const userChartDataItem = chartData.find(item => item.金融資産額 === userBracketLabel);
-  console.log("Found userChartDataItem:", userChartDataItem);
+  const userBracketLabel = userBracket ? createAssetLabel(userBracket.min, userBracket.max) : undefined;
+  const userChartDataItem = userBracketLabel ? chartData.find(item => item.金融資産額 === userBracketLabel) : undefined;
 
-  if (!userChartDataItem) {
-    console.log("User chart data item not found.");
-    return <div className="text-red-500 p-4 bg-red-50 rounded-lg">ユーザーの金融資産データが見つかりません。</div>;
+  if (!userBracket || !userChartDataItem) {
+    return <div className="text-red-500 p-4 bg-red-50 rounded-lg">ユーザーの金融資産データが見つからないか、分布範囲外です。</div>;
   }
 
   const totalWeight = chartData.reduce((sum, b) => sum + b.割合, 0);
@@ -368,8 +323,6 @@ function SavingsPositionChart({ age, income, savings }: { age: number; income: n
 
   const userZ = stdDev === 0 ? 0 : (savingsInMan - mean) / stdDev;
   const deviation = Math.round(userZ * 10 + 50);
-
-  console.log("Deviation:", deviation);
 
   let cumulativePercent = 0;
   const percentileData = chartData.map(d => {
@@ -391,7 +344,7 @@ function SavingsPositionChart({ age, income, savings }: { age: number; income: n
         </span>
       </h3>
       <ResponsiveContainer width="100%" height={400} >
-        <BarChart data={chartData} margin={{ top: 60, right: 20, bottom: 50, left: 10 }}>
+        <BarChart data={chartData} margin={{ top: 60, right: 20, bottom: 100, left: 60 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="金融資産額" angle={-60} textAnchor="end" height={120} interval={0} />
           <YAxis label={{ value: '割合 (%)', angle: -90, position: 'outsideLeft' }} />
@@ -407,7 +360,7 @@ function SavingsPositionChart({ age, income, savings }: { age: number; income: n
               );
             }}
           />
-          <Bar dataKey="割合" fill="#8884d8" />
+          <Bar dataKey="割合" fill="#60A5FA" />
           {userBracket && userChartDataItem && (
             <Customized
               component={({ xAxisMap, yAxisMap }: {
