@@ -146,6 +146,28 @@ function CustomIncomeMarker({ xAxis, yAxis, xValue, yValue, deviation}: CustomIn
   );
 }
 
+function isUserSavingsInGroup(
+  savingsInMan: number,
+  group: RawAssetGroup
+): boolean {
+  const { min, max } = group;
+
+  if (min === 0 && max === 0) {
+    return savingsInMan <= 0;
+  }
+
+  if (min === 1 && max === 99) {
+    return savingsInMan > 0 && savingsInMan < 100;
+  }
+
+  if (max === null) {
+    return savingsInMan >= min;
+  }
+
+  // At this point, max is guaranteed to be a number.
+  return savingsInMan >= min && savingsInMan < (max as number);
+}
+
 export default function SavingsPositionChart({ age, income, savings }: { age: number; income: number; savings: number }) {
   const ageBracket = getSavingsAgeBracket(age);
   const incomeBracket = getIncomeBracketForSavings(income);
@@ -168,22 +190,9 @@ export default function SavingsPositionChart({ age, income, savings }: { age: nu
 
   const savingsInMan = savings / 10000;
 
-  const userBracket = distributionAssetGroups.find(group => {
-    const min = group.min;
-    const max = group.max;
-    let isMatch = false;
-
-    if (min === 0 && max === 0) { // Financial assets not held
-      isMatch = savingsInMan <= 0;
-    } else if (min === 1 && max === 99) { // Less than 100万円
-      isMatch = savingsInMan > 0 && savingsInMan < 100;
-    } else if (max === null) { // 3,000万円以上
-      isMatch = savingsInMan >= min;
-    } else if (max !== null) { // Other ranges
-      isMatch = savingsInMan >= min && savingsInMan < max;
-    }
-    return isMatch;
-  });
+  const userBracket = distributionAssetGroups.find(group =>
+    isUserSavingsInGroup(savingsInMan, group)
+  );
 
   // Find the corresponding chartData item for the found userBracket
   const userBracketLabel = userBracket ? createAssetLabel(userBracket.min, userBracket.max) : undefined;
@@ -194,16 +203,33 @@ export default function SavingsPositionChart({ age, income, savings }: { age: nu
   }
 
   const totalWeight = chartData.reduce((sum, b) => sum + b.割合, 0);
-  const mean = chartData.reduce((sum, b) => sum + b.midpoint * b.割合, 0) / totalWeight;
-  const stdDev = Math.sqrt(chartData.reduce((sum, b) => sum + Math.pow(b.midpoint - mean, 2) * b.割合, 0) / totalWeight);
+  const mean = totalWeight === 0 ? 0 : chartData.reduce((sum, b) => sum + b.midpoint * b.割合, 0) / totalWeight;
 
-  const userZ = stdDev === 0 ? 0 : (savingsInMan - mean) / stdDev;
+  let stdDev: number;
+  if (totalWeight === 0) {
+    stdDev = 0;
+  } else {
+    const sumOfSquaredDifferences = chartData.reduce((sum, b) => sum + Math.pow(b.midpoint - mean, 2) * (b.割合 as number), 0);
+    const variance = sumOfSquaredDifferences / totalWeight;
+    if (!Number.isFinite(variance) || variance < 0) {
+      stdDev = 0;
+    } else {
+      stdDev = Math.sqrt(variance);
+    }
+  }
+
+  let userZ: number;
+  if (stdDev === 0) {
+    userZ = 0;
+  } else {
+    userZ = (savingsInMan - mean) / stdDev;
+  }
   const deviation = Math.round(userZ * 10 + 50);
 
   let cumulativePercent = 0;
   const percentileData = chartData.map(d => {
       const lowerBound = cumulativePercent;
-      cumulativePercent += d.割合;
+      cumulativePercent += d.割合 as number;
       return { ...d, lowerBound, upperBound: cumulativePercent };
   });
 
@@ -226,7 +252,7 @@ export default function SavingsPositionChart({ age, income, savings }: { age: nu
           <YAxis label={{ value: '割合 (%)', angle: -90, position: 'outsideLeft' }} />
           <Tooltip
             content={({ active, payload, label }) => {
-              if (!active || !payload || !payload.length === 0) return null;
+              if (!active || !payload || payload.length === 0) return null;
               const percent = payload[0].value as number;
               return (
                 <div className="bg-white p-2 border rounded text-sm shadow">
