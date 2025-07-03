@@ -17,9 +17,24 @@ const labelMap: Record<string, string> = {
   totalAsset: '総資産金額（円）',
 };
 
+interface FormData {
+  totalAsset: string;
+  age: string;
+  retireAge: string;
+  income: string;
+  expense: string;
+  nisa: string;
+  ideco: string;
+  stockYield: string;
+  bondYield: string;
+  inflation: string;
+  medical: string;
+  withdrawRate: string;
+}
+
 interface PersonalTileProps {
-  data: any;
-  onUpdate: (data: any) => void;
+  data: FormData;
+  onUpdate: (data: FormData) => void;
   menuOpen: boolean;
   setMenuOpen: (isOpen: boolean) => void;
 }
@@ -84,7 +99,7 @@ export default function PersonalTile({ data, onUpdate, menuOpen, setMenuOpen }: 
                     </button>
                   </div>
                 ) : (
-                  <p>{key === 'totalAsset' || key === 'income' || key === 'expense' || key === 'nisa' || key === 'ideco' ? parseInt(val as string).toLocaleString() : val}</p>
+                  <p>{key === 'totalAsset' || key === 'income' || key === 'expense' || key === 'nisa' || key === 'ideco' ? parseInt(String(val)).toLocaleString() : String(val)}</p>
                 )}
               </div>
               {!editFields[key] && (

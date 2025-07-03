@@ -1,7 +1,41 @@
-コードレビューして不要なコードを精査して。あとプロンプトの回答は日本語で行うように。
-formatNumber関数はすでにコード上にないです。
+[{
+	"resource": "/c:/dev/vite-projects/vite-project/src/components/dashboard/PersonalTile.tsx",
+	"owner": "eslint",
+	"code": {
+		"value": "@typescript-eslint/no-explicit-any",
+		"target": {
+			"$mid": 1,
+			"path": "/rules/no-explicit-any",
+			"scheme": "https",
+			"authority": "typescript-eslint.io"
+		}
+	},
+	"severity": 8,
+	"message": "Unexpected any. Specify a different type.",
+	"source": "eslint",
+	"startLineNumber": 21,
+	"startColumn": 9,
+	"endLineNumber": 21,
+	"endColumn": 12
+},{
+	"resource": "/c:/dev/vite-projects/vite-project/src/components/dashboard/PersonalTile.tsx",
+	"owner": "eslint",
+	"code": {
+		"value": "@typescript-eslint/no-explicit-any",
+		"target": {
+			"$mid": 1,
+			"path": "/rules/no-explicit-any",
+			"scheme": "https",
+			"authority": "typescript-eslint.io"
+		}
+	},
+	"severity": 8,
+	"message": "Unexpected any. Specify a different type.",
+	"source": "eslint",
+	"startLineNumber": 22,
+	"startColumn": 20,
+	"endLineNumber": 22,
+	"endColumn": 23
+}]
 
-私が特に気にしているのが金融資産の位置を示すグラフの描写部分で二重にみえるところがあるところ
- // If userBracket is not found, it means the user's savings fall outside the defined brackets.
-  // In this case, we should not display the marker.
-  これが書かれた以降の部分です。
+PersonalTile.tsxのエラーが解消しきっていません。修正してください。

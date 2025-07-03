@@ -180,7 +180,7 @@ export default function SavingsPositionChart({ age, income, savings }: { age: nu
     } else if (max === null) { // 3,000万円以上
       isMatch = savingsInMan >= min;
     } else { // Other ranges
-      isMatch = savingsInMan >= min && savingsInMan < max;
+      isMatch = savingsInMan >= min && (max === null || savingsInMan < max);
     }
     return isMatch;
   });
