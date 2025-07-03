@@ -1,41 +1,4 @@
-[{
-	"resource": "/c:/dev/vite-projects/vite-project/src/components/dashboard/PersonalTile.tsx",
-	"owner": "eslint",
-	"code": {
-		"value": "@typescript-eslint/no-explicit-any",
-		"target": {
-			"$mid": 1,
-			"path": "/rules/no-explicit-any",
-			"scheme": "https",
-			"authority": "typescript-eslint.io"
-		}
-	},
-	"severity": 8,
-	"message": "Unexpected any. Specify a different type.",
-	"source": "eslint",
-	"startLineNumber": 21,
-	"startColumn": 9,
-	"endLineNumber": 21,
-	"endColumn": 12
-},{
-	"resource": "/c:/dev/vite-projects/vite-project/src/components/dashboard/PersonalTile.tsx",
-	"owner": "eslint",
-	"code": {
-		"value": "@typescript-eslint/no-explicit-any",
-		"target": {
-			"$mid": 1,
-			"path": "/rules/no-explicit-any",
-			"scheme": "https",
-			"authority": "typescript-eslint.io"
-		}
-	},
-	"severity": 8,
-	"message": "Unexpected any. Specify a different type.",
-	"source": "eslint",
-	"startLineNumber": 22,
-	"startColumn": 20,
-	"endLineNumber": 22,
-	"endColumn": 23
-}]
+src/components/dashboard/SavingsPositionChart.tsx(229,42): error TS2367: This comparison appears to be unintentional because the types 'boolean' and 'number' have no overlap.
+Error: Command "npm run build" exited with 2
 
-PersonalTile.tsxのエラーが解消しきっていません。修正してください。
+Vercelで検知されたエラーを基に、対象ファイルのエラーを解消してください。

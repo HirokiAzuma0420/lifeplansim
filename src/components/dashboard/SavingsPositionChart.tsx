@@ -179,8 +179,8 @@ export default function SavingsPositionChart({ age, income, savings }: { age: nu
       isMatch = savingsInMan > 0 && savingsInMan < 100;
     } else if (max === null) { // 3,000万円以上
       isMatch = savingsInMan >= min;
-    } else { // Other ranges
-      isMatch = savingsInMan >= min && (max === null || savingsInMan < max);
+    } else if (max !== null) { // Other ranges
+      isMatch = savingsInMan >= min && savingsInMan < max;
     }
     return isMatch;
   });
