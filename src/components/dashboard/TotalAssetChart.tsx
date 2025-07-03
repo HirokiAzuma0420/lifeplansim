@@ -1,25 +1,12 @@
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts';
-import { getAssetGrade } from '../../assets/getAssetGrade';
+interface TotalAssetChartProps {
+  enrichedData: { year: number; 現金: number; NISA: number; iDeCo: number; 総資産: number; }[];
+  rankInfo: { rank: string; color: string; commenttitle: string; comment: string; image: string };
+  COLORS: { [key: string]: string };
+}
 
-const COLORS = {
-  現金: '#3B82F6',
-  NISA: '#10B981',
-  iDeCo: '#F59E0B',
-};
-
-export default function TotalAssetChart({ data, totalAsset }: { data: any[], totalAsset: number }) {
-  const rankInfo = getAssetGrade(totalAsset);
-
+export default function TotalAssetChart({ enrichedData, rankInfo, COLORS }: TotalAssetChartProps) {
   return (
     <div className="bg-white rounded-xl shadow p-6 mb-6 relative">
       <h3 className="text-lg font-semibold mb-2">総資産推移</h3>
@@ -51,7 +38,7 @@ export default function TotalAssetChart({ data, totalAsset }: { data: any[], tot
       </div>
       {/* グラフ本体 */}
       <ResponsiveContainer width="100%" height={280}>
-        <AreaChart data={data} stackOffset="none">
+        <AreaChart data={enrichedData} stackOffset="none">
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="year" />
           <YAxis tickFormatter={(v) => `¥${(v / 1_000_000).toFixed(0)}M`} />

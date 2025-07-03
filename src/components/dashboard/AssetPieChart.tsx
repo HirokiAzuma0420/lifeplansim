@@ -14,7 +14,11 @@ const COLORS = {
   iDeCo: '#F59E0B',
 };
 
-export default function AssetPieChart({ data }: { data: any[] }) {
+interface AssetPieChartProps {
+  pieData: { name: string; value: number }[];
+}
+
+export default function AssetPieChart({ pieData }: AssetPieChartProps) {
   const pieColors = [COLORS.現金, COLORS.NISA, COLORS.iDeCo];
 
   return (
@@ -23,14 +27,14 @@ export default function AssetPieChart({ data }: { data: any[] }) {
       <ResponsiveContainer width="100%" height={240}>
         <PieChart>
           <Pie
-            data={data}
+            data={pieData}
             cx="50%"
             cy="50%"
             outerRadius={70}
             dataKey="value"
             label={({ name, percent }) => `${name} ${(percent * 100).toFixed(1)}%`}
           >
-            {data.map((_, index) => (
+            {pieData.map((_, index) => (
               <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
             ))}
           </Pie>

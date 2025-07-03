@@ -1,38 +1,51 @@
-export const getAssetGrade = (amount: number) => {
-  if (amount >= 30000000)
+export function getAssetGrade(totalAsset: number) {
+  if (totalAsset > 100000000) {
     return {
       rank: 'S',
-      color: '#8e24aa',
-      commenttitle: '圧倒的な安定資産です！',
-      comment: '完全な富裕層クラスの資産形成レベルです。FIREを計画しているとしたら、現実になること間違いなし！',
-      image: `${import.meta.env.BASE_URL}ranks/s.png`,
+      color: '#FFD700',
+      commenttitle: '素晴らしい！',
+      comment: 'あなたは資産形成の達人です。この調子で豊かな未来を築きましょう！',
+      image: '/public/ranks/s.png',
     };
-  if (amount >= 20000000)
+  } else if (totalAsset > 50000000) {
     return {
       rank: 'A',
-      color: '#1976d2',
-      commenttitle: '非常に優れた積立状況です！',
-      comment: 'このままいけば老後は安泰。年金との取崩しを考えても安定した資産を持ち続けられます！',
-      image: `${import.meta.env.BASE_URL}ranks/a.png`,
+      color: '#ADFF2F',
+      commenttitle: '非常に良い！',
+      comment: '着実に資産を増やしています。更なる飛躍を目指しましょう！',
+      image: '/public/ranks/a.png',
     };
-  if (amount >= 10000000)
+  } else if (totalAsset > 30000000) {
     return {
       rank: 'B',
-      color: '#43a047',
-      comment: 'この調子で継続を！',
-      image: `${import.meta.env.BASE_URL}ranks/b.png`,
+      color: '#87CEEB',
+      commenttitle: '良いスタート！',
+      comment: '資産形成は順調です。このペースを維持しましょう！',
+      image: '/public/ranks/b.png',
     };
-  if (amount >= 5000000)
+  } else if (totalAsset > 10000000) {
     return {
       rank: 'C',
-      color: '#f9a825',
-      comment: '今後の積立強化が推奨されます。',
-      image: `${import.meta.env.BASE_URL}ranks/c.png`,
+      color: '#FFD700',
+      commenttitle: 'まずまずです！',
+      comment: '資産形成の基礎はできています。さらに加速させましょう！',
+      image: '/public/ranks/c.png',
     };
-  return {
-    rank: 'D',
-    color: '#e53935',
-    comment: '積立資産の改善が急務です。',
-    image: `${import.meta.env.BASE_URL}ranks/d.png`,
-  };
-};
+  } else if (totalAsset > 5000000) {
+    return {
+      rank: 'D',
+      color: '#FFD700',
+      commenttitle: 'これからが本番！',
+      comment: '資産形成はこれからが重要です。計画的に進めましょう！',
+      image: '/public/ranks/d.png',
+    };
+  } else {
+    return {
+      rank: 'E',
+      color: '#FFD700',
+      commenttitle: '頑張りましょう！',
+      comment: '資産形成の第一歩を踏み出しましょう。小さなことから始めてみましょう！',
+      image: '/public/ranks/e.png',
+    };
+  }
+}

@@ -1,5 +1,8 @@
+interface AssetTableProps {
+  enrichedData: { year: number; 現金: number; NISA: number; iDeCo: number; 総資産: number; }[];
+}
 
-export default function AssetTable({ data }: { data: any[] }) {
+export default function AssetTable({ enrichedData }: AssetTableProps) {
   return (
     <div className="bg-white rounded-xl shadow p-4 overflow-x-auto">
       <h3 className="text-lg font-semibold mb-2">資産詳細テーブル</h3>
@@ -17,7 +20,7 @@ export default function AssetTable({ data }: { data: any[] }) {
             </tr>
           </thead>
           <tbody>
-            {data.map((d) => (
+            {enrichedData.map((d) => (
               <tr key={d.year} className="text-right border-b">
                 <td className="px-2 py-1 text-left">{d.year}</td>
                 <td className="px-2 py-1">{d.現金.toLocaleString()}</td>

@@ -1,14 +1,4 @@
-
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Customized,
-} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Customized } from 'recharts';
 import incomeDistribution from '../../assets/tingin.json';
 
 function getAgeBracket(age: number): string {
@@ -101,7 +91,12 @@ function CustomIncomeMarker({ xAxis, yAxis, xValue, yValue, deviation}: CustomIn
   );
 }
 
-export default function IncomePositionChart({ age, income }: { age: number; income: number }) {
+interface IncomePositionChartProps {
+  age: number;
+  income: number;
+}
+
+export default function IncomePositionChart({ age, income }: IncomePositionChartProps) {
   const bracketKey = getAgeBracket(age);
   const dist = (incomeDistribution as IncomeDistribution)[bracketKey];
   if (!dist) return <div>該当年齢の分布データがありません</div>;
