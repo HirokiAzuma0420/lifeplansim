@@ -15,7 +15,7 @@ export function getAssetGrade(totalAsset: number) {
       comment: '着実に資産を増やしています。更なる飛躍を目指しましょう！',
       image: '/public/ranks/a.png',
     };
-  } else if (totalAsset > 30000000) {
+  } else if (totalAsset > 20000000) {
     return {
       rank: 'B',
       color: '#87CEEB',
