@@ -1,51 +1,43 @@
 export function getAssetGrade(totalAsset: number) {
-  if (totalAsset > 100000000) {
+  if (totalAsset >= 50000000) {
     return {
       rank: 'S',
       color: '#FFD700',
-      commenttitle: '素晴らしい！',
-      comment: 'あなたは資産形成の達人です。この調子で豊かな未来を築きましょう！',
+      commenttitle: '完全な経済的自立',
+      comment: 'あなたは非常に高い資産を築いています。働き方・暮らし方を自ら選べるフェーズです。',
       image: '/public/ranks/s.png',
     };
-  } else if (totalAsset > 50000000) {
+  } else if (totalAsset >= 30000000) {
     return {
       rank: 'A',
       color: '#ADFF2F',
-      commenttitle: '非常に良い！',
-      comment: '着実に資産を増やしています。更なる飛躍を目指しましょう！',
+      commenttitle: '資産基盤は万全',
+      comment: '将来にわたり安定した生活が見込まれます。リスク資産の活用も検討できる水準です。',
       image: '/public/ranks/a.png',
     };
-  } else if (totalAsset > 20000000) {
+  } else if (totalAsset >= 15000000) {
     return {
       rank: 'B',
       color: '#87CEEB',
-      commenttitle: '良いスタート！',
-      comment: '資産形成は順調です。このペースを維持しましょう！',
+      commenttitle: '順調な資産形成',
+      comment: '平均以上の水準にあります。今後もこのペースで積み上げていきましょう。',
       image: '/public/ranks/b.png',
     };
-  } else if (totalAsset > 10000000) {
+  } else if (totalAsset >= 7000000) {
     return {
       rank: 'C',
-      color: '#FFD700',
-      commenttitle: 'まずまずです！',
-      comment: '資産形成の基礎はできています。さらに加速させましょう！',
+      color: '#FFA500',
+      commenttitle: '基盤はこれから',
+      comment: '生活の安定と老後資金に向けて、さらに積立や資産運用を意識していきましょう。',
       image: '/public/ranks/c.png',
-    };
-  } else if (totalAsset > 5000000) {
-    return {
-      rank: 'D',
-      color: '#FFD700',
-      commenttitle: 'これからが本番！',
-      comment: '資産形成はこれからが重要です。計画的に進めましょう！',
-      image: '/public/ranks/d.png',
     };
   } else {
     return {
-      rank: 'E',
-      color: '#FFD700',
-      commenttitle: '頑張りましょう！',
-      comment: '資産形成の第一歩を踏み出しましょう。小さなことから始めてみましょう！',
-      image: '/public/ranks/e.png',
+      rank: 'D',
+      color: '#FF6347',
+      commenttitle: 'スタート地点',
+      comment: 'まだ道半ばですが、ここからの積み上げが大きな差になります。まずは毎月の黒字化から始めましょう。',
+      image: '/public/ranks/d.png',
     };
   }
 }

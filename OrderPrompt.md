@@ -1,5 +1,2 @@
-getAssetGrade.tsの定義によると
-totalAsset > 30000000 = B
-totalAsset > 10000000 = C
-つまり26300000の場合はBになるのだけれど、ブラウザ描写はCになっている
-デバッグしてください
+TotalAssetChartの見出し「総資産推移」が左と上に寄りすぎです。
+SavingsPositionChart.tsxの見出しのレイアウトと揃えてください
