@@ -1,2 +1,1 @@
-TotalAssetChartの見出し「総資産推移」が左と上に寄りすぎです。
-SavingsPositionChart.tsxの見出しのレイアウトと揃えてください
+もういちど一個前の仕様にもどしてください

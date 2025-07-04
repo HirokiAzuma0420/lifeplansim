@@ -39,7 +39,10 @@ export default function TotalAssetChart({ enrichedData, rankInfo, COLORS }: Tota
     const { x, y, index } = props;
 
     // 最初のデータ点と、以降10個おきのデータ点にラベルを表示
-    if (index % 10 === 0) {
+    const isMobile = window.innerWidth < 400; // モバイルビューの判定 (例: 768px未満)
+    const labelInterval = isMobile ? 20 : 10; // モバイルでは20項目おき、PCでは10項目おき
+
+    if (index % labelInterval === 0) {
       const dataPoint = enrichedData[index];
       if (!dataPoint) return null;
 
@@ -47,12 +50,42 @@ export default function TotalAssetChart({ enrichedData, rankInfo, COLORS }: Tota
       const formattedValue = `${Math.round(totalAsset / 10000).toLocaleString()}万円`;
       const yearLabel = index === 0 ? 'スタート' : `${index}年後`;
 
+      const isMobile = window.innerWidth < 768; // モバイルビューの判定 (例: 768px未満)
+      const fontSize = isMobile ? 8 : 10; // モバイルではフォントサイズを小さく
+      const dyYear = isMobile ? -18 : -22; // モバイルでは垂直位置を調整
+      const dyValue = isMobile ? -3 : -7; // モバイルでは垂直位置を調整
+
+      let textAnchor: 'start' | 'middle' | 'end' = 'middle';
+      let dxOffset = 0;
+
+      // モバイルビューで端に近い場合はtextAnchorを調整
+      if (isMobile) {
+        // グラフの左右のパディングを考慮 (ResponsiveContainerのmargin.left/right + AreaChartのmargin.left/right)
+        // ここでは簡易的に固定値を使用するか、より正確な計算が必要
+        const chartLeftPadding = 20; // AreaChartのmargin.left
+        const chartRightPadding = 30; // AreaChartのmargin.right
+        const totalChartWidth = window.innerWidth - chartLeftPadding - chartRightPadding; // 簡易的なグラフ幅
+
+        const labelWidthEstimate = 50; // ラベルの幅の概算 (調整が必要な場合あり)
+
+        // x座標がグラフの左端に近い場合
+        if (x < chartLeftPadding + labelWidthEstimate / 2) {
+          textAnchor = 'start';
+          dxOffset = 5; // テキストを少し右にずらす
+        }
+        // x座標がグラフの右端に近い場合
+        else if (x > totalChartWidth - labelWidthEstimate / 2) {
+          textAnchor = 'end';
+          dxOffset = -5; // テキストを少し左にずらす
+        }
+      }
+
       return (
         <g>
-          <text x={x} y={y} dy={-20} fill="#666" fontSize={12} textAnchor="middle">
+          <text x={x} y={y} dy={dyYear} fill="#666" fontSize={fontSize} textAnchor={textAnchor} dx={dxOffset}>
             {yearLabel}
           </text>
-          <text x={x} y={y} dy={-5} fill="#333" fontSize={12} textAnchor="middle" fontWeight="bold">
+          <text x={x} y={y} dy={dyValue} fill="#333" fontSize={fontSize} textAnchor={textAnchor} fontWeight="bold" dx={dxOffset}>
             {formattedValue}
           </text>
         </g>
