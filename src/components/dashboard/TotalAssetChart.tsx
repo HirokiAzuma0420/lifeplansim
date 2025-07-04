@@ -131,7 +131,7 @@ export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, r
       <ResponsiveContainer width="100%" height={350}>
         <AreaChart data={enrichedData} stackOffset="none" margin={{ top: 60, right: 30, left: 20, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="year" />
+          <XAxis dataKey="year" interval="preserveStartEnd" />
           <YAxis tickFormatter={(v) => `${Math.round(v / 10000)}万円`} />
           <Tooltip content={<CustomTooltip />} />
           <Legend wrapperStyle={{ position: 'relative', top: -15 }} />
