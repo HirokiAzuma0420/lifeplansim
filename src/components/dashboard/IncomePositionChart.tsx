@@ -101,8 +101,14 @@ export default function IncomePositionChart({ age, income }: IncomePositionChart
   const dist = (incomeDistribution as IncomeDistribution)[bracketKey];
   if (!dist) return <div>該当年齢の分布データがありません</div>;
 
+  const totalCount = dist.reduce((sum, b) => sum + b.count, 0);
+  const chartData = dist.map(d => ({
+    ...d,
+    percentage: (d.count / totalCount) * 100,
+  }));
+
   const incomeInMan = income / 10000;
-  const userBracket = dist.find(
+  const userBracket = chartData.find(
     (b) => incomeInMan >= b.low && (b.high === null || incomeInMan < b.high)
   );
 
@@ -131,17 +137,18 @@ export default function IncomePositionChart({ age, income }: IncomePositionChart
         </span>
       </h3>
       <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={dist} margin={{ top: 60, right: 20, bottom: 20, left: 0 }}>
+        <BarChart data={chartData} margin={{ top: 60, right: 20, bottom: 20, left: 20 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="収入階級" />
-          <YAxis label={{ value: '人数', angle: -90, position: 'insideLeft' }} />
+          <YAxis 
+            label={{ value: '割合 (%)', angle: -90, position: 'insideLeft' }} 
+            tickFormatter={(tick) => `${tick.toFixed(0)}%`}
+          />
           <Tooltip
             content={({ active, payload, label }) => {
               if (!active || !payload || payload.length === 0) return null;
 
-              const groupCount = payload[0].value as number;
-              const totalCount = dist.reduce((sum, b) => sum + b.count, 0);
-              const groupPercent = ((groupCount / totalCount) * 100).toFixed(1);
+              const groupPercent = (payload[0].value as number).toFixed(1);
 
               return (
                 <div className="bg-white p-2 border rounded text-sm shadow">
@@ -151,7 +158,7 @@ export default function IncomePositionChart({ age, income }: IncomePositionChart
               );
             }}
           />
-          <Bar dataKey="count" fill="#60A5FA" />
+          <Bar dataKey="percentage" fill="#60A5FA" />
           {userBracket && (
             <Customized
               component={({ xAxisMap, yAxisMap }: {
@@ -166,7 +173,7 @@ export default function IncomePositionChart({ age, income }: IncomePositionChart
                     xAxis={xAxis}
                     yAxis={yAxis}
                     xValue={userBracket.収入階級}
-                    yValue={userBracket.count}
+                    yValue={userBracket.percentage}
                     deviation={deviation}
                   />
                 );

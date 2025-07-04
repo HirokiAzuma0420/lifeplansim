@@ -1,2 +1,1 @@
-TotalAssetChartは現在、静的に積み上げ順が決まっているが
-**面積が小さい順**に積みあがるようにしてほしい
+InvestmentPrincipalChartのY軸見出し「割合」がY軸ラベルと近いのでIncomePositionChartと揃えてほしい
