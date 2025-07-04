@@ -39,7 +39,7 @@ export default function TotalAssetChart({ enrichedData, rankInfo, COLORS }: Tota
     const { x, y, index } = props;
 
     // 最初のデータ点と、以降10個おきのデータ点にラベルを表示
-    const isMobile = window.innerWidth < 400; // モバイルビューの判定 (例: 768px未満)
+    const isMobile = window.innerWidth < 768; // モバイルビューの判定 (例: 768px未満)
     const labelInterval = isMobile ? 20 : 10; // モバイルでは20項目おき、PCでは10項目おき
 
     if (index % labelInterval === 0) {
