@@ -39,6 +39,16 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameT
 export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, retireAge }: TotalAssetChartProps) {
   const retirementYear = enrichedData[0].year + (retireAge - age);
 
+  // 各資産の合計を計算
+  const assetTotals: { [key: string]: number } = {
+    '現金': enrichedData.reduce((acc, cur) => acc + cur.現金, 0),
+    'NISA': enrichedData.reduce((acc, cur) => acc + cur.NISA, 0),
+    'iDeCo': enrichedData.reduce((acc, cur) => acc + cur.iDeCo, 0),
+  };
+
+  // 資産を合計の昇順にソート
+  const sortedAssets = Object.keys(assetTotals).sort((a, b) => assetTotals[a] - assetTotals[b]);
+
   const CustomizedLabel = (props: LabelProps) => {
     const { x, y, index } = props;
 
@@ -86,6 +96,7 @@ export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, r
 
       return (
         <g>
+          <circle cx={x} cy={y} r={4} fill="white" stroke={COLORS.iDeCo} strokeWidth={2} />
           <text x={x} y={y} dy={dyYear} fill="#666" fontSize={fontSize} textAnchor={textAnchor} dx={dxOffset}>
             {yearLabel}
           </text>
@@ -135,9 +146,17 @@ export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, r
           <YAxis tickFormatter={(v) => `${Math.round(v / 10000)}万円`} />
           <Tooltip content={<CustomTooltip />} />
           <Legend wrapperStyle={{ position: 'relative', top: -15 }} />
-          <Area type="monotone" dataKey="現金" stackId="1" stroke={COLORS.現金} fill={COLORS.現金} />
-          <Area type="monotone" dataKey="NISA" stackId="1" stroke={COLORS.NISA} fill={COLORS.NISA} />
-          <Area type="monotone" dataKey="iDeCo" stackId="1" stroke={COLORS.iDeCo} fill={COLORS.iDeCo} label={CustomizedLabel} />
+          {sortedAssets.map((assetKey, index) => (
+            <Area
+              key={assetKey}
+              type="monotone"
+              dataKey={assetKey}
+              stackId="1"
+              stroke={COLORS[assetKey]}
+              fill={COLORS[assetKey]}
+              label={index === sortedAssets.length - 1 ? CustomizedLabel : undefined}
+            />
+          ))}
           {retirementYear >= enrichedData[0].year && retirementYear <= enrichedData[enrichedData.length - 1].year && (
             <ReferenceLine x={retirementYear} stroke="red" strokeDasharray="3 3" label={{ value: '退職', position: 'bottom', fill: 'gray', fontSize: 12, fontWeight: 'normal', dy: 20 }} />
           )}
