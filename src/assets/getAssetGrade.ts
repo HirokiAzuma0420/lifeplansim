@@ -23,7 +23,7 @@ export function getAssetGrade(totalAsset: number) {
       comment: '平均以上の水準にあります。今後もこのペースで積み上げていきましょう。',
       image: '/ranks/b.png',
     };
-  } else if (totalAsset >= 7000000) {
+  } else if (totalAsset >= 1000000) {
     return {
       rank: 'C',
       color: '#FFA500',

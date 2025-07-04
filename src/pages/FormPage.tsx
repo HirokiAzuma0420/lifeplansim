@@ -23,14 +23,14 @@ const FormPage: React.FC = () => {
 
       <section className="px-4 py-5">
         <h1 className="text-xl font-bold text-left mb-4">収支の設定</h1>
-        <InputField label="年間収入（円）" />
-        <InputField label="年間支出（円）" />
+        <InputField label="年間収入（万円）" />
+        <InputField label="年間支出（万円）" />
       </section>
 
       <section className="px-4 py-5">
         <h1 className="text-xl font-bold text-left mb-4">積立の設定</h1>
-        <InputField label="NISA 積立額（円）" />
-        <InputField label="iDeCo 積立額（円）" />
+        <InputField label="NISA 積立額（万円）" />
+        <InputField label="iDeCo 積立額（万円）" />
       </section>
 
       <section className="px-4 py-5">

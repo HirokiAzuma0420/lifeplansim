@@ -1,4 +1,4 @@
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import type { TooltipProps } from 'recharts';
 import type { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
 
@@ -6,6 +6,8 @@ interface TotalAssetChartProps {
   enrichedData: { year: number; 現金: number; NISA: number; iDeCo: number; 総資産: number; }[];
   rankInfo: { rank: string; color: string; commenttitle: string; comment: string; image: string };
   COLORS: { [key: string]: string };
+  age: number;
+  retireAge: number;
 }
 
 // Rechartsから渡されるカスタムラベルのpropsの型
@@ -34,7 +36,9 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameT
   return null;
 };
 
-export default function TotalAssetChart({ enrichedData, rankInfo, COLORS }: TotalAssetChartProps) {
+export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, retireAge }: TotalAssetChartProps) {
+  const retirementYear = enrichedData[0].year + (retireAge - age);
+
   const CustomizedLabel = (props: LabelProps) => {
     const { x, y, index } = props;
 
@@ -130,10 +134,13 @@ export default function TotalAssetChart({ enrichedData, rankInfo, COLORS }: Tota
           <XAxis dataKey="year" />
           <YAxis tickFormatter={(v) => `${Math.round(v / 10000)}万円`} />
           <Tooltip content={<CustomTooltip />} />
-          <Legend />
+          <Legend wrapperStyle={{ position: 'relative', top: -15 }} />
           <Area type="monotone" dataKey="現金" stackId="1" stroke={COLORS.現金} fill={COLORS.現金} />
           <Area type="monotone" dataKey="NISA" stackId="1" stroke={COLORS.NISA} fill={COLORS.NISA} />
           <Area type="monotone" dataKey="iDeCo" stackId="1" stroke={COLORS.iDeCo} fill={COLORS.iDeCo} label={CustomizedLabel} />
+          {retirementYear >= enrichedData[0].year && retirementYear <= enrichedData[enrichedData.length - 1].year && (
+            <ReferenceLine x={retirementYear} stroke="red" strokeDasharray="3 3" label={{ value: '退職', position: 'bottom', fill: 'gray', fontSize: 12, fontWeight: 'normal', dy: 20 }} />
+          )}
         </AreaChart>
       </ResponsiveContainer>
     </div>

@@ -115,7 +115,13 @@ export default function SamplePage() {
           savings={currentTotalAsset}
         />
 
-        <TotalAssetChart enrichedData={enrichedData} rankInfo={rankInfo} COLORS={COLORS} />
+        <TotalAssetChart
+          enrichedData={enrichedData}
+          rankInfo={rankInfo}
+          COLORS={COLORS}
+          age={parseInt(formData.age)}
+          retireAge={parseInt(formData.retireAge)}
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <InvestmentPrincipalChart enrichedData={enrichedData} />

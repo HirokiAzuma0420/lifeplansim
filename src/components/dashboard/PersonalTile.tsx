@@ -12,16 +12,16 @@ interface PersonalTileProps {
 const labelMap: Record<string, string> = {
   age: '現在の年齢',
   retireAge: '退職予定年齢',
-  income: '年間収入（円）',
-  expense: '年間支出（円）',
-  nisa: 'NISA 積立額（円）',
-  ideco: 'iDeCo 積立額（円）',
+  income: '年間収入（万円）',
+  expense: '年間支出（万円）',
+  nisa: 'NISA 積立額（万円）',
+  ideco: 'iDeCo 積立額（万円）',
   stockYield: '株式市場の利回り（％）',
   bondYield: '債券の利回り（％）',
   inflation: 'インフレ率（％）',
   medical: '医療費の増加率（％）',
   withdrawRate: '初期取り崩し率（％）',
-  totalAsset: '総資産金額（円）',
+  totalAsset: '総資産金額（万円）',
 };
 
 export default function PersonalTile({
@@ -64,8 +64,14 @@ export default function PersonalTile({
               {editFields[key] ? (
                 <div className="flex gap-2">
                   <input
-                    value={val}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, [key]: e.target.value }))}
+                    value={key === 'totalAsset' || key === 'income' || key === 'expense' || key === 'nisa' || key === 'ideco' ? (parseInt(val) / 10000).toString() : val}
+                    onChange={(e) => setFormData((prev) => ({
+                      ...prev,
+                      [key]:
+                        key === 'totalAsset' || key === 'income' || key === 'expense' || key === 'nisa' || key === 'ideco'
+                          ? (parseFloat(e.target.value) * 10000).toString()
+                          : e.target.value,
+                    }))}
                     className="w-full border px-2 py-1 text-sm rounded"
                     type={key === 'totalAsset' || key === 'income' || key === 'expense' || key === 'nisa' || key === 'ideco' ? 'number' : 'text'}
                   />
@@ -77,7 +83,7 @@ export default function PersonalTile({
                   </button>
                 </div>
               ) : (
-                <p>{key === 'totalAsset' || key === 'income' || key === 'expense' || key === 'nisa' || key === 'ideco' ? parseInt(val).toLocaleString() : val}</p>
+                <p>{key === 'totalAsset' || key === 'income' || key === 'expense' || key === 'nisa' || key === 'ideco' ? (parseInt(val) / 10000).toLocaleString() : val}</p>
               )}
             </div>
             {!editFields[key] && (
