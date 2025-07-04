@@ -1,1 +1,1 @@
-InvestmentPrincipalChartのY軸見出し「割合」がY軸ラベルと近いのでIncomePositionChartと揃えてほしい
+画像を囲う枠や影はいらない。フラットなデザインにしたい
