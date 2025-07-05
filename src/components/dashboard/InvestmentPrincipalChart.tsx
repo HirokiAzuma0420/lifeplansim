@@ -11,7 +11,7 @@ export default function InvestmentPrincipalChart({ enrichedData }: InvestmentPri
       <ResponsiveContainer width="100%" height={300}>
         <LineChart 
           data={enrichedData.filter((d) => d.year <= 2050)}
-          margin={{ top: 20, right: 20, left: 80, bottom: 5 }}
+          margin={{ top: 20, right: 20, left: 5, bottom: 5 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="year" />
