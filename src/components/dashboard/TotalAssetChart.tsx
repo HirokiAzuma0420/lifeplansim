@@ -158,7 +158,14 @@ export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, r
             />
           ))}
           {retirementYear >= enrichedData[0].year && retirementYear <= enrichedData[enrichedData.length - 1].year && (
-            <ReferenceLine x={retirementYear} stroke="red" strokeDasharray="3 3" label={{ value: '退職', position: 'bottom', fill: 'gray', fontSize: 13, fontWeight: 'normal', dy: 30 }} />
+            <ReferenceLine x={retirementYear} stroke="red" strokeDasharray="3 3" label={{
+              value: '退職',
+              position: 'bottom',
+              fill: 'gray',
+              fontSize: window.innerWidth < 768 ? 13 : 14,
+              fontWeight: 'normal',
+              dy: window.innerWidth < 768 ? 20 : 30,
+            }} />
           )}
         </AreaChart>
       </ResponsiveContainer>
