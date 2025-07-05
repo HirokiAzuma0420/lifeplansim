@@ -139,7 +139,7 @@ export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, r
         </div>
       </div>
       {/* グラフ本体 */}
-      <ResponsiveContainer width="100%" height={350}>
+      <ResponsiveContainer width="100%" height={400}>
         <AreaChart data={enrichedData} stackOffset="none" margin={{ top: 80, right: 30, left: 60, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="year" interval="preserveStartEnd" />

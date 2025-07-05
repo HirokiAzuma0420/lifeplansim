@@ -24,7 +24,7 @@ export default function AssetPieChart({ pieData }: AssetPieChartProps) {
   return (
     <div className="bg-white rounded-xl shadow p-4">
       <h3 className="text-lg font-semibold mb-2">資産保有割合（最新年）</h3>
-      <ResponsiveContainer width="100%" height={240}>
+      <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie
             data={pieData}

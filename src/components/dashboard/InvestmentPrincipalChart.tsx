@@ -8,7 +8,7 @@ export default function InvestmentPrincipalChart({ enrichedData }: InvestmentPri
   return (
     <div className="bg-white rounded-xl shadow p-4">
       <h3 className="text-lg font-semibold mb-2">積立元本推移（〜2050年）</h3>
-      <ResponsiveContainer width="100%" height={240}>
+      <ResponsiveContainer width="100%" height={300}>
         <LineChart 
           data={enrichedData.filter((d) => d.year <= 2050)}
           margin={{ top: 20, right: 20, left: 60, bottom: 5 }}
