@@ -38,17 +38,49 @@ type CustomIncomeMarkerProps = {
   deviation: number;
 };
 
+import { useState, useEffect } from 'react';
+
 function CustomIncomeMarker({ xAxis, yAxis, xValue, yValue, deviation}: CustomIncomeMarkerProps) {
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const xBand = xAxis.scale(xValue) + (xAxis.scale.bandwidth ? xAxis.scale.bandwidth() / 2 : 0);
   const yPos = yAxis.scale(yValue);
+
+  const isLargeScreen = screenWidth >= 768;
+
+  const rectWidth = isLargeScreen ? 72 : 60;
+  const rectHeight = isLargeScreen ? 48 : 40;
+  const rectX = isLargeScreen ? xBand - 36 : xBand - 30;
+  const rectY = isLargeScreen ? yPos - 90 : yPos - 75;
+
+  const fontSizeLabel = isLargeScreen ? 16 : 12;
+  const yPosLabel = isLargeScreen ? yPos - 72 : yPos - 60;
+
+  const fontSizeDeviation = isLargeScreen ? 22 : 16;
+  const yPosDeviation = isLargeScreen ? yPos - 50.4 : yPos - 42;
+
+  const imageWidth = isLargeScreen ? 28.8 : 24;
+  const imageHeight = isLargeScreen ? 28.8 : 24;
+  const imageX = isLargeScreen ? xBand - 14.4 : xBand - 12;
+  const imageY = isLargeScreen ? yPos - 28.8 : yPos - 24;
+
   return (
   <>
     {/* 吹き出しの背景（角丸矩形） */}
     <rect
-      x={xBand - 30}
-      y={yPos - 75}
-      width={60}
-      height={40}
+      x={rectX}
+      y={rectY}
+      width={rectWidth}
+      height={rectHeight}
       rx={8}
       ry={8}
       fill="white"
@@ -59,10 +91,10 @@ function CustomIncomeMarker({ xAxis, yAxis, xValue, yValue, deviation}: CustomIn
     {/* ラベル */}
     <text
       x={xBand}
-      y={yPos - 60}
+      y={yPosLabel}
       textAnchor="middle"
       fill="red"
-      fontSize="12"
+      fontSize={fontSizeLabel}
       fontWeight="bold"
     >
       偏差値
@@ -70,10 +102,10 @@ function CustomIncomeMarker({ xAxis, yAxis, xValue, yValue, deviation}: CustomIn
 
     <text
       x={xBand}
-      y={yPos - 42}
+      y={yPosDeviation}
       textAnchor="middle"
       fill="red"
-      fontSize="16"
+      fontSize={fontSizeDeviation}
       fontWeight="900"
       fontFamily="'Yu Gothic'"
     >
@@ -82,10 +114,10 @@ function CustomIncomeMarker({ xAxis, yAxis, xValue, yValue, deviation}: CustomIn
 
       <image
         href="/Income_maker.svg"
-        x={xBand - 12}
-        y={yPos - 24}
-        width={24}
-        height={24}
+        x={imageX}
+        y={imageY}
+        width={imageWidth}
+        height={imageHeight}
       />
     </>
   );
