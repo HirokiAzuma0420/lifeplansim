@@ -137,7 +137,7 @@ export default function IncomePositionChart({ age, income }: IncomePositionChart
         </span>
       </h3>
       <ResponsiveContainer width="100%" height={350}>
-        <BarChart data={chartData} margin={{ top: 80, right: 20, bottom: 20, left: 5 }}>
+        <BarChart data={chartData} margin={{ top: 80, right: 20, bottom: 20}}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="収入階級" />
           <YAxis 
