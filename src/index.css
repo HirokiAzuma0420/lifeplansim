@@ -7,3 +7,59 @@
     font-family: 'Roboto', 'IBM Plex Sans JP', 'Noto Sans JP', sans-serif;
   }
 }
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer components {
+  .accordion-content {
+    transition: max-height 0.8s ease-out;
+    max-height: 0;
+    overflow: auto;   
+  }
+
+  .accordion-content.open {
+    max-height: 2000px; /* 十分な高さを設定 */   
+  }
+}
+
+.custom-radio {
+  appearance: none;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  width: 1.5em;
+  height: 1.5em;
+  margin-right: 0.5em;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.custom-radio:checked {
+  background-color: #3b82f6; /* 青色 */
+  border-color: #3b82f6;
+}
+
+.custom-radio:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.5em;
+  height: 1em;
+  border: solid white;
+  border-width: 0 0.2em 0.2em 0;
+  transform: translate(-50%, -60%) rotate(45deg);
+}

@@ -40,3 +40,32 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Fade-in animation for section transitions */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Accordion animation for conditional content */
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+  opacity: 0;
+}
+
+.accordion-content.open {
+  max-height: 9999px; /* Effectively removes height limitation for accordion animation */
+  opacity: 1;
+}

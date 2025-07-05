@@ -2,7 +2,7 @@
 module.exports = {
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}" // ← src以下のTSXにも適用されるようにする
+    "./src/**/*.{js,ts,jsx,tsx,css}" 
   ],
   theme: {
     extend: {
