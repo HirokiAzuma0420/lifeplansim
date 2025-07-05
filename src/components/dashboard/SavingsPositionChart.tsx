@@ -220,7 +220,6 @@ export default function SavingsPositionChart({ age, income, savings }: SavingsPo
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="金融資産額" angle={-60} textAnchor="end" height={120} interval={0} />
           <YAxis 
-            label={{ value: '割合 (%)', angle: -90, position: 'insideLeft' }}
             tickFormatter={(tick) => `${tick.toFixed(0)}%`}
           />
           <Tooltip

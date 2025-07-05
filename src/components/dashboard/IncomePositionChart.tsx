@@ -137,11 +137,10 @@ export default function IncomePositionChart({ age, income }: IncomePositionChart
         </span>
       </h3>
       <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={chartData} margin={{ top: 60, right: 20, bottom: 20, left: 20 }}>
+        <BarChart data={chartData} margin={{ top: 80, right: 20, bottom: 20, left: 20 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="収入階級" />
           <YAxis 
-            label={{ value: '割合 (%)', angle: -90, position: 'insideLeft' }} 
             tickFormatter={(tick) => `${tick.toFixed(0)}%`}
           />
           <Tooltip

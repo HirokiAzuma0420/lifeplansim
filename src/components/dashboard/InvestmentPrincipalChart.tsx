@@ -11,15 +11,14 @@ export default function InvestmentPrincipalChart({ enrichedData }: InvestmentPri
       <ResponsiveContainer width="100%" height={240}>
         <LineChart 
           data={enrichedData.filter((d) => d.year <= 2050)}
-          margin={{ top: 5, right: 20, left: 20, bottom: 5 }}
+          margin={{ top: 20, right: 20, left: 60, bottom: 5 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="year" />
           <YAxis 
-            tickFormatter={(v) => `¥${(v / 1_000_000).toFixed(0)}M`} 
-            label={{ value: '金額', angle: -90, position: 'insideLeft' }}
+            tickFormatter={(v) => `${(v / 10000).toFixed(0)}万円`} 
           />
-          <Tooltip formatter={(v: number) => `¥${v.toLocaleString()}`} />
+          <Tooltip formatter={(v: number) => `${(v / 10000).toLocaleString()}万円`} />
           <Legend />
           <Line type="monotone" dataKey="NISA" stroke="#6366F1" strokeWidth={3} dot={false} />
           <Line type="monotone" dataKey="iDeCo" stroke="#06B6D4" strokeWidth={3} dot={false} />
