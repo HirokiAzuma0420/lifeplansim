@@ -65,7 +65,7 @@ export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, r
       const yearLabel = index === 0 ? 'スタート' : `${index}年後`;
 
       const isMobile = window.innerWidth < 768; // モバイルビューの判定 (例: 768px未満)
-      const fontSize = isMobile ? 8 : 10; // モバイルではフォントサイズを小さく
+      const fontSize = isMobile ? 8 : 16; // モバイルではフォントサイズを小さく
       const dyYear = isMobile ? -18 : -22; // モバイルでは垂直位置を調整
       const dyValue = isMobile ? -3 : -7; // モバイルでは垂直位置を調整
 
