@@ -216,7 +216,7 @@ export default function SavingsPositionChart({ age, income, savings }: SavingsPo
         </span>
       </h3>
       <ResponsiveContainer width="100%" height={450} >
-        <BarChart data={chartData} margin={{ top: 60, right: 20, bottom: 100, left: 20 }}>
+        <BarChart data={chartData} margin={{ top: 60, right: 20, bottom: 100, left: 40 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="金融資産額" angle={-60} textAnchor="end" height={120} interval={0} />
           <YAxis 
