@@ -1017,7 +1017,7 @@ export default function FormPage() {
     <div className="min-h-screen bg-gray-100">
       <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg md:max-w-5xl">
         {/* Progress Bar */}
-        <div className="w-full bg-gray-300 h-4 sticky top-0 z-10 rounded-t-lg">
+        <div className="w-full bg-gray-300 h-4 fixed top-0 left-0 right-0 z-10 rounded-t-lg">
           <div
             className="bg-blue-500 h-full transition-all duration-500 ease-out"
             style={{ width: `${progress}%` }}
