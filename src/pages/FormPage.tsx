@@ -1,4 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { Trash2 } from "lucide-react";
+import incomeBrackets from "../assets/net_income_brackets.json";
+import AssetAccordion from "../components/AssetAccordion";
 
 const sections = [
   '家族構成',
@@ -16,8 +19,14 @@ const sections = [
   'シミュレーション設定',
 ];
 
+function getNetIncome(gross: number): number {
+  const bracket = incomeBrackets.find((b: { min: number; max: number | null; rate: number }) => gross >= b.min && (b.max === null || gross <= b.max))
+  return bracket ? gross * bracket.rate : gross * 0.8
+}
+
 export default function FormPage() {
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
+  
   const [formData, setFormData] = useState({
     familyComposition: '', // 独身／既婚
     mainIncome: '',
@@ -43,9 +52,16 @@ export default function FormPage() {
     carPrice: '',
     carReplacementFrequency: '',
     housePurchaseAge: '',
+    housePurchasePrice: '',
+    headDownPayment: '',
     housingLoanYears: '',
     housingLoanInterestRateType: '', // 一般的な想定／指定
     housingLoanInterestRate: '',
+    housingLoanStatus: '', // これから借りる予定／すでに返済中／借りる予定はない
+    loanOriginalAmount: '',
+    loanMonthlyPayment: '',
+    loanRemainingYears: '',
+    loanInterestRate: '',
     planToMarry: '', // する／しない
     marriageAge: '',
     engagementCost: '200',
@@ -68,23 +84,80 @@ export default function FormPage() {
     currentSavings: '',
     monthlySavings: '',
     hasInvestment: '', // はい／いいえ
-    totalInvestmentValue: '',
-    monthlyInvestmentAmount: '',
-    investmentStocks: '',
-    investmentTrust: '',
-    investmentBonds: '',
-    investmentIdeco: '',
-    investmentCrypto: '',
-    investmentOther: '',
+    investmentStocksCurrent: '',
+    investmentTrustCurrent: '',
+    investmentBondsCurrent: '',
+    investmentIdecoCurrent: '',
+    investmentCryptoCurrent: '',
+    investmentOtherCurrent: '',
+    monthlyInvestmentAmounts: {
+      investmentStocksMonthly: '0',
+      investmentTrustMonthly: '0',
+      investmentBondsMonthly: '0',
+      investmentIdecoMonthly: '0',
+      investmentCryptoMonthly: '0',
+      investmentOtherMonthly: '0',
+    },
+    investmentStocksAnnualSpot: '0',
+    investmentTrustAnnualSpot: '0',
+    investmentBondsAnnualSpot: '0',
+    investmentIdecoAnnualSpot: '0',
+    investmentCryptoAnnualSpot: '0',
+    investmentOtherAnnualSpot: '0',
+    investmentStocksRate: '6.0',
+    investmentTrustRate: '4.0',
+    investmentBondsRate: '1.0',
+    investmentIdecoRate: '4.0',
+    investmentCryptoRate: '8.0',
+    investmentOtherRate: '0.5',
     simulationPeriodAge: '90',
     interestRateScenario: '', // 固定利回り／ランダム変動
     emergencyFund: '300',
     riskTolerance: '', // 保守的／中庸／積極的
   });
 
+  const [applianceReplacements, setApplianceReplacements] = useState([
+    { name: '冷蔵庫', cycle: 10, cost: 15 },
+    { name: '洗濯機', cycle: 8, cost: 12 },
+    { name: 'エアコン', cycle: 10, cost: 10 },
+    { name: 'テレビ', cycle: 10, cost: 8 },
+    { name: '電子レンジ', cycle: 8, cost: 3 },
+    { name: '掃除機', cycle: 6, cost: 2 },
+  ]);
+
+  const handleApplianceChange = (index: number, field: string, value: string) => {
+    const newAppliances = [...applianceReplacements];
+    newAppliances[index] = { ...newAppliances[index], [field]: value };
+    setApplianceReplacements(newAppliances);
+  };
+
+  const addAppliance = () => {
+    setApplianceReplacements([...applianceReplacements, { name: '', cycle: 0, cost: 0 }]);
+  };
+
+  const handleRemoveAppliance = (index: number) => {
+    setApplianceReplacements((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const displayTotalApplianceCost = useMemo(() => {
+    return applianceReplacements
+      .map((item) => Number(item.cost) || 0)
+      .reduce((sum, cost) => sum + cost, 0)
+  }, [applianceReplacements]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    if (name.endsWith('Monthly')) {
+      setFormData(prev => ({
+        ...prev,
+        monthlyInvestmentAmounts: {
+          ...prev.monthlyInvestmentAmounts,
+          [name]: value
+        }
+      }));
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,13 +165,7 @@ export default function FormPage() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: checked ? value : '', // Store value if checked, empty if unchecked
-    }));
-  };
+  
 
   const goToNextSection = () => {
     if (currentSectionIndex < sections.length - 1) {
@@ -137,6 +204,8 @@ export default function FormPage() {
     return fixed + variable;
   }, [formData]);
 
+
+
   const totalIncome = useMemo(() => {
     return (
       (Number(formData.mainIncome) || 0) +
@@ -145,6 +214,10 @@ export default function FormPage() {
       (Number(formData.spouseSideJobIncome) || 0)
     );
   }, [formData.mainIncome, formData.spouseMainIncome, formData.sideJobIncome, formData.spouseSideJobIncome]);
+
+  const displayTotalIncome = useMemo(() => {
+    return totalIncome * 10000;
+  }, [totalIncome]);
 
   const totalMarriageCost = useMemo(() => {
     if (formData.planToMarry !== 'する') return 0;
@@ -178,22 +251,118 @@ export default function FormPage() {
     );
   }, [formData.currentSavings, formData.monthlySavings]);
 
-  const totalInvestment = useMemo(() => {
-    return (
-        (Number(formData.totalInvestmentValue) || 0) +
-        (Number(formData.monthlyInvestmentAmount) || 0) / 10000
-    );
-  }, [formData.totalInvestmentValue, formData.monthlyInvestmentAmount]);
+  const displayTotalSavings = useMemo(() => {
+    return totalSavings * 10000;
+  }, [totalSavings]);
 
-  const displayTotalExpense = useMemo(() => {
-    if (formData.expenseMethod === '簡単') {
-      return Number(formData.livingCostSimple) || 0;
+  const totalInvestment = useMemo(() => {
+    const monthlyTotal = Object.values(formData.monthlyInvestmentAmounts).reduce(
+      (acc, val) => acc + Number(val),
+      0
+    );
+
+    const annualSpotTotal = (
+      (Number(formData.investmentStocksAnnualSpot) || 0) +
+      (Number(formData.investmentTrustAnnualSpot) || 0) +
+      (Number(formData.investmentBondsAnnualSpot) || 0) +
+      (Number(formData.investmentIdecoAnnualSpot) || 0) +
+      (Number(formData.investmentCryptoAnnualSpot) || 0) +
+      (Number(formData.investmentOtherAnnualSpot) || 0)
+    );
+
+    return {
+      monthly: monthlyTotal,
+      annual: (monthlyTotal * 12) + annualSpotTotal
+    };
+  }, [
+    formData.monthlyInvestmentAmounts,
+    formData.investmentStocksAnnualSpot,
+    formData.investmentTrustAnnualSpot,
+    formData.investmentBondsAnnualSpot,
+    formData.investmentIdecoAnnualSpot,
+    formData.investmentCryptoAnnualSpot,
+    formData.investmentOtherAnnualSpot,
+  ]);
+
+  const calculateLoanPayment = (principal: number, annualInterestRate: number, years: number): { annualPayment: number, totalPayment: number } => {
+    if (principal <= 0 || annualInterestRate < 0 || years <= 0) {
+      return { annualPayment: 0, totalPayment: 0 };
     }
-    if (formData.expenseMethod === '詳細') {
-      return totalExpenses;
+
+    const monthlyInterestRate = annualInterestRate / 100 / 12;
+    const totalMonths = years * 12;
+
+    if (monthlyInterestRate === 0) {
+      const annualPayment = principal / years;
+      return { annualPayment: annualPayment, totalPayment: principal };
     }
-    return 0;
-  }, [formData.expenseMethod, formData.livingCostSimple, totalExpenses]);
+
+    const monthlyPayment = principal * monthlyInterestRate * Math.pow((1 + monthlyInterestRate), totalMonths) / (Math.pow((1 + monthlyInterestRate), totalMonths) - 1);
+    const annualPayment = monthlyPayment * 12;
+    const totalPayment = annualPayment * years;
+
+    return { annualPayment: Math.ceil(annualPayment / 1000) * 1000, totalPayment: Math.ceil(totalPayment / 1000) * 1000 };
+  };
+
+  const { estimatedAnnualLoanPayment, estimatedTotalLoanPayment } = useMemo(() => {
+    const housingLoanStatus = formData.housingLoanStatus;
+    let annualPayment = 0;
+    let totalPayment = 0;
+
+    if (housingLoanStatus === 'これから借りる予定') {
+      const housePurchasePrice = Number(formData.housePurchasePrice) || 0;
+      const headDownPayment = Number(formData.headDownPayment) || 0;
+      const housingLoanYears = Number(formData.housingLoanYears) || 0;
+
+      if (housePurchasePrice > 0 && housingLoanYears > 0 && formData.housingLoanInterestRateType) {
+        const principal = (housePurchasePrice - headDownPayment) * 10000; // Convert to yen
+
+        let interestRate = 1.5; // Default general interest rate
+        if (formData.housingLoanInterestRateType === '指定') {
+          interestRate = Number(formData.housingLoanInterestRate) || 0;
+        }
+        const calculated = calculateLoanPayment(principal, interestRate, housingLoanYears);
+        annualPayment = calculated.annualPayment;
+        totalPayment = calculated.totalPayment;
+      }
+    } else if (housingLoanStatus === 'すでに返済中') {
+      const loanMonthlyPayment = Number(formData.loanMonthlyPayment) || 0;
+      const loanRemainingYears = Number(formData.loanRemainingYears) || 0;
+
+      if (loanMonthlyPayment > 0 && loanRemainingYears > 0) {
+        annualPayment = Math.ceil(loanMonthlyPayment * 12 / 1000) * 1000;
+        totalPayment = Math.ceil(annualPayment * loanRemainingYears / 1000) * 1000;
+      }
+    }
+
+    return { estimatedAnnualLoanPayment: annualPayment, estimatedTotalLoanPayment: totalPayment };
+  }, [
+    formData.housingLoanStatus,
+    formData.housePurchasePrice,
+    formData.headDownPayment,
+    formData.housingLoanYears,
+    formData.housingLoanInterestRateType,
+    formData.housingLoanInterestRate,
+    formData.loanOriginalAmount,
+    formData.loanMonthlyPayment,
+    formData.loanRemainingYears,
+    formData.loanInterestRate,
+  ]);
+
+  const displayEstimatedNetIncome = useMemo(() => {
+    const personIncome = (Number(formData.mainIncome) || 0) + (Number(formData.sideJobIncome) || 0);
+    const spouseIncome = (Number(formData.spouseMainIncome) || 0) + (Number(formData.spouseSideJobIncome) || 0);
+    return getNetIncome(personIncome * 10000) + getNetIncome(spouseIncome * 10000);
+  }, [
+    formData.mainIncome,
+    formData.spouseMainIncome,
+    formData.sideJobIncome,
+    formData.spouseSideJobIncome,
+  ]);
+
+
+
+  
 
   useEffect(() => {
     if (formData.expenseMethod === '詳細') {
@@ -204,15 +373,26 @@ export default function FormPage() {
     }
   }, [formData.expenseMethod]);
 
+  useEffect(() => {
+    if (formData.familyComposition === "独身") {
+      setFormData(prev => ({
+        ...prev,
+        spouseMainIncome: "0",
+        spouseSideJobIncome: "0"
+      }));
+    }
+  }, [formData.familyComposition]);
+
   const renderSection = () => {
     switch (sections[currentSectionIndex]) {
       case '家族構成':
         return (
           <div className="p-4">
             {/* Image placeholder */}
-            <div className="w-full h-48 bg-white mb-8 flex items-center justify-center text-gray-500 md:w-[1000px] md:h-[600px] mx-auto">
+            <div className="w-full h-auto bg-white mb-8 flex items-center justify-center text-gray-500 max-w-[800px] mx-auto">
               <img src="/form/Q1.png"></img>
             </div>
+            <h2 className="text-2xl font-bold text-center mb-4">家族構成に関する質問</h2>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 現在の家族構成は？
@@ -250,12 +430,11 @@ export default function FormPage() {
         return (
           <div className="p-4">
             {/* Image placeholder */}
-            <div className="w-full h-48 bg-white mb-8 flex items-center justify-center text-gray-500 md:w-[1000px] md:h-[600px] mx-auto">
+            <div className="w-full h-auto bg-white mb-8 flex items-center justify-center text-gray-500 max-w-[800px] mx-auto">
               <img src="/form/Q2.png"></img>
             </div>
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold mb-2">年間収入総額: {totalIncome.toLocaleString()}万円</h3>
-            </div>
+            <h2 className="text-2xl font-bold text-center mb-4">現在の収入に関する質問</h2>
+            
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="mainIncome">
                 本業年間収入[万円]
@@ -318,12 +497,10 @@ export default function FormPage() {
         return (
           <div className="p-4">
             {/* Image placeholder */}
-            <div className="w-full h-48 bg-white mb-8 flex items-center justify-center text-gray-500 md:w-[1000px] md:h-[600px] mx-auto">
-              <img src="/form/Q3.png"></img>
+            <div className="w-full h-auto bg-white mb-8 flex items-center justify-center text-gray-500 max-w-[800px] mx-auto">
+              <img src="/form/Q3.png" className="max-w-full h-auto"></img>
             </div>
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold mb-2">生活費総額: {displayTotalExpense.toLocaleString()}円</h3>
-            </div>
+            <h2 className="text-2xl font-bold text-center mb-4">現在の支出に関する質問</h2>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 支出の入力方法を選んでください。
@@ -374,6 +551,7 @@ export default function FormPage() {
               </div>
 
             <div id="detailed-expense" className={`accordion-content ${formData.expenseMethod === '詳細' ? 'open' : ''}`}>
+                <p className="text-lg font-semibold mb-2">年間支出合計：{totalExpenses.toLocaleString()}円</p>
                 <h3 className="text-lg font-semibold mb-2">固定費</h3>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="housingCost">
@@ -468,9 +646,10 @@ export default function FormPage() {
         return (
           <div className="p-4">
             {/* Image placeholder */}
-            <div className="w-full h-48 bg-white mb-8 flex items-center justify-center text-gray-500 md:w-[1000px] md:h-[600px] mx-auto">
+            <div className="w-full h-auto bg-white mb-8 flex items-center justify-center text-gray-500 max-w-[800px] mx-auto">
               <img src="/form/Q4-car.png"></img>
             </div>
+            <h2 className="text-2xl font-bold text-center mb-4">ライフイベント - 車に関する質問</h2>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carPrice">
                 今後買い替える車の価格帯は？[万円]
@@ -489,67 +668,158 @@ export default function FormPage() {
         return (
           <div className="p-4">
             {/* Image placeholder */}
-            <div className="w-full h-48 bg-white mb-8 flex items-center justify-center text-gray-500 md:w-[1000px] md:h-[600px] mx-auto">
+            <div className="w-full h-auto bg-white mb-8 flex items-center justify-center text-gray-500 max-w-[800px] mx-auto">
               <img src="/form/Q4-home.png"></img>
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="housePurchaseAge">
-                住宅購入予定は何歳のとき？[歳]
-              </label>
-              <input type="number" id="housePurchaseAge" name="housePurchaseAge" value={formData.housePurchaseAge} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="housingLoanYears">
-                住宅ローン年数は？[年]
-              </label>
-              <input type="number" id="housingLoanYears" name="housingLoanYears" value={formData.housingLoanYears} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
-            </div>
+            <h2 className="text-2xl font-bold text-center mb-4">ライフイベント - 家に関する質問</h2>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                住宅ローンの想定利率は？
+                住宅ローンの状況は？
               </label>
               <div className="mt-2">
                 <label className="inline-flex items-center mr-4">
                   <input
                     type="radio"
                     className="custom-radio"
-                    name="housingLoanInterestRateType"
-                    value="一般的な想定"
-                    checked={formData.housingLoanInterestRateType === '一般的な想定'}
+                    name="housingLoanStatus"
+                    value="これから借りる予定"
+                    checked={formData.housingLoanStatus === 'これから借りる予定'}
                     onChange={handleRadioChange}
                     required
                   />
-                  <span className="ml-2">一般的な想定</span>
+                  <span className="ml-2">これから借りる予定</span>
+                </label>
+                <label className="inline-flex items-center mr-4">
+                  <input
+                    type="radio"
+                    className="custom-radio"
+                    name="housingLoanStatus"
+                    value="すでに返済中"
+                    checked={formData.housingLoanStatus === 'すでに返済中'}
+                    onChange={handleRadioChange}
+                    required
+                  />
+                  <span className="ml-2">すでに返済中</span>
                 </label>
                 <label className="inline-flex items-center">
                   <input
                     type="radio"
                     className="custom-radio"
-                    name="housingLoanInterestRateType"
-                    value="指定"
-                    checked={formData.housingLoanInterestRateType === '指定'}
+                    name="housingLoanStatus"
+                    value="借りる予定はない"
+                    checked={formData.housingLoanStatus === '借りる予定はない'}
                     onChange={handleRadioChange}
                     required
                   />
-                  <span className="ml-2">指定</span>
+                  <span className="ml-2">借りる予定はない</span>
                 </label>
               </div>
             </div>
-            <div className={`accordion-content ${formData.housingLoanInterestRateType === '指定' ? 'open' : ''}`}>
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="housingLoanInterestRate">
-                  想定利率[%]
-                </label>
-                <input type="number" id="housingLoanInterestRate" name="housingLoanInterestRate" value={formData.housingLoanInterestRate} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
-              </div>
+
+            {formData.housingLoanStatus === 'これから借りる予定' && (
+              <>
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="housePurchaseAge">
+                    住宅購入予定は何歳のとき？[歳]
+                  </label>
+                  <input type="number" id="housePurchaseAge" name="housePurchaseAge" value={formData.housePurchaseAge} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="housePurchaseAge">
+                    購入する家の予定金額は？[万円]
+                  </label>
+                  <input type="number" id="housePurchasePrice" name="housePurchasePrice" value={formData.housePurchasePrice} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="headDownPayment">
+                    頭金はどれくらいですか？[万円]
+                  </label>
+                  <input type="number" id="headDownPayment" name="headDownPayment" value={formData.headDownPayment} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="housingLoanYears">
+                    住宅ローン年数は？[年]
+                  </label>
+                  <input type="number" id="housingLoanYears" name="housingLoanYears" value={formData.housingLoanYears} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2">
+                    住宅ローンの想定利率は？
+                  </label>
+                  <div className="mt-2">
+                    <label className="inline-flex items-center mr-4">
+                      <input
+                        type="radio"
+                        className="custom-radio"
+                        name="housingLoanInterestRateType"
+                        value="一般的な想定"
+                        checked={formData.housingLoanInterestRateType === '一般的な想定'}
+                        onChange={handleRadioChange}
+                        required
+                      />
+                      <span className="ml-2">一般的な想定</span>
+                    </label>
+                    <label className="inline-flex items-center">
+                      <input
+                        type="radio"
+                        className="custom-radio"
+                        name="housingLoanInterestRateType"
+                        value="指定"
+                        checked={formData.housingLoanInterestRateType === '指定'}
+                        onChange={handleRadioChange}
+                        required
+                      />
+                      <span className="ml-2">指定</span>
+                    </label>
+                  </div>
+                </div>
+                <div className={`accordion-content ${formData.housingLoanInterestRateType === '指定' ? 'open' : ''}`}>
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="housingLoanInterestRate">
+                      想定利率[%]
+                    </label>
+                    <input type="number" id="housingLoanInterestRate" name="housingLoanInterestRate" value={formData.housingLoanInterestRate} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="例：0.5" required />
+                  </div>
+              </>
+            )}
+
+            {formData.housingLoanStatus === 'すでに返済中' && (
+              <>
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="loanOriginalAmount">
+                    借入時のローン総額[万円]
+                  </label>
+                  <input type="number" id="loanOriginalAmount" name="loanOriginalAmount" value={formData.loanOriginalAmount} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="loanMonthlyPayment">
+                    毎月の返済額[円]
+                  </label>
+                  <input type="number" id="loanMonthlyPayment" name="loanMonthlyPayment" value={formData.loanMonthlyPayment} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="loanRemainingYears">
+                    残りの返済年数[年]
+                  </label>
+                  <input type="number" id="loanRemainingYears" name="loanRemainingYears" value={formData.loanRemainingYears} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="loanInterestRate">
+                    利率[%] (任意)
+                  </label>
+                  <input type="number" id="loanInterestRate" name="loanInterestRate" value={formData.loanInterestRate} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                </div>
+              </>
+            )}
           </div>
         );
       case 'ライフイベント - 結婚':
         return (
           <div className="p-4">
             {/* Image placeholder */}
-            <div className="w-full h-48 bg-white mb-8 flex items-center justify-center text-gray-500 md:w-[1000px] md:h-[600px] mx-auto">
+            <div className="w-full h-auto bg-white mb-8 flex items-center justify-center text-gray-500 max-w-[800px] mx-auto">
               <img src="/form/Q4-marriage.png"></img>
             </div>
+            <h2 className="text-2xl font-bold text-center mb-4">ライフイベント - 結婚に関する質問</h2>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 結婚を予定していますか？
@@ -622,9 +892,10 @@ export default function FormPage() {
         return (
           <div className="p-4">
             {/* Image placeholder */}
-            <div className="w-full h-48 bg-white mb-8 flex items-center justify-center text-gray-500 md:w-[1000px] md:h-[600px] mx-auto">
+            <div className="w-full h-auto bg-white mb-8 flex items-center justify-center text-gray-500 max-w-[800px] mx-auto">
               <img src="/form/Q4-children.png"></img>
             </div>
+            <h2 className="text-2xl font-bold text-center mb-4">ライフイベント - 子供に関する質問</h2>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 子供はいますか？
@@ -694,9 +965,10 @@ export default function FormPage() {
         return (
           <div className="p-4">
             {/* Image placeholder */}
-            <div className="w-full h-48 bg-white mb-8 flex items-center justify-center text-gray-500 md:w-[1000px] md:h-[600px] mx-auto">
+            <div className="w-full h-auto bg-white mb-8 flex items-center justify-center text-gray-500 max-w-[800px] mx-auto">
               <img src="/form/Q4-appliances.png"></img>
             </div>
+            <h2 className="text-2xl font-bold text-center mb-4">ライフイベント - 生活に関する質問</h2>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="currentRentLoanPayment">
                 現在の家賃または住宅ローンの毎月支払額は？[万円]
@@ -717,15 +989,61 @@ export default function FormPage() {
                 placeholder="例：海外移住、転職・独立資金、留学、事業資金 など"
               ></textarea>
             </div>
+            <h3 className="text-lg font-semibold mb-2">家電買い替えサイクルと費用</h3>
+            <div className="grid grid-cols-[auto_auto_auto_min-content] gap-2 mb-2 text-sm text-gray-600 font-semibold">
+              <div>家電名</div>
+              <div>買い替えサイクル（年）</div>
+              <div>1回あたりの費用（万円）</div>
+              <div></div>
+            </div>
+            {applianceReplacements.map((appliance, index) => (
+              <div key={index} className="grid grid-cols-[auto_auto_auto_min-content] gap-4 mb-2 items-center">
+                <input
+                  type="text"
+                  placeholder="家電名"
+                  value={appliance.name}
+                  onChange={(e) => handleApplianceChange(index, 'name', e.target.value)}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+                <input
+                  type="number"
+                  placeholder="買い替えサイクル（年）"
+                  value={appliance.cycle}
+                  onChange={(e) => handleApplianceChange(index, 'cycle', e.target.value)}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+                <input
+                  type="number"
+                  placeholder="1回あたりの費用（万円）"
+                  value={appliance.cost}
+                  onChange={(e) => handleApplianceChange(index, 'cost', e.target.value)}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveAppliance(index)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  <Trash2 size={24} className="text-red-500 hover:text-red-700" />
+                </button>
+              </div>
+            ))}
+            <button
+              onClick={addAppliance}
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4"
+            >
+              家電を追加する
+            </button>
           </div>
         );
       case 'ライフイベント - 親の介護':
         return (
           <div className="p-4">
             {/* Image placeholder */}
-            <div className="w-full h-48 bg-white mb-8 flex items-center justify-center text-gray-500 md:w-[1000px] md:h-[600px] mx-auto">
+            <div className="w-full h-auto bg-white mb-8 flex items-center justify-center text-gray-500 max-w-[800px] mx-auto">
               <img src="/form/Q4-parenthelp.png"></img>
             </div>
+            <h2 className="text-2xl font-bold text-center mb-4">ライフイベント - 親の介護に関する質問</h2>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 親の介護が将来発生すると想定しますか？
@@ -792,9 +1110,10 @@ export default function FormPage() {
         return (
           <div className="p-4">
             {/* Image placeholder */}
-            <div className="w-full h-48 bg-white mb-8 flex items-center justify-center text-gray-500 md:w-[1000px] md:h-[600px] mx-auto">
+            <div className="w-full h-auto bg-white mb-8 flex items-center justify-center text-gray-500 max-w-[800px] mx-auto">
               <img src="/form/Q4-retirement.png"></img>
             </div>
+            <h2 className="text-2xl font-bold text-center mb-4">ライフイベント - 老後に関する質問</h2>
             <div className="mb-4">
               <h3 className="text-lg font-semibold mb-2">老後の月間不足額: {totalRetirementMonthly.toLocaleString()}万円</h3>
             </div>
@@ -828,12 +1147,11 @@ export default function FormPage() {
         return (
           <div className="p-4">
             {/* Image placeholder */}
-            <div className="w-full h-48 bg-white mb-8 flex items-center justify-center text-gray-500 md:w-[1000px] md:h-[600px] mx-auto">
+            <div className="w-full h-auto bg-white mb-8 flex items-center justify-center text-gray-500 max-w-[800px] mx-auto">
               <img src="/form/Q4-savings.png"></img>
             </div>
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold mb-2">貯蓄総額: {totalSavings.toLocaleString()}万円</h3>
-            </div>
+            <h2 className="text-2xl font-bold text-center mb-4">貯蓄に関する質問</h2>
+            
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="currentSavings">
                 現在の預貯金総額は？[万円]
@@ -852,97 +1170,64 @@ export default function FormPage() {
         return (
           <div className="p-4">
             {/* Image placeholder */}
-            <div className="w-full h-48 bg-white mb-8 flex items-center justify-center text-gray-500 md:w-[1000px] md:h-[600px] mx-auto">
+            <div className="w-full h-auto bg-white mb-8 flex items-center justify-center text-gray-500 max-w-[800px] mx-auto">
               <img src="/form/Q4-investment.png"></img>
             </div>
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold mb-2">投資総額: {totalInvestment.toLocaleString()}万円</h3>
+            <h2 className="text-2xl font-bold text-center mb-4">投資に関する質問</h2>
+            <div className="space-y-4">
+              <AssetAccordion
+                assetName="株式"
+                assetKey="investmentStocks"
+                formData={formData}
+                handleInputChange={handleInputChange}
+                monthlyInvestmentAmounts={formData.monthlyInvestmentAmounts}
+              />
+              <AssetAccordion
+                assetName="投資信託"
+                assetKey="investmentTrust"
+                formData={formData}
+                handleInputChange={handleInputChange}
+                monthlyInvestmentAmounts={formData.monthlyInvestmentAmounts}
+              />
+              <AssetAccordion
+                assetName="債券"
+                assetKey="investmentBonds"
+                formData={formData}
+                handleInputChange={handleInputChange}
+                monthlyInvestmentAmounts={formData.monthlyInvestmentAmounts}
+              />
+              <AssetAccordion
+                assetName="iDeCo"
+                assetKey="investmentIdeco"
+                formData={formData}
+                handleInputChange={handleInputChange}
+                monthlyInvestmentAmounts={formData.monthlyInvestmentAmounts}
+              />
+              <AssetAccordion
+                assetName="仮想通貨"
+                assetKey="investmentCrypto"
+                formData={formData}
+                handleInputChange={handleInputChange}
+                monthlyInvestmentAmounts={formData.monthlyInvestmentAmounts}
+              />
+              <AssetAccordion
+                assetName="その他"
+                assetKey="investmentOther"
+                formData={formData}
+                handleInputChange={handleInputChange}
+                monthlyInvestmentAmounts={formData.monthlyInvestmentAmounts}
+              />
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                投資をしていますか？
-              </label>
-              <div className="mt-2">
-                <label className="inline-flex items-center mr-4">
-                  <input
-                    type="radio"
-                    className="custom-radio"
-                    name="hasInvestment"
-                    value="はい"
-                    checked={formData.hasInvestment === 'はい'}
-                    onChange={handleRadioChange}
-                    required
-                  />
-                  <span className="ml-2">はい</span>
-                </label>
-                <label className="inline-flex items-center">
-                  <input
-                    type="radio"
-                    className="custom-radio"
-                    name="hasInvestment"
-                    value="いいえ"
-                    checked={formData.hasInvestment === 'いいえ'}
-                    onChange={handleRadioChange}
-                    required
-                  />
-                  <span className="ml-2">いいえ</span>
-                </label>
-              </div>
-            </div>
-            <div className={`accordion-content ${formData.hasInvestment === 'はい' ? 'open' : ''}`}>
-                <div className="mb-4">
-                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="totalInvestmentValue">
-                    現在の投資額合計（時価評価額）[万円]
-                  </label>
-                  <input type="number" id="totalInvestmentValue" name="totalInvestmentValue" value={formData.totalInvestmentValue} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="monthlyInvestmentAmount">
-                    毎月の積立投資額[円]
-                  </label>
-                  <input type="number" id="monthlyInvestmentAmount" name="monthlyInvestmentAmount" value={formData.monthlyInvestmentAmount} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-gray-700 text-sm font-bold mb-2">
-                    主な投資先
-                  </label>
-                  <div className="mt-2">
-                    <label className="inline-flex items-center mr-4">
-                      <input type="checkbox" className="form-checkbox" name="investmentStocks" value="株式" checked={!!formData.investmentStocks} onChange={handleCheckboxChange} />
-                      <span className="ml-2">株式</span>
-                    </label>
-                    <label className="inline-flex items-center mr-4">
-                      <input type="checkbox" className="form-checkbox" name="investmentTrust" value="投資信託" checked={!!formData.investmentTrust} onChange={handleCheckboxChange} />
-                      <span className="ml-2">投資信託（NISAなど）</span>
-                    </label>
-                    <label className="inline-flex items-center mr-4">
-                      <input type="checkbox" className="form-checkbox" name="investmentBonds" value="債券" checked={!!formData.investmentBonds} onChange={handleCheckboxChange} />
-                      <span className="ml-2">債券</span>
-                    </label>
-                    <label className="inline-flex items-center mr-4">
-                      <input type="checkbox" className="form-checkbox" name="investmentIdeco" value="iDeCo" checked={!!formData.investmentIdeco} onChange={handleCheckboxChange} />
-                      <span className="ml-2">iDeCo</span>
-                    </label>
-                    <label className="inline-flex items-center mr-4">
-                      <input type="checkbox" className="form-checkbox" name="investmentCrypto" value="仮想通貨" checked={!!formData.investmentCrypto} onChange={handleCheckboxChange} />
-                      <span className="ml-2">仮想通貨</span>
-                    </label>
-                    <label className="inline-flex items-center">
-                      <input type="checkbox" className="form-checkbox" name="investmentOther" value="その他" checked={!!formData.investmentOther} onChange={handleCheckboxChange} />
-                      <span className="ml-2">その他</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
           </div>
         );
       case 'シミュレーション設定':
         return (
           <div className="p-4">
             {/* Image placeholder */}
-            <div className="w-full h-48 bg-white mb-8 flex items-center justify-center text-gray-500 md:w-[1000px] md:h-[600px] mx-auto">
+            <div className="w-full h-auto bg-white mb-8 flex items-center justify-center text-gray-500 max-w-[800px] mx-auto">
               <img src="/form/Q5-settings.png"></img>
             </div>
+            <h2 className="text-2xl font-bold text-center mb-4">シミュレーション設定に関する質問</h2>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="simulationPeriodAge">
                 シミュレーションの対象期間（現在から何歳まで）[歳]
@@ -1013,9 +1298,27 @@ export default function FormPage() {
 
   const progress = ((currentSectionIndex + 1) / sections.length) * 100;
 
+    function renderFloatingBox(amount: number, shouldShow: boolean, label: string, topClass: string = 'top-[1.5rem]') {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg md:max-w-5xl">
+    <div
+      className={`fixed ${topClass} inset-x-0 z-40 transition-opacity duration-500 ${
+        shouldShow ? 'opacity-100' : 'opacity-0 pointer-events-none'
+      }`}
+    >
+      <div className="max-w-5xl mx-auto px-4">
+        <div className="bg-yellow-50 border border-yellow-300 rounded-xl shadow-md w-fit mx-auto px-4 py-2">
+          <span className="text-yellow-800 text-sm md:text-xl font-semibold">
+            {label}: {amount.toLocaleString()}円
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+  return (
+    <div className="flex justify-center w-full min-h-screen bg-gray-100">
+      <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg md:max-w-5xl overflow-visible">
         {/* Progress Bar */}
         <div className="w-full bg-gray-300 h-4 fixed top-0 left-0 right-0 z-10 rounded-t-lg">
           <div
@@ -1026,35 +1329,63 @@ export default function FormPage() {
             {Math.round(progress)}%
           </div>
         </div>
-        <div className="md:flex">
-          <div className="w-full p-4">
-            {renderSection()}
-            <div className="flex justify-center space-x-4 mt-6">
-              {currentSectionIndex > 0 && (
-                <button
-                  onClick={goToPreviousSection}
-                  className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                >
-                  戻る
-                </button>
-              )}
-              {currentSectionIndex < sections.length - 1 ? (
-                <button
-                  onClick={goToNextSection}
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                >
-                  次へ
-                </button>
-              ) : (
-                <button
-                  type="submit"
-                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                >
-                  完了
-                </button>
-              )}
+        <div className="h-1"></div>
+        {renderFloatingBox(totalExpenses, currentSectionIndex === sections.indexOf('現在の支出') && totalExpenses > 0, "生活費総額")}
+        {renderFloatingBox(displayTotalIncome, currentSectionIndex === sections.indexOf('現在の収入') && displayTotalIncome > 0, "年間収入総額")}
+        {displayEstimatedNetIncome > 0 && (
+          <div
+            className={`fixed top-[5rem] inset-x-0 z-40 transition-opacity duration-500 ${
+              currentSectionIndex === sections.indexOf('現在の収入') ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+          >
+            <div className="max-w-5xl mx-auto px-4">
+              <div className="bg-yellow-50 border border-yellow-300 rounded-xl shadow-md w-fit mx-auto px-4 py-2">
+                <span className="text-yellow-800 text-sm md:text-xl font-semibold">
+                  推定手取り総額: {displayEstimatedNetIncome.toLocaleString()}円
+                </span>
+              </div>
             </div>
           </div>
+        )}
+        {renderFloatingBox(estimatedAnnualLoanPayment, currentSectionIndex === sections.indexOf('ライフイベント - 家') && estimatedAnnualLoanPayment > 0 && (formData.housingLoanStatus === 'これから借りる予定' || formData.housingLoanStatus === 'すでに返済中'), "年間返済額")}
+        {renderFloatingBox(estimatedTotalLoanPayment, currentSectionIndex === sections.indexOf('ライフイベント - 家') && estimatedTotalLoanPayment > 0 && (formData.housingLoanStatus === 'これから借りる予定' || formData.housingLoanStatus === 'すでに返済中'), "総返済額", "top-[5rem]")}
+        
+        {renderFloatingBox(displayTotalSavings, currentSectionIndex === sections.indexOf('貯蓄') && displayTotalSavings > 0, "貯蓄総額")}
+        {renderFloatingBox(totalInvestment.monthly, currentSectionIndex === sections.indexOf('投資') && totalInvestment.monthly > 0, "月間投資総額")}
+        {renderFloatingBox(totalInvestment.annual, currentSectionIndex === sections.indexOf('投資') && totalInvestment.annual > 0, "年間投資総額", "top-[5rem]")}
+        {renderFloatingBox(displayTotalApplianceCost * 10000, currentSectionIndex === sections.indexOf('ライフイベント - 生活') && displayTotalApplianceCost > 0, "家電買い替え総額")}
+        <div className="relative flex">
+          <div className="flex-1 flex flex-col max-w-[800px] w-full px-4">
+            <div className="w-full p-4">
+              {renderSection()}
+              <div className="flex justify-center space-x-4 mt-6">
+                {currentSectionIndex > 0 && (
+                  <button
+                    onClick={goToPreviousSection}
+                    className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  >
+                    戻る
+                  </button>
+                )}
+                {currentSectionIndex < sections.length - 1 ? (
+                  <button
+                    onClick={goToNextSection}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  >
+                    次へ
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  >
+                    完了
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+          
         </div>
       </div>
     </div>
