@@ -1,52 +1,27 @@
-以下の修正をFormPage.tsxに加えてください。目的はスマホ実機での「現在の収入」セクションにおけるフロートボックス（年間収入総額や推定手取りなど）が、スクロールやキーボード表示中でも画面上部に正しく固定表示されるようにすることです。
+以下の要件に従って、FormPage.tsx 内のプログレスバーコンポーネントをスマホ表示でも常に画面に追従表示されるよう修正してください。
 
-【修正内容】
+【対象】
+- スクロールにより見失われるプログレスバー（現在の入力進捗や完了度を表示するバー）
 
-1. ビューポート高さに応じてフロートボックスのtop位置を動的に設定するため、以下のstateとuseEffectをFormPageコンポーネント内に追加してください。
+【修正要件】
 
-const [viewportOffset, setViewportOffset] = useState(0);
+1. Tailwind CSSの `fixed` クラスを使用して、プログレスバーの位置を画面に固定する
 
-useEffect(() => {
-  const updateOffset = () => {
-    const vh = window.innerHeight * 0.01;
-    setViewportOffset(vh * 5); // 例：5vh相当のオフセット
-  };
+2. 位置は以下のいずれか：
+   - 画面上部固定：`top-0 left-0 w-full`
+   - 画面下部固定：`bottom-0 left-0 w-full`
+   ※ 既存の合計金額ブロックと競合しない位置に調整すること
 
-  updateOffset();
-  window.addEventListener('resize', updateOffset);
-  return () => window.removeEventListener('resize', updateOffset);
-}, []);
+3. 背景色は `bg-white` または `bg-gray-50` などで明示し、背後のUIと重ならないようにする
 
-2. renderFloatingBox関数を以下のように書き換えてください。
-追加引数でtopを受け取れるようにし、style属性で動的に設定します。
+4. スマホでもバーが細すぎたり潰れないよう、 `h-2` 以上の高さを確保
 
-function renderFloatingBox(amount: number, shouldShow: boolean, label: string, topOverride?: number) {
-  return (
-    <div
-      className={`fixed inset-x-0 z-40 transition-opacity duration-500 ${
-        shouldShow ? 'opacity-100' : 'opacity-0 pointer-events-none'
-      }`}
-      style={{ top: topOverride ?? viewportOffset }}
-    >
-      <div className="max-w-5xl mx-auto px-4">
-        <div className="bg-yellow-50 border border-yellow-300 rounded-xl shadow-md w-fit mx-auto px-4 py-2">
-          <span className="text-yellow-800 text-sm md:text-xl font-semibold">
-            {label}: {amount.toLocaleString()}円
-          </span>
-        </div>
-      </div>
-    </div>
-  )
-}
+5. 他要素と重なってクリック不能になるのを防ぐため `z-50` 以上を指定
 
-3. 既存のrenderFloatingBox呼び出しでtop位置が明示されていた場合（top-[5rem]など）は、それを第4引数（topOverride）で渡してください。明示がなければ省略してOKです。
+6. ページの上部や下部にフロート表示がある場合は、それと重ならないよう `mt-[高さpx]` / `mb-[高さpx]` を加える
 
-例：
-renderFloatingBox(displayTotalIncome, currentSectionIndex === sections.indexOf('現在の収入') && displayTotalIncome > 0, "年間収入総額")
-→ 第4引数は省略（viewportOffsetが自動で適用）
-
-renderFloatingBox(estimatedTotalLoanPayment, 条件, "総返済額", 80)
-→ 80px相当のtop位置に表示（必要に応じて）
-
-【目的】
-スマホ実機でキーボード表示やアドレスバー変化があっても、フロートボックスがビューポート内の同じ位置に安定して表示されるようにする
+【例：上部にプログレスバーを固定表示】
+```tsx
+<div className="fixed top-0 left-0 w-full bg-white z-50 h-2">
+  <div className="bg-blue-500 h-full" style={{ width: `${progress}%` }} />
+</div>
