@@ -1,7 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Trash2 } from "lucide-react";
-import incomeBrackets from "../assets/net_income_brackets.json";
+
 import AssetAccordion from "../components/AssetAccordion";
+import { useVisualViewportHeightEffect } from "../hooks/useVisualViewportHeightEffect";
 
 const sections = [
   '家族構成',
@@ -19,15 +20,12 @@ const sections = [
   'シミュレーション設定',
 ];
 
-function getNetIncome(gross: number): number {
-  const bracket = incomeBrackets.find((b: { min: number; max: number | null; rate: number }) => gross >= b.min && (b.max === null || gross <= b.max))
-  return bracket ? gross * bracket.rate : gross * 0.8
-}
 
-import { useVisualViewportHeightEffect } from "../hooks/useVisualViewportHeightEffect"
+
+
 
 export default function FormPage() {
-  useVisualViewportHeightEffect()
+  useVisualViewportHeightEffect();
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   
   const [formData, setFormData] = useState({
@@ -142,11 +140,7 @@ export default function FormPage() {
     setApplianceReplacements((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const displayTotalApplianceCost = useMemo(() => {
-    return applianceReplacements
-      .map((item) => Number(item.cost) || 0)
-      .reduce((sum, cost) => sum + cost, 0)
-  }, [applianceReplacements]);
+  
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -247,121 +241,17 @@ export default function FormPage() {
     );
   }, [formData.postRetirementLivingCost, formData.pensionAmount]);
 
-  const totalSavings = useMemo(() => {
-    return (
-        (Number(formData.currentSavings) || 0) +
-        (Number(formData.monthlySavings) || 0) / 10000
-    );
-  }, [formData.currentSavings, formData.monthlySavings]);
+  
 
-  const displayTotalSavings = useMemo(() => {
-    return totalSavings * 10000;
-  }, [totalSavings]);
+  
 
-  const totalInvestment = useMemo(() => {
-    const monthlyTotal = Object.values(formData.monthlyInvestmentAmounts).reduce(
-      (acc, val) => acc + Number(val),
-      0
-    );
+  
 
-    const annualSpotTotal = (
-      (Number(formData.investmentStocksAnnualSpot) || 0) +
-      (Number(formData.investmentTrustAnnualSpot) || 0) +
-      (Number(formData.investmentBondsAnnualSpot) || 0) +
-      (Number(formData.investmentIdecoAnnualSpot) || 0) +
-      (Number(formData.investmentCryptoAnnualSpot) || 0) +
-      (Number(formData.investmentOtherAnnualSpot) || 0)
-    );
+  
 
-    return {
-      monthly: monthlyTotal,
-      annual: (monthlyTotal * 12) + annualSpotTotal
-    };
-  }, [
-    formData.monthlyInvestmentAmounts,
-    formData.investmentStocksAnnualSpot,
-    formData.investmentTrustAnnualSpot,
-    formData.investmentBondsAnnualSpot,
-    formData.investmentIdecoAnnualSpot,
-    formData.investmentCryptoAnnualSpot,
-    formData.investmentOtherAnnualSpot,
-  ]);
+  
 
-  const calculateLoanPayment = (principal: number, annualInterestRate: number, years: number): { annualPayment: number, totalPayment: number } => {
-    if (principal <= 0 || annualInterestRate < 0 || years <= 0) {
-      return { annualPayment: 0, totalPayment: 0 };
-    }
-
-    const monthlyInterestRate = annualInterestRate / 100 / 12;
-    const totalMonths = years * 12;
-
-    if (monthlyInterestRate === 0) {
-      const annualPayment = principal / years;
-      return { annualPayment: annualPayment, totalPayment: principal };
-    }
-
-    const monthlyPayment = principal * monthlyInterestRate * Math.pow((1 + monthlyInterestRate), totalMonths) / (Math.pow((1 + monthlyInterestRate), totalMonths) - 1);
-    const annualPayment = monthlyPayment * 12;
-    const totalPayment = annualPayment * years;
-
-    return { annualPayment: Math.ceil(annualPayment / 1000) * 1000, totalPayment: Math.ceil(totalPayment / 1000) * 1000 };
-  };
-
-  const { estimatedAnnualLoanPayment, estimatedTotalLoanPayment } = useMemo(() => {
-    const housingLoanStatus = formData.housingLoanStatus;
-    let annualPayment = 0;
-    let totalPayment = 0;
-
-    if (housingLoanStatus === 'これから借りる予定') {
-      const housePurchasePrice = Number(formData.housePurchasePrice) || 0;
-      const headDownPayment = Number(formData.headDownPayment) || 0;
-      const housingLoanYears = Number(formData.housingLoanYears) || 0;
-
-      if (housePurchasePrice > 0 && housingLoanYears > 0 && formData.housingLoanInterestRateType) {
-        const principal = (housePurchasePrice - headDownPayment) * 10000; // Convert to yen
-
-        let interestRate = 1.5; // Default general interest rate
-        if (formData.housingLoanInterestRateType === '指定') {
-          interestRate = Number(formData.housingLoanInterestRate) || 0;
-        }
-        const calculated = calculateLoanPayment(principal, interestRate, housingLoanYears);
-        annualPayment = calculated.annualPayment;
-        totalPayment = calculated.totalPayment;
-      }
-    } else if (housingLoanStatus === 'すでに返済中') {
-      const loanMonthlyPayment = Number(formData.loanMonthlyPayment) || 0;
-      const loanRemainingYears = Number(formData.loanRemainingYears) || 0;
-
-      if (loanMonthlyPayment > 0 && loanRemainingYears > 0) {
-        annualPayment = Math.ceil(loanMonthlyPayment * 12 / 1000) * 1000;
-        totalPayment = Math.ceil(annualPayment * loanRemainingYears / 1000) * 1000;
-      }
-    }
-
-    return { estimatedAnnualLoanPayment: annualPayment, estimatedTotalLoanPayment: totalPayment };
-  }, [
-    formData.housingLoanStatus,
-    formData.housePurchasePrice,
-    formData.headDownPayment,
-    formData.housingLoanYears,
-    formData.housingLoanInterestRateType,
-    formData.housingLoanInterestRate,
-    formData.loanOriginalAmount,
-    formData.loanMonthlyPayment,
-    formData.loanRemainingYears,
-    formData.loanInterestRate,
-  ]);
-
-  const displayEstimatedNetIncome = useMemo(() => {
-    const personIncome = (Number(formData.mainIncome) || 0) + (Number(formData.sideJobIncome) || 0);
-    const spouseIncome = (Number(formData.spouseMainIncome) || 0) + (Number(formData.spouseSideJobIncome) || 0);
-    return getNetIncome(personIncome * 10000) + getNetIncome(spouseIncome * 10000);
-  }, [
-    formData.mainIncome,
-    formData.spouseMainIncome,
-    formData.sideJobIncome,
-    formData.spouseSideJobIncome,
-  ]);
+  
 
 
 
@@ -1301,81 +1191,69 @@ export default function FormPage() {
 
   const progress = ((currentSectionIndex + 1) / sections.length) * 100;
 
-  function renderFloatingBox(amount: number, shouldShow: boolean, label: string) {
-    return (
-      <div
-        className={"sticky z-40 transition-opacity duration-500 " + (shouldShow ? "opacity-100" : "opacity-0 pointer-events-none")}
-        style={{
-          top: "calc(var(--visual-viewport-height, 100vh) * 0.05)"
-        }}
-      >
-        <div className="max-w-5xl mx-auto px-4">
-          <div className="bg-yellow-50 border border-yellow-300 rounded-xl shadow-md w-fit mx-auto px-4 py-2">
-            <span className="text-yellow-800 text-sm md:text-xl font-semibold">
-              {label}: {amount.toLocaleString()}円
-            </span>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  const shouldShowFloatBox = currentSectionIndex === sections.indexOf('現在の収入') && displayTotalIncome > 0;
 
   return (
-    <div className="h-screen overflow-y-scroll bg-gray-100">
-      <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg md:max-w-5xl overflow-visible">
-        {/* Progress Bar */}
-        <div className="w-full bg-gray-300 h-4 sticky top-0 z-50 rounded-t-lg">
-          <div
-            className="bg-blue-500 h-full transition-all duration-500 ease-out"
-            style={{ width: `${progress}%` }}
-          ></div>
-          <div className="absolute inset-0 flex items-center justify-center text-white text-xs font-bold">
-            {Math.round(progress)}%
-          </div>
+    <div className="min-h-screen flex flex-col bg-gray-100">
+      {/* ヘッダー固定領域（プログレスバー＋フロートボックス） */}
+      <div
+  className="fixed inset-x-0 top-0 z-50 bg-gray-100"
+  style={{
+    top: 'env(safe-area-inset-top)',
+    height: 'fit-content',
+  }}
+>
+        {/* プログレスバー */}
+        <div className="w-full h-2 bg-gray-300">
+          <div className="bg-blue-500 h-full transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
         </div>
-        <div className="h-1"></div>
-        {renderFloatingBox(totalExpenses, currentSectionIndex === sections.indexOf('現在の支出') && totalExpenses > 0, "生活費総額")}
-        {renderFloatingBox(displayTotalIncome, currentSectionIndex === sections.indexOf('現在の収入') && displayTotalIncome > 0, "年間収入総額")}
-        {renderFloatingBox(displayEstimatedNetIncome, currentSectionIndex === sections.indexOf('現在の収入') && displayEstimatedNetIncome > 0, "推定手取り総額")}
-        {renderFloatingBox(estimatedAnnualLoanPayment, currentSectionIndex === sections.indexOf('ライフイベント - 家') && estimatedAnnualLoanPayment > 0 && (formData.housingLoanStatus === 'これから借りる予定' || formData.housingLoanStatus === 'すでに返済中'), "年間返済額")}
-        {renderFloatingBox(estimatedTotalLoanPayment, currentSectionIndex === sections.indexOf('ライフイベント - 家') && estimatedTotalLoanPayment > 0 && (formData.housingLoanStatus === 'これから借りる予定' || formData.housingLoanStatus === 'すでに返済中'), "総返済額")}
-        
-        {renderFloatingBox(displayTotalSavings, currentSectionIndex === sections.indexOf('貯蓄') && displayTotalSavings > 0, "貯蓄総額")}
-        {renderFloatingBox(totalInvestment.monthly, currentSectionIndex === sections.indexOf('投資') && totalInvestment.monthly > 0, "月間投資総額")}
-        {renderFloatingBox(totalInvestment.annual, currentSectionIndex === sections.indexOf('投資') && totalInvestment.annual > 0, "年間投資総額")}
-        {renderFloatingBox(displayTotalApplianceCost * 10000, currentSectionIndex === sections.indexOf('ライフイベント - 生活') && displayTotalApplianceCost > 0, "家電買い替え総額")}
-        <div className="relative flex">
-          <div className="flex-1 flex flex-col max-w-[800px] w-full px-4">
-            <div className="w-full p-4">
-              {renderSection()}
-              <div className="flex justify-center space-x-4 mt-6">
-                {currentSectionIndex > 0 && (
-                  <button
-                    onClick={goToPreviousSection}
-                    className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  >
-                    戻る
-                  </button>
-                )}
-                {currentSectionIndex < sections.length - 1 ? (
-                  <button
-                    onClick={goToNextSection}
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  >
-                    次へ
-                  </button>
-                ) : (
-                  <button
-                    type="submit"
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  >
-                    完了
-                  </button>
-                )}
+
+        {/* フロートボックス（必要条件が満たされたときだけ表示） */}
+        <div className="px-4 py-2" style={{ visibility: shouldShowFloatBox ? 'visible' : 'hidden' }}>
+            <div className="bg-yellow-50 border border-yellow-300 rounded-xl shadow w-fit mx-auto px-4 py-1">
+              <span className="text-yellow-800 text-sm font-semibold">
+                年間収入総額: {displayTotalIncome.toLocaleString()}円
+              </span>
+            </div>
+          </div>
+      </div>
+
+      {/* フォームスクロール領域 */}
+      <div className="flex-1 overflow-y-auto px-4 pb-32">
+        <div className="h-16"></div>
+        <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg md:max-w-5xl overflow-visible">
+          <div className="relative flex">
+            <div className="flex-1 flex flex-col max-w-[800px] w-full px-4">
+              <div className="w-full p-4">
+                {renderSection()}
+                <div className="flex justify-center space-x-4 mt-6">
+                  {currentSectionIndex > 0 && (
+                    <button
+                      onClick={goToPreviousSection}
+                      className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    >
+                      戻る
+                    </button>
+                  )}
+                  {currentSectionIndex < sections.length - 1 ? (
+                    <button
+                      onClick={goToNextSection}
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    >
+                      次へ
+                    </button>
+                  ) : (
+                    <button
+                      type="submit"
+                      className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    >
+                      完了
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-          
         </div>
       </div>
     </div>
