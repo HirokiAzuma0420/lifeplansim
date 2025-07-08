@@ -11,7 +11,7 @@ export function useVisualViewportHeightEffect(): void {
     const update = () =>
       document.documentElement.style.setProperty(
         "--visual-viewport-height",
-        `${vv.height}px`
+        vv.height + "px"
       )
 
     vv.addEventListener("resize", update)
