@@ -36,7 +36,7 @@ export default function FormPage() {
         const visualHeight = window.visualViewport.height;
         const layoutHeight = window.innerHeight;
         const delta = layoutHeight - visualHeight;
-        const threshold = 300;
+        const threshold = 150;
 
         if (keyboardTimerRef.current) {
           clearTimeout(keyboardTimerRef.current);
@@ -1341,7 +1341,7 @@ export default function FormPage() {
     function renderFloatingBox(amount: number, shouldShow: boolean, label: string, topClass: string = 'top-[1.5rem]') {
   return (
     <div
-      className={`fixed ${topClass} inset-x-0 z-40 transition-opacity duration-500 ${
+      className={`${isKeyboardOpen ? 'absolute' : 'fixed'} ${topClass} inset-x-0 z-40 transition-opacity duration-500 ${
         shouldShow ? 'opacity-100' : 'opacity-0 pointer-events-none'
       }`}
     >
@@ -1358,10 +1358,9 @@ export default function FormPage() {
 
   return (
     <div className="flex justify-center w-full min-h-screen bg-gray-100">
-      <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg md:max-w-5xl overflow-visible">
+      <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg md:max-w-5xl overflow-visible relative">
         {/* Progress Bar */}
-        {!isKeyboardOpen && (
-          <div className="w-full bg-gray-300 h-4 fixed top-0 left-0 right-0 z-10 rounded-t-lg">
+        <div className={`w-full bg-gray-300 h-4 ${isKeyboardOpen ? 'absolute' : 'fixed'} top-0 left-0 right-0 z-10 rounded-t-lg`}>
             <div
               className="bg-blue-500 h-full transition-all duration-500 ease-out"
               style={{ width: `${progress}%` }}
@@ -1370,16 +1369,13 @@ export default function FormPage() {
               {Math.round(progress)}%
             </div>
           </div>
-        )}
         <div className="h-1"></div>
-        <div className="fixed top-20 left-2 bg-black text-white text-xs px-2 py-1 rounded">
-          keyboard: {isKeyboardOpen ? 'OPEN' : 'CLOSED'}
-        </div>
+        
         {!isKeyboardOpen && renderFloatingBox(totalExpenses, currentSectionIndex === sections.indexOf('現在の支出') && totalExpenses > 0, "生活費総額")}
         {!isKeyboardOpen && renderFloatingBox(displayTotalIncome, currentSectionIndex === sections.indexOf('現在の収入') && displayTotalIncome > 0, "年間収入総額")}
         {displayEstimatedNetIncome > 0 && (
           <div
-            className={`fixed top-[5rem] inset-x-0 z-40 transition-opacity duration-500 ${
+            className={`${isKeyboardOpen ? 'absolute' : 'fixed'} top-[5rem] inset-x-0 z-40 transition-opacity duration-500 ${
               currentSectionIndex === sections.indexOf('現在の収入') ? 'opacity-100' : 'opacity-0 pointer-events-none'
             }`}
           >

@@ -1,36 +1,21 @@
-以下の内容で FormPage.tsx を修正してください。
+1. VisualViewport API を使って、スマートフォンでのソフトウェアキーボード出現を検知してください。`window.innerHeight` と `window.visualViewport.height` の差分を使って、キーボード高さを計算できます。
 
-### 1. isKeyboardOpen の判定条件を厳格化
+2. 次の2つの状態を useState で管理してください：
+- isKeyboardOpen（boolean）: キーボードが開いているかどうか
+- keyboardHeight（number）: キーボードの高さ（ピクセル）
 
-delta（window.innerHeight - visualViewport.height）の閾値を 150 から 300 に変更し、誤判定を抑制してください。
+3. useEffect 内で visualViewport の resize イベントを監視し、以下の条件で state を更新してください：
+- innerHeight - visualViewport.height > 150 のとき isKeyboardOpen を true、keyboardHeight に差分をセット
+- それ以外は isKeyboardOpen を false、keyboardHeight を 0 にリセット
 
-また、変化量が数フレーム連続で継続した場合のみ `setIsKeyboardOpen(true)` を実行するなど、**デバウンスまたは連続判定フィルタ**を検討してください（例: setTimeout で200ms継続した場合など）。
-
-```ts
-const threshold = 300
-const delta = layoutHeight - visualHeight
-
-if (delta > threshold) {
-  setIsKeyboardOpen(true)
-} else {
-  setIsKeyboardOpen(false)
-}
-```
-
-### 2. フォールバックとしてボタンタップ時に isKeyboardOpen = false を明示的に設定する（任意）
-
-戻る・次へボタンを押した際、強制的に `isKeyboardOpen = false` をセットしておくと UI が復元されやすくなります。
-
-### 3. デバッグ用にキーボード開閉状態を画面に表示（開発中のみ）
-
-以下のような表示を追加し、意図しない `isKeyboardOpen = true` が常時出ていないか確認してください。
+4. フロート表示しているプログレスバーおよび総額ボックスについて、`position: fixed` を使っている場合、スマートフォンのキーボード表示時に描画が崩れる問題があるため、キーボード出現時は `absolute` に切り替えてください。以下のように動的に class を制御してください：
 
 ```tsx
-<div className="fixed top-20 left-2 bg-black text-white text-xs px-2 py-1 rounded">
-  keyboard: {isKeyboardOpen ? 'OPEN' : 'CLOSED'}
+<div className={`${isKeyboardOpen ? 'absolute' : 'fixed'} top-0 left-0 z-50 w-full`}>
+  ...
 </div>
 ```
 
----
+5. 必要に応じて、この要素の親コンテナに `position: relative` を明示してください。
 
-修正後も改善されない場合は、keyboardHeight の値や viewport サイズのログ出力を入れて、具体的な高さ変動を観察してください。
+6. 現在画面に表示されている `"keyb"` という文字列は、デバッグ用に `isKeyboardOpen && "keyb"` のように書かれていると推測されます。これは画面に不要なので削除してください。状態確認が必要な場合は `console.log` に置き換えてください。
