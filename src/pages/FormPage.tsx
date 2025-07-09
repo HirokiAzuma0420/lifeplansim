@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Trash2 } from "lucide-react";
 import incomeBrackets from "../assets/net_income_brackets.json";
 import AssetAccordion from "../components/AssetAccordion";
@@ -28,30 +28,42 @@ export default function FormPage() {
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false)
   const [keyboardHeight, setKeyboardHeight] = useState(0)
 
+  const keyboardTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     const handleResize = () => {
       if (window.visualViewport) {
-        const visualHeight = window.visualViewport.height
-        const layoutHeight = window.innerHeight
-        const delta = layoutHeight - visualHeight
+        const visualHeight = window.visualViewport.height;
+        const layoutHeight = window.innerHeight;
+        const delta = layoutHeight - visualHeight;
+        const threshold = 300;
 
-        if (delta > 150) {
-          setIsKeyboardOpen(true)
-          setKeyboardHeight(delta)
+        if (keyboardTimerRef.current) {
+          clearTimeout(keyboardTimerRef.current);
+        }
+
+        if (delta > threshold) {
+          keyboardTimerRef.current = setTimeout(() => {
+            setIsKeyboardOpen(true);
+            setKeyboardHeight(delta);
+          }, 200);
         } else {
-          setIsKeyboardOpen(false)
-          setKeyboardHeight(0)
+          setIsKeyboardOpen(false);
+          setKeyboardHeight(0);
         }
       }
-    }
+    };
 
-    window.visualViewport?.addEventListener('resize', handleResize)
-    handleResize()
+    window.visualViewport?.addEventListener('resize', handleResize);
+    handleResize();
 
     return () => {
-      window.visualViewport?.removeEventListener('resize', handleResize)
-    }
-  }, [])
+      window.visualViewport?.removeEventListener('resize', handleResize);
+      if (keyboardTimerRef.current) {
+        clearTimeout(keyboardTimerRef.current);
+      }
+    };
+  }, []);
 
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   
@@ -199,12 +211,14 @@ export default function FormPage() {
     if (currentSectionIndex < sections.length - 1) {
       setCurrentSectionIndex(currentSectionIndex + 1);
     }
+    setIsKeyboardOpen(false);
   };
 
   const goToPreviousSection = () => {
     if (currentSectionIndex > 0) {
       setCurrentSectionIndex(currentSectionIndex - 1);
     }
+    setIsKeyboardOpen(false);
   };
 
   const totalExpenses = useMemo(() => {
@@ -1358,6 +1372,9 @@ export default function FormPage() {
           </div>
         )}
         <div className="h-1"></div>
+        <div className="fixed top-20 left-2 bg-black text-white text-xs px-2 py-1 rounded">
+          keyboard: {isKeyboardOpen ? 'OPEN' : 'CLOSED'}
+        </div>
         {!isKeyboardOpen && renderFloatingBox(totalExpenses, currentSectionIndex === sections.indexOf('現在の支出') && totalExpenses > 0, "生活費総額")}
         {!isKeyboardOpen && renderFloatingBox(displayTotalIncome, currentSectionIndex === sections.indexOf('現在の収入') && displayTotalIncome > 0, "年間収入総額")}
         {displayEstimatedNetIncome > 0 && (

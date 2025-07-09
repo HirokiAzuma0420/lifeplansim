@@ -1,44 +1,36 @@
-以下の点について修正・確認してください。
+以下の内容で FormPage.tsx を修正してください。
 
-## 1. 未使用変数 keyboardHeight に関するエラー対応
+### 1. isKeyboardOpen の判定条件を厳格化
 
-現在、次のエラーが出ています：
+delta（window.innerHeight - visualViewport.height）の閾値を 150 から 300 に変更し、誤判定を抑制してください。
 
-- ESLint: 'keyboardHeight' is assigned a value but never used.
-- TypeScript: 'keyboardHeight' が宣言されていますが、その値が読み取られることはありません。
-
-対応方針：
-
-keyboardHeight は現状 UI 表示や判定に使用されていないため、以下いずれかを行ってください：
-
-- 将来的に使う予定がなければ、keyboardHeight を useState から削除する。
-- あるいは、UI 調整やマージン制御などで使用する場合は、それを明示して適切に活用してください（例：ダミー div で下部に余白を確保する等）。
-
-一時的に未使用であっても保持したい場合は、コメントを添えて ESLint 無視設定を追加してください：
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-
-## 2. useMemo の依存配列に関する警告対応
-
-次の警告が出ています：
-
-- React Hook useMemo has unnecessary dependencies: 'formData.loanInterestRate' and 'formData.loanOriginalAmount'.
-
-これは、依存配列に不要な変数が含まれているためです。現在の useMemo の return 関数内部でこれらの変数が使用されていないか確認し、実際に未使用であれば依存配列から削除してください。
+また、変化量が数フレーム連続で継続した場合のみ `setIsKeyboardOpen(true)` を実行するなど、**デバウンスまたは連続判定フィルタ**を検討してください（例: setTimeout で200ms継続した場合など）。
 
 ```ts
-useMemo(() => {
-  // 処理内容
-}, [必要な依存のみ記載])
+const threshold = 300
+const delta = layoutHeight - visualHeight
+
+if (delta > threshold) {
+  setIsKeyboardOpen(true)
+} else {
+  setIsKeyboardOpen(false)
+}
 ```
 
-formData.loanInterestRate や loanOriginalAmount を使用していない場合は削除。使用している場合はそのままで構いません。
+### 2. フォールバックとしてボタンタップ時に isKeyboardOpen = false を明示的に設定する（任意）
 
-## 3. キーボード表示時の UI 制御の反映確認
+戻る・次へボタンを押した際、強制的に `isKeyboardOpen = false` をセットしておくと UI が復元されやすくなります。
 
-以下の変更が確実に反映されているか確認してください：
+### 3. デバッグ用にキーボード開閉状態を画面に表示（開発中のみ）
 
-- isKeyboardOpen が true のときにプログレスバーや renderFloatingBox を表示しないようにしているか。
-- 特定の fixed 要素がスクリーンキーボードに隠れないよう、必要であれば下部に keyboardHeight 分の余白を追加する処理が設けられているか。
+以下のような表示を追加し、意図しない `isKeyboardOpen = true` が常時出ていないか確認してください。
 
-必要に応じて、keyboardHeight を UI マージンや padding 調整に使用してください。
+```tsx
+<div className="fixed top-20 left-2 bg-black text-white text-xs px-2 py-1 rounded">
+  keyboard: {isKeyboardOpen ? 'OPEN' : 'CLOSED'}
+</div>
+```
+
+---
+
+修正後も改善されない場合は、keyboardHeight の値や viewport サイズのログ出力を入れて、具体的な高さ変動を観察してください。
