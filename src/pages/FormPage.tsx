@@ -371,10 +371,8 @@ export default function FormPage() {
     formData.housingLoanYears,
     formData.housingLoanInterestRateType,
     formData.housingLoanInterestRate,
-    formData.loanOriginalAmount,
     formData.loanMonthlyPayment,
     formData.loanRemainingYears,
-    formData.loanInterestRate,
   ]);
 
   const displayEstimatedNetIncome = useMemo(() => {
@@ -1417,6 +1415,7 @@ export default function FormPage() {
           </div>
           
         </div>
+        {isKeyboardOpen && <div style={{ height: `${keyboardHeight}px` }} />}
       </div>
     </div>
   );

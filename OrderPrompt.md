@@ -1,58 +1,44 @@
-以下の修正を FormPage.tsx に適用してください。
+以下の点について修正・確認してください。
 
-1. useState と useEffect を使って、スマートフォンでソフトウェアキーボードが表示されているかどうかを検出し、その高さを取得できるようにしてください。
-2. 既存のプログレスバーや renderFloatingBox で表示している fixed 要素が、キーボード表示時に見切れないように、isKeyboardOpen の状態をもとに非表示制御を行ってください。
+## 1. 未使用変数 keyboardHeight に関するエラー対応
 
-修正内容:
+現在、次のエラーが出ています：
 
-1. 以下の state を冒頭に追加する。
+- ESLint: 'keyboardHeight' is assigned a value but never used.
+- TypeScript: 'keyboardHeight' が宣言されていますが、その値が読み取られることはありません。
 
-const [isKeyboardOpen, setIsKeyboardOpen] = useState(false)
-const [keyboardHeight, setKeyboardHeight] = useState(0)
+対応方針：
 
-2. VisualViewport を使ってキーボード検知する useEffect を追加する。
+keyboardHeight は現状 UI 表示や判定に使用されていないため、以下いずれかを行ってください：
 
-useEffect(() => {
-  const handleResize = () => {
-    if (window.visualViewport) {
-      const visualHeight = window.visualViewport.height
-      const layoutHeight = window.innerHeight
-      const delta = layoutHeight - visualHeight
+- 将来的に使う予定がなければ、keyboardHeight を useState から削除する。
+- あるいは、UI 調整やマージン制御などで使用する場合は、それを明示して適切に活用してください（例：ダミー div で下部に余白を確保する等）。
 
-      if (delta > 150) {
-        setIsKeyboardOpen(true)
-        setKeyboardHeight(delta)
-      } else {
-        setIsKeyboardOpen(false)
-        setKeyboardHeight(0)
-      }
-    }
-  }
+一時的に未使用であっても保持したい場合は、コメントを添えて ESLint 無視設定を追加してください：
 
-  window.visualViewport?.addEventListener('resize', handleResize)
-  handleResize()
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 
-  return () => {
-    window.visualViewport?.removeEventListener('resize', handleResize)
-  }
-}, [])
+## 2. useMemo の依存配列に関する警告対応
 
-3. プログレスバー部分の表示条件に isKeyboardOpen を追加して非表示制御を行う。
+次の警告が出ています：
 
-{!isKeyboardOpen && (
-  <div className="w-full bg-gray-300 h-4 fixed top-0 left-0 right-0 z-10 rounded-t-lg">
-    <div
-      className="bg-blue-500 h-full transition-all duration-500 ease-out"
-      style={{ width: `${progress}%` }}
-    ></div>
-    <div className="absolute inset-0 flex items-center justify-center text-white text-xs font-bold">
-      {Math.round(progress)}%
-    </div>
-  </div>
-)}
+- React Hook useMemo has unnecessary dependencies: 'formData.loanInterestRate' and 'formData.loanOriginalAmount'.
 
-4. renderFloatingBox の呼び出しもすべて !isKeyboardOpen でラップする。
+これは、依存配列に不要な変数が含まれているためです。現在の useMemo の return 関数内部でこれらの変数が使用されていないか確認し、実際に未使用であれば依存配列から削除してください。
 
-{!isKeyboardOpen && renderFloatingBox(...)}
+```ts
+useMemo(() => {
+  // 処理内容
+}, [必要な依存のみ記載])
+```
 
-この修正により、スマホでキーボードが表示されている間、固定要素が画面に重ならず非表示になります。
+formData.loanInterestRate や loanOriginalAmount を使用していない場合は削除。使用している場合はそのままで構いません。
+
+## 3. キーボード表示時の UI 制御の反映確認
+
+以下の変更が確実に反映されているか確認してください：
+
+- isKeyboardOpen が true のときにプログレスバーや renderFloatingBox を表示しないようにしているか。
+- 特定の fixed 要素がスクリーンキーボードに隠れないよう、必要であれば下部に keyboardHeight 分の余白を追加する処理が設けられているか。
+
+必要に応じて、keyboardHeight を UI マージンや padding 調整に使用してください。
