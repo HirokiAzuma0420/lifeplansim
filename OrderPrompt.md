@@ -1,27 +1,58 @@
-以下の要件に従って、FormPage.tsx 内のプログレスバーコンポーネントをスマホ表示でも常に画面に追従表示されるよう修正してください。
+以下の修正を FormPage.tsx に適用してください。
 
-【対象】
-- スクロールにより見失われるプログレスバー（現在の入力進捗や完了度を表示するバー）
+1. useState と useEffect を使って、スマートフォンでソフトウェアキーボードが表示されているかどうかを検出し、その高さを取得できるようにしてください。
+2. 既存のプログレスバーや renderFloatingBox で表示している fixed 要素が、キーボード表示時に見切れないように、isKeyboardOpen の状態をもとに非表示制御を行ってください。
 
-【修正要件】
+修正内容:
 
-1. Tailwind CSSの `fixed` クラスを使用して、プログレスバーの位置を画面に固定する
+1. 以下の state を冒頭に追加する。
 
-2. 位置は以下のいずれか：
-   - 画面上部固定：`top-0 left-0 w-full`
-   - 画面下部固定：`bottom-0 left-0 w-full`
-   ※ 既存の合計金額ブロックと競合しない位置に調整すること
+const [isKeyboardOpen, setIsKeyboardOpen] = useState(false)
+const [keyboardHeight, setKeyboardHeight] = useState(0)
 
-3. 背景色は `bg-white` または `bg-gray-50` などで明示し、背後のUIと重ならないようにする
+2. VisualViewport を使ってキーボード検知する useEffect を追加する。
 
-4. スマホでもバーが細すぎたり潰れないよう、 `h-2` 以上の高さを確保
+useEffect(() => {
+  const handleResize = () => {
+    if (window.visualViewport) {
+      const visualHeight = window.visualViewport.height
+      const layoutHeight = window.innerHeight
+      const delta = layoutHeight - visualHeight
 
-5. 他要素と重なってクリック不能になるのを防ぐため `z-50` 以上を指定
+      if (delta > 150) {
+        setIsKeyboardOpen(true)
+        setKeyboardHeight(delta)
+      } else {
+        setIsKeyboardOpen(false)
+        setKeyboardHeight(0)
+      }
+    }
+  }
 
-6. ページの上部や下部にフロート表示がある場合は、それと重ならないよう `mt-[高さpx]` / `mb-[高さpx]` を加える
+  window.visualViewport?.addEventListener('resize', handleResize)
+  handleResize()
 
-【例：上部にプログレスバーを固定表示】
-```tsx
-<div className="fixed top-0 left-0 w-full bg-white z-50 h-2">
-  <div className="bg-blue-500 h-full" style={{ width: `${progress}%` }} />
-</div>
+  return () => {
+    window.visualViewport?.removeEventListener('resize', handleResize)
+  }
+}, [])
+
+3. プログレスバー部分の表示条件に isKeyboardOpen を追加して非表示制御を行う。
+
+{!isKeyboardOpen && (
+  <div className="w-full bg-gray-300 h-4 fixed top-0 left-0 right-0 z-10 rounded-t-lg">
+    <div
+      className="bg-blue-500 h-full transition-all duration-500 ease-out"
+      style={{ width: `${progress}%` }}
+    ></div>
+    <div className="absolute inset-0 flex items-center justify-center text-white text-xs font-bold">
+      {Math.round(progress)}%
+    </div>
+  </div>
+)}
+
+4. renderFloatingBox の呼び出しもすべて !isKeyboardOpen でラップする。
+
+{!isKeyboardOpen && renderFloatingBox(...)}
+
+この修正により、スマホでキーボードが表示されている間、固定要素が画面に重ならず非表示になります。
