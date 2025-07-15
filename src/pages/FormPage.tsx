@@ -1321,8 +1321,8 @@ export default function FormPage() {
 }
 
   return (
-    <div className="flex justify-center w-full min-h-screen bg-gray-100">
-      <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg md:max-w-5xl relative md:overflow-visible overflow-hidden h-screen md:h-auto">
+    <div className="flex justify-center w-full h-screen bg-gray-100">
+      <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg md:max-w-5xl relative h-screen md:h-auto overflow-hidden">
         {/* Progress Bar */}
         <div
           className={`w-full bg-gray-300 h-4 fixed top-0 left-0 right-0 z-50 md:static rounded-t-lg`}
