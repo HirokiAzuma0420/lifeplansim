@@ -1,21 +1,18 @@
-FormPage.tsx におけるすべてのフロートボックスおよびプログレスバーに以下の修正を加えてください。
+FormPage.tsx のすべてのフロートボックスおよびプログレスバーの transform: translateY(...) を完全に削除してください。
 
-1. renderFloatingBox の div は position: fixed に変更し、top 指定をやめて transform で補正してください：
+1. transform スタイルは一切使用せず、position: fixed と top: 0（または env(safe-area-inset-top)）のみで表示位置を制御してください。
 
-<div
-  className="fixed left-0 right-0 z-50 transition-opacity duration-300 ..."
-  style={{
-    transform: `translateY(${offset - viewportOffsetY}px)`,
-  }}
->
+2. viewportOffsetY ステートや、それに関連する useEffect（visualViewport.offsetTop 監視）はすべて削除してください。
 
-2. プログレスバー（年間進捗）は同様に fixed に変更し、transform: translateY(-viewportOffsetY) を適用してください。
+3. フロートボックスの位置調整（24px, 80px など）は top: XXpx を直接 style で指定することで制御してください。
 
-<div
-  className="fixed top-0 left-0 right-0 z-40 bg-gray-300 h-4 rounded-t-lg"
-  style={{ transform: `translateY(${-viewportOffsetY}px)` }}
->
+例：
+<div className="fixed left-0 right-0 z-50" style={{ top: '80px' }}>...</div>
 
-3. すべてのフロートボックスが fixed + transform で画面上部に常に追従するように統一してください。
+4. ProgressBar も同様に transform を使わず、position: fixed と top: 0 に置き直してください。
 
-この修正により、スマホ実機でキーボード表示やスクロール時に、すべてのボックスが一貫して上部に固定表示されるようになります。
+5. 追加で、public/index.html に以下の meta タグを入れてください：
+
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+これにより、合成レイヤーによる描画バグを回避し、スマホ実機でもスクロールに完全追従する固定表示が安定します。
