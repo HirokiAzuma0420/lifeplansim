@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect} from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Trash2 } from "lucide-react";
 import incomeBrackets from "../assets/net_income_brackets.json";
 import AssetAccordion from "../components/AssetAccordion";
@@ -28,7 +28,20 @@ export default function FormPage() {
   
 
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
-  
+  const [viewportOffsetY, setViewportOffsetY] = useState(0);
+
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const update = () => setViewportOffsetY(vv.offsetTop);
+    vv.addEventListener("scroll", update);
+    vv.addEventListener("resize", update);
+    update();
+    return () => {
+      vv.removeEventListener("scroll", update);
+      vv.removeEventListener("resize", update);
+    };
+  }, []);
   
   const [formData, setFormData] = useState({
     familyComposition: '', // 独身／既婚
@@ -1299,14 +1312,14 @@ export default function FormPage() {
 
   const progress = ((currentSectionIndex + 1) / sections.length) * 100;
 
-    function renderFloatingBox(amount: number, shouldShow: boolean, label: string, topOffset: string = '24px') {
+    function renderFloatingBox(amount: number, shouldShow: boolean, label: string, topClass: string = 'top-[1.5rem]') {
   return (
     <div
-      className={`fixed left-0 right-0 z-50 transition-opacity duration-500 md:static ${
+      className={`fixed ${topClass} inset-x-0 z-40 transition-opacity duration-500 ${
         shouldShow ? 'opacity-100' : 'opacity-0 pointer-events-none'
       }`}
       style={{
-        top: topOffset,
+        transform: `translateY(-${viewportOffsetY}px)`,
       }}
     >
       <div className="max-w-5xl mx-auto px-4">
@@ -1321,12 +1334,10 @@ export default function FormPage() {
 }
 
   return (
-    <div className="flex justify-center w-full h-screen bg-gray-100">
-      <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg md:max-w-5xl relative h-screen md:h-auto overflow-hidden">
+    <div className="flex justify-center w-full min-h-screen bg-gray-100">
+      <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg md:max-w-5xl overflow-visible relative">
         {/* Progress Bar */}
-        <div
-          className={`w-full bg-gray-300 h-4 fixed top-0 left-0 right-0 z-50 md:static rounded-t-lg`}
-        >
+        <div className={`w-full bg-gray-300 h-4 fixed top-0 left-0 right-0 z-10 rounded-t-lg`}>
             <div
               className="bg-blue-500 h-full transition-all duration-500 ease-out"
               style={{ width: `${progress}%` }}
@@ -1335,20 +1346,20 @@ export default function FormPage() {
               {Math.round(progress)}%
             </div>
           </div>
+        <div className="h-1"></div>
         
+        {renderFloatingBox(totalExpenses, currentSectionIndex === sections.indexOf('現在の支出') && totalExpenses > 0, "生活費総額")}
+        {renderFloatingBox(displayTotalIncome, currentSectionIndex === sections.indexOf('現在の収入') && displayTotalIncome > 0, "年間収入総額")}
+        {renderFloatingBox(displayEstimatedNetIncome, currentSectionIndex === sections.indexOf('現在の収入') && displayEstimatedNetIncome > 0, "推定手取り総額", "top-[5rem]")}
+        {renderFloatingBox(estimatedAnnualLoanPayment, currentSectionIndex === sections.indexOf('ライフイベント - 家') && estimatedAnnualLoanPayment > 0 && (formData.housingLoanStatus === 'これから借りる予定' || formData.housingLoanStatus === 'すでに返済中'), "年間返済額")}
+        {renderFloatingBox(estimatedTotalLoanPayment, currentSectionIndex === sections.indexOf('ライフイベント - 家') && estimatedTotalLoanPayment > 0 && (formData.housingLoanStatus === 'これから借りる予定' || formData.housingLoanStatus === 'すでに返済中'), "総返済額", "top-[5rem]")}
         
-        {renderFloatingBox(totalExpenses, currentSectionIndex === sections.indexOf('現在の支出') && totalExpenses > 0, "生活費総額", '24px')}
-        {renderFloatingBox(displayTotalIncome, currentSectionIndex === sections.indexOf('現在の収入') && displayTotalIncome > 0, "年間収入総額", '24px')}
-        {renderFloatingBox(displayEstimatedNetIncome, currentSectionIndex === sections.indexOf('現在の収入') && displayEstimatedNetIncome > 0, "推定手取り総額", '80px')}
-        {renderFloatingBox(estimatedAnnualLoanPayment, currentSectionIndex === sections.indexOf('ライフイベント - 家') && estimatedAnnualLoanPayment > 0 && (formData.housingLoanStatus === 'これから借りる予定' || formData.housingLoanStatus === 'すでに返済中'), "年間返済額", '24px')}
-        {renderFloatingBox(estimatedTotalLoanPayment, currentSectionIndex === sections.indexOf('ライフイベント - 家') && estimatedTotalLoanPayment > 0 && (formData.housingLoanStatus === 'これから借りる予定' || formData.housingLoanStatus === 'すでに返済中'), "総返済額", '80px')}
-        
-        {renderFloatingBox(displayTotalSavings, currentSectionIndex === sections.indexOf('貯蓄') && displayTotalSavings > 0, "貯蓄総額", '24px')}
-        {renderFloatingBox(totalInvestment.monthly, currentSectionIndex === sections.indexOf('投資') && totalInvestment.monthly > 0, "月間投資総額", '24px')}
-        {renderFloatingBox(totalInvestment.annual, currentSectionIndex === sections.indexOf('投資') && totalInvestment.annual > 0, "年間投資総額", '80px')}
-        {renderFloatingBox(displayTotalApplianceCost * 10000, currentSectionIndex === sections.indexOf('ライフイベント - 生活') && displayTotalApplianceCost > 0, "家電買い替え総額", '24px')}
-        <div className="relative flex h-full md:h-auto">
-          <div className="flex-1 flex flex-col max-w-[800px] w-full px-4 pb-4 md:pb-0 md:static absolute top-[112px] bottom-0 left-0 right-0 overflow-y-auto">
+        {renderFloatingBox(displayTotalSavings, currentSectionIndex === sections.indexOf('貯蓄') && displayTotalSavings > 0, "貯蓄総額")}
+        {renderFloatingBox(totalInvestment.monthly, currentSectionIndex === sections.indexOf('投資') && totalInvestment.monthly > 0, "月間投資総額")}
+        {renderFloatingBox(totalInvestment.annual, currentSectionIndex === sections.indexOf('投資') && totalInvestment.annual > 0, "年間投資総額", "top-[5rem]")}
+        {renderFloatingBox(displayTotalApplianceCost * 10000, currentSectionIndex === sections.indexOf('ライフイベント - 生活') && displayTotalApplianceCost > 0, "家電買い替え総額")}
+        <div className="relative flex">
+          <div className="flex-1 flex flex-col max-w-[800px] w-full px-4">
             <div className="w-full p-4">
               {renderSection()}
               <div className="flex justify-center space-x-4 mt-6">

@@ -1,13 +1,35 @@
-FormPage.tsx のレイアウトに関して以下の修正を行ってください。
+FormPage.tsx に以下の変更を加えてください。
 
-1. 最上位コンテナのクラスを `min-h-screen` から `h-screen` に変更し、スマホ実機でも高さが確保されるようにしてください。
+1. useState と useEffect で visualViewport.offsetTop を監視し、viewportOffsetY というステートに保存してください。
 
-<div className="flex justify-center w-full h-screen bg-gray-100">
+const [viewportOffsetY, setViewportOffsetY] = useState(0);
 
-2. 内部のラッパー（max-w-md）に `relative h-screen overflow-hidden` を付与し、absoluteで配置されたフォームエリアが正しく高さを持つようにしてください。
+useEffect(() => {
+  const vv = window.visualViewport;
+  if (!vv) return;
+  const update = () => setViewportOffsetY(vv.offsetTop);
+  vv.addEventListener("scroll", update);
+  vv.addEventListener("resize", update);
+  update();
+  return () => {
+    vv.removeEventListener("scroll", update);
+    vv.removeEventListener("resize", update);
+  };
+}, []);
 
-<div className="max-w-md mx-auto bg-white shadow-lg rounded-lg md:max-w-5xl relative h-screen md:h-auto overflow-hidden">
+2. displayEstimatedNetIncome のフロートボックスに transform: translateY(-viewportOffsetY) を適用してください。
 
-3. フォームスクロール領域の div（absolute top-[112px] bottom-0 ...）はこの親に対して正しく張り付くようになります。
+<div
+  className="fixed top-0 inset-x-0 z-50 transition-opacity duration-500"
+  style={{
+    transform: `translateY(-${viewportOffsetY}px)`,
+    opacity: currentSectionIndex === sections.indexOf('現在の収入') ? 1 : 0,
+    pointerEvents: currentSectionIndex === sections.indexOf('現在の収入') ? 'auto' : 'none',
+  }}
+>
+  // 手取りボックス内容
+</div>
 
-この修正により、スマホ実機でフォームエリアが消えるバグが解消され、上部の ProgressBar やフロートボックスを固定したまま、フォームをスクロール可能になります。
+3. その他のフロートボックス（生活費総額や年間収入総額など）にも同様の transform を適用して統一してください。
+
+この対応により、スマホ実機でキーボード表示中にスクロールしても、各種フロートボックスが画面上部に正しく固定表示されます。
