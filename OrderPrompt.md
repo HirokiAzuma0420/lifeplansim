@@ -28,4 +28,4 @@ useEffect(() => {
 
 <div className="relative max-w-md mx-auto bg-white shadow-lg rounded-lg md:max-w-5xl overflow-visible">
 
-これにより、フロートボックスとプログレスバーがスマホ実機（Android Chrome）でも常に画面上部に追従し、スクロールやソフトキーボードによって消える問題を回避できます。
+これにより、フロートボックスとプログレスバーがスマホ実機（Android Chrome）でも常に画面上部に追従し、スクロールやソフトキーボードによって消える問題を回避
