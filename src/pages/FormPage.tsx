@@ -25,47 +25,23 @@ function getNetIncome(gross: number): number {
 }
 
 export default function FormPage() {
-  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false)
-  const [keyboardHeight, setKeyboardHeight] = useState(0)
-
-  const keyboardTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.visualViewport) {
-        const visualHeight = window.visualViewport.height;
-        const layoutHeight = window.innerHeight;
-        const delta = layoutHeight - visualHeight;
-        const threshold = 150;
-
-        if (keyboardTimerRef.current) {
-          clearTimeout(keyboardTimerRef.current);
-        }
-
-        if (delta > threshold) {
-          keyboardTimerRef.current = setTimeout(() => {
-            setIsKeyboardOpen(true);
-            setKeyboardHeight(delta);
-          }, 200);
-        } else {
-          setIsKeyboardOpen(false);
-          setKeyboardHeight(0);
-        }
-      }
-    };
-
-    window.visualViewport?.addEventListener('resize', handleResize);
-    handleResize();
-
-    return () => {
-      window.visualViewport?.removeEventListener('resize', handleResize);
-      if (keyboardTimerRef.current) {
-        clearTimeout(keyboardTimerRef.current);
-      }
-    };
-  }, []);
+  
 
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
+  const [viewportOffsetY, setViewportOffsetY] = useState(0);
+
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const update = () => setViewportOffsetY(vv.offsetTop);
+    vv.addEventListener("scroll", update);
+    vv.addEventListener("resize", update);
+    update();
+    return () => {
+      vv.removeEventListener("scroll", update);
+      vv.removeEventListener("resize", update);
+    };
+  }, []);
   
   const [formData, setFormData] = useState({
     familyComposition: '', // 独身／既婚
@@ -211,14 +187,12 @@ export default function FormPage() {
     if (currentSectionIndex < sections.length - 1) {
       setCurrentSectionIndex(currentSectionIndex + 1);
     }
-    setIsKeyboardOpen(false);
   };
 
   const goToPreviousSection = () => {
     if (currentSectionIndex > 0) {
       setCurrentSectionIndex(currentSectionIndex - 1);
     }
-    setIsKeyboardOpen(false);
   };
 
   const totalExpenses = useMemo(() => {
@@ -1341,9 +1315,12 @@ export default function FormPage() {
     function renderFloatingBox(amount: number, shouldShow: boolean, label: string, topClass: string = 'top-[1.5rem]') {
   return (
     <div
-      className={`${isKeyboardOpen ? 'absolute' : 'fixed'} ${topClass} inset-x-0 z-40 transition-opacity duration-500 ${
+      className={`fixed ${topClass} inset-x-0 z-40 transition-opacity duration-500 ${
         shouldShow ? 'opacity-100' : 'opacity-0 pointer-events-none'
       }`}
+      style={{
+        transform: `translateY(-${viewportOffsetY}px)`,
+      }}
     >
       <div className="max-w-5xl mx-auto px-4">
         <div className="bg-yellow-50 border border-yellow-300 rounded-xl shadow-md w-fit mx-auto px-4 py-2">
@@ -1360,7 +1337,7 @@ export default function FormPage() {
     <div className="flex justify-center w-full min-h-screen bg-gray-100">
       <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg md:max-w-5xl overflow-visible relative">
         {/* Progress Bar */}
-        <div className={`w-full bg-gray-300 h-4 ${isKeyboardOpen ? 'absolute' : 'fixed'} top-0 left-0 right-0 z-10 rounded-t-lg`}>
+        <div className={`w-full bg-gray-300 h-4 fixed top-0 left-0 right-0 z-10 rounded-t-lg`}>
             <div
               className="bg-blue-500 h-full transition-all duration-500 ease-out"
               style={{ width: `${progress}%` }}
@@ -1371,30 +1348,16 @@ export default function FormPage() {
           </div>
         <div className="h-1"></div>
         
-        {!isKeyboardOpen && renderFloatingBox(totalExpenses, currentSectionIndex === sections.indexOf('現在の支出') && totalExpenses > 0, "生活費総額")}
-        {!isKeyboardOpen && renderFloatingBox(displayTotalIncome, currentSectionIndex === sections.indexOf('現在の収入') && displayTotalIncome > 0, "年間収入総額")}
-        {displayEstimatedNetIncome > 0 && (
-          <div
-            className={`${isKeyboardOpen ? 'absolute' : 'fixed'} top-[5rem] inset-x-0 z-40 transition-opacity duration-500 ${
-              currentSectionIndex === sections.indexOf('現在の収入') ? 'opacity-100' : 'opacity-0 pointer-events-none'
-            }`}
-          >
-            <div className="max-w-5xl mx-auto px-4">
-              <div className="bg-yellow-50 border border-yellow-300 rounded-xl shadow-md w-fit mx-auto px-4 py-2">
-                <span className="text-yellow-800 text-sm md:text-xl font-semibold">
-                  推定手取り総額: {displayEstimatedNetIncome.toLocaleString()}円
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
-        {!isKeyboardOpen && renderFloatingBox(estimatedAnnualLoanPayment, currentSectionIndex === sections.indexOf('ライフイベント - 家') && estimatedAnnualLoanPayment > 0 && (formData.housingLoanStatus === 'これから借りる予定' || formData.housingLoanStatus === 'すでに返済中'), "年間返済額")}
-        {!isKeyboardOpen && renderFloatingBox(estimatedTotalLoanPayment, currentSectionIndex === sections.indexOf('ライフイベント - 家') && estimatedTotalLoanPayment > 0 && (formData.housingLoanStatus === 'これから借りる予定' || formData.housingLoanStatus === 'すでに返済中'), "総返済額", "top-[5rem]")}
+        {renderFloatingBox(totalExpenses, currentSectionIndex === sections.indexOf('現在の支出') && totalExpenses > 0, "生活費総額")}
+        {renderFloatingBox(displayTotalIncome, currentSectionIndex === sections.indexOf('現在の収入') && displayTotalIncome > 0, "年間収入総額")}
+        {renderFloatingBox(displayEstimatedNetIncome, currentSectionIndex === sections.indexOf('現在の収入') && displayEstimatedNetIncome > 0, "推定手取り総額", "top-[5rem]")}
+        {renderFloatingBox(estimatedAnnualLoanPayment, currentSectionIndex === sections.indexOf('ライフイベント - 家') && estimatedAnnualLoanPayment > 0 && (formData.housingLoanStatus === 'これから借りる予定' || formData.housingLoanStatus === 'すでに返済中'), "年間返済額")}
+        {renderFloatingBox(estimatedTotalLoanPayment, currentSectionIndex === sections.indexOf('ライフイベント - 家') && estimatedTotalLoanPayment > 0 && (formData.housingLoanStatus === 'これから借りる予定' || formData.housingLoanStatus === 'すでに返済中'), "総返済額", "top-[5rem]")}
         
-        {!isKeyboardOpen && renderFloatingBox(displayTotalSavings, currentSectionIndex === sections.indexOf('貯蓄') && displayTotalSavings > 0, "貯蓄総額")}
-        {!isKeyboardOpen && renderFloatingBox(totalInvestment.monthly, currentSectionIndex === sections.indexOf('投資') && totalInvestment.monthly > 0, "月間投資総額")}
-        {!isKeyboardOpen && renderFloatingBox(totalInvestment.annual, currentSectionIndex === sections.indexOf('投資') && totalInvestment.annual > 0, "年間投資総額", "top-[5rem]")}
-        {!isKeyboardOpen && renderFloatingBox(displayTotalApplianceCost * 10000, currentSectionIndex === sections.indexOf('ライフイベント - 生活') && displayTotalApplianceCost > 0, "家電買い替え総額")}
+        {renderFloatingBox(displayTotalSavings, currentSectionIndex === sections.indexOf('貯蓄') && displayTotalSavings > 0, "貯蓄総額")}
+        {renderFloatingBox(totalInvestment.monthly, currentSectionIndex === sections.indexOf('投資') && totalInvestment.monthly > 0, "月間投資総額")}
+        {renderFloatingBox(totalInvestment.annual, currentSectionIndex === sections.indexOf('投資') && totalInvestment.annual > 0, "年間投資総額", "top-[5rem]")}
+        {renderFloatingBox(displayTotalApplianceCost * 10000, currentSectionIndex === sections.indexOf('ライフイベント - 生活') && displayTotalApplianceCost > 0, "家電買い替え総額")}
         <div className="relative flex">
           <div className="flex-1 flex flex-col max-w-[800px] w-full px-4">
             <div className="w-full p-4">
@@ -1428,7 +1391,7 @@ export default function FormPage() {
           </div>
           
         </div>
-        {isKeyboardOpen && <div style={{ height: `${keyboardHeight}px` }} />}
+        
       </div>
     </div>
   );

@@ -1,21 +1,35 @@
-1. VisualViewport API を使って、スマートフォンでのソフトウェアキーボード出現を検知してください。`window.innerHeight` と `window.visualViewport.height` の差分を使って、キーボード高さを計算できます。
+FormPage.tsx に以下の変更を加えてください。
 
-2. 次の2つの状態を useState で管理してください：
-- isKeyboardOpen（boolean）: キーボードが開いているかどうか
-- keyboardHeight（number）: キーボードの高さ（ピクセル）
+1. useState と useEffect で visualViewport.offsetTop を監視し、viewportOffsetY というステートに保存してください。
 
-3. useEffect 内で visualViewport の resize イベントを監視し、以下の条件で state を更新してください：
-- innerHeight - visualViewport.height > 150 のとき isKeyboardOpen を true、keyboardHeight に差分をセット
-- それ以外は isKeyboardOpen を false、keyboardHeight を 0 にリセット
+const [viewportOffsetY, setViewportOffsetY] = useState(0);
 
-4. フロート表示しているプログレスバーおよび総額ボックスについて、`position: fixed` を使っている場合、スマートフォンのキーボード表示時に描画が崩れる問題があるため、キーボード出現時は `absolute` に切り替えてください。以下のように動的に class を制御してください：
+useEffect(() => {
+  const vv = window.visualViewport;
+  if (!vv) return;
+  const update = () => setViewportOffsetY(vv.offsetTop);
+  vv.addEventListener("scroll", update);
+  vv.addEventListener("resize", update);
+  update();
+  return () => {
+    vv.removeEventListener("scroll", update);
+    vv.removeEventListener("resize", update);
+  };
+}, []);
 
-```tsx
-<div className={`${isKeyboardOpen ? 'absolute' : 'fixed'} top-0 left-0 z-50 w-full`}>
-  ...
+2. displayEstimatedNetIncome のフロートボックスに transform: translateY(-viewportOffsetY) を適用してください。
+
+<div
+  className="fixed top-0 inset-x-0 z-50 transition-opacity duration-500"
+  style={{
+    transform: `translateY(-${viewportOffsetY}px)`,
+    opacity: currentSectionIndex === sections.indexOf('現在の収入') ? 1 : 0,
+    pointerEvents: currentSectionIndex === sections.indexOf('現在の収入') ? 'auto' : 'none',
+  }}
+>
+  // 手取りボックス内容
 </div>
-```
 
-5. 必要に応じて、この要素の親コンテナに `position: relative` を明示してください。
+3. その他のフロートボックス（生活費総額や年間収入総額など）にも同様の transform を適用して統一してください。
 
-6. 現在画面に表示されている `"keyb"` という文字列は、デバッグ用に `isKeyboardOpen && "keyb"` のように書かれていると推測されます。これは画面に不要なので削除してください。状態確認が必要な場合は `console.log` に置き換えてください。
+この対応により、スマホ実機でキーボード表示中にスクロールしても、各種フロートボックスが画面上部に正しく固定表示されます。
