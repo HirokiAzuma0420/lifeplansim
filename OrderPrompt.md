@@ -1,31 +1,21 @@
-FormPage.tsx に次の変更を加えてください。
+FormPage.tsx におけるすべてのフロートボックスおよびプログレスバーに以下の修正を加えてください。
 
-1. useEffect で window.visualViewport.offsetTop を監視し、viewportOffsetY に保存してください。
-
-const [viewportOffsetY, setViewportOffsetY] = useState(0);
-
-useEffect(() => {
-  const vv = window.visualViewport;
-  if (!vv) return;
-  const update = () => setViewportOffsetY(vv.offsetTop);
-  vv.addEventListener("resize", update);
-  vv.addEventListener("scroll", update);
-  update();
-  return () => {
-    vv.removeEventListener("resize", update);
-    vv.removeEventListener("scroll", update);
-  };
-}, []);
-
-2. renderFloatingBox で position: fixed をやめ、position: absolute を使ってください。
+1. renderFloatingBox の div は position: fixed に変更し、top 指定をやめて transform で補正してください：
 
 <div
-  className="absolute left-0 right-0 z-50"
-  style={{ top: `${viewportOffsetY + 8}px` }}
+  className="fixed left-0 right-0 z-50 transition-opacity duration-300 ..."
+  style={{
+    transform: `translateY(${offset - viewportOffsetY}px)`,
+  }}
 >
 
-3. renderFloatingBox を配置している親要素（最大ラッパー）に position: relative を明示してください。
+2. プログレスバー（年間進捗）は同様に fixed に変更し、transform: translateY(-viewportOffsetY) を適用してください。
 
-<div className="relative max-w-md mx-auto bg-white shadow-lg rounded-lg md:max-w-5xl overflow-visible">
+<div
+  className="fixed top-0 left-0 right-0 z-40 bg-gray-300 h-4 rounded-t-lg"
+  style={{ transform: `translateY(${-viewportOffsetY}px)` }}
+>
 
-これにより、フロートボックスとプログレスバーがスマホ実機（Android Chrome）でも常に画面上部に追従し、スクロールやソフトキーボードによって消える問題を回避
+3. すべてのフロートボックスが fixed + transform で画面上部に常に追従するように統一してください。
+
+この修正により、スマホ実機でキーボード表示やスクロール時に、すべてのボックスが一貫して上部に固定表示されるようになります。

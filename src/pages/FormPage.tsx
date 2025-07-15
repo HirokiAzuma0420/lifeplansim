@@ -1315,11 +1315,11 @@ export default function FormPage() {
     function renderFloatingBox(amount: number, shouldShow: boolean, label: string, offset: number = 0) {
   return (
     <div
-      className={`absolute left-0 right-0 z-40 transition-opacity duration-500 ${
+      className={`fixed left-0 right-0 z-40 transition-opacity duration-500 ${
         shouldShow ? 'opacity-100' : 'opacity-0 pointer-events-none'
       }`}
       style={{
-        top: `${viewportOffsetY + offset}px`,
+        transform: `translateY(${offset - viewportOffsetY}px)`,
       }}
     >
       <div className="max-w-5xl mx-auto px-4">
@@ -1338,8 +1338,8 @@ export default function FormPage() {
       <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg md:max-w-5xl overflow-visible relative">
         {/* Progress Bar */}
         <div
-          className={`w-full bg-gray-300 h-4 absolute left-0 right-0 z-10 rounded-t-lg`}
-          style={{ top: `${viewportOffsetY}px` }}
+          className={`w-full bg-gray-300 h-4 fixed top-0 left-0 right-0 z-10 rounded-t-lg`}
+          style={{ transform: `translateY(${-viewportOffsetY}px)` }}
         >
             <div
               className="bg-blue-500 h-full transition-all duration-500 ease-out"
