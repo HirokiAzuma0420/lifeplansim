@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect} from 'react';
 import { Trash2 } from "lucide-react";
 import incomeBrackets from "../assets/net_income_brackets.json";
 import AssetAccordion from "../components/AssetAccordion";
