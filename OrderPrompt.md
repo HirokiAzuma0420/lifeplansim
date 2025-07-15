@@ -1,6 +1,6 @@
-FormPage.tsx に以下の変更を加えてください。
+FormPage.tsx に次の変更を加えてください。
 
-1. useState と useEffect で visualViewport.offsetTop を監視し、viewportOffsetY というステートに保存してください。
+1. useEffect で window.visualViewport.offsetTop を監視し、viewportOffsetY に保存してください。
 
 const [viewportOffsetY, setViewportOffsetY] = useState(0);
 
@@ -8,28 +8,24 @@ useEffect(() => {
   const vv = window.visualViewport;
   if (!vv) return;
   const update = () => setViewportOffsetY(vv.offsetTop);
-  vv.addEventListener("scroll", update);
   vv.addEventListener("resize", update);
+  vv.addEventListener("scroll", update);
   update();
   return () => {
-    vv.removeEventListener("scroll", update);
     vv.removeEventListener("resize", update);
+    vv.removeEventListener("scroll", update);
   };
 }, []);
 
-2. displayEstimatedNetIncome のフロートボックスに transform: translateY(-viewportOffsetY) を適用してください。
+2. renderFloatingBox で position: fixed をやめ、position: absolute を使ってください。
 
 <div
-  className="fixed top-0 inset-x-0 z-50 transition-opacity duration-500"
-  style={{
-    transform: `translateY(-${viewportOffsetY}px)`,
-    opacity: currentSectionIndex === sections.indexOf('現在の収入') ? 1 : 0,
-    pointerEvents: currentSectionIndex === sections.indexOf('現在の収入') ? 'auto' : 'none',
-  }}
+  className="absolute left-0 right-0 z-50"
+  style={{ top: `${viewportOffsetY + 8}px` }}
 >
-  // 手取りボックス内容
-</div>
 
-3. その他のフロートボックス（生活費総額や年間収入総額など）にも同様の transform を適用して統一してください。
+3. renderFloatingBox を配置している親要素（最大ラッパー）に position: relative を明示してください。
 
-この対応により、スマホ実機でキーボード表示中にスクロールしても、各種フロートボックスが画面上部に正しく固定表示されます。
+<div className="relative max-w-md mx-auto bg-white shadow-lg rounded-lg md:max-w-5xl overflow-visible">
+
+これにより、フロートボックスとプログレスバーがスマホ実機（Android Chrome）でも常に画面上部に追従し、スクロールやソフトキーボードによって消える問題を回避できます。
