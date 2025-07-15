@@ -1302,7 +1302,7 @@ export default function FormPage() {
     function renderFloatingBox(amount: number, shouldShow: boolean, label: string, topOffset: string = '24px') {
   return (
     <div
-      className={`fixed left-0 right-0 z-40 transition-opacity duration-500 ${
+      className={`fixed left-0 right-0 z-50 transition-opacity duration-500 md:static ${
         shouldShow ? 'opacity-100' : 'opacity-0 pointer-events-none'
       }`}
       style={{
@@ -1322,10 +1322,10 @@ export default function FormPage() {
 
   return (
     <div className="flex justify-center w-full min-h-screen bg-gray-100">
-      <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg md:max-w-5xl overflow-visible relative">
+      <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg md:max-w-5xl relative md:overflow-visible overflow-hidden h-screen md:h-auto">
         {/* Progress Bar */}
         <div
-          className={`w-full bg-gray-300 h-4 fixed top-0 left-0 right-0 z-10 rounded-t-lg`}
+          className={`w-full bg-gray-300 h-4 fixed top-0 left-0 right-0 z-50 md:static rounded-t-lg`}
         >
             <div
               className="bg-blue-500 h-full transition-all duration-500 ease-out"
@@ -1347,8 +1347,8 @@ export default function FormPage() {
         {renderFloatingBox(totalInvestment.monthly, currentSectionIndex === sections.indexOf('投資') && totalInvestment.monthly > 0, "月間投資総額", '24px')}
         {renderFloatingBox(totalInvestment.annual, currentSectionIndex === sections.indexOf('投資') && totalInvestment.annual > 0, "年間投資総額", '80px')}
         {renderFloatingBox(displayTotalApplianceCost * 10000, currentSectionIndex === sections.indexOf('ライフイベント - 生活') && displayTotalApplianceCost > 0, "家電買い替え総額", '24px')}
-        <div className="relative flex">
-          <div className="flex-1 flex flex-col max-w-[800px] w-full px-4">
+        <div className="relative flex h-full md:h-auto">
+          <div className="flex-1 flex flex-col max-w-[800px] w-full px-4 pb-4 md:pb-0 md:static absolute top-[112px] bottom-0 left-0 right-0 overflow-y-auto">
             <div className="w-full p-4">
               {renderSection()}
               <div className="flex justify-center space-x-4 mt-6">
