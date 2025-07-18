@@ -437,6 +437,7 @@ export default function FormPage() {
   }, [currentSectionIndex]);
 
   useEffect(() => {
+    if (currentSectionIndex === 0) return;
     setVisitedSections(prev => new Set([...prev, currentSectionIndex]));
   }, [currentSectionIndex]);
 
