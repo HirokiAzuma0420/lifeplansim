@@ -1,62 +1,75 @@
-## 🎯 修正依頼内容：「ライフイベント - 結婚」セクションで結婚関連費用の合計額をフロートボックス表示する
+## 🎯 修正依頼内容：FormPage.tsx に以下6点の改修を実装してください
 
 ---
 
-### ✅ 目的
+### ✅ 1. ライフイベント - 車：ローン設定項目と総額表示の追加
 
-ユーザーが結婚に関する各費用（婚約・結婚式・新婚旅行・引越し）を入力するセクションにおいて、合計額（万円）の目安をリアルタイムでフロートボックスに表示したい。
+【フォーム項目の追加】
+- ローンで購入しますか？（name: carLoanUsage, options: はい／いいえ）
+- ローン年数は？（name: carLoanYears, options: 3／5／7、carLoanUsage が "はい" のときのみ表示）
 
----
+【formData に以下の項目を追加】
+- carLoanUsage: ''
+- carLoanYears: ''
 
-### ✅ 表示内容
+【ローン総額の useMemo を追加】
+const totalCarLoanCost = useMemo(() => {
+  if (formData.carLoanUsage !== 'はい') return 0;
+  const principal = Number(formData.carPrice) * 10000 || 0;
+  const years = Number(formData.carLoanYears) || 0;
+  const interestRate = 0.025 / 12;
+  const months = years * 12;
+  if (principal <= 0 || years <= 0) return 0;
+  const monthly = principal * interestRate * Math.pow(1 + interestRate, months) / (Math.pow(1 + interestRate, months) - 1);
+  const total = monthly * months;
+  return Math.ceil(total);
+}, [formData.carPrice, formData.carLoanUsage, formData.carLoanYears]);
 
-- ラベル：結婚費用総額  
-- 表示単位：円  
-- 表示条件：`sections[currentSectionIndex] === 'ライフイベント - 結婚'` かつ `planToMarry === 'する'`  
-
----
-
-### 🔧 修正内容
-
-#### 1. useMemo を追加：結婚費用合計を算出
-
-const totalMarriageCost = useMemo(() => {
-  if (formData.planToMarry !== 'する') return 0;
-  return (
-    (Number(formData.engagementCost) || 0) +
-    (Number(formData.weddingCost) || 0) +
-    (Number(formData.honeymoonCost) || 0) +
-    (Number(formData.newHomeMovingCost) || 0)
-  ) * 10000; // 万円 → 円に変換
-}, [
-  formData.planToMarry,
-  formData.engagementCost,
-  formData.weddingCost,
-  formData.honeymoonCost,
-  formData.newHomeMovingCost,
-]);
+【フロートボックス表示を追加】
+renderFloatingBox(totalCarLoanCost, currentSectionIndex === sections.indexOf('ライフイベント - 車') && totalCarLoanCost > 0, '車ローン総額')
 
 ---
 
-#### 2. renderFloatingBox の呼び出しを追記（floating-header 内）
+### ✅ 2. ライフイベント - 結婚：既婚者には表示しない
 
-{renderFloatingBox(
-  totalMarriageCost,
-  currentSectionIndex === sections.indexOf('ライフイベント - 結婚') && totalMarriageCost > 0,
-  \"結婚費用総額\"
-)}
+renderSection() 内の 'ライフイベント - 結婚' セクション分岐に以下を追加：
+
+if (formData.familyComposition === '既婚') return null;
 
 ---
 
-### ✅ 表示位置
+### ✅ 3. ライフイベント - 親の介護：金額表示を画面内から削除し、フロート化
 
-- 他の renderFloatingBox と同様、`floating-header` 内に配置  
-- すでにある家・投資・家電などの金額フロートと同一レイヤーで表示
+【削除】
+- 画面内の「介護費用総額: ○○万円」の h3 タグを削除
+
+【追加】
+renderFloatingBox(totalCareCost * 10000, currentSectionIndex === sections.indexOf('ライフイベント - 親の介護') && totalCareCost > 0, '介護費用総額')
 
 ---
 
-### ✅ 補足事項
+### ✅ 4. ライフイベント - 老後：「老後の月間不足額」の画面内表示を削除し、フロート化
 
-- `defaultValue` で初期値（例：200, 330, 35, 50万円）があるため、フォーム初期表示時点で自動的に表示される  
-- 円換算時に 10000 を掛けてフロート表示と整合  
-- 表示切り替えは planToMarry が \"する\" であることが条件となるため、不要な表示はされない
+【削除】
+- 老後セクション内の「老後の月間不足額: ○○万円」の h3 タグ
+
+【追加】
+renderFloatingBox(totalRetirementMonthly * 10000, currentSectionIndex === sections.indexOf('ライフイベント - 老後') && totalRetirementMonthly > 0, '老後の不足額')
+
+---
+
+### ✅ 5. 貯蓄セクション：フロートボックスでの表示を削除
+
+【削除】
+renderFloatingBox(displayTotalSavings, currentSectionIndex === sections.indexOf('貯蓄') && displayTotalSavings > 0, '貯蓄総額')
+
+---
+
+### ✅ 6. シミュレーション設定：「運用リスク許容度」関連を完全に削除
+
+【削除対象】
+- input要素（selectタグとoption）
+- ラベルやラップ要素
+- formData.riskTolerance の定義
+
+---

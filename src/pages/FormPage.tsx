@@ -53,6 +53,8 @@ export default function FormPage() {
     otherVariableCost: '0',
     carPrice: '',
     carReplacementFrequency: '',
+    carLoanUsage: '',
+    carLoanYears: '',
     housePurchaseAge: '',
     housePurchasePrice: '',
     headDownPayment: '',
@@ -115,7 +117,6 @@ export default function FormPage() {
     simulationPeriodAge: '90',
     interestRateScenario: '', // 固定利回り／ランダム変動
     emergencyFund: '300',
-    riskTolerance: '', // 保守的／中庸／積極的
   });
 
   const [applianceReplacements, setApplianceReplacements] = useState([
@@ -252,16 +253,17 @@ export default function FormPage() {
     );
   }, [formData.postRetirementLivingCost, formData.pensionAmount]);
 
-  const totalSavings = useMemo(() => {
-    return (
-        (Number(formData.currentSavings) || 0) +
-        (Number(formData.monthlySavings) || 0) / 10000
-    );
-  }, [formData.currentSavings, formData.monthlySavings]);
-
-  const displayTotalSavings = useMemo(() => {
-    return totalSavings * 10000;
-  }, [totalSavings]);
+  const totalCarLoanCost = useMemo(() => {
+    if (formData.carLoanUsage !== 'はい') return 0;
+    const principal = Number(formData.carPrice) * 10000 || 0;
+    const years = Number(formData.carLoanYears) || 0;
+    const interestRate = 0.025 / 12;
+    const months = years * 12;
+    if (principal <= 0 || years <= 0) return 0;
+    const monthly = principal * interestRate * Math.pow(1 + interestRate, months) / (Math.pow(1 + interestRate, months) - 1);
+    const total = monthly * months;
+    return Math.ceil(total);
+  }, [formData.carPrice, formData.carLoanUsage, formData.carLoanYears]);
 
   const totalInvestment = useMemo(() => {
     const monthlyTotal = Object.values(formData.monthlyInvestmentAmounts).reduce(
@@ -729,6 +731,54 @@ export default function FormPage() {
               </label>
               <input type="number" id="carReplacementFrequency" name="carReplacementFrequency" value={formData.carReplacementFrequency} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
             </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                ローンで購入しますか？
+              </label>
+              <div className="mt-2">
+                <label className="inline-flex items-center mr-4">
+                  <input
+                    type="radio"
+                    className="custom-radio"
+                    name="carLoanUsage"
+                    value="はい"
+                    checked={formData.carLoanUsage === 'はい'}
+                    onChange={handleRadioChange}
+                  />
+                  <span className="ml-2">はい</span>
+                </label>
+                <label className="inline-flex items-center">
+                  <input
+                    type="radio"
+                    className="custom-radio"
+                    name="carLoanUsage"
+                    value="いいえ"
+                    checked={formData.carLoanUsage === 'いいえ'}
+                    onChange={handleRadioChange}
+                  />
+                  <span className="ml-2">いいえ</span>
+                </label>
+              </div>
+            </div>
+            {formData.carLoanUsage === 'はい' && (
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carLoanYears">
+                  ローン年数は？
+                </label>
+                <select
+                  id="carLoanYears"
+                  name="carLoanYears"
+                  value={formData.carLoanYears}
+                  onChange={handleInputChange}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                >
+                  <option value="">選択してください</option>
+                  <option value="3">3年</option>
+                  <option value="5">5年</option>
+                  <option value="7">7年</option>
+                </select>
+              </div>
+            )}
           </div>
         );
       case 'ライフイベント - 家':
@@ -880,6 +930,7 @@ export default function FormPage() {
           </div>
         );
       case 'ライフイベント - 結婚':
+        if (formData.familyComposition === '既婚') return null;
         return (
           <div className="p-4">
             {/* Image placeholder */}
@@ -1133,9 +1184,6 @@ export default function FormPage() {
             </div>
             <div className={`accordion-content ${formData.parentCareAssumption === 'はい' ? 'open' : ''}`}>
                 <div className="mb-4">
-                  <h3 className="text-lg font-semibold mb-2">介護費用総額: {totalCareCost.toLocaleString()}万円</h3>
-                </div>
-                <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="parentCareMonthlyCost">
                     介護費用の想定（月額）[万円]
                   </label>
@@ -1158,9 +1206,6 @@ export default function FormPage() {
               <img src="/form/Q4-retirement.png"></img>
             </div>
             <h2 className="text-2xl font-bold text-center mb-4">老後に関する質問</h2>
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold mb-2">老後の月間不足額: {totalRetirementMonthly.toLocaleString()}万円</h3>
-            </div>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="retirementAge">
                 退職予定年齢は？[歳]
@@ -1315,30 +1360,6 @@ export default function FormPage() {
               </label>
               <input type="number" id="emergencyFund" name="emergencyFund" value={formData.emergencyFund} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" defaultValue={300} />
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="riskTolerance">
-                運用リスク許容度
-              </label>
-              <select
-                id="riskTolerance"
-                name="riskTolerance"
-                value={formData.riskTolerance}
-                onChange={handleInputChange}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                required
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    goToNextSection();
-                  }
-                }}
-              >
-                <option value="">選択してください</option>
-                <option value="保守的">保守的（元本重視）</option>
-                <option value="中庸">中庸（バランス型）</option>
-                <option value="積極的">積極的（リスク許容）</option>
-              </select>
-            </div>
           </div>
         );
       default:
@@ -1387,8 +1408,10 @@ export default function FormPage() {
         {renderFloatingBox(displayEstimatedNetIncome, currentSectionIndex === sections.indexOf('現在の収入') && displayEstimatedNetIncome > 0, "推定手取り総額", "top-[5rem]")}
         {renderFloatingBox(estimatedAnnualLoanPayment, currentSectionIndex === sections.indexOf('ライフイベント - 家') && estimatedAnnualLoanPayment > 0 && (formData.housingLoanStatus === 'これから借りる予定' || formData.housingLoanStatus === 'すでに返済中'), "年間返済額")}
         {renderFloatingBox(estimatedTotalLoanPayment, currentSectionIndex === sections.indexOf('ライフイベント - 家') && estimatedTotalLoanPayment > 0 && (formData.housingLoanStatus === 'これから借りる予定' || formData.housingLoanStatus === 'すでに返済中'), "総返済額", "top-[5rem]")}
+        {renderFloatingBox(totalCarLoanCost, currentSectionIndex === sections.indexOf('ライフイベント - 車') && totalCarLoanCost > 0, '車ローン総額')}
+        {renderFloatingBox(totalCareCost * 10000, currentSectionIndex === sections.indexOf('ライフイベント - 親の介護') && totalCareCost > 0, '介護費用総額')}
+        {renderFloatingBox(totalRetirementMonthly * 10000, currentSectionIndex === sections.indexOf('ライフイベント - 老後') && totalRetirementMonthly > 0, '老後の不足額')}
         
-        {renderFloatingBox(displayTotalSavings, currentSectionIndex === sections.indexOf('貯蓄') && displayTotalSavings > 0, "貯蓄総額")}
         {renderFloatingBox(totalInvestment.monthly, currentSectionIndex === sections.indexOf('投資') && totalInvestment.monthly > 0, "月間投資総額")}
         {renderFloatingBox(totalInvestment.annual, currentSectionIndex === sections.indexOf('投資') && totalInvestment.annual > 0, "年間投資総額", "top-[5rem]")}
         {renderFloatingBox(displayTotalApplianceCost * 10000, currentSectionIndex === sections.indexOf('ライフイベント - 生活') && displayTotalApplianceCost > 0, "家電買い替え総額")}
