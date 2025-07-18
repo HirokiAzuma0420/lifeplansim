@@ -28,20 +28,6 @@ export default function FormPage() {
   
 
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
-  const [viewportOffsetY, setViewportOffsetY] = useState(0);
-
-  useEffect(() => {
-    const vv = window.visualViewport;
-    if (!vv) return;
-    const update = () => setViewportOffsetY(vv.offsetTop);
-    vv.addEventListener("scroll", update);
-    vv.addEventListener("resize", update);
-    update();
-    return () => {
-      vv.removeEventListener("scroll", update);
-      vv.removeEventListener("resize", update);
-    };
-  }, []);
   
   const [formData, setFormData] = useState({
     familyComposition: '', // 独身／既婚
@@ -396,6 +382,18 @@ export default function FormPage() {
       }));
     }
   }, [formData.familyComposition]);
+
+  useEffect(() => {
+  const handleResize = () => {
+    const dummy = document.createElement("div");
+    dummy.style.cssText = "height:0;overflow:hidden;";
+    document.body.appendChild(dummy);
+    setTimeout(() => document.body.removeChild(dummy), 0);
+  };
+
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
 
   const renderSection = () => {
     switch (sections[currentSectionIndex]) {
@@ -1315,12 +1313,8 @@ export default function FormPage() {
     function renderFloatingBox(amount: number, shouldShow: boolean, label: string, topClass: string = 'top-[1.5rem]') {
   return (
     <div
-      className={`fixed ${topClass} inset-x-0 z-40 transition-opacity duration-500 ${
-        shouldShow ? 'opacity-100' : 'opacity-0 pointer-events-none'
-      }`}
-      style={{
-        transform: `translateY(-${viewportOffsetY}px)`,
-      }}
+      className={"fixed " + topClass + " inset-x-0 z-50 transition-opacity duration-500 " +
+        (shouldShow ? "opacity-100" : "opacity-0 pointer-events-none")}
     >
       <div className="max-w-5xl mx-auto px-4">
         <div className="bg-yellow-50 border border-yellow-300 rounded-xl shadow-md w-fit mx-auto px-4 py-2">
@@ -1330,7 +1324,7 @@ export default function FormPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
   return (
