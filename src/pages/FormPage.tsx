@@ -28,6 +28,8 @@ export default function FormPage() {
   
 
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
+  const [showBackModal, setShowBackModal] = useState(false);
+  const [visitedSections, setVisitedSections] = useState<Set<number>>(new Set([0]));
   
   const [formData, setFormData] = useState({
     familyComposition: '', // 独身／既婚
@@ -184,11 +186,7 @@ export default function FormPage() {
     }
   };
 
-  const goToPreviousSection = () => {
-    if (currentSectionIndex > 0) {
-      setCurrentSectionIndex(currentSectionIndex - 1);
-    }
-  };
+  
 
   const totalExpenses = useMemo(() => {
     if (formData.expenseMethod !== '詳細') return 0;
@@ -436,6 +434,10 @@ export default function FormPage() {
   useEffect(() => {
     const state = { formInitialized: true, section: currentSectionIndex };
     window.history.pushState(state, "", "");
+  }, [currentSectionIndex]);
+
+  useEffect(() => {
+    setVisitedSections(prev => new Set([...prev, currentSectionIndex]));
   }, [currentSectionIndex]);
 
   useEffect(() => {
@@ -1472,7 +1474,7 @@ export default function FormPage() {
               <div className="flex justify-center space-x-4 mt-6">
                 {currentSectionIndex > 0 && (
                   <button
-                    onClick={goToPreviousSection}
+                    onClick={() => setShowBackModal(true)}
                     className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                   >
                     戻る
@@ -1499,6 +1501,32 @@ export default function FormPage() {
           
         </div>
         
+      </div>
+      <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50" hidden={!showBackModal}>
+        <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+          <h2 className="text-lg font-semibold mb-4">どこに戻りますか？</h2>
+          <ul className="space-y-2 max-h-64 overflow-y-auto">
+            {Array.from(visitedSections).map(i => (
+              <li key={i}>
+                <button
+                  onClick={() => {
+                    setCurrentSectionIndex(i);
+                    setShowBackModal(false);
+                  }}
+                  className="w-full text-left px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded"
+                >
+                  {effectiveSections[i]}
+                </button>
+              </li>
+            ))}
+          </ul>
+          <button
+            onClick={() => setShowBackModal(false)}
+            className="mt-4 px-4 py-2 text-sm text-gray-600 hover:text-gray-900 underline"
+          >
+            キャンセル
+          </button>
+        </div>
       </div>
     </div>
   );
