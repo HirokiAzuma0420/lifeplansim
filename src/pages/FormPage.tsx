@@ -228,8 +228,14 @@ export default function FormPage() {
       (Number(formData.weddingCost) || 0) +
       (Number(formData.honeymoonCost) || 0) +
       (Number(formData.newHomeMovingCost) || 0)
-    );
-  }, [formData.planToMarry, formData.engagementCost, formData.weddingCost, formData.honeymoonCost, formData.newHomeMovingCost]);
+    ) * 10000; // 万円 → 円に変換
+  }, [
+    formData.planToMarry,
+    formData.engagementCost,
+    formData.weddingCost,
+    formData.honeymoonCost,
+    formData.newHomeMovingCost,
+  ]);
 
   const totalCareCost = useMemo(() => {
     if (formData.parentCareAssumption !== 'はい') return 0;
@@ -613,7 +619,6 @@ export default function FormPage() {
               </div>
 
             <div id="detailed-expense" className={`accordion-content ${formData.expenseMethod === '詳細' ? 'open' : ''}`}>
-                <p className="text-lg font-semibold mb-2">年間支出合計：{totalExpenses.toLocaleString()}円</p>
                 <h3 className="text-lg font-semibold mb-2">固定費</h3>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="housingCost">
@@ -711,7 +716,7 @@ export default function FormPage() {
             <div className="w-full h-auto bg-white mb-8 flex items-center justify-center text-gray-500 max-w-[800px] mx-auto">
               <img src="/form/Q4-car.png"></img>
             </div>
-            <h2 className="text-2xl font-bold text-center mb-4">ライフイベント - 車に関する質問</h2>
+            <h2 className="text-2xl font-bold text-center mb-4">車に関する質問</h2>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carPrice">
                 今後買い替える車の価格帯は？[万円]
@@ -733,7 +738,7 @@ export default function FormPage() {
             <div className="w-full h-auto bg-white mb-8 flex items-center justify-center text-gray-500 max-w-[800px] mx-auto">
               <img src="/form/Q4-home.png"></img>
             </div>
-            <h2 className="text-2xl font-bold text-center mb-4">ライフイベント - 家に関する質問</h2>
+            <h2 className="text-2xl font-bold text-center mb-4">家に関する質問</h2>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 住宅ローンの状況は？
@@ -881,7 +886,7 @@ export default function FormPage() {
             <div className="w-full h-auto bg-white mb-8 flex items-center justify-center text-gray-500 max-w-[800px] mx-auto">
               <img src="/form/Q4-marriage.png"></img>
             </div>
-            <h2 className="text-2xl font-bold text-center mb-4">ライフイベント - 結婚に関する質問</h2>
+            <h2 className="text-2xl font-bold text-center mb-4">結婚に関する質問</h2>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 結婚を予定していますか？
@@ -914,9 +919,6 @@ export default function FormPage() {
               </div>
             </div>
             <div className={`accordion-content ${formData.planToMarry === 'する' ? 'open' : ''}`}>
-                <div className="mb-4">
-                  <h3 className="text-lg font-semibold mb-2">結婚関連費用総額: {totalMarriageCost.toLocaleString()}万円</h3>
-                </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="marriageAge">
                     結婚予定年齢は？[歳]
@@ -957,7 +959,7 @@ export default function FormPage() {
             <div className="w-full h-auto bg-white mb-8 flex items-center justify-center text-gray-500 max-w-[800px] mx-auto">
               <img src="/form/Q4-children.png"></img>
             </div>
-            <h2 className="text-2xl font-bold text-center mb-4">ライフイベント - 子供に関する質問</h2>
+            <h2 className="text-2xl font-bold text-center mb-4">子供に関する質問</h2>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 子供はいますか？
@@ -1030,27 +1032,7 @@ export default function FormPage() {
             <div className="w-full h-auto bg-white mb-8 flex items-center justify-center text-gray-500 max-w-[800px] mx-auto">
               <img src="/form/Q4-appliances.png"></img>
             </div>
-            <h2 className="text-2xl font-bold text-center mb-4">ライフイベント - 生活に関する質問</h2>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="currentRentLoanPayment">
-                現在の家賃または住宅ローンの毎月支払額は？[万円]
-              </label>
-              <input type="number" id="currentRentLoanPayment" name="currentRentLoanPayment" value={formData.currentRentLoanPayment} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="otherLargeExpenses">
-                その他、将来想定される大きな支出はありますか？
-              </label>
-              <textarea
-                id="otherLargeExpenses"
-                name="otherLargeExpenses"
-                value={formData.otherLargeExpenses}
-                onChange={handleInputChange}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                rows={4}
-                placeholder="例：海外移住、転職・独立資金、留学、事業資金 など"
-              ></textarea>
-            </div>
+            <h2 className="text-2xl font-bold text-center mb-4">生活に関する質問</h2>
             <h3 className="text-lg font-semibold mb-2">家電買い替えサイクルと費用</h3>
             <div className="grid grid-cols-[auto_auto_auto_min-content] gap-2 mb-2 text-sm text-gray-600 font-semibold">
               <div>家電名</div>
@@ -1105,7 +1087,7 @@ export default function FormPage() {
             <div className="w-full h-auto bg-white mb-8 flex items-center justify-center text-gray-500 max-w-[800px] mx-auto">
               <img src="/form/Q4-parenthelp.png"></img>
             </div>
-            <h2 className="text-2xl font-bold text-center mb-4">ライフイベント - 親の介護に関する質問</h2>
+            <h2 className="text-2xl font-bold text-center mb-4">親の介護に関する質問</h2>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 親の介護が将来発生すると想定しますか？
@@ -1175,7 +1157,7 @@ export default function FormPage() {
             <div className="w-full h-auto bg-white mb-8 flex items-center justify-center text-gray-500 max-w-[800px] mx-auto">
               <img src="/form/Q4-retirement.png"></img>
             </div>
-            <h2 className="text-2xl font-bold text-center mb-4">ライフイベント - 老後に関する質問</h2>
+            <h2 className="text-2xl font-bold text-center mb-4">老後に関する質問</h2>
             <div className="mb-4">
               <h3 className="text-lg font-semibold mb-2">老後の月間不足額: {totalRetirementMonthly.toLocaleString()}万円</h3>
             </div>
@@ -1410,6 +1392,11 @@ export default function FormPage() {
         {renderFloatingBox(totalInvestment.monthly, currentSectionIndex === sections.indexOf('投資') && totalInvestment.monthly > 0, "月間投資総額")}
         {renderFloatingBox(totalInvestment.annual, currentSectionIndex === sections.indexOf('投資') && totalInvestment.annual > 0, "年間投資総額", "top-[5rem]")}
         {renderFloatingBox(displayTotalApplianceCost * 10000, currentSectionIndex === sections.indexOf('ライフイベント - 生活') && displayTotalApplianceCost > 0, "家電買い替え総額")}
+        {renderFloatingBox(
+          totalMarriageCost,
+          currentSectionIndex === sections.indexOf('ライフイベント - 結婚') && totalMarriageCost > 0,
+          "結婚費用総額"
+        )}
         </div>
         <div className="relative flex">
           <div className="flex-1 flex flex-col max-w-[800px] w-full px-4">
