@@ -384,16 +384,25 @@ export default function FormPage() {
   }, [formData.familyComposition]);
 
   useEffect(() => {
-  const handleResize = () => {
-    const dummy = document.createElement("div");
-    dummy.style.cssText = "height:0;overflow:hidden;";
-    document.body.appendChild(dummy);
-    setTimeout(() => document.body.removeChild(dummy), 0);
-  };
+    const el = document.getElementById("floating-header");
+    if (!el) return;
 
-  window.addEventListener("resize", handleResize);
-  return () => window.removeEventListener("resize", handleResize);
-}, []);
+    const visualViewport = window.visualViewport;
+    if (!visualViewport) return;
+
+    const updateTop = () => {
+      el.style.top = `${visualViewport.offsetTop}px`;
+    };
+
+    visualViewport.addEventListener("resize", updateTop);
+    visualViewport.addEventListener("scroll", updateTop);
+    updateTop();
+
+    return () => {
+      visualViewport.removeEventListener("resize", updateTop);
+      visualViewport.removeEventListener("scroll", updateTop);
+    };
+  }, []);
 
   const renderSection = () => {
     switch (sections[currentSectionIndex]) {
@@ -1313,7 +1322,7 @@ export default function FormPage() {
     function renderFloatingBox(amount: number, shouldShow: boolean, label: string, topClass: string = 'top-[1.5rem]') {
   return (
     <div
-      className={"sticky " + topClass + " inset-x-0 z-50 transition-opacity duration-500 " +
+      className={"absolute " + topClass + " inset-x-0 z-50 transition-opacity duration-500 " +
         (shouldShow ? "opacity-100" : "opacity-0 pointer-events-none")}
     >
       <div className="max-w-5xl mx-auto px-4">
@@ -1330,16 +1339,18 @@ export default function FormPage() {
   return (
     <div className="flex justify-center w-full min-h-screen bg-gray-100">
       <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg md:max-w-5xl overflow-visible relative">
-        {/* Progress Bar */}
-        <div className="sticky top-0 z-50 w-full bg-gray-300 h-4 rounded-t-lg">
-            <div
-              className="bg-blue-500 h-full transition-all duration-500 ease-out"
-              style={{ width: `${progress}%` }}
-            ></div>
-            <div className="absolute inset-0 flex items-center justify-center text-white text-xs font-bold">
-              {Math.round(progress)}%
+        {/* Floating Header */}
+        <div id="floating-header" className="fixed left-0 right-0 z-50 transition-opacity duration-500">
+          {/* Progress Bar */}
+          <div className="relative w-full bg-gray-300 h-4 rounded-t-lg">
+              <div
+                className="bg-blue-500 h-full transition-all duration-500 ease-out"
+                style={{ width: `${progress}%` }}
+              ></div>
+              <div className="absolute inset-0 flex items-center justify-center text-white text-xs font-bold">
+                {Math.round(progress)}%
+              </div>
             </div>
-          </div>
         <div className="h-1"></div>
         
         {renderFloatingBox(totalExpenses, currentSectionIndex === sections.indexOf('現在の支出') && totalExpenses > 0, "生活費総額")}
@@ -1352,6 +1363,7 @@ export default function FormPage() {
         {renderFloatingBox(totalInvestment.monthly, currentSectionIndex === sections.indexOf('投資') && totalInvestment.monthly > 0, "月間投資総額")}
         {renderFloatingBox(totalInvestment.annual, currentSectionIndex === sections.indexOf('投資') && totalInvestment.annual > 0, "年間投資総額", "top-[5rem]")}
         {renderFloatingBox(displayTotalApplianceCost * 10000, currentSectionIndex === sections.indexOf('ライフイベント - 生活') && displayTotalApplianceCost > 0, "家電買い替え総額")}
+        </div>
         <div className="relative flex">
           <div className="flex-1 flex flex-col max-w-[800px] w-full px-4">
             <div className="w-full p-4">
