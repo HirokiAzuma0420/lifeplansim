@@ -404,6 +404,23 @@ export default function FormPage() {
     };
   }, []);
 
+  useEffect(() => {
+    const state = { section: currentSectionIndex };
+    window.history.pushState(state, "", "");
+  }, [currentSectionIndex]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentSectionIndex(prev => {
+        if (prev > 0) return prev - 1;
+        return 0;
+      });
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
   const renderSection = () => {
     switch (sections[currentSectionIndex]) {
       case '家族構成':
@@ -1303,6 +1320,12 @@ export default function FormPage() {
                 onChange={handleInputChange}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 required
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    goToNextSection();
+                  }
+                }}
               >
                 <option value="">選択してください</option>
                 <option value="保守的">保守的（元本重視）</option>
