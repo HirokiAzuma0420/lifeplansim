@@ -406,7 +406,8 @@ export default function FormPage() {
 
   useEffect(() => {
     if (!window.history.state?.formInitialized) {
-      window.history.replaceState({ formInitialized: true, section: 0 }, "", "");
+      window.history.pushState({ formInitialized: true, section: 0 }, "", "");
+      setCurrentSectionIndex(0);
     }
   }, []);
 
@@ -421,8 +422,9 @@ export default function FormPage() {
       if (state?.formInitialized && typeof state.section === "number") {
         setCurrentSectionIndex(state.section);
       } else {
-        // フォーム外への離脱を防止：履歴を再注入
+        // 不正な履歴（外部履歴）に戻ろうとした場合、強制的に初期セクションに戻す
         window.history.pushState({ formInitialized: true, section: 0 }, "", "");
+        setCurrentSectionIndex(0);
       }
     };
 

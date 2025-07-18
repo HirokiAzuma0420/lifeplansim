@@ -1,40 +1,50 @@
-## 🎯 修正依頼内容：Androidなどの戻るキーで FormPage を離脱させず、フォーム内の前ページにだけ戻るように制御する
+## 🎯 修正依頼内容：フォームページにおいて2回連続の戻る操作でページ離脱が発生する問題を修正し、常に FormPage 内のセクション遷移にとどめる
 
 ---
 
-### ✅ 背景
+### ✅ 問題の原因（現コードのレビュー結果）
 
-現在の実装では、useEffect によって `pushState` / `popstate` を使ってセクション遷移を履歴として積んでいるが、フォーム最初のセクション（index = 0）で戻るキーを押すと、ブラウザ履歴上の1つ前、つまり `TopPage.tsx` や他ページに遷移してしまう。  
-これを防ぎ、**フォームページ内でのみ「戻る」キーが機能する**ようにする。
+現状の実装では `pushState` をセクションごとに積み、`popstate` で `section` を復元しているが、初回ロード時に `replaceState` した履歴が 1件しか存在しないため、以下の問題が起きる：
+
+- ブラウザ戻る操作①：現在のセクションをひとつ戻す（意図通り）  
+- ブラウザ戻る操作②：初期 `replaceState` に戻る  
+- それ以降：ブラウザ履歴が残っていないため、**FormPage を離脱**
+
+これは初回の `replaceState` によって **履歴の“スタック数”が増えない**ため。
 
 ---
 
 ### ✅ 修正方針
 
-1. 初回マウント時に history.replaceState で履歴の初期ダミーを置く  
-2. セクション遷移時は pushState で履歴を積み、popstate は index を 1つ戻す  
-3. index が 0 のときに popstate が発生した場合は history.pushState で履歴を復元し、「ページ離脱をブロック」
+- マウント時に `replaceState` ではなく、**強制的に「ダミー履歴」を1件追加（pushState）**しておく  
+- 初回 push によって履歴が最低2件積まれるようにすることで、戻る操作の対象を常に制御下に置く  
+- `popstate` にて `state.section` が存在しない場合は、必ず `section 0` に戻す（＝フォーム離脱をブロック）
 
 ---
 
 ### 🔧 修正内容
 
-#### 1. 初期履歴状態を1件ダミー登録（mount 時に一度だけ）
+#### 1. 初期化タイミングの useEffect を以下のように変更する（replace → push に変更）
 
 useEffect(() => {
   if (!window.history.state?.formInitialized) {
-    window.history.replaceState({ formInitialized: true, section: 0 }, "", "");
+    window.history.pushState({ formInitialized: true, section: 0 }, "", "");
+    setCurrentSectionIndex(0);
   }
 }, []);
 
-#### 2. セクション切り替え時に履歴を積む処理（現状と同様）
+---
+
+#### 2. セクション遷移時の履歴積み上げは現状のままでよい
 
 useEffect(() => {
   const state = { formInitialized: true, section: currentSectionIndex };
   window.history.pushState(state, "", "");
 }, [currentSectionIndex]);
 
-#### 3. 戻るキーで section を戻す popstate ハンドラを強化
+---
+
+#### 3. popstate ハンドラは「履歴離脱を完全にブロック」するよう厳格に制御する
 
 useEffect(() => {
   const handlePopState = (event: PopStateEvent) => {
@@ -42,8 +52,9 @@ useEffect(() => {
     if (state?.formInitialized && typeof state.section === "number") {
       setCurrentSectionIndex(state.section);
     } else {
-      // フォーム外への離脱を防止：履歴を再注入
+      // 不正な履歴（外部履歴）に戻ろうとした場合、強制的に初期セクションに戻す
       window.history.pushState({ formInitialized: true, section: 0 }, "", "");
+      setCurrentSectionIndex(0);
     }
   };
 
@@ -53,15 +64,16 @@ useEffect(() => {
 
 ---
 
-### ✅ 期待する動作
+### ✅ 期待される動作
 
-- 「戻る」キーはフォーム内のセクション index を1つずつ戻すように働く  
-- 最初のセクションで戻るキーを押しても、ページ離脱は発生せず、履歴が復元されるだけで実質的な変化はない  
-- TopPage.tsx など別ページへのナビゲーションは、意図的なボタン操作でのみ行われる
+- どのセクションにいても、戻るキー操作は必ず「前セクション」に戻るのみとなる  
+- セクション index = 0 のときに戻るキーを押しても、離脱せずセクション0にとどまり続ける  
+- ユーザーが「完了」ボタンを押すまでブラウザ履歴でページ遷移が発生しない
 
 ---
 
 ### 💡 補足
 
-- 他の画面遷移（Link や navigate 等）と競合しないよう、FormPage 固有の状態識別子として state.formInitialized を導入  
-- 他ページと履歴を共通に扱っている場合は、リセット処理（popstate の再 push）に十分注意する
+- `formInitialized` のようなフラグを `state` に埋め込むことで、他ページからの履歴との区別が明確にできる  
+- フォーム以外のページでは `formInitialized` が存在しないため、この判定で分岐可能  
+- より正確に制御したい場合、history.length の増加をトラッキングしてもよい（任意）
