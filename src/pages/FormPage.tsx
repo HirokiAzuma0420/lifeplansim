@@ -55,6 +55,7 @@ export default function FormPage() {
     carReplacementFrequency: '',
     carLoanUsage: '',
     carLoanYears: '',
+    carLoanType: '',
     housePurchaseAge: '',
     housePurchasePrice: '',
     headDownPayment: '',
@@ -119,6 +120,13 @@ export default function FormPage() {
     emergencyFund: '300',
   });
 
+  const effectiveSections = useMemo(() => {
+    return sections.filter((section) => {
+      if (section === 'ライフイベント - 結婚' && formData.familyComposition === '既婚') return false;
+      return true;
+    });
+  }, [formData.familyComposition]);
+
   const [applianceReplacements, setApplianceReplacements] = useState([
     { name: '冷蔵庫', cycle: 10, cost: 15 },
     { name: '洗濯機', cycle: 8, cost: 12 },
@@ -171,7 +179,7 @@ export default function FormPage() {
   
 
   const goToNextSection = () => {
-    if (currentSectionIndex < sections.length - 1) {
+    if (currentSectionIndex < effectiveSections.length - 1) {
       setCurrentSectionIndex(currentSectionIndex + 1);
     }
   };
@@ -257,13 +265,19 @@ export default function FormPage() {
     if (formData.carLoanUsage !== 'はい') return 0;
     const principal = Number(formData.carPrice) * 10000 || 0;
     const years = Number(formData.carLoanYears) || 0;
-    const interestRate = 0.025 / 12;
+
+    let annualRate = 0.025; // default
+    if (formData.carLoanType === '銀行ローン') annualRate = 0.015;
+    else if (formData.carLoanType === 'ディーラーローン') annualRate = 0.045;
+
+    const interestRate = annualRate / 12;
     const months = years * 12;
     if (principal <= 0 || years <= 0) return 0;
+
     const monthly = principal * interestRate * Math.pow(1 + interestRate, months) / (Math.pow(1 + interestRate, months) - 1);
     const total = monthly * months;
     return Math.ceil(total);
-  }, [formData.carPrice, formData.carLoanUsage, formData.carLoanYears]);
+  }, [formData.carPrice, formData.carLoanUsage, formData.carLoanYears, formData.carLoanType]);
 
   const totalInvestment = useMemo(() => {
     const monthlyTotal = Object.values(formData.monthlyInvestmentAmounts).reduce(
@@ -454,7 +468,7 @@ export default function FormPage() {
   }, []);
 
   const renderSection = () => {
-    switch (sections[currentSectionIndex]) {
+    switch (effectiveSections[currentSectionIndex]) {
       case '家族構成':
         return (
           <div className="p-4">
@@ -761,6 +775,7 @@ export default function FormPage() {
               </div>
             </div>
             {formData.carLoanUsage === 'はい' && (
+              <>
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carLoanYears">
                   ローン年数は？
@@ -778,6 +793,36 @@ export default function FormPage() {
                   <option value="7">7年</option>
                 </select>
               </div>
+              <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                ローンの種類は？
+              </label>
+              <div className="mt-2">
+                <label className="inline-flex items-center mr-4">
+                  <input
+                    type="radio"
+                    className="custom-radio"
+                    name="carLoanType"
+                    value="銀行ローン"
+                    checked={formData.carLoanType === '銀行ローン'}
+                    onChange={handleRadioChange}
+                  />
+                  <span className="ml-2">銀行ローン</span>
+                </label>
+                <label className="inline-flex items-center">
+                  <input
+                    type="radio"
+                    className="custom-radio"
+                    name="carLoanType"
+                    value="ディーラーローン"
+                    checked={formData.carLoanType === 'ディーラーローン'}
+                    onChange={handleRadioChange}
+                  />
+                  <span className="ml-2">ディーラーローン</span>
+                </label>
+              </div>
+            </div>
+            </>
             )}
           </div>
         );
@@ -930,7 +975,6 @@ export default function FormPage() {
           </div>
         );
       case 'ライフイベント - 結婚':
-        if (formData.familyComposition === '既婚') return null;
         return (
           <div className="p-4">
             {/* Image placeholder */}
@@ -1367,7 +1411,7 @@ export default function FormPage() {
     }
   };
 
-  const progress = ((currentSectionIndex + 1) / sections.length) * 100;
+  const progress = ((currentSectionIndex + 1) / effectiveSections.length) * 100;
 
     function renderFloatingBox(amount: number, shouldShow: boolean, label: string, topClass: string = 'top-[1.5rem]') {
   return (
@@ -1403,21 +1447,21 @@ export default function FormPage() {
             </div>
         <div className="h-1"></div>
         
-        {renderFloatingBox(totalExpenses, currentSectionIndex === sections.indexOf('現在の支出') && totalExpenses > 0, "生活費総額")}
-        {renderFloatingBox(displayTotalIncome, currentSectionIndex === sections.indexOf('現在の収入') && displayTotalIncome > 0, "年間収入総額")}
-        {renderFloatingBox(displayEstimatedNetIncome, currentSectionIndex === sections.indexOf('現在の収入') && displayEstimatedNetIncome > 0, "推定手取り総額", "top-[5rem]")}
-        {renderFloatingBox(estimatedAnnualLoanPayment, currentSectionIndex === sections.indexOf('ライフイベント - 家') && estimatedAnnualLoanPayment > 0 && (formData.housingLoanStatus === 'これから借りる予定' || formData.housingLoanStatus === 'すでに返済中'), "年間返済額")}
-        {renderFloatingBox(estimatedTotalLoanPayment, currentSectionIndex === sections.indexOf('ライフイベント - 家') && estimatedTotalLoanPayment > 0 && (formData.housingLoanStatus === 'これから借りる予定' || formData.housingLoanStatus === 'すでに返済中'), "総返済額", "top-[5rem]")}
-        {renderFloatingBox(totalCarLoanCost, currentSectionIndex === sections.indexOf('ライフイベント - 車') && totalCarLoanCost > 0, '車ローン総額')}
-        {renderFloatingBox(totalCareCost * 10000, currentSectionIndex === sections.indexOf('ライフイベント - 親の介護') && totalCareCost > 0, '介護費用総額')}
-        {renderFloatingBox(totalRetirementMonthly * 10000, currentSectionIndex === sections.indexOf('ライフイベント - 老後') && totalRetirementMonthly > 0, '老後の不足額')}
+        {renderFloatingBox(totalExpenses, currentSectionIndex === effectiveSections.indexOf('現在の支出') && totalExpenses > 0, "生活費総額")}
+        {renderFloatingBox(displayTotalIncome, currentSectionIndex === effectiveSections.indexOf('現在の収入') && displayTotalIncome > 0, "年間収入総額")}
+        {renderFloatingBox(displayEstimatedNetIncome, currentSectionIndex === effectiveSections.indexOf('現在の収入') && displayEstimatedNetIncome > 0, "推定手取り総額", "top-[5rem]")}
+        {renderFloatingBox(estimatedAnnualLoanPayment, currentSectionIndex === effectiveSections.indexOf('ライフイベント - 家') && estimatedAnnualLoanPayment > 0 && (formData.housingLoanStatus === 'これから借りる予定' || formData.housingLoanStatus === 'すでに返済中'), "年間返済額")}
+        {renderFloatingBox(estimatedTotalLoanPayment, currentSectionIndex === effectiveSections.indexOf('ライフイベント - 家') && estimatedTotalLoanPayment > 0 && (formData.housingLoanStatus === 'これから借りる予定' || formData.housingLoanStatus === 'すでに返済中'), "総返済額", "top-[5rem]")}
+        {renderFloatingBox(totalCarLoanCost, currentSectionIndex === effectiveSections.indexOf('ライフイベント - 車') && totalCarLoanCost > 0, '車ローン総額')}
+        {renderFloatingBox(totalCareCost * 10000, currentSectionIndex === effectiveSections.indexOf('ライフイベント - 親の介護') && totalCareCost > 0, '介護費用総額')}
+        {renderFloatingBox(totalRetirementMonthly * 10000, currentSectionIndex === effectiveSections.indexOf('ライフイベント - 老後') && totalRetirementMonthly > 0, '老後の不足額')}
         
-        {renderFloatingBox(totalInvestment.monthly, currentSectionIndex === sections.indexOf('投資') && totalInvestment.monthly > 0, "月間投資総額")}
-        {renderFloatingBox(totalInvestment.annual, currentSectionIndex === sections.indexOf('投資') && totalInvestment.annual > 0, "年間投資総額", "top-[5rem]")}
-        {renderFloatingBox(displayTotalApplianceCost * 10000, currentSectionIndex === sections.indexOf('ライフイベント - 生活') && displayTotalApplianceCost > 0, "家電買い替え総額")}
+        {renderFloatingBox(totalInvestment.monthly, currentSectionIndex === effectiveSections.indexOf('投資') && totalInvestment.monthly > 0, "月間投資総額")}
+        {renderFloatingBox(totalInvestment.annual, currentSectionIndex === effectiveSections.indexOf('投資') && totalInvestment.annual > 0, "年間投資総額", "top-[5rem]")}
+        {renderFloatingBox(displayTotalApplianceCost * 10000, currentSectionIndex === effectiveSections.indexOf('ライフイベント - 生活') && displayTotalApplianceCost > 0, "家電買い替え総額")}
         {renderFloatingBox(
           totalMarriageCost,
-          currentSectionIndex === sections.indexOf('ライフイベント - 結婚') && totalMarriageCost > 0,
+          currentSectionIndex === effectiveSections.indexOf('ライフイベント - 結婚') && totalMarriageCost > 0,
           "結婚費用総額"
         )}
         </div>
@@ -1434,7 +1478,7 @@ export default function FormPage() {
                     戻る
                   </button>
                 )}
-                {currentSectionIndex < sections.length - 1 ? (
+                {currentSectionIndex < effectiveSections.length - 1 ? (
                   <button
                     onClick={goToNextSection}
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
