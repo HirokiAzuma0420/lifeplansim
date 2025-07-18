@@ -1,75 +1,49 @@
-## 🎯 修正依頼内容：モバイルでのスクリーンキーボード表示時も fixed 要素（フロートボックス等）を常時表示に保つ
+## 🎯 修正依頼内容：スクリーンキーボード表示中でもプログレスバーおよびフロートボックスをスクロール追従表示に保つ
 
 ### ✅ 背景と目的
 
-現在の FormPage.tsx では、スクリーンキーボード（ソフトウェアキーボード）表示中に renderFloatingBox() がスクロールで画面外に消える不具合がある。  
-原因は visualViewport.offsetTop を用いた transform: translateY(...) による位置補正であり、これは Android/iOS 双方のブラウザで不安定な挙動を引き起こす。
+現行の FormPage.tsx では、プログレスバーおよび renderFloatingBox によるフロートボックスが position: fixed により画面上部に常時表示される設計となっている。  
+しかし、モバイル環境（特に Android 実機）でスクリーンキーボード表示中にスクロールすると、これらの要素がビューポート外に押し出され、見えなくなってしまう問題が発生している。  
+原因は、仮想キーボードによって viewport の高さが縮んだ状態でも fixed がそのまま適用されるため、ビューポート外に描画されることによる。
 
 ---
 
-### ✅ 修正方針（重要）
+### ✅ 修正方針（推奨）
 
-1. transform: translateY(-viewportOffsetY) を完全に削除する（ロジック含め不要）  
-2. renderFloatingBox は fixed + top で描画位置を直接指定する形に修正  
-3. z-index は z-50 として前面固定（任意に調整可）  
-4. position: relative の親要素がある場合、fixed の干渉を受けないよう注意  
-5. resize イベントで強制 reflow を実行し、キーボード開閉時の再描画を補助  
+1. position: fixed をやめて position: sticky に変更する
+2. top の指定はそのまま維持し、z-index も高め（z-50など）に設定する
+3. sticky を有効にするため、親要素の overflow に hidden を指定しないよう確認する
 
 ---
 
 ### 🔧 修正対象箇所
 
-#### 1. renderFloatingBox の JSX を以下のように修正する
+#### 1. プログレスバーの div を以下のように修正する
 
-function renderFloatingBox(amount: number, shouldShow: boolean, label: string, topClass: string = 'top-[1.5rem]') {
-  return (
-    <div
-      className={"fixed " + topClass + " inset-x-0 z-50 transition-opacity duration-500 " +
-        (shouldShow ? "opacity-100" : "opacity-0 pointer-events-none")}
-    >
-      <div className="max-w-5xl mx-auto px-4">
-        <div className="bg-yellow-50 border border-yellow-300 rounded-xl shadow-md w-fit mx-auto px-4 py-2">
-          <span className="text-yellow-800 text-sm md:text-xl font-semibold">
-            {label}: {amount.toLocaleString()}円
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
+<div className="sticky top-0 z-50 w-full bg-gray-300 h-4 rounded-t-lg" />
+
+元々 fixed top-0 z-10 だった要素に対して、fixed を sticky に置換し、z-50 に引き上げる
 
 ---
 
-#### 2. useEffect に以下の強制 reflow 処理を追加する
+#### 2. renderFloatingBox で返す最上位 div のクラスを以下のように修正する
 
-useEffect(() => {
-  const handleResize = () => {
-    const dummy = document.createElement("div");
-    dummy.style.cssText = "height:0;overflow:hidden;";
-    document.body.appendChild(dummy);
-    setTimeout(() => document.body.removeChild(dummy), 0);
-  };
+<div className={"sticky " + topClass + " inset-x-0 z-50 transition-opacity duration-500 " + 
+  (shouldShow ? "opacity-100" : "opacity-0 pointer-events-none")}>
 
-  window.addEventListener("resize", handleResize);
-  return () => window.removeEventListener("resize", handleResize);
-}, []);
-
----
-
-#### 3. viewportOffsetY 関連の useState / visualViewport 使用部分をすべて削除
-
-const [viewportOffsetY, setViewportOffsetY] = useState(0);
-// および visualViewport 使用の useEffect も削除
+固定表示にしていた部分を sticky に変更し、topClass による top-xx の位置指定はそのまま活用する
 
 ---
 
 ### ✅ 期待する動作
 
-- Android/iOS の仮想キーボード表示中でも、フロートボックスがスクロールに追従し常時表示され続けること  
-- ビューポートのリサイズ・キーボード開閉による再描画漏れが起こらないこと  
+- モバイル環境でスクリーンキーボードが表示されても、プログレスバーおよびフロートボックスが常時上部に表示されたままとなる
+- キーボードによる viewport 縮小があっても表示が押し出されない
+- スクロールしても該当要素は見失われず、ユーザー体験が安定する
 
 ---
 
 ### 💡 補足
 
-この修正は Tailwind CSS を前提とした構成です。クラス名やレイアウト階層は現行コードと整合するよう適宜調整してください。
+既存のスタイルや Tailwind クラスに合わせて必要があれば z-index や padding、背景色などを微調整してもよい。  
+親要素が overflow: hidden を持つと sticky が無効化されるため、overflow-visible または overflow-auto を保持すること。
