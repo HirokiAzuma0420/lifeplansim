@@ -405,16 +405,25 @@ export default function FormPage() {
   }, []);
 
   useEffect(() => {
-    const state = { section: currentSectionIndex };
+    if (!window.history.state?.formInitialized) {
+      window.history.replaceState({ formInitialized: true, section: 0 }, "", "");
+    }
+  }, []);
+
+  useEffect(() => {
+    const state = { formInitialized: true, section: currentSectionIndex };
     window.history.pushState(state, "", "");
   }, [currentSectionIndex]);
 
   useEffect(() => {
-    const handlePopState = () => {
-      setCurrentSectionIndex(prev => {
-        if (prev > 0) return prev - 1;
-        return 0;
-      });
+    const handlePopState = (event: PopStateEvent) => {
+      const state = event.state;
+      if (state?.formInitialized && typeof state.section === "number") {
+        setCurrentSectionIndex(state.section);
+      } else {
+        // フォーム外への離脱を防止：履歴を再注入
+        window.history.pushState({ formInitialized: true, section: 0 }, "", "");
+      }
     };
 
     window.addEventListener("popstate", handlePopState);
