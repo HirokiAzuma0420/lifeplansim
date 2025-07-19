@@ -902,11 +902,11 @@ export default function FormPage() {
                       <input type="number" name="housePurchasePlan.age" onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
                     </div>
                     <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-2">購入金額</label>
+                      <label className="block text-gray-700 text-sm font-bold mb-2">購入金額[万円]</label>
                       <input type="number" name="housePurchasePlan.price" onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
                     </div>
                     <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-2">頭金</label>
+                      <label className="block text-gray-700 text-sm font-bold mb-2">頭金[万円]</label>
                       <input type="number" name="housePurchasePlan.downPayment" onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
                     </div>
                     <div>
@@ -914,9 +914,24 @@ export default function FormPage() {
                       <input type="number" name="housePurchasePlan.loanYears" onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
                     </div>
                     <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-2">ローン金利</label>
-                      <input type="number" name="housePurchasePlan.interestRate" onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                        <label className="block text-gray-700 text-sm font-bold mb-2">ローン金利の想定</label>
+                        <div className="mt-2">
+                            <label className="inline-flex items-center mr-4">
+                            <input type="radio" className="custom-radio" name="housingLoanInterestRateType" value="一般的な想定" checked={formData.housingLoanInterestRateType === '一般的な想定'} onChange={handleRadioChange} />
+                            <span className="ml-2">一般的な想定（1.5%）</span>
+                            </label>
+                            <label className="inline-flex items-center">
+                            <input type="radio" className="custom-radio" name="housingLoanInterestRateType" value="指定" checked={formData.housingLoanInterestRateType === '指定'} onChange={handleRadioChange} />
+                            <span className="ml-2">自分で金利を指定する</span>
+                            </label>
+                        </div>
                     </div>
+                    {formData.housingLoanInterestRateType === '指定' && (
+                        <div>
+                            <label className="block text-gray-700 text-sm font-bold mb-2">ローン金利 (%)</label>
+                            <input type="number" name="housingLoanInterestRate" value={formData.housingLoanInterestRate} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                        </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -925,7 +940,10 @@ export default function FormPage() {
             {(formData.housingType === '持ち家（ローン中）') && (
                  <div className="mt-6">
                  <h3 className="text-lg font-semibold mb-2">現在の住宅ローンについて</h3>
-                 <p>現在の支出セクションで入力された住居費は月額 {formData.housingCost} 円です。これは住宅ローンの返済額として正しいですか？</p>
+                 <div>
+                    <p>入力された住居費：{formData.housingCost}円</p>
+                    <p>これは月のローン返済額と一致していますか？</p>
+                 </div>
                  <div className="mt-2">
                     <label className="inline-flex items-center mr-4">
                       <input type="radio" className="custom-radio" name="housingCostConfirmation" value="yes" onChange={() => {}} />
@@ -961,7 +979,7 @@ export default function FormPage() {
                       <input type="number" name={`houseRenovationPlans[${index}].age`} value={plan.age} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
                     </div>
                     <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-2">リフォーム費用</label>
+                      <label className="block text-gray-700 text-sm font-bold mb-2">リフォーム費用[万円]</label>
                       <input type="number" name={`houseRenovationPlans[${index}].cost`} value={plan.cost} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
                     </div>
                     <div>

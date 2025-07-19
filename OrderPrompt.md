@@ -1,15 +1,60 @@
-[{
-	"resource": "/c:/dev/lifeplansim/src/pages/FormPage.tsx",
-	"owner": "typescript",
-	"code": "2322",
-	"severity": 8,
-	"message": "型 '{ age?: number | undefined; price?: number | undefined; downPayment?: number | undefined; loanYears?: number | undefined; interestRate?: number | undefined; }' を型 '{ age: number; price: number; downPayment: number; loanYears: number; interestRate: number; }' に割り当てることはできません。\n  プロパティ 'age' の型に互換性がありません。\n    型 'number | undefined' を型 'number' に割り当てることはできません。\n      型 'undefined' を型 'number' に割り当てることはできません。",
-	"source": "ts",
-	"startLineNumber": 178,
-	"startColumn": 34,
-	"endLineNumber": 178,
-	"endColumn": 51,
-	"origin": "extHost1"
-}]
+# 指示概要
 
-このエラーを修正すること
+FormPage.tsx の「ライフイベント - 家」セクションに対し、以下4点の修正を加えてください。
+
+---
+
+## ✅ 1. 金額単位の明示：「万円」統一
+
+- 家に関するすべての入力項目（購入金額・頭金・リフォーム費など）を [万円] 単位で表示すること。
+- 対象ラベルに [万円] を明記するだけでよく、値の変換（×10000など）は不要。
+
+---
+
+## ✅ 2. 金利入力方式：「一般的な想定」or「指定」
+
+- formData.housingLoanInterestRateType を使用し、以下の選択肢を表示する：
+  - 一般的な想定（1.5%）
+  - 自分で金利を指定する
+
+- 「指定」を選択した場合のみ、formData.housingLoanInterestRate を入力可能にする。
+
+---
+
+## ✅ 3. ローン返済額のフロート表示（2段構成）
+
+- useMemo により算出された estimatedAnnualLoanPayment（年間返済額）と estimatedTotalLoanPayment（総返済額）を右上にフロート表示する。
+- 表示条件は以下のとおり：
+  - currentSectionIndex が ライフイベント - 家 に一致
+  - formData.housingLoanStatus が「これから借りる予定」または「すでに返済中」
+  - いずれかの金額が 0 より大きい
+
+- 表示形式は以下の2段構成：
+
+年間返済額：134,000円  
+総返済額：4,020,000円
+
+- 既存の renderFloatingBox を使って2つ別々のボックスを表示してよい。
+
+---
+
+## ✅ 4. 表示文言の改善：現在の支出確認
+
+- 持ち家（ローン中）のユーザーに提示する住居費確認文言を以下のように修正する：
+
+入力された住居費：120000円  
+これは月のローン返済額と一致していますか？
+
+- テキストは2行で表示すること。
+- 必要に応じて p 要素や div で分割し、視認性を高める。
+
+---
+
+# 実装要件
+
+- 表示切り替えは useState や条件分岐を使って動的に制御すること。
+- JSX ベースで表示項目を整理し、不要なフィールドは非表示にする。
+- formData に値を保持し、再入力時は上書きできるようにする。
+- renderFloatingBox を活用した返済額の表示を徹底し、レイアウト崩れがないようにすること。
+
+---
