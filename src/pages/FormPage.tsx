@@ -30,6 +30,7 @@ export default function FormPage() {
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const [showBackModal, setShowBackModal] = useState(false);
   const [visitedSections, setVisitedSections] = useState<Set<number>>(new Set([0]));
+  const [showLoanEdit, setShowLoanEdit] = useState(false);
   
   const [formData, setFormData] = useState({
     familyComposition: '', // 独身／既婚
@@ -353,23 +354,28 @@ export default function FormPage() {
     let annualPayment = 0;
     let totalPayment = 0;
 
-    if (housingLoanStatus === 'これから借りる予定') {
-      const housePurchasePrice = Number(formData.housePurchasePrice) || 0;
-      const headDownPayment = Number(formData.headDownPayment) || 0;
-      const housingLoanYears = Number(formData.housingLoanYears) || 0;
+    const isFutureBuyer = formData.housingType === '賃貸' && formData.housePurchasePlan !== null;
+    const isCurrentLoanHolder = formData.housingType === '持ち家（ローン中）' && Number(formData.loanMonthlyPayment) > 0 && Number(formData.loanRemainingYears) > 0;
 
-      if (housePurchasePrice > 0 && housingLoanYears > 0 && formData.housingLoanInterestRateType) {
-        const principal = (housePurchasePrice - headDownPayment) * 10000; // Convert to yen
+    if (housingLoanStatus === 'これから借りる予定' || isFutureBuyer) {
+      const price = (isFutureBuyer ? formData.housePurchasePlan?.price : Number(formData.housePurchasePrice)) || 0;
+      const downPayment = (isFutureBuyer ? formData.housePurchasePlan?.downPayment : Number(formData.headDownPayment)) || 0;
+      const years = (isFutureBuyer ? formData.housePurchasePlan?.loanYears : Number(formData.housingLoanYears)) || 0;
+      const interestRateType = formData.housingLoanInterestRateType;
+      const customInterestRate = (isFutureBuyer ? formData.housePurchasePlan?.interestRate : Number(formData.housingLoanInterestRate)) || 0;
+
+      if (price > 0 && years > 0 && interestRateType) {
+        const principal = (price - downPayment) * 10000; // Convert to yen
 
         let interestRate = 1.5; // Default general interest rate
-        if (formData.housingLoanInterestRateType === '指定') {
-          interestRate = Number(formData.housingLoanInterestRate) || 0;
+        if (interestRateType === '指定') {
+          interestRate = customInterestRate;
         }
-        const calculated = calculateLoanPayment(principal, interestRate, housingLoanYears);
+        const calculated = calculateLoanPayment(principal, interestRate, years);
         annualPayment = calculated.annualPayment;
         totalPayment = calculated.totalPayment;
       }
-    } else if (housingLoanStatus === 'すでに返済中') {
+    } else if (housingLoanStatus === 'すでに返済中' || isCurrentLoanHolder) {
       const loanMonthlyPayment = Number(formData.loanMonthlyPayment) || 0;
       const loanRemainingYears = Number(formData.loanRemainingYears) || 0;
 
@@ -389,6 +395,8 @@ export default function FormPage() {
     formData.housingLoanInterestRate,
     formData.loanMonthlyPayment,
     formData.loanRemainingYears,
+    formData.housePurchasePlan,
+    formData.housingType
   ]);
 
   const displayEstimatedNetIncome = useMemo(() => {
@@ -937,24 +945,53 @@ export default function FormPage() {
               </div>
             )}
 
-            {(formData.housingType === '持ち家（ローン中）') && (
+            {(formData.housingType === '持ち家（ローン中）' && formData.expenseMethod === '詳細') && (
                  <div className="mt-6">
                  <h3 className="text-lg font-semibold mb-2">現在の住宅ローンについて</h3>
                  <div>
-                    <p>入力された住居費：{formData.housingCost}円</p>
+                    <p>入力された住居費：{formData.housingCost || '未入力'}</p>
                     <p>これは月のローン返済額と一致していますか？</p>
                  </div>
                  <div className="mt-2">
                     <label className="inline-flex items-center mr-4">
-                      <input type="radio" className="custom-radio" name="housingCostConfirmation" value="yes" onChange={() => {}} />
+                      <input type="radio" className="custom-radio" name="housingCostConfirmation" value="yes" onChange={() => setShowLoanEdit(false)} />
                       <span className="ml-2">はい</span>
                     </label>
                     <label className="inline-flex items-center">
-                      <input type="radio" className="custom-radio" name="housingCostConfirmation" value="no" onChange={() => {}} />
+                      <input type="radio" className="custom-radio" name="housingCostConfirmation" value="no" onChange={() => setShowLoanEdit(true)} />
                       <span className="ml-2">いいえ</span>
                     </label>
                   </div>
+                  {showLoanEdit && (
+                    <div className="mt-4 space-y-4">
+                        <div>
+                            <label className="block text-gray-700 text-sm font-bold mb-2">ローン返済額（月額）[円]</label>
+                            <input type="number" name="loanMonthlyPayment" value={formData.loanMonthlyPayment} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                        </div>
+                        <div>
+                            <label className="block text-gray-700 text-sm font-bold mb-2">ローン残存年数[年]</label>
+                            <input type="number" name="loanRemainingYears" value={formData.loanRemainingYears} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                        </div>
+                    </div>
+                    )}
                </div>
+            )}
+
+            {(formData.housingType === '持ち家（ローン中）' && formData.expenseMethod === '簡単') && (
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold mb-2">住宅ローンの補足情報</h3>
+                <p className="text-sm text-gray-600 mb-4">簡単入力モードのため、生活費に含まれるローン返済額と残りの期間を教えてください。</p>
+                <div className="space-y-4">
+                    <div>
+                        <label className="block text-gray-700 text-sm font-bold mb-2">ローン返済額（月額）[円]</label>
+                        <input type="number" name="loanMonthlyPayment" value={formData.loanMonthlyPayment} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                    </div>
+                    <div>
+                        <label className="block text-gray-700 text-sm font-bold mb-2">ローン残存年数[年]</label>
+                        <input type="number" name="loanRemainingYears" value={formData.loanRemainingYears} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                    </div>
+                </div>
+              </div>
             )}
             
             {(formData.housingType.startsWith('持ち家') || formData.housePurchasePlan) && (
@@ -963,7 +1000,7 @@ export default function FormPage() {
                 <label className="block text-gray-700 text-sm font-bold mb-2">将来的にリフォーム・修繕の予定はありますか？</label>
                 <div className="mt-2">
                     <label className="inline-flex items-center mr-4">
-                      <input type="radio" className="custom-radio" name="renovationPlanToggle" value="yes" onChange={() => setFormData({...formData, houseRenovationPlans: [{ age: 0, cost: 0 }]})} />
+                      <input type="radio" className="custom-radio" name="renovationPlanToggle" value="yes" onChange={() => setFormData({...formData, houseRenovationPlans: [{ age: 0, cost: 150 }]})} />
                       <span className="ml-2">はい</span>
                     </label>
                     <label className="inline-flex items-center">
@@ -1431,6 +1468,16 @@ export default function FormPage() {
 
   const progress = ((currentSectionIndex + 1) / effectiveSections.length) * 100;
 
+  const isHouseLoanSection = effectiveSections[currentSectionIndex] === 'ライフイベント - 家';
+  const shouldShowLoanBox = isHouseLoanSection && 
+  (
+    formData.housingLoanStatus === 'これから借りる予定' || 
+    formData.housingLoanStatus === 'すでに返済中' || 
+    formData.housePurchasePlan !== null ||
+    (formData.housingType === '持ち家（ローン中）' && Number(formData.loanMonthlyPayment) > 0 && Number(formData.loanRemainingYears) > 0)
+);
+
+
     function renderFloatingBox(amount: number, shouldShow: boolean, label: string, topClass: string = 'top-[1.5rem]') {
   return (
     <div
@@ -1468,8 +1515,8 @@ export default function FormPage() {
         {renderFloatingBox(totalExpenses, currentSectionIndex === effectiveSections.indexOf('現在の支出') && totalExpenses > 0, "生活費総額")}
         {renderFloatingBox(displayTotalIncome, currentSectionIndex === effectiveSections.indexOf('現在の収入') && displayTotalIncome > 0, "年間収入総額")}
         {renderFloatingBox(displayEstimatedNetIncome, currentSectionIndex === effectiveSections.indexOf('現在の収入') && displayEstimatedNetIncome > 0, "推定手取り総額", "top-[5rem]")}
-        {renderFloatingBox(estimatedAnnualLoanPayment, currentSectionIndex === effectiveSections.indexOf('ライフイベント - 家') && estimatedAnnualLoanPayment > 0 && (formData.housingLoanStatus === 'これから借りる予定' || formData.housingLoanStatus === 'すでに返済中'), "年間返済額")}
-        {renderFloatingBox(estimatedTotalLoanPayment, currentSectionIndex === effectiveSections.indexOf('ライフイベント - 家') && estimatedTotalLoanPayment > 0 && (formData.housingLoanStatus === 'これから借りる予定' || formData.housingLoanStatus === 'すでに返済中'), "総返済額", "top-[5rem]")}
+        {renderFloatingBox(estimatedAnnualLoanPayment, shouldShowLoanBox && estimatedAnnualLoanPayment > 0, "年間返済額")}
+        {renderFloatingBox(estimatedTotalLoanPayment, shouldShowLoanBox && estimatedTotalLoanPayment > 0, "総返済額", "top-[5rem]")}
         {renderFloatingBox(totalCarLoanCost, currentSectionIndex === effectiveSections.indexOf('ライフイベント - 車') && totalCarLoanCost > 0, '車ローン総額')}
         {renderFloatingBox(totalCareCost * 10000, currentSectionIndex === effectiveSections.indexOf('ライフイベント - 親の介護') && totalCareCost > 0, '介護費用総額')}
         {renderFloatingBox(totalRetirementMonthly * 10000, currentSectionIndex === effectiveSections.indexOf('ライフイベント - 老後') && totalRetirementMonthly > 0, '老後の不足額')}

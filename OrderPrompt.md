@@ -1,60 +1,75 @@
-# 指示概要
+[{
+	"resource": "/c:/dev/lifeplansim/src/pages/FormPage.tsx",
+	"owner": "typescript",
+	"code": "18048",
+	"severity": 8,
+	"message": "'price' は 'undefined' の可能性があります。",
+	"source": "ts",
+	"startLineNumber": 367,
+	"startColumn": 11,
+	"endLineNumber": 367,
+	"endColumn": 16,
+	"origin": "extHost1"
+},{
+	"resource": "/c:/dev/lifeplansim/src/pages/FormPage.tsx",
+	"owner": "typescript",
+	"code": "18048",
+	"severity": 8,
+	"message": "'years' は 'undefined' の可能性があります。",
+	"source": "ts",
+	"startLineNumber": 367,
+	"startColumn": 24,
+	"endLineNumber": 367,
+	"endColumn": 29,
+	"origin": "extHost1"
+},{
+	"resource": "/c:/dev/lifeplansim/src/pages/FormPage.tsx",
+	"owner": "typescript",
+	"code": "18048",
+	"severity": 8,
+	"message": "'price' は 'undefined' の可能性があります。",
+	"source": "ts",
+	"startLineNumber": 368,
+	"startColumn": 28,
+	"endLineNumber": 368,
+	"endColumn": 33,
+	"origin": "extHost1"
+},{
+	"resource": "/c:/dev/lifeplansim/src/pages/FormPage.tsx",
+	"owner": "typescript",
+	"code": "18048",
+	"severity": 8,
+	"message": "'downPayment' は 'undefined' の可能性があります。",
+	"source": "ts",
+	"startLineNumber": 368,
+	"startColumn": 36,
+	"endLineNumber": 368,
+	"endColumn": 47,
+	"origin": "extHost1"
+},{
+	"resource": "/c:/dev/lifeplansim/src/pages/FormPage.tsx",
+	"owner": "typescript",
+	"code": "2322",
+	"severity": 8,
+	"message": "型 'number | undefined' を型 'number' に割り当てることはできません。\n  型 'undefined' を型 'number' に割り当てることはできません。",
+	"source": "ts",
+	"startLineNumber": 372,
+	"startColumn": 11,
+	"endLineNumber": 372,
+	"endColumn": 23,
+	"origin": "extHost1"
+},{
+	"resource": "/c:/dev/lifeplansim/src/pages/FormPage.tsx",
+	"owner": "typescript",
+	"code": "2345",
+	"severity": 8,
+	"message": "型 'number | undefined' の引数を型 'number' のパラメーターに割り当てることはできません。\n  型 'undefined' を型 'number' に割り当てることはできません。",
+	"source": "ts",
+	"startLineNumber": 374,
+	"startColumn": 74,
+	"endLineNumber": 374,
+	"endColumn": 79,
+	"origin": "extHost1"
+}]
 
-FormPage.tsx の「ライフイベント - 家」セクションに対し、以下4点の修正を加えてください。
-
----
-
-## ✅ 1. 金額単位の明示：「万円」統一
-
-- 家に関するすべての入力項目（購入金額・頭金・リフォーム費など）を [万円] 単位で表示すること。
-- 対象ラベルに [万円] を明記するだけでよく、値の変換（×10000など）は不要。
-
----
-
-## ✅ 2. 金利入力方式：「一般的な想定」or「指定」
-
-- formData.housingLoanInterestRateType を使用し、以下の選択肢を表示する：
-  - 一般的な想定（1.5%）
-  - 自分で金利を指定する
-
-- 「指定」を選択した場合のみ、formData.housingLoanInterestRate を入力可能にする。
-
----
-
-## ✅ 3. ローン返済額のフロート表示（2段構成）
-
-- useMemo により算出された estimatedAnnualLoanPayment（年間返済額）と estimatedTotalLoanPayment（総返済額）を右上にフロート表示する。
-- 表示条件は以下のとおり：
-  - currentSectionIndex が ライフイベント - 家 に一致
-  - formData.housingLoanStatus が「これから借りる予定」または「すでに返済中」
-  - いずれかの金額が 0 より大きい
-
-- 表示形式は以下の2段構成：
-
-年間返済額：134,000円  
-総返済額：4,020,000円
-
-- 既存の renderFloatingBox を使って2つ別々のボックスを表示してよい。
-
----
-
-## ✅ 4. 表示文言の改善：現在の支出確認
-
-- 持ち家（ローン中）のユーザーに提示する住居費確認文言を以下のように修正する：
-
-入力された住居費：120000円  
-これは月のローン返済額と一致していますか？
-
-- テキストは2行で表示すること。
-- 必要に応じて p 要素や div で分割し、視認性を高める。
-
----
-
-# 実装要件
-
-- 表示切り替えは useState や条件分岐を使って動的に制御すること。
-- JSX ベースで表示項目を整理し、不要なフィールドは非表示にする。
-- formData に値を保持し、再入力時は上書きできるようにする。
-- renderFloatingBox を活用した返済額の表示を徹底し、レイアウト崩れがないようにすること。
-
----
+各エラーを修正して。
