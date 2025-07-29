@@ -31,6 +31,7 @@ export default function FormPage() {
   const [showBackModal, setShowBackModal] = useState(false);
   const [visitedSections, setVisitedSections] = useState<Set<number>>(new Set([0]));
   const [showLoanEdit, setShowLoanEdit] = useState(false);
+  const [annualRaiseRate, setAnnualRaiseRate] = useState(1.5);
   
   const [formData, setFormData] = useState({
     familyComposition: '', // 独身／既婚
@@ -609,6 +610,19 @@ export default function FormPage() {
                   defaultValue={0}
                 />
               </div>
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700">
+                毎年の昇給率（%）
+              </label>
+              <input
+                type="number"
+                step="0.1"
+                min="0"
+                value={annualRaiseRate}
+                onChange={(e) => setAnnualRaiseRate(parseFloat(e.target.value))}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm appearance-none"
+              />
+            </div>
           </div>
         );
       case '現在の支出':
