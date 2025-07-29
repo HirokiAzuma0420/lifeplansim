@@ -412,10 +412,6 @@ export default function FormPage() {
     formData.spouseSideJobIncome,
   ]);
 
-
-
-  
-
   useEffect(() => {
     if (formData.expenseMethod === '詳細') {
       const element = document.getElementById('detailed-expense');
@@ -615,7 +611,6 @@ export default function FormPage() {
                   />
                 </div>
               </div>
-            <hr className="my-6 border-gray-300" />
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="sideJobIncome">
                 副業年間収入[万円]
