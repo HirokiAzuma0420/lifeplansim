@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* スピンボタン非表示 */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 @layer base {
   html {
     font-family: 'Roboto', 'IBM Plex Sans JP', 'Noto Sans JP', sans-serif;
