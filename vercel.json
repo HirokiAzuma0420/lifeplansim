@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "api/**/*.ts": {
+      "runtime": "vercel-node@4.0.0"
+    }
+  },
   "rewrites": [
     { "source": "/(.*)", "destination": "/" }
   ]
