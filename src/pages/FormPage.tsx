@@ -25,14 +25,15 @@ function getNetIncome(gross: number): number {
 }
 
 export default function FormPage() {
-  
-
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const [showBackModal, setShowBackModal] = useState(false);
   const [visitedSections, setVisitedSections] = useState<Set<number>>(new Set([0]));
   const [showLoanEdit, setShowLoanEdit] = useState(false);
   const [annualRaiseRate, setAnnualRaiseRate] = useState(1.5);
   const [spouseAnnualRaiseRate, setSpouseAnnualRaiseRate] = useState(1.5);
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [result, setResult] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
   
   const [formData, setFormData] = useState({
     familyComposition: '', // 独身／既婚
@@ -128,6 +129,22 @@ export default function FormPage() {
     emergencyFund: '300',
   });
 
+  const handleSimulate = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/simulate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ inputParams: formData }),
+      });
+      const data = await response.json();
+      setResult(data.result);
+    } catch (error) {
+      setResult({ error: '通信エラー' });
+    }
+    setLoading(false);
+  };
+
   const effectiveSections = useMemo(() => {
     return sections.filter((section) => {
       if (section === 'ライフイベント - 結婚' && formData.familyComposition === '既婚') return false;
@@ -203,15 +220,11 @@ export default function FormPage() {
     setFormData({ ...formData, [name]: value });
   };
 
-  
-
   const goToNextSection = () => {
     if (currentSectionIndex < effectiveSections.length - 1) {
       setCurrentSectionIndex(currentSectionIndex + 1);
     }
   };
-
-  
 
   const totalExpenses = useMemo(() => {
     if (formData.expenseMethod !== '詳細') return 0;
@@ -237,8 +250,6 @@ export default function FormPage() {
 
     return fixed + variable;
   }, [formData]);
-
-
 
   const totalIncome = useMemo(() => {
     return (
@@ -1525,6 +1536,35 @@ export default function FormPage() {
   );
 }
 
+  if (isCompleted) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl text-center">
+          <h2 className="text-2xl font-bold mb-4">入力完了</h2>
+          <p className="mb-6">ありがとうございました。入力内容を確認してください。</p>
+          <pre className="text-left bg-gray-100 p-4 rounded-md overflow-x-auto" style={{maxHeight: '400px'}}>
+            {JSON.stringify(formData, null, 2)}
+          </pre>
+          <button
+            type="button"
+            className="mt-6 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            onClick={handleSimulate}
+            disabled={loading}
+          >
+            {loading ? '送信中...' : 'シミュレーション実行'}
+          </button>
+
+          {result && (
+            <div className="mt-4 p-4 bg-gray-50 rounded">
+              <h3 className="font-semibold mb-2">シミュレーション結果</h3>
+              <pre className="text-xs">{JSON.stringify(result, null, 2)}</pre>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex justify-center w-full min-h-screen bg-gray-100">
       <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg md:max-w-5xl overflow-visible relative">
@@ -1582,7 +1622,7 @@ export default function FormPage() {
                   </button>
                 ) : (
                   <button
-                    type="submit"
+                    onClick={() => setIsCompleted(true)}
                     className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                   >
                     完了
