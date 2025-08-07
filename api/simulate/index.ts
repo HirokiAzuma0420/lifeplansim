@@ -53,7 +53,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       mainJobIncome *= (1 + incomeGrowthRate);
     }
 
-    const finalAssets = currentAssets;
+    const finalAssets = Math.round(currentAssets / 1000) * 1000;
 
     res.status(200).json({ result: { years, finalAssets } });
   } catch (error: unknown) {
