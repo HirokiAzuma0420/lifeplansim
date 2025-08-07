@@ -617,6 +617,36 @@ export default function FormPage() {
                 />
               </div>
             </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="sideJobIncome">
+                副業年間収入[万円]
+              </label>
+              <input
+                type="number"
+                id="sideJobIncome"
+                name="sideJobIncome"
+                value={formData.sideJobIncome}
+                onChange={handleInputChange}
+                className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                defaultValue={0}
+              />
+            </div>
+            {formData.familyComposition === '既婚' && (
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="spouseAge">
+                  配偶者の現在年齢[歳]
+                </label>
+                <input
+                  type="number"
+                  id="spouseAge"
+                  name="spouseAge"
+                  value={formData.spouseAge || ''}
+                  onChange={handleInputChange}
+                  className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  required
+                />
+              </div>
+            )}
             <div className={`mb-4 accordion-content ${formData.familyComposition === '既婚' ? 'open' : ''} flex items-end space-x-4`}>
                 <div className="flex-1">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="spouseMainIncome">
@@ -647,36 +677,6 @@ export default function FormPage() {
                   />
                 </div>
               </div>
-            {formData.familyComposition === '既婚' && (
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="spouseAge">
-                  配偶者の現在年齢[歳]
-                </label>
-                <input
-                  type="number"
-                  id="spouseAge"
-                  name="spouseAge"
-                  value={formData.spouseAge || ''}
-                  onChange={handleInputChange}
-                  className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  required
-                />
-              </div>
-            )}
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="sideJobIncome">
-                副業年間収入[万円]
-              </label>
-              <input
-                type="number"
-                id="sideJobIncome"
-                name="sideJobIncome"
-                value={formData.sideJobIncome}
-                onChange={handleInputChange}
-                className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                defaultValue={0}
-              />
-            </div>
             <div className={`mb-4 accordion-content ${formData.familyComposition === '既婚' ? 'open' : ''}`}>
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="spouseSideJobIncome">
                   配偶者の副業年間収入[万円]

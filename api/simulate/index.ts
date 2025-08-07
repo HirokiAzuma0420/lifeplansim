@@ -26,7 +26,15 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     const incomeGrowthRate = inputParams.incomeGrowthRate ?? 0.02;
     const livingCost = inputParams.livingCost ?? 2000000;
 
-    const years = [];
+    type YearData = {
+      year: number;
+      age: number;
+      income: number;
+      expense: number;
+      assets: number;
+    };
+
+    const years: YearData[] = [];
 
     for (let age = initialAge; age <= endAge; age++) {
       const year = new Date().getFullYear() + (age - initialAge);
@@ -50,7 +58,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     const finalAssets = currentAssets;
 
     res.status(200).json({ result: { years, finalAssets } });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Simulation error:', error);
     res.status(500).json({ error: 'Internal Server Error', details: error.message });
   }
