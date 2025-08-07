@@ -139,10 +139,93 @@ export default function FormPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           inputParams: {
-            ...formData,
             initialAge: Number(formData.personAge),
             spouseInitialAge: formData.spouseAge ? Number(formData.spouseAge) : undefined,
             endAge: Number(formData.simulationPeriodAge),
+            currentSavings: Number(formData.currentSavings) * 10000, // 万円 -> 円
+            mainJobIncome: Number(formData.mainIncome) * 10000, // 万円 -> 円
+            incomeGrowthRate: Number(annualRaiseRate) / 100, // % -> 小数
+            spouseMainIncome: Number(formData.spouseMainIncome) * 10000, // 万円 -> 円
+            spouseIncomeGrowthRate: Number(spouseAnnualRaiseRate) / 100, // % -> 小数
+            sideJobIncome: Number(formData.sideJobIncome) * 10000, // 万円 -> 円
+            spouseSideJobIncome: Number(formData.spouseSideJobIncome) * 10000, // 万円 -> 円
+            livingCost: formData.livingCostSimple ? Number(formData.livingCostSimple) * 12 : 0, // 円/月 -> 円/年
+            carPrice: Number(formData.carPrice) * 10000, // 万円 -> 円
+            carReplacementFrequency: Number(formData.carReplacementFrequency),
+            carLoanUsage: formData.carLoanUsage,
+            carLoanYears: Number(formData.carLoanYears),
+            carLoanType: formData.carLoanType,
+            housingType: formData.housingType,
+            housePurchasePlan: formData.housePurchasePlan ? {
+              age: Number(formData.housePurchasePlan.age),
+              price: Number(formData.housePurchasePlan.price) * 10000, // 万円 -> 円
+              downPayment: Number(formData.housePurchasePlan.downPayment) * 10000, // 万円 -> 円
+              loanYears: Number(formData.housePurchasePlan.loanYears),
+              interestRate: Number(formData.housePurchasePlan.interestRate) / 100, // % -> 小数
+            } : null,
+            houseRenovationPlans: formData.houseRenovationPlans.map(plan => ({
+              age: Number(plan.age),
+              cost: Number(plan.cost) * 10000, // 万円 -> 円
+              cycleYears: plan.cycleYears ? Number(plan.cycleYears) : undefined,
+            })),
+            loanMonthlyPayment: Number(formData.loanMonthlyPayment),
+            loanRemainingYears: Number(formData.loanRemainingYears),
+            housingLoanInterestRateType: formData.housingLoanInterestRateType,
+            housingLoanInterestRate: Number(formData.housingLoanInterestRate) / 100, // % -> 小数
+            monthlySavings: Number(formData.monthlySavings),
+            investmentStocksCurrent: Number(formData.investmentStocksCurrent),
+            investmentTrustCurrent: Number(formData.investmentTrustCurrent),
+            investmentBondsCurrent: Number(formData.investmentBondsCurrent),
+            investmentIdecoCurrent: Number(formData.investmentIdecoCurrent),
+            investmentCryptoCurrent: Number(formData.investmentCryptoCurrent),
+            investmentOtherCurrent: Number(formData.investmentOtherCurrent),
+            monthlyInvestmentAmounts: Object.fromEntries(
+              Object.entries(formData.monthlyInvestmentAmounts).map(([key, value]) => [key, Number(value)])
+            ),
+            investmentStocksAnnualSpot: Number(formData.investmentStocksAnnualSpot),
+            investmentTrustAnnualSpot: Number(formData.investmentTrustAnnualSpot),
+            investmentBondsAnnualSpot: Number(formData.investmentBondsAnnualSpot),
+            investmentIdecoAnnualSpot: Number(formData.investmentIdecoAnnualSpot),
+            investmentCryptoAnnualSpot: Number(formData.investmentCryptoAnnualSpot),
+            investmentOtherAnnualSpot: Number(formData.investmentOtherAnnualSpot),
+            investmentStocksRate: Number(formData.investmentStocksRate) / 100,
+            investmentTrustRate: Number(formData.investmentTrustRate) / 100,
+            investmentBondsRate: Number(formData.investmentBondsRate) / 100,
+            investmentIdecoRate: Number(formData.investmentIdecoRate) / 100,
+            investmentCryptoRate: Number(formData.investmentCryptoRate) / 100,
+            investmentOtherRate: Number(formData.investmentOtherRate) / 100,
+            emergencyFund: Number(formData.emergencyFund) * 10000, // 万円 -> 円
+            // Add other fields from formData that are directly passed and need Number() conversion
+            // For example, from the '貯蓄' and '投資' sections
+            // These are not explicitly mentioned in the prompt's example, but should be handled.
+            // The prompt says "...必要な変換とキー統一" so I should try to cover all relevant ones.
+            // Let's check formData structure again.
+            // currentSavings: '', // 万円
+            // monthlySavings: '', // 円
+            // investmentStocksCurrent: '', // 円
+            // investmentTrustCurrent: '', // 円
+            // investmentBondsCurrent: '', // 円
+            // investmentIdecoCurrent: '', // 円
+            // investmentCryptoCurrent: '', // 円
+            // investmentOtherCurrent: '', // 円
+            // monthlyInvestmentAmounts: { ... }, // 円
+            // investmentStocksAnnualSpot: '', // 円
+            // investmentTrustAnnualSpot: '', // 円
+            // investmentBondsAnnualSpot: '', // 円
+            // investmentIdecoAnnualSpot: '', // 円
+            // investmentCryptoAnnualSpot: '', // 円
+            // investmentOtherAnnualSpot: '', // 円
+            // investmentStocksRate: '6.0', // %
+            // investmentTrustRate: '4.0', // %
+            // investmentBondsRate: '1.0', // %
+            // investmentIdecoRate: '4.0', // %
+            // investmentCryptoRate: '8.0', // %
+            // investmentOtherRate: '0.5', // %
+            // emergencyFund: '300', // 万円
+
+            // Also need to pass annualRaiseRate and spouseAnnualRaiseRate from state
+            annualRaiseRate: Number(annualRaiseRate), // This is already a number from state, but let's be explicit
+            spouseAnnualRaiseRate: Number(spouseAnnualRaiseRate), // Same here
           }
         }),
       });
