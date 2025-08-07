@@ -59,6 +59,7 @@ export default function FormPage() {
     socializingCost: '',
     hobbyEntertainmentCost: '',
     otherVariableCost: '0',
+    carFirstReplacementAfterYears: '',
     carPrice: '',
     carReplacementFrequency: '',
     carLoanUsage: '',
@@ -90,6 +91,8 @@ export default function FormPage() {
     educationPattern: '', // 公立中心／公私混合／私立中心
     currentRentLoanPayment: '',
     otherLargeExpenses: '',
+    parentCurrentAge: '',
+    parentCareStartAge: '',
     parentCareAssumption: '', // はい／いいえ／まだ分からない
     parentCareMonthlyCost: '10',
     parentCareYears: '5',
@@ -226,6 +229,15 @@ export default function FormPage() {
             // Also need to pass annualRaiseRate and spouseAnnualRaiseRate from state
             annualRaiseRate: Number(annualRaiseRate), // This is already a number from state, but let's be explicit
             spouseAnnualRaiseRate: Number(spouseAnnualRaiseRate), // Same here
+            parentCurrentAge: Number(formData.parentCurrentAge),
+            parentCareStartAge: Number(formData.parentCareStartAge),
+            carFirstReplacementAfterYears: Number(formData.carFirstReplacementAfterYears),
+            applianceReplacements: applianceReplacements.map(appliance => ({
+              ...appliance,
+              cycle: Number(appliance.cycle),
+              cost: Number(appliance.cost) * 10000, // 万円 -> 円
+              firstReplacementAfterYears: Number(appliance.firstReplacementAfterYears),
+            })),
           }
         }),
       });
@@ -246,12 +258,12 @@ export default function FormPage() {
   }, [formData.familyComposition]);
 
   const [applianceReplacements, setApplianceReplacements] = useState([
-    { name: '冷蔵庫', cycle: 10, cost: 15 },
-    { name: '洗濯機', cycle: 8, cost: 12 },
-    { name: 'エアコン', cycle: 10, cost: 10 },
-    { name: 'テレビ', cycle: 10, cost: 8 },
-    { name: '電子レンジ', cycle: 8, cost: 3 },
-    { name: '掃除機', cycle: 6, cost: 2 },
+    { name: '冷蔵庫', cycle: 10, cost: 15, firstReplacementAfterYears: 0 },
+    { name: '洗濯機', cycle: 8, cost: 12, firstReplacementAfterYears: 0 },
+    { name: 'エアコン', cycle: 10, cost: 10, firstReplacementAfterYears: 0 },
+    { name: 'テレビ', cycle: 10, cost: 8, firstReplacementAfterYears: 0 },
+    { name: '電子レンジ', cycle: 8, cost: 3, firstReplacementAfterYears: 0 },
+    { name: '掃除機', cycle: 6, cost: 2, firstReplacementAfterYears: 0 },
   ]);
 
   const handleApplianceChange = (index: number, field: string, value: string) => {
@@ -261,7 +273,7 @@ export default function FormPage() {
   };
 
   const addAppliance = () => {
-    setApplianceReplacements([...applianceReplacements, { name: '', cycle: 0, cost: 0 }]);
+    setApplianceReplacements([...applianceReplacements, { name: '', cycle: 0, cost: 0, firstReplacementAfterYears: 0 }]);
   };
 
   const handleRemoveAppliance = (index: number) => {
@@ -933,6 +945,12 @@ export default function FormPage() {
             </div>
             <h2 className="text-2xl font-bold text-center mb-4">車に関する質問</h2>
             <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carFirstReplacementAfterYears">
+                初回買い替えは今から何年後？[年]
+              </label>
+              <input type="number" id="carFirstReplacementAfterYears" name="carFirstReplacementAfterYears" value={formData.carFirstReplacementAfterYears} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+            </div>
+            <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carPrice">
                 今後買い替える車の価格帯は？[万円]
               </label>
@@ -1352,11 +1370,12 @@ export default function FormPage() {
             <div className="grid grid-cols-[auto_auto_auto_min-content] gap-2 mb-2 text-sm text-gray-600 font-semibold">
               <div>家電名</div>
               <div>買い替えサイクル（年）</div>
+              <div>初回買い替え（年後）</div>
               <div>1回あたりの費用（万円）</div>
               <div></div>
             </div>
             {applianceReplacements.map((appliance, index) => (
-              <div key={index} className="grid grid-cols-[auto_auto_auto_min-content] gap-4 mb-2 items-center">
+              <div key={index} className="grid grid-cols-[auto_auto_auto_auto_min-content] gap-4 mb-2 items-center">
                 <input
                   type="text"
                   placeholder="家電名"
@@ -1369,6 +1388,13 @@ export default function FormPage() {
                   placeholder="買い替えサイクル（年）"
                   value={appliance.cycle}
                   onChange={(e) => handleApplianceChange(index, 'cycle', e.target.value)}
+                  className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+                <input
+                  type="number"
+                  placeholder="初回買い替え（年後）"
+                  value={appliance.firstReplacementAfterYears}
+                  onChange={(e) => handleApplianceChange(index, 'firstReplacementAfterYears', e.target.value)}
                   className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 />
                 <input
@@ -1403,6 +1429,18 @@ export default function FormPage() {
               <img src="/form/Q4-parenthelp.png"></img>
             </div>
             <h2 className="text-2xl font-bold text-center mb-4">親の介護に関する質問</h2>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="parentCurrentAge">
+                親の現在の年齢[歳]
+              </label>
+              <input type="number" id="parentCurrentAge" name="parentCurrentAge" value={formData.parentCurrentAge} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="parentCareStartAge">
+                親の要介護開始年齢[歳]
+              </label>
+              <input type="number" id="parentCareStartAge" name="parentCareStartAge" value={formData.parentCareStartAge} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+            </div>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 親の介護が将来発生すると想定しますか？

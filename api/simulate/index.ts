@@ -1,5 +1,11 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
+interface ApplianceReplacement {
+  name: string;
+  cycle: number;
+  cost: number;
+}
+
 interface HousePurchasePlan {
   age: number;
   price: number;
@@ -23,6 +29,13 @@ interface MonthlyInvestmentAmounts {
   investmentOtherMonthly: number;
 }
 
+interface ApplianceReplacement {
+  name: string;
+  cycle: number;
+  cost: number;
+  firstReplacementAfterYears: number;
+}
+
 interface InputParams {
   initialAge?: number;
   endAge?: number;
@@ -40,6 +53,7 @@ interface InputParams {
   carLoanUsage?: 'はい' | 'いいえ';
   carLoanYears?: number;
   carLoanType?: '銀行ローン' | 'ディーラーローン';
+  carFirstReplacementAfterYears?: number; // 追加
   housingType?: '賃貸' | '持ち家（ローン中）' | '持ち家（完済）';
   housePurchasePlan?: HousePurchasePlan | null;
   houseRenovationPlans?: HouseRenovationPlan[];
@@ -68,6 +82,21 @@ interface InputParams {
   investmentCryptoRate?: number; // 小数
   investmentOtherRate?: number; // 小数
   emergencyFund?: number; // 円
+  // Step 4 additions
+  hasChildren?: 'はい' | 'いいえ';
+  numberOfChildren?: number;
+  firstBornAge?: number;
+  educationPattern?: '公立中心' | '公私混合' | '私立中心';
+  applianceReplacements?: ApplianceReplacement[];
+  parentCareAssumption?: 'はい' | 'いいえ' | 'まだ分からない';
+  parentCurrentAge?: number; // 追加
+  parentCareStartAge?: number; // 追加
+  parentCareMonthlyCost?: number; // 円
+  parentCareYears?: number;
+  retirementAge?: number;
+  postRetirementLivingCost?: number; // 円
+  pensionStartAge?: number;
+  pensionAmount?: number; // 円
 }
 
 interface YearlyData {
@@ -81,6 +110,10 @@ interface YearlyData {
   expense: number;
   carExpense: number;
   housingExpense: number;
+  childExpense: number;
+  applianceExpense: number;
+  careExpense: number;
+  retirementExpense: number;
   assets: number;
 }
 
@@ -173,6 +206,22 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const emergencyFund = Number(inputParams.emergencyFund || 0); // 円
 
+    // Step 4 additions
+    const hasChildren = inputParams.hasChildren;
+    const numberOfChildren = Number(inputParams.numberOfChildren || 0);
+    const firstBornAge = Number(inputParams.firstBornAge || 0);
+    const educationPattern = inputParams.educationPattern;
+    const applianceReplacements = inputParams.applianceReplacements || [];
+    const parentCareAssumption = inputParams.parentCareAssumption;
+    const parentCurrentAge = Number(inputParams.parentCurrentAge || 0);
+    const parentCareStartAge = Number(inputParams.parentCareStartAge || 0);
+    const parentCareMonthlyCost = Number(inputParams.parentCareMonthlyCost || 0); // 円
+    const parentCareYears = Number(inputParams.parentCareYears || 0);
+    const retirementAge = Number(inputParams.retirementAge || 0);
+    const postRetirementLivingCost = Number(inputParams.postRetirementLivingCost || 0); // 円
+    const pensionStartAge = Number(inputParams.pensionStartAge || 0);
+    const pensionAmount = Number(inputParams.pensionAmount || 0); // 円
+
     // Helper function for loan calculation
     const calculateLoanPayment = (principal: number, annualInterestRate: number, years: number): number => {
       if (principal <= 0 || annualInterestRate < 0 || years <= 0) {
@@ -203,9 +252,59 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       let currentYearExpense = livingCost;
       let carExpense = 0;
       let housingExpense = 0;
+      let childExpense = 0;
+      let applianceExpense = 0;
+      let careExpense = 0;
+      let retirementExpense = 0;
+
+      // Child expense calculation
+      if (hasChildren === 'はい' && numberOfChildren > 0 && age >= firstBornAge) {
+        let educationCostPerChild = 0;
+        switch (educationPattern) {
+          case '公立中心':
+            educationCostPerChild = 10000000; // 1000万円
+            break;
+          case '公私混合':
+            educationCostPerChild = 16000000; // 1600万円
+            break;
+          case '私立中心':
+            educationCostPerChild = 20000000; // 2000万円
+            break;
+        }
+        // Simplified: distribute total cost over 22 years (0-21 age)
+        childExpense = (educationCostPerChild * numberOfChildren) / 22;
+        currentYearExpense += childExpense;
+      }
+
+      // Appliance replacement expense calculation
+      applianceReplacements.forEach(appliance => {
+        if (appliance.cycle > 0 && (age - initialAge - appliance.firstReplacementAfterYears) >= 0 && (age - initialAge - appliance.firstReplacementAfterYears) % appliance.cycle === 0) {
+          applianceExpense += appliance.cost; // cost is already in Yen
+        }
+      });
+      currentYearExpense += applianceExpense;
+
+      // Parent care expense calculation
+      if (parentCareAssumption === 'はい' && parentCurrentAge > 0 && parentCareStartAge > 0) {
+        const yearsUntilCare = parentCareStartAge - parentCurrentAge;
+        if (age - initialAge >= yearsUntilCare && age - initialAge < yearsUntilCare + parentCareYears) {
+          careExpense = parentCareMonthlyCost * 12;
+          currentYearExpense += careExpense;
+        }
+      }
+
+      // Retirement expense calculation
+      if (age >= pensionStartAge) {
+        const pensionIncome = pensionAmount * 12;
+        const livingCostAfterRetirement = postRetirementLivingCost * 12;
+        if (livingCostAfterRetirement > pensionIncome) {
+          retirementExpense = livingCostAfterRetirement - pensionIncome;
+          currentYearExpense += retirementExpense;
+        }
+      }
 
       // Car expense calculation
-      if (carPrice > 0 && carReplacementFrequency > 0 && (age - initialAge) % carReplacementFrequency === 0) {
+      if (carPrice > 0 && carReplacementFrequency > 0 && (age - initialAge - Number(inputParams.carFirstReplacementAfterYears || 0)) >= 0 && (age - initialAge - Number(inputParams.carFirstReplacementAfterYears || 0)) % carReplacementFrequency === 0) {
         if (carLoanUsage === 'はい') {
           let annualRate = 0.025; // default decimal
           if (carLoanType === '銀行ローン') annualRate = 0.015;
@@ -247,7 +346,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
       currentAssets = currentAssets + currentYearIncome - currentYearExpense;
 
-      console.log(`Age: ${age}, Income: ${currentYearIncome}, Expense: ${currentYearExpense}, Assets: ${currentAssets}, CarExpense: ${carExpense}, HousingExpense: ${housingExpense}`);
+      console.log(`Age: ${age}, Income: ${currentYearIncome}, Expense: ${currentYearExpense}, Assets: ${currentAssets}, CarExpense: ${carExpense}, HousingExpense: ${housingExpense}, ChildExpense: ${childExpense}, ApplianceExpense: ${applianceExpense}, CareExpense: ${careExpense}, RetirementExpense: ${retirementExpense}`);
       console.log(`Types - Income: ${typeof currentYearIncome}, Expense: ${typeof currentYearExpense}, Assets: ${typeof currentAssets}`);
 
       years.push({
@@ -261,6 +360,10 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
         expense: Math.round(currentYearExpense / 1000) * 1000,
         carExpense: Math.round(carExpense / 1000) * 1000,
         housingExpense: Math.round(housingExpense / 1000) * 1000,
+        childExpense: Math.round(childExpense / 1000) * 1000,
+        applianceExpense: Math.round(applianceExpense / 1000) * 1000,
+        careExpense: Math.round(careExpense / 1000) * 1000,
+        retirementExpense: Math.round(retirementExpense / 1000) * 1000,
         assets: Math.round(currentAssets / 1000) * 1000,
       });
 
