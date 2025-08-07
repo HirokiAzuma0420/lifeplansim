@@ -37,6 +37,8 @@ export default function FormPage() {
   
   const [formData, setFormData] = useState({
     familyComposition: '', // 独身／既婚
+    personAge: '',
+    spouseAge: '',
     mainIncome: '',
     spouseMainIncome: '',
     sideJobIncome: '0',
@@ -135,7 +137,14 @@ export default function FormPage() {
       const response = await fetch('/api/simulate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ inputParams: formData }),
+        body: JSON.stringify({
+          inputParams: {
+            ...formData,
+            initialAge: Number(formData.personAge),
+            spouseInitialAge: formData.spouseAge ? Number(formData.spouseAge) : undefined,
+            endAge: Number(formData.simulationPeriodAge),
+          }
+        }),
       });
       const data = await response.json();
       setResult(data.result);
@@ -563,6 +572,21 @@ export default function FormPage() {
             </div>
             <h2 className="text-2xl font-bold text-center mb-4">現在の収入に関する質問</h2>
             
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="personAge">
+                本人の現在年齢[歳]
+              </label>
+              <input
+                type="number"
+                id="personAge"
+                name="personAge"
+                value={formData.personAge || ''}
+                onChange={handleInputChange}
+                className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                required
+              />
+            </div>
+
             <div className="mb-4 flex items-end space-x-4">
               <div className="flex-1">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="mainIncome">
@@ -623,6 +647,22 @@ export default function FormPage() {
                   />
                 </div>
               </div>
+            {formData.familyComposition === '既婚' && (
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="spouseAge">
+                  配偶者の現在年齢[歳]
+                </label>
+                <input
+                  type="number"
+                  id="spouseAge"
+                  name="spouseAge"
+                  value={formData.spouseAge || ''}
+                  onChange={handleInputChange}
+                  className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  required
+                />
+              </div>
+            )}
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="sideJobIncome">
                 副業年間収入[万円]

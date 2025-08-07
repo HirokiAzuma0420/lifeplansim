@@ -7,6 +7,7 @@ interface InputParams {
   mainJobIncome?: number;
   incomeGrowthRate?: number;
   livingCost?: number;
+  spouseInitialAge?: number;
 }
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
@@ -15,24 +16,17 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const inputParams: InputParams = req.body || {};
+    const inputParams: InputParams = req.body.inputParams || {};
 
     const initialAge = inputParams.initialAge ?? 25;
-    const endAge = inputParams.endAge ?? 65;
+    const endAge = inputParams.endAge ?? 90;
+    const spouseInitialAge = inputParams.spouseInitialAge; // 将来拡張用
     let currentAssets = inputParams.currentSavings ?? 1000000;
     let mainJobIncome = inputParams.mainJobIncome ?? 4000000;
     const incomeGrowthRate = inputParams.incomeGrowthRate ?? 0.02;
     const livingCost = inputParams.livingCost ?? 2000000;
 
-    type YearData = {
-    year: number;
-    age: number;
-    income: number;
-    expense: number;
-    assets: number;
-    };
-
-    const years: YearData[] = [];
+    const years = [];
 
     for (let age = initialAge; age <= endAge; age++) {
       const year = new Date().getFullYear() + (age - initialAge);
@@ -45,26 +39,19 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       years.push({
         year,
         age,
-        income: Math.round(currentYearIncome / 1000) * 1000,
-        expense: Math.round(currentYearExpense / 1000) * 1000,
-        assets: Math.round(currentAssets / 1000) * 1000,
+        income: currentYearIncome,
+        expense: currentYearExpense,
+        assets: currentAssets,
       });
 
       mainJobIncome *= (1 + incomeGrowthRate);
     }
 
-    const finalAssets = Math.round(currentAssets / 1000) * 1000;
+    const finalAssets = currentAssets;
 
     res.status(200).json({ result: { years, finalAssets } });
-  } catch (error: unknown) {
-  if (error instanceof Error) {
-    // Error型なら .message が使える
-    console.error('Simulation error:', error.message);
-    res.status(500).json({ error: 'Internal Server Error', details: error.message });
-  } else {
-    // それ以外（たとえばstring型やnumber型）も考慮
+  } catch (error: any) {
     console.error('Simulation error:', error);
-    res.status(500).json({ error: 'Internal Server Error', details: String(error) });
-  }
+    res.status(500).json({ error: 'Internal Server Error', details: error.message });
   }
 }
