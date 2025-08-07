@@ -1,11 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-interface ApplianceReplacement {
-  name: string;
-  cycle: number;
-  cost: number;
-}
-
 interface HousePurchasePlan {
   age: number;
   price: number;
@@ -114,6 +108,8 @@ interface YearlyData {
   applianceExpense: number;
   careExpense: number;
   retirementExpense: number;
+  monthlySavings: number;
+  investmentGains: number;
   assets: number;
 }
 
@@ -145,6 +141,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     const carLoanUsage = inputParams.carLoanUsage;
     const carLoanYears = Number(inputParams.carLoanYears || 0);
     const carLoanType = inputParams.carLoanType;
+    const carFirstReplacementAfterYears = Number(inputParams.carFirstReplacementAfterYears || 0);
 
     // Housing related inputs
     const housingType = inputParams.housingType;
@@ -156,7 +153,6 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     const housingLoanInterestRate = Number(inputParams.housingLoanInterestRate || 0); // 小数
 
     // Savings and Investment related inputs
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const monthlySavings = Number(inputParams.monthlySavings || 0); // 円
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const investmentStocksCurrent = Number(inputParams.investmentStocksCurrent || 0); // 円
@@ -170,7 +166,6 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     const investmentCryptoCurrent = Number(inputParams.investmentCryptoCurrent || 0); // 円
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const investmentOtherCurrent = Number(inputParams.investmentOtherCurrent || 0); // 円
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const monthlyInvestmentAmounts = inputParams.monthlyInvestmentAmounts || {
       investmentStocksMonthly: 0,
       investmentTrustMonthly: 0,
@@ -179,29 +174,17 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       investmentCryptoMonthly: 0,
       investmentOtherMonthly: 0,
     };
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const investmentStocksAnnualSpot = Number(inputParams.investmentStocksAnnualSpot || 0); // 円
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const investmentTrustAnnualSpot = Number(inputParams.investmentTrustAnnualSpot || 0); // 円
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const investmentBondsAnnualSpot = Number(inputParams.investmentBondsAnnualSpot || 0); // 円
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const investmentIdecoAnnualSpot = Number(inputParams.investmentIdecoAnnualSpot || 0); // 円
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const investmentCryptoAnnualSpot = Number(inputParams.investmentCryptoAnnualSpot || 0); // 円
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const investmentOtherAnnualSpot = Number(inputParams.investmentOtherAnnualSpot || 0); // 円
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const investmentStocksRate = Number(inputParams.investmentStocksRate || 0); // 小数
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const investmentTrustRate = Number(inputParams.investmentTrustRate || 0); // 小数
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const investmentBondsRate = Number(inputParams.investmentBondsRate || 0); // 小数
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const investmentIdecoRate = Number(inputParams.investmentIdecoRate || 0); // 小数
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const investmentCryptoRate = Number(inputParams.investmentCryptoRate || 0); // 小数
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const investmentOtherRate = Number(inputParams.investmentOtherRate || 0); // 小数
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const emergencyFund = Number(inputParams.emergencyFund || 0); // 円
@@ -217,6 +200,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     const parentCareStartAge = Number(inputParams.parentCareStartAge || 0);
     const parentCareMonthlyCost = Number(inputParams.parentCareMonthlyCost || 0); // 円
     const parentCareYears = Number(inputParams.parentCareYears || 0);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const retirementAge = Number(inputParams.retirementAge || 0);
     const postRetirementLivingCost = Number(inputParams.postRetirementLivingCost || 0); // 円
     const pensionStartAge = Number(inputParams.pensionStartAge || 0);
@@ -240,6 +224,17 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
     const years: YearlyData[] = [];
 
+    // Track car loan repayment periods
+    const carLoanRepaymentPeriods: { startAge: number; endAge: number; annualPayment: number }[] = [];
+
+    // Initialize investment balances
+    let investmentStocksBalance = Number(inputParams.investmentStocksCurrent || 0);
+    let investmentTrustBalance = Number(inputParams.investmentTrustCurrent || 0);
+    let investmentBondsBalance = Number(inputParams.investmentBondsCurrent || 0);
+    let investmentIdecoBalance = Number(inputParams.investmentIdecoCurrent || 0);
+    let investmentCryptoBalance = Number(inputParams.investmentCryptoCurrent || 0);
+    let investmentOtherBalance = Number(inputParams.investmentOtherCurrent || 0);
+
     for (let age = initialAge; age <= endAge; age++) {
       const year = new Date().getFullYear() + (age - initialAge);
 
@@ -256,9 +251,12 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       let applianceExpense = 0;
       let careExpense = 0;
       let retirementExpense = 0;
+      let investmentGains = 0;
 
       // Child expense calculation
-      if (hasChildren === 'はい' && numberOfChildren > 0 && age >= firstBornAge) {
+      const childStartAge = Number(firstBornAge);
+      const childEndAge = childStartAge + 22; // 22 years of education
+      if (hasChildren === 'はい' && numberOfChildren > 0 && age >= childStartAge && age < childEndAge) {
         let educationCostPerChild = 0;
         switch (educationPattern) {
           case '公立中心':
@@ -271,14 +269,14 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
             educationCostPerChild = 20000000; // 2000万円
             break;
         }
-        // Simplified: distribute total cost over 22 years (0-21 age)
         childExpense = (educationCostPerChild * numberOfChildren) / 22;
         currentYearExpense += childExpense;
       }
 
       // Appliance replacement expense calculation
       applianceReplacements.forEach(appliance => {
-        if (appliance.cycle > 0 && (age - initialAge - appliance.firstReplacementAfterYears) >= 0 && (age - initialAge - appliance.firstReplacementAfterYears) % appliance.cycle === 0) {
+        const applianceStartAge = initialAge + Number(appliance.firstReplacementAfterYears);
+        if (appliance.cycle > 0 && age >= applianceStartAge && (age - applianceStartAge) % appliance.cycle === 0) {
           applianceExpense += appliance.cost; // cost is already in Yen
         }
       });
@@ -286,8 +284,8 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
       // Parent care expense calculation
       if (parentCareAssumption === 'はい' && parentCurrentAge > 0 && parentCareStartAge > 0) {
-        const yearsUntilCare = parentCareStartAge - parentCurrentAge;
-        if (age - initialAge >= yearsUntilCare && age - initialAge < yearsUntilCare + parentCareYears) {
+        const careStartAge = initialAge + (parentCareStartAge - parentCurrentAge);
+        if (age >= careStartAge && age < careStartAge + parentCareYears) {
           careExpense = parentCareMonthlyCost * 12;
           currentYearExpense += careExpense;
         }
@@ -304,30 +302,48 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       // Car expense calculation
-      if (carPrice > 0 && carReplacementFrequency > 0 && (age - initialAge - Number(inputParams.carFirstReplacementAfterYears || 0)) >= 0 && (age - initialAge - Number(inputParams.carFirstReplacementAfterYears || 0)) % carReplacementFrequency === 0) {
-        if (carLoanUsage === 'はい') {
-          let annualRate = 0.025; // default decimal
-          if (carLoanType === '銀行ローン') annualRate = 0.015;
-          else if (carLoanType === 'ディーラーローン') annualRate = 0.045;
-          carExpense = calculateLoanPayment(carPrice, annualRate, carLoanYears);
-        } else {
-          carExpense = carPrice;
+      if (carPrice > 0 && carReplacementFrequency > 0) {
+        const carPurchaseAge = initialAge + carFirstReplacementAfterYears;
+        if (age >= carPurchaseAge && (age - carPurchaseAge) % carReplacementFrequency === 0) {
+          if (carLoanUsage === 'はい') {
+            let annualRate = 0.025; // default decimal
+            if (carLoanType === '銀行ローン') annualRate = 0.015;
+            else if (carLoanType === 'ディーラーローン') annualRate = 0.045;
+            const loanAnnualPayment = calculateLoanPayment(carPrice, annualRate, carLoanYears);
+            carLoanRepaymentPeriods.push({ startAge: age, endAge: age + carLoanYears, annualPayment: loanAnnualPayment });
+          } else {
+            carExpense += carPrice;
+          }
         }
-        currentYearExpense += carExpense;
       }
 
+      // Add car loan repayments to expense
+      carLoanRepaymentPeriods.forEach(loan => {
+        if (age >= loan.startAge && age < loan.endAge) {
+          carExpense += loan.annualPayment;
+        }
+      });
+      currentYearExpense += carExpense;
+
       // Housing expense calculation
-      if (housingType === '賃貸' && housePurchasePlan && age === housePurchasePlan.age) {
+      if (housingType === '賃貸' && housePurchasePlan) {
         const principal = Number(housePurchasePlan.price) - Number(housePurchasePlan.downPayment);
         let interestRate = 0.015; // Default general interest rate decimal
         if (housingLoanInterestRateType === '指定') {
           interestRate = housingLoanInterestRate;
         }
-        housingExpense = calculateLoanPayment(principal, interestRate, Number(housePurchasePlan.loanYears));
+        const loanAnnualPayment = calculateLoanPayment(principal, interestRate, Number(housePurchasePlan.loanYears));
+        if (age >= housePurchasePlan.age && age < housePurchasePlan.age + Number(housePurchasePlan.loanYears)) {
+          housingExpense += loanAnnualPayment;
+        }
         currentYearExpense += housingExpense;
       } else if (housingType === '持ち家（ローン中）' && loanMonthlyPayment > 0 && loanRemainingYears > 0) {
-        // Assuming loanMonthlyPayment is monthly, convert to annual
-        housingExpense = loanMonthlyPayment * 12;
+        // Existing loan repayment
+        const existingLoanAnnualPayment = loanMonthlyPayment * 12;
+        // Assuming the existing loan starts from initialAge and continues for loanRemainingYears
+        if (age >= initialAge && age < initialAge + loanRemainingYears) {
+          housingExpense += existingLoanAnnualPayment;
+        }
         currentYearExpense += housingExpense;
       }
 
@@ -339,6 +355,27 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
         }
       });
 
+      // Savings and Investment calculation
+      currentAssets += monthlySavings * 12; // Add annual savings
+
+      // Apply investment gains/losses
+      investmentGains += investmentStocksBalance * investmentStocksRate;
+      investmentGains += investmentTrustBalance * investmentTrustRate;
+      investmentGains += investmentBondsBalance * investmentBondsRate;
+      investmentGains += investmentIdecoBalance * investmentIdecoRate;
+      investmentGains += investmentCryptoBalance * investmentCryptoRate;
+      investmentGains += investmentOtherBalance * investmentOtherRate;
+
+      currentAssets += investmentGains;
+
+      // Add monthly and annual spot investments to balances
+      investmentStocksBalance += monthlyInvestmentAmounts.investmentStocksMonthly * 12 + investmentStocksAnnualSpot;
+      investmentTrustBalance += monthlyInvestmentAmounts.investmentTrustMonthly * 12 + investmentTrustAnnualSpot;
+      investmentBondsBalance += monthlyInvestmentAmounts.investmentBondsMonthly * 12 + investmentBondsAnnualSpot;
+      investmentIdecoBalance += monthlyInvestmentAmounts.investmentIdecoMonthly * 12 + investmentIdecoAnnualSpot;
+      investmentCryptoBalance += monthlyInvestmentAmounts.investmentCryptoMonthly * 12 + investmentCryptoAnnualSpot;
+      investmentOtherBalance += monthlyInvestmentAmounts.investmentOtherMonthly * 12 + investmentOtherAnnualSpot;
+
       // Type and NaN checks before asset calculation
       if (typeof currentAssets !== 'number' || isNaN(currentAssets)) throw new Error(`Invalid currentAssets type or NaN at age ${age}: ${currentAssets}`);
       if (typeof currentYearIncome !== 'number' || isNaN(currentYearIncome)) throw new Error(`Invalid currentYearIncome type or NaN at age ${age}: ${currentYearIncome}`);
@@ -346,7 +383,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
       currentAssets = currentAssets + currentYearIncome - currentYearExpense;
 
-      console.log(`Age: ${age}, Income: ${currentYearIncome}, Expense: ${currentYearExpense}, Assets: ${currentAssets}, CarExpense: ${carExpense}, HousingExpense: ${housingExpense}, ChildExpense: ${childExpense}, ApplianceExpense: ${applianceExpense}, CareExpense: ${careExpense}, RetirementExpense: ${retirementExpense}`);
+      console.log(`Age: ${age}, Income: ${currentYearIncome}, Expense: ${currentYearExpense}, Assets: ${currentAssets}, CarExpense: ${carExpense}, HousingExpense: ${housingExpense}, ChildExpense: ${childExpense}, ApplianceExpense: ${applianceExpense}, CareExpense: ${careExpense}, RetirementExpense: ${retirementExpense}, MonthlySavings: ${monthlySavings}, InvestmentGains: ${investmentGains}`);
       console.log(`Types - Income: ${typeof currentYearIncome}, Expense: ${typeof currentYearExpense}, Assets: ${typeof currentAssets}`);
 
       years.push({
@@ -364,6 +401,8 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
         applianceExpense: Math.round(applianceExpense / 1000) * 1000,
         careExpense: Math.round(careExpense / 1000) * 1000,
         retirementExpense: Math.round(retirementExpense / 1000) * 1000,
+        monthlySavings: Math.round(monthlySavings / 1000) * 1000,
+        investmentGains: Math.round(investmentGains / 1000) * 1000,
         assets: Math.round(currentAssets / 1000) * 1000,
       });
 

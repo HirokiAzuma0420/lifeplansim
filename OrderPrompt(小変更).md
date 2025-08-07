@@ -1,80 +1,79 @@
-# ローカルLLMへの厳密プロンプト：親の介護開始年齢・家電/車買い替え初回年指定ロジック実装
+# ローカルLLMへの厳密プロンプト：ローン返済計上・子供支出修正指示
 
 ---
 
-## 目的
-1. 親の要介護開始年齢や親年齢を入力できるようにし、その年齢から介護支出を加算できるロジックに拡張すること。
-2. 車や家電の「買い替えサイクル」だけでなく、「今から何年後に初回買い替えが発生するか」を入力フォームで受け、ロジックで初回年と周期に基づき正しく加算できるようにすること。
+## 【目的】
+1. 車・住宅ローンの支出は「ローン期間中、毎年返済額を加算」するようロジックを修正せよ（初年度のみの一括計上は不可）。
+2. 子供支出（教育費）は「firstBornAgeから22年間」childExpenseを均等割で毎年加算し、その年の支出に反映させること。
+3. 入力値（numberOfChildren, firstBornAgeなど）はstring型で渡ることがあるため、ロジック内で必ずNumber()型変換し、バリデーション・計算の判定漏れが起きないようにせよ。
 
 ---
 
-## 【Step1】親の介護支出の入力・ロジック拡張
+## 【Step1】車ローン返済ロジック修正
 
-### A. **FormPage.tsx 側の入力フォーム拡張**
-1. 介護項目の入力欄として以下を追加せよ。
-   - 親の現在年齢（parentCurrentAge: number）
-   - 親の要介護開始年齢（parentCareStartAge: number）
-   - 介護月額費用（parentCareMonthlyCost: number）【既存】
-   - 介護期間（parentCareYears: number）【既存】
-2. 送信時、これらをinputParamsでAPIに渡すこと。
+### A. 年ループ内で
+- 車をローンで購入した場合、ローン返済開始年（初回買替年）からローン終了年（ローン年数分）まで、毎年carExpenseに年額返済額を加算するようにすること。
 
-### B. **index.ts 側のロジック**
-1. `parentCurrentAge`と`parentCareStartAge`から、要介護が始まる年齢を算出し、年次ループの中で
-if (age === initialAge + (parentCareStartAge - parentCurrentAge)
-|| (age > initialAge + (parentCareStartAge - parentCurrentAge)
-&& age < initialAge + (parentCareStartAge - parentCurrentAge) + parentCareYears)) {
-careExpense = parentCareMonthlyCost * 12;
-currentYearExpense += careExpense;
-}
-
-
-のように、「親の要介護開始年齢から指定年数だけ」介護費用を加算するよう修正せよ。
-
----
-
-## 【Step2】車・家電「買い替え初回年」入力とロジック実装
-
-### A. **FormPage.tsx 側の入力フォーム拡張**
-1. 家電や車ごとに「初回買い替えは今から何年後か？」（例：firstReplacementAfterYears: number）を入力できる欄を追加。
-2. `applianceReplacements`および車情報に、初回までの年数（firstReplacementAfterYears）も追加してAPIに渡す。
-
-### B. **index.ts 側のロジック**
-1. 車買い替え：年齢ループの中で
-if (carPrice > 0 && carReplacementFrequency > 0 &&
-(age - initialAge - carFirstReplacementAfterYears) >= 0 &&
-(age - initialAge - carFirstReplacementAfterYears) % carReplacementFrequency === 0) {
-// 車買い替え発生
-}
-
-
-のように、「初回買い替え年＋周期」に合わせて車支出が発生するようにせよ。
-
-1. 家電買い替え：applianceReplacements[]内の各家電に`firstReplacementAfterYears`を追加し、
-applianceReplacements.forEach(appliance => {
-if (
-(age - initialAge - appliance.firstReplacementAfterYears) >= 0 &&
-(age - initialAge - appliance.firstReplacementAfterYears) % appliance.cycle === 0
-) {
-applianceExpense += appliance.cost;
+### B. 例
+for (let age = initialAge; age <= endAge; age++) {
+// ...略...
+// 車ローン返済年管理
+// carRepaymentPeriods: 車のローン開始年配列
+carRepaymentPeriods.forEach(startYear => {
+if (age >= startYear && age < startYear + carLoanYears) {
+carExpense += loanAnnualPayment;
 }
 });
+}
 
-
-で家電ごとに初回年＋サイクルで加算するロジックに修正せよ。
-
----
-
-## 【Step3】テスト＆バリデーション
-
-- いずれの拡張も、パラメータ未入力時は従来通り動作し、入力時のみ追加支出が加算されることを確認すること。
-- 年齢計算のズレや負値発生などはバリデーションで防ぐこと。
+- 「毎回の買い替えイベントでローン返済期間分、返済年額を支出計上」できる設計にすること。
 
 ---
 
-## 【まとめ】
+## 【Step2】住宅ローン返済ロジック修正
 
-- 親の介護費用は「親年齢・要介護開始年齢・期間」で判定
-- 車・家電は「初回買い替え年＋サイクル」で発生
-- これらの仕様をFormPage.tsx・index.tsの両方で実装・受け渡し・年次判定まで厳密に実装せよ
+### A. 持ち家（ローン中）の場合
+- 住宅購入年からローン年数分、毎年housingExpenseにローン年額を加算すること。
+- 既存ローン継続中の場合も、loanMonthlyPayment×12をローン終了まで毎年加算する。
+
+### B. 例
+if (housingType === '賃貸' && housePurchasePlan && age >= housePurchasePlan.age && age < housePurchasePlan.age + housePurchasePlan.loanYears) {
+housingExpense = loanAnnualPayment;
+currentYearExpense += housingExpense;
+}
 
 ---
+
+## 【Step3】子供支出ロジック修正
+
+### A. 子供支出の年齢範囲・入力バリデーション
+- hasChildren, numberOfChildren, educationPattern, firstBornAgeを必ずNumber()で変換
+- 35歳（firstBornAge）から22年間、childExpenseに「教育費合計÷22年×人数」を加算すること
+
+### B. 例
+const childStart = Number(firstBornAge);
+const childEnd = childStart + 22;
+if (hasChildren === 'はい' && numberOfChildren > 0 && age >= childStart && age < childEnd) {
+// 教育パターンに応じて金額決定
+let educationCostPerChild = ...;
+childExpense = (educationCostPerChild * numberOfChildren) / 22;
+currentYearExpense += childExpense;
+}
+
+
+---
+
+## 【Step4】入力値型変換の徹底
+
+- すべての年齢・金額入力値をNumber()で明示的に変換し、string型のままif判定や加算をしないこと。
+- 不正な値（NaN, null, undefined）は必ず0として扱う。
+
+---
+
+## 【Step5】テスト・バリデーション
+
+- 修正後のロジックで、output.jsonの各年のcarExpense, housingExpense, childExpenseが「ローン・教育費期間中ずっと毎年計上されている」ことを検証すること。
+
+---
+
+この手順を厳密に実施し、ローン返済と子供支出の計上漏れ・バグを完全に解消せよ。
