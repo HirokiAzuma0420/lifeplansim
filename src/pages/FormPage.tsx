@@ -32,7 +32,7 @@ export default function FormPage() {
   const [annualRaiseRate, setAnnualRaiseRate] = useState(1.5);
   const [spouseAnnualRaiseRate, setSpouseAnnualRaiseRate] = useState(1.5);
   const [isCompleted, setIsCompleted] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<object | string | null>(null);
   const [loading, setLoading] = useState(false);
   
   const [formData, setFormData] = useState({
@@ -140,6 +140,7 @@ export default function FormPage() {
       const data = await response.json();
       setResult(data.result);
     } catch (error) {
+      console.error(error);
       setResult({ error: '通信エラー' });
     }
     setLoading(false);
