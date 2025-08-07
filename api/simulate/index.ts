@@ -45,9 +45,9 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       years.push({
         year,
         age,
-        income: currentYearIncome,
-        expense: currentYearExpense,
-        assets: currentAssets,
+        income: Math.round(currentYearIncome / 1000) * 1000,
+        expense: Math.round(currentYearExpense / 1000) * 1000,
+        assets: Math.round(currentAssets / 1000) * 1000,
       });
 
       mainJobIncome *= (1 + incomeGrowthRate);
