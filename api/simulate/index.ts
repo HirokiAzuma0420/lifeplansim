@@ -61,52 +61,54 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const inputParams: InputParams = req.body.inputParams || {};
+    console.log('Received inputParams:', inputParams);
 
-    const initialAge = inputParams.initialAge ?? 25;
-    const endAge = inputParams.endAge ?? 90;
-    const spouseInitialAge = inputParams.spouseInitialAge; // 将来拡張用
-    let currentAssets = inputParams.currentSavings ?? 1000000;
-    let mainJobIncome = inputParams.mainJobIncome ?? 4000000;
-    const incomeGrowthRate = inputParams.incomeGrowthRate ?? 0.02;
-    let spouseMainIncome = inputParams.spouseMainIncome ?? 0;
-    const spouseIncomeGrowthRate = inputParams.spouseIncomeGrowthRate ?? 0.02;
-    const sideJobIncome = inputParams.sideJobIncome ?? 0;
-    const spouseSideJobIncome = inputParams.spouseSideJobIncome ?? 0;
-  const livingCost = inputParams.livingCost ?? 2000000;
+    const initialAge = Number(inputParams.initialAge || 25);
+    const endAge = Number(inputParams.endAge || 90);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const spouseInitialAge = Number(inputParams.spouseInitialAge || 0); // 将来拡張用
+    let currentAssets = Number(inputParams.currentSavings || 0) * 10000; // 万 -> 円
+    let mainJobIncome = Number(inputParams.mainJobIncome || 0) * 10000; // 万 -> 円
+    const incomeGrowthRate = Number(inputParams.incomeGrowthRate || 0) / 100; // % -> 小数
+    let spouseMainIncome = Number(inputParams.spouseMainIncome || 0) * 10000; // 万 -> 円
+    const spouseIncomeGrowthRate = Number(inputParams.spouseIncomeGrowthRate || 0) / 100; // % -> 小数
+    const sideJobIncome = Number(inputParams.sideJobIncome || 0) * 10000; // 万 -> 円
+    const spouseSideJobIncome = Number(inputParams.spouseSideJobIncome || 0) * 10000; // 万 -> 円
+    const livingCost = Number(inputParams.livingCost || 0); // 円
 
-  // Car related inputs
-  const carPrice = inputParams.carPrice ?? 0;
-  const carReplacementFrequency = inputParams.carReplacementFrequency ?? 0;
-  const carLoanUsage = inputParams.carLoanUsage;
-  const carLoanYears = inputParams.carLoanYears ?? 0;
-  const carLoanType = inputParams.carLoanType;
+    // Car related inputs
+    const carPrice = Number(inputParams.carPrice || 0); // 万
+    const carReplacementFrequency = Number(inputParams.carReplacementFrequency || 0);
+    const carLoanUsage = inputParams.carLoanUsage;
+    const carLoanYears = Number(inputParams.carLoanYears || 0);
+    const carLoanType = inputParams.carLoanType;
 
-  // Housing related inputs
-  const housingType = inputParams.housingType;
-  const housePurchasePlan = inputParams.housePurchasePlan;
-  const houseRenovationPlans = inputParams.houseRenovationPlans ?? [];
-  const loanMonthlyPayment = inputParams.loanMonthlyPayment ?? 0;
-  const loanRemainingYears = inputParams.loanRemainingYears ?? 0;
-  const housingLoanInterestRateType = inputParams.housingLoanInterestRateType;
-  const housingLoanInterestRate = inputParams.housingLoanInterestRate ?? 0;
+    // Housing related inputs
+    const housingType = inputParams.housingType;
+    const housePurchasePlan = inputParams.housePurchasePlan;
+    const houseRenovationPlans = inputParams.houseRenovationPlans ?? [];
+    const loanMonthlyPayment = Number(inputParams.loanMonthlyPayment || 0); // 円
+    const loanRemainingYears = Number(inputParams.loanRemainingYears || 0);
+    const housingLoanInterestRateType = inputParams.housingLoanInterestRateType;
+    const housingLoanInterestRate = Number(inputParams.housingLoanInterestRate || 0); // %
 
-  // Helper function for loan calculation
-  const calculateLoanPayment = (principal: number, annualInterestRate: number, years: number): number => {
-    if (principal <= 0 || annualInterestRate < 0 || years <= 0) {
-      return 0;
-    }
-    const monthlyInterestRate = annualInterestRate / 100 / 12;
-    const totalMonths = years * 12;
+    // Helper function for loan calculation
+    const calculateLoanPayment = (principal: number, annualInterestRate: number, years: number): number => {
+      if (principal <= 0 || annualInterestRate < 0 || years <= 0) {
+        return 0;
+      }
+      const monthlyInterestRate = (annualInterestRate / 100) / 12; // % -> 小数
+      const totalMonths = years * 12;
 
-    if (monthlyInterestRate === 0) {
-      return principal / years;
-    }
+      if (monthlyInterestRate === 0) {
+        return principal / years;
+      }
 
-    const monthlyPayment = principal * monthlyInterestRate * Math.pow((1 + monthlyInterestRate), totalMonths) / (Math.pow((1 + monthlyInterestRate), totalMonths) - 1);
-    return monthlyPayment * 12;
-  };
+      const monthlyPayment = principal * monthlyInterestRate * Math.pow((1 + monthlyInterestRate), totalMonths) / (Math.pow((1 + monthlyInterestRate), totalMonths) - 1);
+      return monthlyPayment * 12;
+    };
 
-  const years: YearlyData[] = [];
+    const years: YearlyData[] = [];
 
     for (let age = initialAge; age <= endAge; age++) {
       const year = new Date().getFullYear() + (age - initialAge);
@@ -124,9 +126,9 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       // Car expense calculation
       if (carPrice > 0 && carReplacementFrequency > 0 && (age - initialAge) % carReplacementFrequency === 0) {
         if (carLoanUsage === 'はい') {
-          let annualRate = 0.025; // default
-          if (carLoanType === '銀行ローン') annualRate = 0.015;
-          else if (carLoanType === 'ディーラーローン') annualRate = 0.045;
+          let annualRate = 2.5; // default %
+          if (carLoanType === '銀行ローン') annualRate = 1.5;
+          else if (carLoanType === 'ディーラーローン') annualRate = 4.5;
           carExpense = calculateLoanPayment(carPrice * 10000, annualRate, carLoanYears);
         } else {
           carExpense = carPrice * 10000;
@@ -136,12 +138,12 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
       // Housing expense calculation
       if (housingType === '賃貸' && housePurchasePlan && age === housePurchasePlan.age) {
-        const principal = (housePurchasePlan.price - housePurchasePlan.downPayment) * 10000;
-        let interestRate = 1.5; // Default general interest rate
+        const principal = (Number(housePurchasePlan.price) - Number(housePurchasePlan.downPayment)) * 10000;
+        let interestRate = 1.5; // Default general interest rate %
         if (housingLoanInterestRateType === '指定') {
           interestRate = housingLoanInterestRate;
         }
-        housingExpense = calculateLoanPayment(principal, interestRate, housePurchasePlan.loanYears);
+        housingExpense = calculateLoanPayment(principal, interestRate, Number(housePurchasePlan.loanYears));
         currentYearExpense += housingExpense;
       } else if (housingType === '持ち家（ローン中）' && loanMonthlyPayment > 0 && loanRemainingYears > 0) {
         // Assuming loanMonthlyPayment is monthly, convert to annual
@@ -151,13 +153,21 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
       // House renovation expense calculation
       houseRenovationPlans.forEach(plan => {
-        if (age === plan.age || (plan.cycleYears && (age - plan.age) % plan.cycleYears === 0 && age > plan.age)) {
-          currentYearExpense += plan.cost * 10000;
-          housingExpense += plan.cost * 10000;
+        if (age === Number(plan.age) || (Number(plan.cycleYears) && (age - Number(plan.age)) % Number(plan.cycleYears) === 0 && age > Number(plan.age))) {
+          currentYearExpense += Number(plan.cost) * 10000;
+          housingExpense += Number(plan.cost) * 10000;
         }
       });
 
+      // Type and NaN checks before asset calculation
+      if (typeof currentAssets !== 'number' || isNaN(currentAssets)) throw new Error(`Invalid currentAssets type or NaN at age ${age}: ${currentAssets}`);
+      if (typeof currentYearIncome !== 'number' || isNaN(currentYearIncome)) throw new Error(`Invalid currentYearIncome type or NaN at age ${age}: ${currentYearIncome}`);
+      if (typeof currentYearExpense !== 'number' || isNaN(currentYearExpense)) throw new Error(`Invalid currentYearExpense type or NaN at age ${age}: ${currentYearExpense}`);
+
       currentAssets = currentAssets + currentYearIncome - currentYearExpense;
+
+      console.log(`Age: ${age}, Income: ${currentYearIncome}, Expense: ${currentYearExpense}, Assets: ${currentAssets}, CarExpense: ${carExpense}, HousingExpense: ${housingExpense}`);
+      console.log(`Types - Income: ${typeof currentYearIncome}, Expense: ${typeof currentYearExpense}, Assets: ${typeof currentAssets}`);
 
       years.push({
         year,
