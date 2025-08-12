@@ -1,13 +1,13 @@
 {
   "familyComposition": "既婚",
-  "personAge": "35",
-  "spouseAge": "36",
-  "mainIncome": "400",
-  "spouseMainIncome": "350",
+  "personAge": "28",
+  "spouseAge": "27",
+  "mainIncome": "300",
+  "spouseMainIncome": "250",
   "sideJobIncome": "0",
   "spouseSideJobIncome": "0",
   "expenseMethod": "簡単",
-  "livingCostSimple": "280000",
+  "livingCostSimple": "190000",
   "housingCost": "",
   "utilitiesCost": "",
   "communicationCost": "",
@@ -22,23 +22,23 @@
   "socializingCost": "",
   "hobbyEntertainmentCost": "",
   "otherVariableCost": "0",
-  "carFirstReplacementAfterYears": "3",
+  "carFirstReplacementAfterYears": "10",
   "carPrice": "300",
-  "carReplacementFrequency": "5",
+  "carReplacementFrequency": "10",
   "carLoanUsage": "はい",
-  "carLoanYears": "5",
+  "carLoanYears": "7",
   "carLoanType": "銀行ローン",
   "housingType": "賃貸",
   "housePurchasePlan": {
-    "age": 40,
-    "price": 4000,
-    "downPayment": 1000,
+    "age": 35,
+    "price": 3200,
+    "downPayment": 300,
     "loanYears": 35,
     "interestRate": 0
   },
   "houseRenovationPlans": [
     {
-      "age": 0,
+      "age": "46",
       "cost": 150
     }
   ],
@@ -61,11 +61,11 @@
   "newHomeMovingCost": "50",
   "hasChildren": "はい",
   "numberOfChildren": "1",
-  "firstBornAge": "37",
-  "educationPattern": "公私混合",
+  "firstBornAge": "35",
+  "educationPattern": "公立中心",
   "currentRentLoanPayment": "",
   "otherLargeExpenses": "",
-  "parentCurrentAge": "68",
+  "parentCurrentAge": "58",
   "parentCareStartAge": "80",
   "parentCareAssumption": "はい",
   "parentCareMonthlyCost": "10",
@@ -74,18 +74,18 @@
   "postRetirementLivingCost": "25",
   "pensionStartAge": "65",
   "pensionAmount": "15",
-  "currentSavings": "800",
+  "currentSavings": "200",
   "monthlySavings": "25000",
   "hasInvestment": "",
   "investmentStocksCurrent": "",
-  "investmentTrustCurrent": "200",
+  "investmentTrustCurrent": "100",
   "investmentBondsCurrent": "",
   "investmentIdecoCurrent": "",
   "investmentCryptoCurrent": "",
   "investmentOtherCurrent": "",
   "monthlyInvestmentAmounts": {
     "investmentStocksMonthly": "0",
-    "investmentTrustMonthly": "20000",
+    "investmentTrustMonthly": "10000",
     "investmentBondsMonthly": "0",
     "investmentIdecoMonthly": "0",
     "investmentCryptoMonthly": "0",
@@ -105,5 +105,43 @@
   "investmentOtherRate": "0.5",
   "simulationPeriodAge": "90",
   "interestRateScenario": "固定利回り",
-  "emergencyFund": "300"
+  "emergencyFund": "300",
+  "appliances": [
+    {
+      "name": "冷蔵庫",
+      "cycle": 10,
+      "cost": 15,
+      "firstReplacementAfterYears": "8"
+    },
+    {
+      "name": "洗濯機",
+      "cycle": 8,
+      "cost": 12,
+      "firstReplacementAfterYears": "8"
+    },
+    {
+      "name": "エアコン",
+      "cycle": 10,
+      "cost": 10,
+      "firstReplacementAfterYears": "8"
+    },
+    {
+      "name": "テレビ",
+      "cycle": 10,
+      "cost": 8,
+      "firstReplacementAfterYears": "8"
+    },
+    {
+      "name": "電子レンジ",
+      "cycle": 8,
+      "cost": 3,
+      "firstReplacementAfterYears": "8"
+    },
+    {
+      "name": "掃除機",
+      "cycle": 6,
+      "cost": 2,
+      "firstReplacementAfterYears": "5"
+    }
+  ]
 }
