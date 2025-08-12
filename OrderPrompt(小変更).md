@@ -1,104 +1,57 @@
-以下の変更を行え。自律的な質問は禁止。FormPage.tsx の「ライフイベント - 生活」内、家電セクションのみを対象とする。目的は横スクロールを廃止し、見出しと入力列の幅を一致させて親幅内に収めること。
+# 目的
+ESLint の @typescript-eslint/no-unused-vars を解消しつつ、「生活防衛資金（emergencyFundJPY）」を年末更新で適用する。現行の「現金がマイナスなら投資元本から補填」処理を、生活防衛資金の閾値を用いた取り崩し処理に置換する。
 
-作業方針
-1) 既存の overflow-x-auto / min-w[...] / grid を撤去し、table + colgroup で列幅を百分率指定する。
-2) 列は5列（家電名, サイクル, 初回, 費用, 操作）。操作列は 40px 固定。
-3) 各 input は w-full h-10 とし、セル幅に追従させる。
-4) ヘッダと行で列構成を完全一致させる。
+# 対象
+api/simulate/index.ts
 
-置換対象
-「家電買い替えサイクルと費用」の h3 直下から「家電を追加する」ボタンまでのブロックを、次のコードで丸ごと置換。
+# 手順（自律質問禁止。以下の編集を機械的に実施する）
 
-<div className="mt-4">
-  <h3 className="text-lg font-semibold mb-2">家電買い替えサイクルと費用</h3>
+1) emergencyFundJPY の定義を非負に矯正
+- 既存の定義行がある場合は置換、無ければ定義直後ブロックに追加。
+置換前: const emergencyFundJPY = n(body.emergencyFundJPY);
+置換後: const emergencyFundJPY = Math.max(0, n(body.emergencyFundJPY));
 
-  <table className="table-fixed w-full border-separate border-spacing-y-2">
-    <colgroup>
-      <col className="w-[30%]" />
-      <col className="w-[17%]" />
-      <col className="w-[17%]" />
-      <col className="w-[31%]" />
-      <col className="w-[40px]" />
-    </colgroup>
-    <thead>
-      <tr className="text-xs text-gray-600">
-        <th className="text-left px-1">家電名</th>
-        <th className="text-left px-1">買い替えサイクル（年）</th>
-        <th className="text-left px-1">初回買い替え（年後）</th>
-        <th className="text-left px-1">1回あたりの費用（万円）</th>
-        <th className="px-1 text-right">操作</th>
-      </tr>
-    </thead>
-    <tbody>
-      {applianceReplacements.map((appliance, index) => (
-        <tr key={index} className="align-middle">
-          <td className="px-1">
-            <input
-              type="text"
-              placeholder="家電名"
-              value={appliance.name}
-              onChange={(e) => handleApplianceChange(index, 'name', e.target.value)}
-              className="shadow border rounded w-full h-10 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
-            />
-          </td>
-          <td className="px-1">
-            <input
-              type="number"
-              placeholder="年数"
-              value={appliance.cycle}
-              min={0}
-              onChange={(e) => handleApplianceChange(index, 'cycle', e.target.value)}
-              className="shadow border rounded w-full h-10 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
-            />
-          </td>
-          <td className="px-1">
-            <input
-              type="number"
-              placeholder="年後"
-              value={appliance.firstReplacementAfterYears}
-              min={0}
-              onChange={(e) => handleApplianceChange(index, 'firstReplacementAfterYears', e.target.value)}
-              className="shadow border rounded w-full h-10 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
-            />
-          </td>
-          <td className="px-1">
-            <input
-              type="number"
-              placeholder="費用（万円）"
-              value={appliance.cost}
-              min={0}
-              onChange={(e) => handleApplianceChange(index, 'cost', e.target.value)}
-              className="shadow border rounded w-full h-10 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
-            />
-          </td>
-          <td className="px-1 text-right">
-            <button
-              type="button"
-              onClick={() => handleRemoveAppliance(index)}
-              className="text-red-500 hover:text-red-700"
-              aria-label="この家電行を削除"
-              title="削除"
-            >
-              <Trash2 size={20} />
-            </button>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
+2) 年次ループ内の「年末更新」直後に生活防衛資金ロジックを実装
+- 直前に以下のような更新が存在する前提:
+  savings += monthlySavingsJPY * 12;
+  savings += balance;
+  investedPrincipal += yearlyRecurringInvestmentJPY + yearlySpotJPY;
 
-  <div className="pt-3">
-    <button
-      type="button"
-      onClick={addAppliance}
-      className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-    >
-      家電を追加する
-    </button>
-  </div>
-</div>
+- 次のブロックを挿入する（既存の「貯蓄がマイナスなら…補填」ブロックは完全削除してから追加すること）。
 
-検収基準
-- 画面幅内に収まり、横スクロールが出ない。
-- 見出しと入力列の幅が一致する。
-- 極端に小さい画面でテキストが折り返されても表全体が w-full に収まる。
+挿入コード:
+  // 生活防衛資金: 現金が閾値を下回る場合は投資元本から取り崩し
+  if (emergencyFundJPY > 0 && savings < emergencyFundJPY) {
+    const shortfall = emergencyFundJPY - savings;
+    const draw = Math.min(shortfall, investedPrincipal);
+    investedPrincipal -= draw;
+    savings += draw;
+  }
+  // 最終ガード
+  if (savings < 0) savings = 0;
+  if (investedPrincipal < 0) investedPrincipal = 0;
+
+3) 旧ロジックの削除
+- 次のようなブロックが残っていれば必ず削除（重複禁止）。
+  if (savings < 0) {
+    investedPrincipal += savings;
+    savings = 0;
+    if (investedPrincipal < 0) {
+      investedPrincipal = 0;
+    }
+  }
+
+# 受入条件
+- emergencyFundJPY がコード内で実際に使用され、ESLint の "is assigned a value but never used" が消えること。
+- savings が emergencyFundJPY 未満の場合、investedPrincipal から不足分を取り崩し、savings は最低でも emergencyFundJPY になること（investedPrincipal が不足する場合は取り崩し可能な範囲で補填）。
+- savings, investedPrincipal が最終的に負値にならないこと。
+- ビルド・lint が通ること（型エラー、未使用変数エラーがないこと）。
+
+# 変更箇所の目安（検索キーワード）
+- "emergencyFundJPY" の定義行
+- "savings += monthlySavingsJPY * 12" を含む年次更新付近
+- "資産がマイナスになった場合の処理" コメント付近
+
+# 注意
+- インデント・区切りコメントのスタイルは既存ファイルに合わせる。
+- 他のロジック（収入・支出・利回り計算等）には一切変更を加えない。

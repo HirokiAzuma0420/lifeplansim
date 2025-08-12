@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect} from 'react';
 import { Trash2 } from "lucide-react";
-import incomeBrackets from "../assets/net_income_brackets.json";
+
 import AssetAccordion from "../components/AssetAccordion";
 
 const sections = [
@@ -19,10 +19,7 @@ const sections = [
   'シミュレーション設定',
 ];
 
-function getNetIncome(gross: number): number {
-  const bracket = incomeBrackets.find((b: { min: number; max: number | null; rate: number }) => gross >= b.min && (b.max === null || gross <= b.max))
-  return bracket ? gross * bracket.rate : gross * 0.8
-}
+
 
 export default function FormPage() {
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
@@ -141,13 +138,11 @@ export default function FormPage() {
       return isFinite(num) ? num : 0;
     };
 
-    const getNet = (gross10k: unknown) => getNetIncome(n(gross10k) * 10000);
-
     try {
-      const mainJobIncomeNet = getNet(formData.mainIncome);
-      const sideJobIncomeNet = getNet(formData.sideJobIncome);
-      const spouseMainJobIncomeNet = getNet(formData.spouseMainIncome);
-      const spouseSideJobIncomeNet = getNet(formData.spouseSideJobIncome);
+      const mainJobIncomeGross = n(formData.mainIncome) * 10000;
+      const sideJobIncomeGross = n(formData.sideJobIncome) * 10000;
+      const spouseMainJobIncomeGross = (formData.familyComposition === '既婚' ? n(formData.spouseMainIncome) : 0) * 10000;
+      const spouseSideJobIncomeGross = (formData.familyComposition === '既婚' ? n(formData.spouseSideJobIncome) : 0) * 10000;
 
       const detailedFixedAnnual = (
         n(formData.housingCost) + n(formData.utilitiesCost) + n(formData.communicationCost) +
@@ -177,10 +172,10 @@ export default function FormPage() {
         retirementAge: n(formData.retirementAge),
         pensionStartAge: n(formData.pensionStartAge),
 
-        mainJobIncomeNet,
-        sideJobIncomeNet,
-        spouseMainJobIncomeNet: formData.familyComposition === '既婚' ? spouseMainJobIncomeNet : undefined,
-        spouseSideJobIncomeNet: formData.familyComposition === '既婚' ? spouseSideJobIncomeNet : undefined,
+        mainJobIncomeGross: mainJobIncomeGross,
+        sideJobIncomeGross: sideJobIncomeGross,
+        spouseMainJobIncomeGross: spouseMainJobIncomeGross,
+        spouseSideJobIncomeGross: spouseSideJobIncomeGross,
         incomeGrowthRate: n(annualRaiseRate) / 100,
         spouseIncomeGrowthRate: formData.familyComposition === '既婚' ? n(spouseAnnualRaiseRate) / 100 : undefined,
 
@@ -561,16 +556,7 @@ export default function FormPage() {
     formData.housingType
   ]);
 
-  const displayEstimatedNetIncome = useMemo(() => {
-    const personIncome = (Number(formData.mainIncome) || 0) + (Number(formData.sideJobIncome) || 0);
-    const spouseIncome = (Number(formData.spouseMainIncome) || 0) + (Number(formData.spouseSideJobIncome) || 0);
-    return getNetIncome(personIncome * 10000) + getNetIncome(spouseIncome * 10000);
-  }, [
-    formData.mainIncome,
-    formData.spouseMainIncome,
-    formData.sideJobIncome,
-    formData.spouseSideJobIncome,
-  ]);
+  
 
   useEffect(() => {
     if (formData.expenseMethod === '詳細') {
@@ -818,7 +804,7 @@ export default function FormPage() {
               </div>
             <div className={`mb-4 accordion-content ${formData.familyComposition === '既婚' ? 'open' : ''}`}>
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="spouseSideJobIncome">
-                  配偶者の副業年間収入[万円]
+                  配偶者の副業年間収入（額面）[万円]
                 </label>
                 <input
                   type="number"
@@ -1814,7 +1800,7 @@ export default function FormPage() {
         
         {renderFloatingBox(totalExpenses, currentSectionIndex === effectiveSections.indexOf('現在の支出') && totalExpenses > 0, "生活費総額")}
         {renderFloatingBox(displayTotalIncome, currentSectionIndex === effectiveSections.indexOf('現在の収入') && displayTotalIncome > 0, "年間収入総額")}
-        {renderFloatingBox(displayEstimatedNetIncome, currentSectionIndex === effectiveSections.indexOf('現在の収入') && displayEstimatedNetIncome > 0, "推定手取り総額", "top-[5rem]")}
+        
         {renderFloatingBox(estimatedAnnualLoanPayment, shouldShowLoanBox && estimatedAnnualLoanPayment > 0, "年間返済額")}
         {renderFloatingBox(estimatedTotalLoanPayment, shouldShowLoanBox && estimatedTotalLoanPayment > 0, "総返済額", "top-[5rem]")}
         {renderFloatingBox(totalCarLoanCost, currentSectionIndex === effectiveSections.indexOf('ライフイベント - 車') && totalCarLoanCost > 0, '車ローン総額')}
