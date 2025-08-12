@@ -1,66 +1,47 @@
-# タスク
-家電費用が「常に約2倍」で計上される現象を解消する。対象は api/simulate/index.ts（必要時のみ FormPage.tsx）。自律的な質問は禁止。最小差分で修正する。
+# 目的
+api/simulate/index.ts の型/ESLintエラーを解消する。未定義識別子（isRandom, minReturn, maxReturn, sigma）を排除し、未使用変数（scenario, stEnabled）を有効活用する。差分は最小。自律質問は禁止。
 
-# 現象の説明（検証事実）
-- 2030年：掃除機 初回 2万円 → 出力 40,000（×2）
-- 2033年：冷蔵15＋洗濯12＋エアコン10＋TV8＋レンジ3＝48万円 → 出力 960,000（×2）
-- 2041年：同セットの2回目 15万円相当 → 出力 300,000（×2）
-原因は、年次ループ内で家電配列を2回以上集計している、または未正規化の配列と正規化済み配列の両方を使って重複加算していること。
+# 背景
+現行コードは「投資リターン」計算部で isRandom / minReturn / maxReturn / sigma を参照しているが未定義。一方で scenario / stEnabled を定義しているのに未使用。資産別乱数系列 assetReturns は生成済み。:contentReference[oaicite:0]{index=0}
 
-# 修正方針
-1) 「受信直後の一回だけ」家電配列を正規化（無効行除外）し、以降はその単一配列のみを参照する。
-2) 年次ループ内の家電加算ブロックは「1箇所だけ」に統一（初回＋周期）。他の家電関連の加算・forEach・map・reduce の重複を全削除。
-3) totalExpense の合算は applianceExpense を「1回だけ」含める。
-4) ログで年ごとの家電加算回数と合算値を確認できるように一時的な検証出力を入れる（開発時のみ）。
+# 作業手順（機械的に適用）
 
-# 具体作業（機械的に適用）
-A) 年次ループ外（正規化）に以下を1回だけ定義。以降、本配列 appliancesOnly を使用。body.appliances/raw の再参照は厳禁。
-const appliancesOnly = Array.isArray(body.appliances)
-  ? body.appliances.filter(a =>
-      a && String(a.name ?? '').trim().length > 0 &&
-      Number(a.cost10kJPY) > 0 &&
-      Number(a.cycleYears) > 0
-    )
-  : [];
-
-B) 年次ループ内の家電計上を次の1ブロックに統一。これ以外の家電加算コード（forEach / 2つ目のfor / 別名配列参照）は全削除。
-let applianceExpense = 0;
-for (const a of appliancesOnly) {
-  const firstAge = initialAge + Number(a.firstAfterYears ?? 0);
-  if (age >= firstAge) {
-    const diff = age - firstAge;
-    const cyc = Number(a.cycleYears ?? 0);
-    if (diff === 0 || (cyc > 0 && diff % cyc === 0)) {
-      applianceExpense += Number(a.cost10kJPY) * 10000;
-    }
+1) 「投資リターン」計算ブロックを置換
+- 置換対象（コメント行を含めてブロックごと削除）:
+  // ■ Investment logic
+  // Fluctuating returns
+  let currentReturn = mu;
+  if (isRandom) {
+    const randomValue = Math.random();
+    currentReturn = Math.max(minReturn, Math.min(maxReturn, mu + sigma * (randomValue - 0.5) * 2.2)); // Simplified normal-like distribution
   }
-}
 
-C) 合計支出の算出は必ず1行で定義し、applianceExpense を1回だけ含める（二重合算を防止）。
-const totalExpense =
-  livingExpense +
-  childExpense +
-  careExpense +
-  carExpense +
-  housingExpense +
-  marriageExpense +
-  applianceExpense +
-  retirementExpense;
+- 置換後（assetReturns を用いた収束ランダム、scenario/stEnabled を活用）:
+  // ■ Investment logic
+  const isRandom = (scenario === 'ランダム変動' && stEnabled);
+  let currentReturn = mu;
+  if (isRandom) {
+    const w = 1 / ASSETS.length;
+    currentReturn = ASSETS.reduce((acc, k) => acc + w * assetReturns[k][i], 0);
+  }
 
-D) 一時デバッグ（開発時のみ。完了後は削除）
-const __applianceDebug = { year: baseYear + i, age, count: appliancesOnly.length, applianceExpense };
-console.debug('appliance-check', __applianceDebug);
+2) 以降の計算は既存のまま維持
+- 下記はそのまま（順序は変更しない）:
+  const investmentReturn = investedPrincipal * currentReturn;
+  annualIncome += investmentReturn;
+  const annualInvestment = yearlyRecurringInvestmentJPY + yearlySpotJPY;
+  investedPrincipal += annualInvestment;
+  const cashFlow = annualIncome - totalExpense - annualInvestment + (monthlySavingsJPY * 12);
+  savings += cashFlow;
 
-# 検索して削除すべき重複コードの目印
-- /appliance/i を含む forEach / 2つ目以降の for-of / 追加の reduce
-- body.appliances を年次ループ内で再参照・再フィルタしている箇所
-- totalExpense を個別に再構築して applianceExpense を二度足ししている箇所
+3) 不要参照の削除・確認
+- isRandom の旧参照箇所（上記以外）・minReturn / maxReturn / sigma の定義/参照が残っていないことを確認し、残っていれば削除。
+- scenario / stEnabled は 1) で使用されるため未使用警告は解消される。
 
-# 受入基準（必ず確認）
-- 2030年 applianceExpense=20,000、2033年=480,000、2041年=150,000（各行 cost10kJPY×10000 の合算と一致）
-- 家電未入力時は全年 applianceExpense=0
-- totalExpense が applianceExpense を1回だけ含む（例：老後差額＋住宅＋家電＝totalExpense が一致）
-- Lint・型エラーなし、計算の他科目（車・住宅・介護・子ども・老後・投資）は現状どおり（回 regress なし）
+# 受入基準
+- TypeScript: TS2304（isRandom, minReturn, maxReturn, sigma）が0件。
+- ESLint: @typescript-eslint/no-unused-vars（scenario, stEnabled）が0件。
+- ランダム変動ON時、currentReturn は assetReturns の等加重平均（期間平均が μ に収束）。OFF時は currentReturn=μ。
 
-
-上記の修正は実行できましたか？確認して報告してください。
+# 注意
+- assetReturns / ASSETS / mu / scenario / stEnabled / i は本ファイル内で既に定義済みであること（未定義なら本手順前の定義を維持）。:contentReference[oaicite:1]{index=1}

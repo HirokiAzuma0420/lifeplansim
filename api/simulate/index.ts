@@ -91,6 +91,7 @@ interface InputParams {
   expectedReturn: number;
   stressTest: {
     enabled: boolean;
+    seed?: number;
   };
 
   interestScenario: '固定利回り' | 'ランダム変動';
@@ -125,10 +126,46 @@ interface YearlyData {
 }
 
 // ユーティリティ関数
+// シード付きPRNG（mulberry32）
+function mulberry32(seed: number) {
+  return function() {
+    let t = (seed += 0x6D2B79F5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// 標準正規（Box-Muller）
+function gaussian(rand: () => number): number {
+  let u = 0, v = 0;
+  while (u === 0) u = rand();
+  while (v === 0) v = rand();
+  return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+}
+
+// ベクトル標準化：平均0・標準偏差1
+function standardize(xs: number[]): number[] {
+  const n = xs.length;
+  const m = xs.reduce((a, b) => a + b, 0) / n;
+  const s = Math.sqrt(xs.reduce((a, b) => a + (b - m) ** 2, 0) / n) || 1;
+  return xs.map(z => (z - m) / s);
+}
+
 const n = (v: unknown): number => {
   const num = Number(v);
   return isFinite(num) ? num : 0;
 };
+
+// 資産リスクプリセットと資産キー配列を定義。
+const ASSET_SIGMA: Record<string, number> = {
+  equity_jp_us: 0.20,
+  fund_foreign: 0.18,
+  ideco_foreign: 0.18,
+  bond_dev: 0.04,
+  btc: 0.70,
+};
+const ASSETS = Object.keys(ASSET_SIGMA); // 等ウェイト
 
 // ローン返済額計算関数 (年額)
 const calculateLoanPayment = (principal: number, annualInterestRate: number, years: number): number => {
@@ -242,6 +279,11 @@ export default async function (req: VercelRequest, res: VercelResponse) {
 
     const stressTestEnabled = interestScenario === 'ランダム変動';
 
+    const mu = Math.max(-1, Math.min(1, n(expectedReturn))); // 小数, 例0.04
+    const scenario = interestScenario || '固定利回り';
+    const stEnabled = stressTestEnabled; // stressTestEnabled は既に定義済み
+    const seedBase = n(body.inputParams.stressTest?.seed) || 123456789; // body.inputParams.stressTest?.seed を使用
+
     const yearlyData: YearlyData[] = [];
 
     let currentAge = initialAge;
@@ -258,8 +300,27 @@ export default async function (req: VercelRequest, res: VercelResponse) {
       Number(a.cycleYears) > 0
     ) : [];
 
+    const baseYear = new Date().getFullYear();
+    const T = (endAge - initialAge) + 1; // ループ回数に合わせる
+    const assetReturns: Record<string, number[]> = {};
+    ASSETS.forEach((k, idx) => {
+      const rand = mulberry32(seedBase + idx * 101);
+      const zs = Array.from({ length: T }, () => gaussian(rand));
+      const zstd = standardize(zs); // 平均0, 分散1に補正（ここが「収束」の鍵）
+      const sigma = ASSET_SIGMA[k];
+      const ra = zstd.map(z => {
+        let r = mu + sigma * z;
+        // 任意: 過度な外れ値抑制（±3σ）
+        const lo = mu - 3 * sigma, hi = mu + 3 * sigma;
+        if (r < lo) r = lo;
+        if (r > hi) r = hi;
+        return r;
+      });
+      assetReturns[k] = ra;
+    });
+
     for (let i = 0; currentAge <= endAge; i++) {
-      const year = i;
+      const year = baseYear + i;
       let annualIncome = 0;
       let livingExpense = 0;
       let housingExpense = 0;
@@ -302,18 +363,12 @@ export default async function (req: VercelRequest, res: VercelResponse) {
           const childBirthAge = children.firstBornAge + c * 3; // 3年おきに生まれると仮定
           const childAge = currentAge - childBirthAge;
 
-          if (childAge >= 0 && childAge <= 22) { // 0歳から22歳まで教育費がかかる
+          if (childAge >= 0 && childAge <= 21) {
             let educationCost = 0;
             switch (children.educationPattern) {
-              case '公立中心':
-                educationCost = 10000000 / 23; // 23年間で1000万円
-                break;
-              case '公私混合':
-                educationCost = 16000000 / 23; // 23年間で1600万円
-                break;
-              case '私立中心':
-                educationCost = 20000000 / 23; // 23年間で2000万円
-                break;
+              case '公立中心': educationCost = 10000000 / 22; break;
+              case '公私混合': educationCost = 16000000 / 22; break;
+              case '私立中心': educationCost = 20000000 / 22; break;
             }
             childExpense += educationCost;
           }
@@ -381,6 +436,9 @@ export default async function (req: VercelRequest, res: VercelResponse) {
         }
       }
       if (housing.purchasePlan && currentAge >= housing.purchasePlan.age && currentAge < housing.purchasePlan.age + housing.purchasePlan.years) {
+        if (currentAge === housing.purchasePlan.age) {
+          housingExpense += housing.purchasePlan.downPaymentJPY; // 頭金一括
+        }
         const loanPrincipal = housing.purchasePlan.priceJPY - housing.purchasePlan.downPaymentJPY;
         housingExpense += calculateLoanPayment(loanPrincipal, housing.purchasePlan.rate, housing.purchasePlan.years);
       }
@@ -398,15 +456,10 @@ export default async function (req: VercelRequest, res: VercelResponse) {
 
       // 詳細モード時の二重計上防止
       if (expenseMode === 'detailed') {
-        // carExpense, housingExpense, applianceExpense, childExpense はライフイベント費用として別途計上されるため、
-        // detailedFixedAnnual/detailedVariableAnnual に含まれる場合は0にする
-        // ただし、現状のFormPage.tsxでは詳細モードの固定費/変動費にこれらのライフイベント費用は含まれていないため、
-        // ここでの0クリアは不要、あるいは別途考慮が必要。
-        // ユーザーの指示により、詳細モード時はライフイベント計上を無効化する
-        // carExpense = 0;
-        // housingExpense = 0;
-        // applianceExpense = 0;
-        // childExpense = 0;
+        carExpense = 0;
+        housingExpense = 0;
+        applianceExpense = 0;
+        childExpense = 0;
       }
 
       // 各種費用の合計
@@ -420,20 +473,26 @@ export default async function (req: VercelRequest, res: VercelResponse) {
         applianceExpense +
         retirementExpense;
 
-      // 3. 資産更新
-      let currentExpectedReturn = expectedReturn;
-      if (stressTestEnabled) {
-        // ランダム変動利回り (簡易的なストレステスト)
-        currentExpectedReturn = expectedReturn + (Math.random() - 0.5) * 0.02; // ±1%の範囲で変動
-      }
-      const investmentReturn = investedPrincipal * currentExpectedReturn; // 投資元本に利回り適用
-      annualIncome += investmentReturn;
+      // ■ Investment logic
+    const isRandom = (scenario === 'ランダム変動' && stEnabled);
+    let currentReturn = mu;
+    if (isRandom) {
+      const w = 1 / ASSETS.length;
+      currentReturn = ASSETS.reduce((acc, k) => acc + w * assetReturns[k][i], 0);
+    }
 
-      // 年間積立額とスポット投資額を合算
-      const annualInvestment = yearlyRecurringInvestmentJPY + yearlySpotJPY;
-      investedPrincipal += annualInvestment; // 年間積立・スポット投資を元本に加算
+    // 1. Calculate investment return on the principal *before* this year's contribution.
+    const investmentReturn = investedPrincipal * currentReturn;
+    annualIncome += investmentReturn;
 
-      savings += annualIncome - totalExpense + (monthlySavingsJPY * 12); // monthlySavingsJPYを加算
+    // 2. Add this year's contribution to the principal.
+    const annualInvestment = yearlyRecurringInvestmentJPY + yearlySpotJPY;
+    investedPrincipal += annualInvestment;
+
+    // ■ Cash flow calculation
+    // 3. Update cash flow, deducting the investment amount from savings.
+    const cashFlow = annualIncome - totalExpense - annualInvestment + (monthlySavingsJPY * 12);
+    savings += cashFlow;
 
       // 生活防衛資金の補填
       if (emergencyFundJPY > 0 && savings < emergencyFundJPY) {

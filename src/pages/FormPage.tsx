@@ -196,6 +196,7 @@ export default function FormPage() {
     simulationPeriodAge: '90',
     interestRateScenario: '', // 固定利回り／ランダム変動
     emergencyFund: '300',
+    stressTestSeed: '', // 追加
   });
 
   const handleSimulate = async () => {
@@ -330,6 +331,7 @@ export default function FormPage() {
         expectedReturn: totalInvestmentRate / 100,
         stressTest: {
           enabled: formData.interestRateScenario === 'ランダム変動',
+          seed: n(formData.stressTestSeed), // 新しく追加するformDataのプロパティ
         },
 
         interestScenario: formData.interestRateScenario as '固定利回り' | 'ランダム変動',
