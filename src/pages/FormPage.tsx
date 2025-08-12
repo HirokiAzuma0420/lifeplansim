@@ -1323,59 +1323,78 @@ export default function FormPage() {
               <img src="/form/Q4-appliances.png"></img>
             </div>
             <h2 className="text-2xl font-bold text-center mb-4">生活に関する質問</h2>
-            <h3 className="text-lg font-semibold mb-2">家電買い替えサイクルと費用</h3>
-            <div className="grid grid-cols-[auto_auto_auto_min-content] gap-2 mb-2 text-sm text-gray-600 font-semibold">
-              <div>家電名</div>
-              <div>買い替えサイクル（年）</div>
-              <div>初回買い替え（年後）</div>
-              <div>1回あたりの費用（万円）</div>
-              <div></div>
-            </div>
-            {applianceReplacements.map((appliance, index) => (
-              <div key={index} className="grid grid-cols-[auto_auto_auto_auto_min-content] gap-4 mb-2 items-center">
-                <input
-                  type="text"
-                  placeholder="家電名"
-                  value={appliance.name}
-                  onChange={(e) => handleApplianceChange(index, 'name', e.target.value)}
-                  className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-                <input
-                  type="number"
-                  placeholder="買い替えサイクル（年）"
-                  value={appliance.cycle}
-                  onChange={(e) => handleApplianceChange(index, 'cycle', e.target.value)}
-                  className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-                <input
-                  type="number"
-                  placeholder="初回買い替え（年後）"
-                  value={appliance.firstReplacementAfterYears}
-                  onChange={(e) => handleApplianceChange(index, 'firstReplacementAfterYears', e.target.value)}
-                  className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-                <input
-                  type="number"
-                  placeholder="1回あたりの費用（万円）"
-                  value={appliance.cost}
-                  onChange={(e) => handleApplianceChange(index, 'cost', e.target.value)}
-                  className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveAppliance(index)}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  <Trash2 size={24} className="text-red-500 hover:text-red-700" />
-                </button>
+            <div className="mt-4">
+              <h3 className="text-lg font-semibold mb-2">家電買い替えサイクルと費用</h3>
+
+              <div className="overflow-x-auto">
+                <div className="min-w-[760px]">
+                  {/* ヘッダー：5列を固定幅で定義 */}
+                  <div className="grid grid-cols-[180px_160px_180px_200px_min-content] items-center gap-3 px-1 py-2 text-xs text-gray-600 font-semibold border-b">
+                    <div>家電名</div>
+                    <div>買い替えサイクル（年）</div>
+                    <div>初回買い替え（年後）</div>
+                    <div>1回あたりの費用（万円）</div>
+                    <div className="text-right pr-1">操作</div>
+                  </div>
+
+                  {/* 行：ヘッダーと同じ5列テンプレートを使用 */}
+                  {applianceReplacements.map((appliance, index) => (
+                    <div key={index} className="grid grid-cols-[180px_160px_180px_200px_min-content] items-center gap-3 px-1 py-2 border-b">
+                      <input
+                        type="text"
+                        placeholder="家電名"
+                        value={appliance.name}
+                        onChange={(e) => handleApplianceChange(index, 'name', e.target.value)}
+                        className="shadow border rounded w-full h-10 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
+                      />
+                      <input
+                        type="number"
+                        placeholder="買い替えサイクル（年）"
+                        value={appliance.cycle}
+                        min={0}
+                        onChange={(e) => handleApplianceChange(index, 'cycle', e.target.value)}
+                        className="shadow border rounded w-full h-10 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
+                      />
+                      <input
+                        type="number"
+                        placeholder="初回買い替え（年後）"
+                        value={appliance.firstReplacementAfterYears}
+                        min={0}
+                        onChange={(e) => handleApplianceChange(index, 'firstReplacementAfterYears', e.target.value)}
+                        className="shadow border rounded w-full h-10 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
+                      />
+                      <input
+                        type="number"
+                        placeholder="1回あたりの費用（万円）"
+                        value={appliance.cost}
+                        min={0}
+                        onChange={(e) => handleApplianceChange(index, 'cost', e.target.value)}
+                        className="shadow border rounded w-full h-10 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveAppliance(index)}
+                        className="text-red-500 hover:text-red-700 justify-self-end pr-1"
+                        aria-label="この家電行を削除"
+                        title="削除"
+                      >
+                        <Trash2 size={20} />
+                      </button>
+                    </div>
+                  ))}
+
+                  <div className="py-3">
+                    <button
+                      type="button"
+                      onClick={addAppliance}
+                      className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    >
+                      家電を追加する
+                    </button>
+                  </div>
+                </div>
               </div>
-            ))}
-            <button
-              onClick={addAppliance}
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4"
-            >
-              家電を追加する
-            </button>
+            </div>
           </div>
         );
       case 'ライフイベント - 親の介護':
