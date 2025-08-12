@@ -317,7 +317,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
         // Simple random fluctuation for demonstration
         currentExpectedReturn = expectedReturn + (Math.random() - 0.5) * 0.02; // +/- 1% fluctuation
       }
-      const investmentReturn = totalAssets * currentExpectedReturn;
+      const investmentReturn = investedPrincipal * currentExpectedReturn;
       const income = totalNetAnnualIncome + investmentReturn;
 
       // 2. 支出計算
@@ -342,7 +342,10 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       // 2c. 介護費
+      let carExpense = 0;
       let careExpense = 0;
+      const medicalExpense = 0;
+      const longTermCareExpense = 0;
       const isCarePeriod = parentCareAssume &&
                            parentCurrentAge > 0 &&
                            parentCareStartAge >= parentCurrentAge &&
@@ -364,28 +367,25 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       // 2f. 車費用
-      let carExpense = 0;
-      if (carPriceJPY > 0 && carFrequencyYears > 0) {
-        // Initial car purchase
-        if (i === carFirstAfterYears) {
-          if (carLoanUse && carLoanYears > 0) {
-            let annualRate = 0.025; // default
-            if (carLoanType === '銀行ローン') annualRate = 0.015;
-            else if (carLoanType === 'ディーラーローン') annualRate = 0.045;
-            carExpense += calculateLoanPayment(carPriceJPY, annualRate, carLoanYears);
+      if (carPriceJPY > 0 && carFirstAfterYears >= 0 && carFrequencyYears > 0) {
+        const eventAge = initialAge + carFirstAfterYears;
+        for (let k = 0; ; k++) {
+          const eventAgeK = eventAge + k * carFrequencyYears;
+          if (eventAgeK > age) break; // 現在の年齢を超えたら終了
+
+          if (carLoanUse) {
+            let annualRatePercent = 2.5;
+            if (carLoanType === '銀行ローン') annualRatePercent = 1.5;
+            else if (carLoanType === 'ディーラーローン') annualRatePercent = 4.5;
+
+            const annualPay = calculateLoanPayment(carPriceJPY, annualRatePercent, carLoanYears);
+            if (age >= eventAgeK && age < eventAgeK + carLoanYears) {
+              carExpense += annualPay;
+            }
           } else {
-            carExpense += carPriceJPY;
-          }
-        }
-        // Subsequent car replacements
-        if (i > carFirstAfterYears && (i - carFirstAfterYears) % carFrequencyYears === 0) {
-          if (carLoanUse && carLoanYears > 0) {
-            let annualRate = 0.025; // default
-            if (carLoanType === '銀行ローン') annualRate = 0.015;
-            else if (carLoanType === 'ディーラーローン') annualRate = 0.045;
-            carExpense += calculateLoanPayment(carPriceJPY, annualRate, carLoanYears);
-          } else {
-            carExpense += carPriceJPY;
+            if (age === eventAgeK) {
+              carExpense += carPriceJPY;
+            }
           }
         }
       }
@@ -401,7 +401,12 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       // ローン返済
       if (housingType === '持ち家（ローン中）' && currentLoanMonthlyPaymentJPY > 0 && currentLoanRemainingYears > 0) {
         // 既存ローン
-        housingExpense += currentLoanMonthlyPaymentJPY * 12;
+        if (housingType==='持ち家（ローン中）' && currentLoanMonthlyPaymentJPY>0 && currentLoanRemainingYears>0) {
+        // ループ開始年を起点に「残存年数」だけ計上
+        if (i < currentLoanRemainingYears) {
+          housingExpense += currentLoanMonthlyPaymentJPY * 12;
+        }
+      }
       } else if (housePurchasePlanAge > 0 && age >= housePurchasePlanAge && age < housePurchasePlanAge + housePurchasePlanYears) {
         // 新規購入ローンの返済
         const principal = housePurchasePlanPriceJPY - housePurchasePlanDownPaymentJPY;
@@ -452,7 +457,15 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       });
 
       // 2e. 合計費用
-      const totalExpense = livingExpense + childExpense + careExpense + retirementExpense + carExpense + housingExpense + marriageExpense + applianceExpense;
+      if (expenseMode === 'detailed') {
+        carExpense = 0;
+        housingExpense = 0;
+        applianceExpense = 0;
+        childExpense = 0;
+      }
+
+      // 各種費用の合計
+      const totalExpense = livingExpense + carExpense + housingExpense + applianceExpense + childExpense + medicalExpense + longTermCareExpense;
 
       // 3. 収支と資産更新
       const balance = income - totalExpense - yearlyRecurringInvestmentJPY - yearlySpotJPY;

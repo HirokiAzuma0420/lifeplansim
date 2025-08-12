@@ -265,7 +265,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     const stressTestEnabled = body.stressTest?.enabled || false;
 
     const interestScenario = body.interestScenario || '固定利回り';
-    const emergencyFundJPY = n(body.emergencyFundJPY);
+    const emergencyFundJPY = Math.max(0, n(body.emergencyFundJPY));
 
     // retirementAgeはinitialAge未満にならないように矯正
     retirementAge = Math.max(initialAge, retirementAge);
@@ -456,18 +456,23 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
       // 3. 収支と資産更新
       const balance = income - totalExpense - yearlyRecurringInvestmentJPY - yearlySpotJPY;
-      savings += monthlySavingsJPY * 12; // Add monthly savings to cash at year-end
+      savings += monthlySavingsJPY * 12;
       savings += balance;
       investedPrincipal += yearlyRecurringInvestmentJPY + yearlySpotJPY;
+
+      // 生活防衛資金: 現金が閾値を下回る場合は投資元本から取り崩し
+      if (emergencyFundJPY > 0 && savings < emergencyFundJPY) {
+        const shortfall = emergencyFundJPY - savings;
+        const draw = Math.min(shortfall, investedPrincipal);
+        investedPrincipal -= draw;
+        savings += draw;
+      }
+      // 最終ガード
+      if (savings < 0) savings = 0;
+      if (investedPrincipal < 0) investedPrincipal = 0;
       
       // 資産がマイナスになった場合の処理
-      if (savings < 0) {
-        investedPrincipal += savings; // 貯蓄のマイナス分を投資元本から補填
-        savings = 0;
-        if (investedPrincipal < 0) {
-            investedPrincipal = 0; // 投資元本もマイナスになったら0に
-        }
-      }
+      
       
       totalAssets = savings + investedPrincipal;
 

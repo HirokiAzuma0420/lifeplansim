@@ -1,2 +1,28 @@
-FormPage.tsxにおける現在の収入セクションで額面金額を入力したときに
-それぞれの額面金額に対して税収計算を行い、その総和をフロートボックスに出す機能が削除されているんですけど、これは要件漏れです。再実装してください。
+エラーを解消したと言っているが、解消できていないけど。npm run lint等を駆使して
+必ずすべてのエラーを解消してください。この変数は宣言されてないよ。あなたの認識が間違っています。宣言されていません。
+
+[{
+	"resource": "/c:/dev/vite-projects/vite-project/api/simulate/index.ts",
+	"owner": "typescript",
+	"code": "2304",
+	"severity": 8,
+	"message": "名前 'medicalExpense' が見つかりません。",
+	"source": "ts",
+	"startLineNumber": 466,
+	"startColumn": 108,
+	"endLineNumber": 466,
+	"endColumn": 122,
+	"origin": "extHost1"
+},{
+	"resource": "/c:/dev/vite-projects/vite-project/api/simulate/index.ts",
+	"owner": "typescript",
+	"code": "2304",
+	"severity": 8,
+	"message": "名前 'longTermCareExpense' が見つかりません。",
+	"source": "ts",
+	"startLineNumber": 466,
+	"startColumn": 125,
+	"endLineNumber": 466,
+	"endColumn": 144,
+	"origin": "extHost1"
+}]
