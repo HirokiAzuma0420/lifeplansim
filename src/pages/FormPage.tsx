@@ -135,88 +135,161 @@ export default function FormPage() {
 
   const handleSimulate = async () => {
     setLoading(true);
+
+    const n = (v: unknown): number => {
+      const num = Number(v);
+      return isFinite(num) ? num : 0;
+    };
+
+    const getNet = (gross10k: unknown) => getNetIncome(n(gross10k) * 10000);
+
     try {
+      const mainJobIncomeNet = getNet(formData.mainIncome);
+      const sideJobIncomeNet = getNet(formData.sideJobIncome);
+      const spouseMainJobIncomeNet = getNet(formData.spouseMainIncome);
+      const spouseSideJobIncomeNet = getNet(formData.spouseSideJobIncome);
+
+      const detailedFixedAnnual = (
+        n(formData.housingCost) + n(formData.utilitiesCost) + n(formData.communicationCost) +
+        n(formData.carCost) + n(formData.insuranceCost) + n(formData.educationCost) + n(formData.otherFixedCost)
+      ) * 12;
+
+      const detailedVariableAnnual = (
+        n(formData.foodCost) + n(formData.dailyNecessitiesCost) + n(formData.transportationCost) +
+        n(formData.clothingBeautyCost) + n(formData.socializingCost) + n(formData.hobbyEntertainmentCost) + n(formData.otherVariableCost)
+      ) * 12;
+
+      const currentInvestmentsJPY = n(formData.investmentStocksCurrent) + n(formData.investmentTrustCurrent) + n(formData.investmentBondsCurrent) +
+                                  n(formData.investmentIdecoCurrent) + n(formData.investmentCryptoCurrent) + n(formData.investmentOtherCurrent);
+
+      const monthlyRecurringInvestment = Object.values(formData.monthlyInvestmentAmounts).reduce((sum, v) => sum + n(v), 0);
+      const yearlyRecurringInvestmentJPY = monthlyRecurringInvestment * 12;
+
+      const yearlySpotJPY = n(formData.investmentStocksAnnualSpot) + n(formData.investmentTrustAnnualSpot) + n(formData.investmentBondsAnnualSpot) +
+                            n(formData.investmentIdecoAnnualSpot) + n(formData.investmentCryptoAnnualSpot) + n(formData.investmentOtherAnnualSpot);
+
+      const totalInvestmentRate = (n(formData.investmentStocksRate) + n(formData.investmentTrustRate) + n(formData.investmentBondsRate) + n(formData.investmentIdecoRate) + n(formData.investmentCryptoRate) + n(formData.investmentOtherRate)) / 6;
+
+      const params = {
+        initialAge: n(formData.personAge),
+        spouseInitialAge: formData.familyComposition === '既婚' ? n(formData.spouseAge) : undefined,
+        endAge: n(formData.simulationPeriodAge),
+        retirementAge: n(formData.retirementAge),
+        pensionStartAge: n(formData.pensionStartAge),
+
+        mainJobIncomeNet,
+        sideJobIncomeNet,
+        spouseMainJobIncomeNet: formData.familyComposition === '既婚' ? spouseMainJobIncomeNet : undefined,
+        spouseSideJobIncomeNet: formData.familyComposition === '既婚' ? spouseSideJobIncomeNet : undefined,
+        incomeGrowthRate: n(annualRaiseRate) / 100,
+        spouseIncomeGrowthRate: formData.familyComposition === '既婚' ? n(spouseAnnualRaiseRate) / 100 : undefined,
+
+        expenseMode: formData.expenseMethod === '簡単' ? 'simple' : 'detailed',
+        livingCostSimpleAnnual: formData.expenseMethod === '簡単' ? n(formData.livingCostSimple) * 12 : undefined,
+        detailedFixedAnnual: formData.expenseMethod === '詳細' ? detailedFixedAnnual : undefined,
+        detailedVariableAnnual: formData.expenseMethod === '詳細' ? detailedVariableAnnual : undefined,
+
+        car: {
+          priceJPY: n(formData.carPrice) * 10000,
+          firstAfterYears: n(formData.carFirstReplacementAfterYears),
+          frequencyYears: n(formData.carReplacementFrequency),
+          loan: {
+            use: formData.carLoanUsage === 'はい',
+            years: formData.carLoanUsage === 'はい' ? n(formData.carLoanYears) : undefined,
+            type: formData.carLoanUsage === 'はい' ? formData.carLoanType as '銀行ローン' | 'ディーラーローン' : undefined,
+          },
+        },
+
+        housing: {
+          type: formData.housingType,
+          currentLoan: formData.housingType === '持ち家（ローン中）' && formData.expenseMethod === '簡単' ? {
+            monthlyPaymentJPY: n(formData.loanMonthlyPayment),
+            remainingYears: n(formData.loanRemainingYears),
+          } : undefined,
+          purchasePlan: formData.housePurchasePlan ? {
+            age: n(formData.housePurchasePlan.age),
+            priceJPY: n(formData.housePurchasePlan.price) * 10000,
+            downPaymentJPY: n(formData.housePurchasePlan.downPayment) * 10000,
+            years: n(formData.housePurchasePlan.loanYears),
+            rate: n(formData.housingLoanInterestRateType === '指定' ? formData.housingLoanInterestRate : 1.5) / 100,
+          } : undefined,
+          renovations: formData.houseRenovationPlans.map(p => ({
+            age: n(p.age),
+            costJPY: n(p.cost) * 10000,
+            cycleYears: p.cycleYears ? n(p.cycleYears) : undefined,
+          })),
+        },
+
+        marriage: formData.planToMarry === 'する' ? {
+          age: n(formData.marriageAge),
+          engagementJPY: n(formData.engagementCost) * 10000,
+          weddingJPY: n(formData.weddingCost) * 10000,
+          honeymoonJPY: n(formData.honeymoonCost) * 10000,
+          movingJPY: n(formData.newHomeMovingCost) * 10000,
+        } : undefined,
+
+        children: formData.hasChildren === 'はい' ? {
+          count: n(formData.numberOfChildren),
+          firstBornAge: n(formData.firstBornAge),
+          educationPattern: formData.educationPattern as '公立中心' | '公私混合' | '私立中心',
+        } : undefined,
+
+        appliances: applianceReplacements.map(a => ({
+          name: a.name,
+          cycleYears: n(a.cycle),
+          firstAfterYears: n(a.firstReplacementAfterYears),
+          cost10kJPY: n(a.cost),
+        })),
+
+        care: {
+          assume: formData.parentCareAssumption === 'はい',
+          parentCurrentAge: n(formData.parentCurrentAge),
+          parentCareStartAge: n(formData.parentCareStartAge),
+          years: n(formData.parentCareYears),
+          monthly10kJPY: n(formData.parentCareMonthlyCost),
+        },
+
+        postRetirementLiving10kJPY: n(formData.postRetirementLivingCost),
+        pensionMonthly10kJPY: n(formData.pensionAmount),
+
+        currentSavingsJPY: n(formData.currentSavings) * 10000,
+        monthlySavingsJPY: n(formData.monthlySavings),
+
+        currentInvestmentsJPY,
+        yearlyRecurringInvestmentJPY,
+        yearlySpotJPY,
+        expectedReturn: totalInvestmentRate / 100,
+        stressTest: {
+          enabled: formData.interestRateScenario === 'ランダム変動',
+        },
+
+        interestScenario: formData.interestRateScenario as '固定利回り' | 'ランダム変動',
+        emergencyFundJPY: n(formData.emergencyFund) * 10000,
+      };
+
       const response = await fetch('/api/simulate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          inputParams: {
-            initialAge: Number(formData.personAge),
-            spouseInitialAge: formData.spouseAge ? Number(formData.spouseAge) : undefined,
-            endAge: Number(formData.simulationPeriodAge),
-            currentSavings: Number(formData.currentSavings) * 10000, // 万円 -> 円
-            mainJobIncome: Number(formData.mainIncome) * 10000, // 万円 -> 円
-            incomeGrowthRate: Number(annualRaiseRate) / 100, // % -> 小数
-            spouseMainIncome: Number(formData.spouseMainIncome) * 10000, // 万円 -> 円
-            spouseIncomeGrowthRate: Number(spouseAnnualRaiseRate) / 100, // % -> 小数
-            sideJobIncome: Number(formData.sideJobIncome) * 10000, // 万円 -> 円
-            spouseSideJobIncome: Number(formData.spouseSideJobIncome) * 10000, // 万円 -> 円
-            livingCost: formData.livingCostSimple ? Number(formData.livingCostSimple) * 12 : 0, // 円/月 -> 円/年
-            carPrice: Number(formData.carPrice) * 10000, // 万円 -> 円
-            carReplacementFrequency: Number(formData.carReplacementFrequency),
-            carLoanUsage: formData.carLoanUsage,
-            carLoanYears: Number(formData.carLoanYears),
-            carLoanType: formData.carLoanType,
-            carFirstReplacementAfterYears: Number(formData.carFirstReplacementAfterYears),
-            housingType: formData.housingType,
-            housePurchasePlan: formData.housePurchasePlan ? {
-              age: Number(formData.housePurchasePlan.age),
-              price: Number(formData.housePurchasePlan.price) * 10000, // 万円 -> 円
-              downPayment: Number(formData.housePurchasePlan.downPayment) * 10000, // 万円 -> 円
-              loanYears: Number(formData.housePurchasePlan.loanYears),
-              interestRate: Number(formData.housePurchasePlan.interestRate) / 100, // % -> 小数
-            } : null,
-            houseRenovationPlans: formData.houseRenovationPlans.map(plan => ({
-              age: Number(plan.age),
-              cost: Number(plan.cost) * 10000, // 万円 -> 円
-              cycleYears: plan.cycleYears ? Number(plan.cycleYears) : undefined,
-            })),
-            loanMonthlyPayment: Number(formData.loanMonthlyPayment),
-            loanRemainingYears: Number(formData.loanRemainingYears),
-            housingLoanInterestRateType: formData.housingLoanInterestRateType,
-            housingLoanInterestRate: Number(formData.housingLoanInterestRate) / 100, // % -> 小数
-            monthlySavings: Number(formData.monthlySavings),
-            investmentStocksCurrent: Number(formData.investmentStocksCurrent),
-            investmentTrustCurrent: Number(formData.investmentTrustCurrent),
-            investmentBondsCurrent: Number(formData.investmentBondsCurrent),
-            investmentIdecoCurrent: Number(formData.investmentIdecoCurrent),
-            investmentCryptoCurrent: Number(formData.investmentCryptoCurrent),
-            investmentOtherCurrent: Number(formData.investmentOtherCurrent),
-            monthlyInvestmentAmounts: Object.fromEntries(
-              Object.entries(formData.monthlyInvestmentAmounts).map(([key, value]) => [key, Number(value)])
-            ),
-            investmentStocksAnnualSpot: Number(formData.investmentStocksAnnualSpot),
-            investmentTrustAnnualSpot: Number(formData.investmentTrustAnnualSpot),
-            investmentBondsAnnualSpot: Number(formData.investmentBondsAnnualSpot),
-            investmentIdecoAnnualSpot: Number(formData.investmentIdecoAnnualSpot),
-            investmentCryptoAnnualSpot: Number(formData.investmentCryptoAnnualSpot),
-            investmentOtherAnnualSpot: Number(formData.investmentOtherAnnualSpot),
-            investmentStocksRate: Number(formData.investmentStocksRate) / 100,
-            investmentTrustRate: Number(formData.investmentTrustRate) / 100,
-            investmentBondsRate: Number(formData.investmentBondsRate) / 100,
-            investmentIdecoRate: Number(formData.investmentIdecoRate) / 100,
-            investmentCryptoRate: Number(formData.investmentCryptoRate) / 100,
-            investmentOtherRate: Number(formData.investmentOtherRate) / 100,
-            emergencyFund: Number(formData.emergencyFund) * 10000, // 万円 -> 円
-            // Also need to pass annualRaiseRate and spouseAnnualRaiseRate from state
-            annualRaiseRate: Number(annualRaiseRate), // This is already a number from state, but let's be explicit
-            spouseAnnualRaiseRate: Number(spouseAnnualRaiseRate), // Same here
-            parentCurrentAge: Number(formData.parentCurrentAge),
-            parentCareStartAge: Number(formData.parentCareStartAge),
-            pensionStartAge: Number(formData.pensionStartAge),
-            pensionAmount: Number(formData.pensionAmount) * 10000, // 万円 -> 円
-            postRetirementLivingCost: Number(formData.postRetirementLivingCost) * 10000, // 万円 -> 円
-          }
-        }),
+        body: JSON.stringify({ inputParams: params }),
       });
+      
       const data = await response.json();
-      const yearly = data.yearlyData ?? data.result?.yearlyData ?? data;
+      if (!response.ok) {
+        throw new Error(data.message || 'シミュレーションエラー');
+      }
+
+      const yearly = data.yearlyData;
       await navigator.clipboard.writeText(JSON.stringify(yearly, null, 2));
-      alert('YearlyTableをコピーしました');
-      setResult(data.result);
-    } catch (error) {
+      alert('シミュレーション結果(yearlyData)をクリップボードにコピーしました');
+      setResult(yearly);
+
+    } catch (error: unknown)  {
       console.error(error);
-      setResult({ error: '通信エラー' });
+       if (error instanceof Error) {
+        setResult({ error: error.message });
+    } else {
+        setResult({ error: '通信エラー' });
+    }
     }
     setLoading(false);
   };
