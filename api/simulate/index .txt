@@ -1,0 +1,186 @@
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+
+interface InputParams {
+  initialAge: number;
+  retirementAge: number;
+  monthlyLivingCost: number;
+  initialSavings: number;
+  yearlyIncome: number;
+  yearlyBonus: number;
+  yearlyInvestment: number;
+  investmentYield: number;
+  numberOfChildren?: number;
+  firstBornAge?: number;
+  educationPattern?: '公立中心' | '公私混合' | '私立中心';
+  parentCareAssumption?: 'はい' | 'いいえ';
+  parentCurrentAge?: number;
+  parentCareStartAge?: number;
+  parentCareYears?: number;
+  parentCareMonthlyCost?: number;
+  postRetirementLivingCost?: number;
+  pensionStartAge?: number;
+  pensionAmount?: number;
+}
+
+interface YearlyData {
+  year: number;
+  age: number;
+  totalAssets: number;
+  savings: number;
+  investment: number;
+  income: number;
+  expense: number;
+  balance: number;
+  childExpense: number;
+  careExpense: number;
+  retirementExpense: number;
+  totalExpense: number;
+}
+
+export default async (req: VercelRequest, res: VercelResponse) => {
+  if (req.method === 'POST') {
+    try {
+      const inputParams: InputParams = req.body;
+
+      const {
+        initialAge,
+        retirementAge,
+        monthlyLivingCost,
+        initialSavings,
+        yearlyIncome,
+        yearlyBonus,
+        yearlyInvestment,
+        investmentYield,
+        numberOfChildren,
+        firstBornAge,
+        educationPattern,
+        parentCareAssumption,
+        parentCurrentAge,
+        parentCareStartAge,
+        parentCareYears,
+        parentCareMonthlyCost,
+        postRetirementLivingCost,
+        pensionStartAge,
+        pensionAmount,
+      } = inputParams;
+
+      // パラメータのバリデーションとデフォルト値設定
+    const initialAge = Number(inputParams.initialAge) || 0;
+    const initialIncome = Number(inputParams.initialIncome) || 0;
+    const initialSavings = Number(inputParams.initialSavings) || 0;
+    const retirementAge = Number(inputParams.retirementAge) || 65;
+    const incomeIncreaseRate = Number(inputParams.incomeIncreaseRate) / 100 || 0;
+    const savingsRate = Number(inputParams.savingsRate) / 100 || 0;
+    const investmentRate = Number(inputParams.investmentRate) / 100 || 0;
+    const investmentYield = Number(inputParams.investmentYield) / 100 || 0;
+
+    const numberOfChildren = Number(inputParams.numberOfChildren) || 0;
+    const firstBornAge = Number(inputParams.firstBornAge) || 0;
+    const educationPattern = inputParams.educationPattern || "公立中心";
+
+    const parentCareAssumption = inputParams.parentCareAssumption || "いいえ";
+    const parentCurrentAge = Number(inputParams.parentCurrentAge) || 0;
+    const parentCareStartAge = Number(inputParams.parentCareStartAge) || 0;
+    const parentCareYears = Number(inputParams.parentCareYears) || 0;
+    const parentCareMonthlyCost = Number(inputParams.parentCareMonthlyCost) || 0;
+
+    const postRetirementLivingCost = Number(inputParams.postRetirementLivingCost) || 0;
+    const pensionStartAge = Number(inputParams.pensionStartAge) || 0;
+    const pensionAmount = Number(inputParams.pensionAmount) || 0;
+
+      // Step 2: Child Expense Logic
+      let educationCostPerChild = 0;
+      if (educationPattern === '公立中心') {
+        educationCostPerChild = 10000000;
+      } else if (educationPattern === '公私混合') {
+        educationCostPerChild = 16000000;
+      } else if (educationPattern === '私立中心') {
+        educationCostPerChild = 20000000;
+      }
+
+      const totalEducationCost = educationCostPerChild * numNumberOfChildren;
+      const annualChildExpense = totalEducationCost > 0 ? totalEducationCost / 22 : 0;
+      
+
+      // Step 3: Care Expense Logic
+      let annualCareCost = 0;
+      let careStartAge = 0;
+      if (parentCareAssumption === 'はい' && numParentCurrentAge > 0 && numParentCareStartAge > 0 && numParentCareYears > 0 && numParentCareMonthlyCost > 0) {
+        annualCareCost = numParentCareMonthlyCost * 10000 * 12; // Assuming input is in 万円
+        careStartAge = numInitialAge + (numParentCareStartAge - numParentCurrentAge);
+      }
+
+      let yearlyData: YearlyData[] = [];
+      let currentSavings = numInitialSavings;
+      let totalAssets = numInitialSavings;
+
+      const simulationYears = 100 - numInitialAge;
+
+      for (let i = 0; i <= simulationYears; i++) {
+        const age = numInitialAge + i;
+        const isRetired = age >= numRetirementAge;
+
+        const annualIncome = isRetired ? 0 : numYearlyIncome + numYearlyBonus;
+        const investmentReturn = totalAssets * (numInvestmentYield / 100);
+        const totalIncome = annualIncome + investmentReturn;
+
+        // 支出の計算
+        const livingExpense = numMonthlyLivingCost * 12;
+        
+        // 支出の計算
+      let childExpense = 0;
+      if (numberOfChildren > 0 && firstBornAge > 0) {
+        const childAge = age - initialAge + firstBornAge;
+        if (childAge >= 0 && childAge < 22) {
+          childExpense = annualChildExpense;
+        }
+      }
+
+      let careExpense = 0;
+        if (annualCareCost > 0 && careStartAge > 0) {
+            if (age >= careStartAge && age < careStartAge + numParentCareYears) {
+                careExpense = annualCareCost;
+            }
+        }
+
+        let retirementExpense = 0;
+        if (age >= numPensionStartAge && numPensionStartAge > 0) {
+            const annualLivingCostAfterRetirement = numPostRetirementLivingCost * 10000 * 12; // Assuming input is in 万円
+            const annualPensionIncome = numPensionAmount * 10000 * 12; // Assuming input is in 万円
+            if (annualLivingCostAfterRetirement > annualPensionIncome) {
+                retirementExpense = annualLivingCostAfterRetirement - annualPensionIncome;
+            }
+        }
+
+        const totalExpense = livingExpense + childExpense + careExpense + retirementExpense;
+
+        const balance = totalIncome - totalExpense - numYearlyInvestment;
+        currentSavings += balance;
+        totalAssets = currentSavings + (numYearlyInvestment * (i + 1)); // 簡易的な投資元本加算
+
+        yearlyData.push({
+          year: new Date().getFullYear() + i,
+          age,
+          totalAssets,
+          savings: currentSavings,
+          investment: numYearlyInvestment * (i + 1),
+          income: totalIncome,
+          expense: totalExpense,
+          balance,
+          childExpense,
+          careExpense,
+          retirementExpense,
+          totalExpense,
+        });
+      }
+
+      res.status(200).json({ yearlyData });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  } else {
+    res.setHeader('Allow', 'POST');
+    res.status(405).end('Method Not Allowed');
+  }
+};

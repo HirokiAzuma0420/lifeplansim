@@ -28,7 +28,6 @@ export default function FormPage() {
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const [showBackModal, setShowBackModal] = useState(false);
   const [visitedSections, setVisitedSections] = useState<Set<number>>(new Set([0]));
-  const [showLoanEdit, setShowLoanEdit] = useState(false);
   const [annualRaiseRate, setAnnualRaiseRate] = useState(1.5);
   const [spouseAnnualRaiseRate, setSpouseAnnualRaiseRate] = useState(1.5);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -158,6 +157,7 @@ export default function FormPage() {
             carLoanUsage: formData.carLoanUsage,
             carLoanYears: Number(formData.carLoanYears),
             carLoanType: formData.carLoanType,
+            carFirstReplacementAfterYears: Number(formData.carFirstReplacementAfterYears),
             housingType: formData.housingType,
             housePurchasePlan: formData.housePurchasePlan ? {
               age: Number(formData.housePurchasePlan.age),
@@ -198,46 +198,14 @@ export default function FormPage() {
             investmentCryptoRate: Number(formData.investmentCryptoRate) / 100,
             investmentOtherRate: Number(formData.investmentOtherRate) / 100,
             emergencyFund: Number(formData.emergencyFund) * 10000, // 万円 -> 円
-            // Add other fields from formData that are directly passed and need Number() conversion
-            // For example, from the '貯蓄' and '投資' sections
-            // These are not explicitly mentioned in the prompt's example, but should be handled.
-            // The prompt says "...必要な変換とキー統一" so I should try to cover all relevant ones.
-            // Let's check formData structure again.
-            // currentSavings: '', // 万円
-            // monthlySavings: '', // 円
-            // investmentStocksCurrent: '', // 円
-            // investmentTrustCurrent: '', // 円
-            // investmentBondsCurrent: '', // 円
-            // investmentIdecoCurrent: '', // 円
-            // investmentCryptoCurrent: '', // 円
-            // investmentOtherCurrent: '', // 円
-            // monthlyInvestmentAmounts: { ... }, // 円
-            // investmentStocksAnnualSpot: '', // 円
-            // investmentTrustAnnualSpot: '', // 円
-            // investmentBondsAnnualSpot: '', // 円
-            // investmentIdecoAnnualSpot: '', // 円
-            // investmentCryptoAnnualSpot: '', // 円
-            // investmentOtherAnnualSpot: '', // 円
-            // investmentStocksRate: '6.0', // %
-            // investmentTrustRate: '4.0', // %
-            // investmentBondsRate: '1.0', // %
-            // investmentIdecoRate: '4.0', // %
-            // investmentCryptoRate: '8.0', // %
-            // investmentOtherRate: '0.5', // %
-            // emergencyFund: '300', // 万円
-
             // Also need to pass annualRaiseRate and spouseAnnualRaiseRate from state
             annualRaiseRate: Number(annualRaiseRate), // This is already a number from state, but let's be explicit
             spouseAnnualRaiseRate: Number(spouseAnnualRaiseRate), // Same here
             parentCurrentAge: Number(formData.parentCurrentAge),
             parentCareStartAge: Number(formData.parentCareStartAge),
-            carFirstReplacementAfterYears: Number(formData.carFirstReplacementAfterYears),
-            applianceReplacements: applianceReplacements.map(appliance => ({
-              ...appliance,
-              cycle: Number(appliance.cycle),
-              cost: Number(appliance.cost) * 10000, // 万円 -> 円
-              firstReplacementAfterYears: Number(appliance.firstReplacementAfterYears),
-            })),
+            pensionStartAge: Number(formData.pensionStartAge),
+            pensionAmount: Number(formData.pensionAmount) * 10000, // 万円 -> 円
+            postRetirementLivingCost: Number(formData.postRetirementLivingCost) * 10000, // 万円 -> 円
           }
         }),
       });
@@ -1046,6 +1014,7 @@ export default function FormPage() {
       case 'ライフイベント - 家':
         return (
           <div className="p-4">
+            {/* Image placeholder */}
             <div className="w-full h-auto bg-white mb-8 flex items-center justify-center text-gray-500 max-w-[800px] mx-auto">
               <img src="/form/Q4-home.png"></img>
             </div>
@@ -1137,27 +1106,15 @@ export default function FormPage() {
                  </div>
                  <div className="mt-2">
                     <label className="inline-flex items-center mr-4">
-                      <input type="radio" className="custom-radio" name="housingCostConfirmation" value="yes" onChange={() => setShowLoanEdit(false)} />
+                      <input type="radio" className="custom-radio" name="housingCostConfirmation" value="yes" onChange={() => setFormData({...formData, housePurchasePlan: { age: 0, price: 0, downPayment: 0, loanYears: 0, interestRate: 0 }})} />
                       <span className="ml-2">はい</span>
                     </label>
                     <label className="inline-flex items-center">
-                      <input type="radio" className="custom-radio" name="housingCostConfirmation" value="no" onChange={() => setShowLoanEdit(true)} />
+                      <input type="radio" className="custom-radio" name="housingCostConfirmation" value="no" onChange={() => setFormData({...formData, housePurchasePlan: null})} />
                       <span className="ml-2">いいえ</span>
                     </label>
                   </div>
-                  {showLoanEdit && (
-                    <div className="mt-4 space-y-4">
-                        <div>
-                            <label className="block text-gray-700 text-sm font-bold mb-2">ローン返済額（月額）[円]</label>
-                            <input type="number" name="loanMonthlyPayment" value={formData.loanMonthlyPayment} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
-                        </div>
-                        <div>
-                            <label className="block text-gray-700 text-sm font-bold mb-2">ローン残存年数[年]</label>
-                            <input type="number" name="loanRemainingYears" value={formData.loanRemainingYears} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
-                        </div>
-                    </div>
-                    )}
-               </div>
+              </div>
             )}
 
             {(formData.housingType === '持ち家（ローン中）' && formData.expenseMethod === '簡単') && (
