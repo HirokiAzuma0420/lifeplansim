@@ -297,12 +297,18 @@ export default function FormPage() {
           educationPattern: formData.educationPattern as '公立中心' | '公私混合' | '私立中心',
         } : undefined,
 
-        appliances: applianceReplacements.map(a => ({
-          name: a.name,
-          cycleYears: n(a.cycle),
-          firstAfterYears: n(a.firstReplacementAfterYears),
-          cost10kJPY: n(a.cost),
-        })),
+        appliances: applianceReplacements
+          .filter(a =>
+            String(a?.name ?? '').trim().length > 0 &&
+            Number(a?.cost) > 0 &&
+            Number(a?.cycle) > 0
+          )
+          .map(a => ({
+            name: String(a.name),
+            cycleYears: Number(a.cycle),
+            firstAfterYears: Number(a.firstReplacementAfterYears ?? 0),
+            cost10kJPY: Number(a.cost) // 万円（サーバで×10000）
+          })),
 
         care: {
           assume: formData.parentCareAssumption === 'はい',
@@ -1845,7 +1851,7 @@ export default function FormPage() {
           <h2 className="text-2xl font-bold mb-4">入力完了</h2>
           <p className="mb-6">ありがとうございました。入力内容を確認してください。</p>
           <pre className="text-left bg-gray-100 p-4 rounded-md overflow-x-auto" style={{maxHeight: '400px'}}>
-            {JSON.stringify(formData, null, 2)}
+            {JSON.stringify({ ...formData, appliances: applianceReplacements }, null, 2)}
           </pre>
           <button
             type="button"

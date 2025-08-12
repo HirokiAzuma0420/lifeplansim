@@ -244,11 +244,17 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     const firstBornAge = n(body.children?.firstBornAge);
     const educationPattern = body.children?.educationPattern || '公立中心';
 
-    const appliances = (body.appliances ?? []).filter(a =>
+    const appliances = Array.isArray(body.appliances) ? body.appliances.filter(a =>
     a && String(a.name ?? '').trim().length > 0 &&
     Number(a.cost10kJPY) > 0 &&
     Number(a.cycleYears) > 0
-  );
+  ) : [];
+
+    // 投資関連
+    const yearlyRecurringInvestmentJPY = n(body.yearlyRecurringInvestmentJPY); // 円/年
+    const yearlySpotJPY = n(body.yearlySpotJPY);                               // 円/年
+    const expectedReturn = n(body.expectedReturn);                             // 小数(例: 0.05)
+    const stressTestEnabled = !!body.stressTest?.enabled;                      // true/false
 
     const parentCareAssume = body.care?.assume || false;
     const parentCurrentAge = n(body.care?.parentCurrentAge);
@@ -262,11 +268,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     const currentSavingsJPY = n(body.currentSavingsJPY);
     const monthlySavingsJPY = n(body.monthlySavingsJPY);
 
-    const currentInvestmentsJPY = n(body.currentInvestmentsJPY);
-    const yearlyRecurringInvestmentJPY = n(body.yearlyRecurringInvestmentJPY);
-    const yearlySpotJPY = n(body.yearlySpotJPY);
-    const expectedReturn = n(body.expectedReturn);
-    const stressTestEnabled = body.stressTest?.enabled || false;
+    const currentInvestmentsJPY = n(body.currentInvestmentsJPY) * 10000; // 万円を円に変換
 
     const interestScenario = body.interestScenario || '固定利回り';
     const emergencyFundJPY = Math.max(0, n(body.emergencyFundJPY));
@@ -348,8 +350,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       // 2c. 介護費
       let carExpense = 0;
       let careExpense = 0;
-      const medicalExpense = 0;
-      const longTermCareExpense = 0;
+      
       const isCarePeriod = parentCareAssume &&
                            parentCurrentAge > 0 &&
                            parentCareStartAge >= parentCurrentAge &&
@@ -475,7 +476,15 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       // 各種費用の合計
-      const totalExpense = livingExpense + carExpense + housingExpense + applianceExpense + childExpense + medicalExpense + longTermCareExpense;
+      const totalExpense =
+        livingExpense +
+        childExpense +
+        careExpense +
+        carExpense +
+        housingExpense +
+        marriageExpense +
+        applianceExpense +
+        retirementExpense;
 
       // 3. 収支と資産更新
       const balance = income - totalExpense - yearlyRecurringInvestmentJPY - yearlySpotJPY;

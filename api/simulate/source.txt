@@ -244,7 +244,11 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     const firstBornAge = n(body.children?.firstBornAge);
     const educationPattern = body.children?.educationPattern || '公立中心';
 
-    const appliances = body.appliances || [];
+    const appliances = Array.isArray(body.appliances) ? body.appliances.filter(a =>
+    a && String(a.name ?? '').trim().length > 0 &&
+    Number(a.cost10kJPY) > 0 &&
+    Number(a.cycleYears) > 0
+  ) : [];
 
     const parentCareAssume = body.care?.assume || false;
     const parentCurrentAge = n(body.care?.parentCurrentAge);
@@ -258,11 +262,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     const currentSavingsJPY = n(body.currentSavingsJPY);
     const monthlySavingsJPY = n(body.monthlySavingsJPY);
 
-    const currentInvestmentsJPY = n(body.currentInvestmentsJPY);
-    const yearlyRecurringInvestmentJPY = n(body.yearlyRecurringInvestmentJPY);
-    const yearlySpotJPY = n(body.yearlySpotJPY);
-    const expectedReturn = n(body.expectedReturn);
-    const stressTestEnabled = body.stressTest?.enabled || false;
+    const currentInvestmentsJPY = n(body.currentInvestmentsJPY) * 10000; // 万円を円に変換
 
     const interestScenario = body.interestScenario || '固定利回り';
     const emergencyFundJPY = Math.max(0, n(body.emergencyFundJPY));
@@ -317,7 +317,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
         // Simple random fluctuation for demonstration
         currentExpectedReturn = expectedReturn + (Math.random() - 0.5) * 0.02; // +/- 1% fluctuation
       }
-      const investmentReturn = totalAssets * currentExpectedReturn;
+      const investmentReturn = investedPrincipal * currentExpectedReturn;
       const income = totalNetAnnualIncome + investmentReturn;
 
       // 2. 支出計算
@@ -342,7 +342,9 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       // 2c. 介護費
+      let carExpense = 0;
       let careExpense = 0;
+      
       const isCarePeriod = parentCareAssume &&
                            parentCurrentAge > 0 &&
                            parentCareStartAge >= parentCurrentAge &&
@@ -364,28 +366,28 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       // 2f. 車費用
-      let carExpense = 0;
-      if (carPriceJPY > 0 && carFrequencyYears > 0) {
-        // Initial car purchase
-        if (i === carFirstAfterYears) {
-          if (carLoanUse && carLoanYears > 0) {
-            let annualRate = 0.025; // default
-            if (carLoanType === '銀行ローン') annualRate = 0.015;
-            else if (carLoanType === 'ディーラーローン') annualRate = 0.045;
-            carExpense += calculateLoanPayment(carPriceJPY, annualRate, carLoanYears);
-          } else {
-            carExpense += carPriceJPY;
-          }
-        }
-        // Subsequent car replacements
-        if (i > carFirstAfterYears && (i - carFirstAfterYears) % carFrequencyYears === 0) {
-          if (carLoanUse && carLoanYears > 0) {
-            let annualRate = 0.025; // default
-            if (carLoanType === '銀行ローン') annualRate = 0.015;
-            else if (carLoanType === 'ディーラーローン') annualRate = 0.045;
-            carExpense += calculateLoanPayment(carPriceJPY, annualRate, carLoanYears);
-          } else {
-            carExpense += carPriceJPY;
+      if (carPriceJPY > 0 && carFirstAfterYears >= 0 && carFrequencyYears > 0) {
+        const base = initialAge + carFirstAfterYears;
+        const yearsSinceFirst = age - base;
+
+        if (yearsSinceFirst >= 0) {
+          for (let k = 0; k <= Math.floor(yearsSinceFirst / carFrequencyYears); k++) {
+            const eventAge = base + k * carFrequencyYears;
+
+            if (carLoanUse) {
+              let annualRatePercent = 2.5;
+              if (carLoanType === '銀行ローン') annualRatePercent = 1.5;
+              else if (carLoanType === 'ディーラーローン') annualRatePercent = 4.5;
+
+              const annualPay = calculateLoanPayment(carPriceJPY, annualRatePercent, carLoanYears);
+              if (age >= eventAge && age < eventAge + carLoanYears) {
+                carExpense += annualPay;
+              }
+            } else {
+              if (age === eventAge) {
+                carExpense += carPriceJPY;
+              }
+            }
           }
         }
       }
@@ -401,7 +403,12 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       // ローン返済
       if (housingType === '持ち家（ローン中）' && currentLoanMonthlyPaymentJPY > 0 && currentLoanRemainingYears > 0) {
         // 既存ローン
-        housingExpense += currentLoanMonthlyPaymentJPY * 12;
+        if (housingType==='持ち家（ローン中）' && currentLoanMonthlyPaymentJPY>0 && currentLoanRemainingYears>0) {
+        // ループ開始年を起点に「残存年数」だけ計上
+        if (i < currentLoanRemainingYears) {
+          housingExpense += currentLoanMonthlyPaymentJPY * 12;
+        }
+      }
       } else if (housePurchasePlanAge > 0 && age >= housePurchasePlanAge && age < housePurchasePlanAge + housePurchasePlanYears) {
         // 新規購入ローンの返済
         const principal = housePurchasePlanPriceJPY - housePurchasePlanDownPaymentJPY;
@@ -451,8 +458,27 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
         }
       });
 
-      // 2e. 合計費用
-      const totalExpense = livingExpense + childExpense + careExpense + retirementExpense + carExpense + housingExpense + marriageExpense + applianceExpense;
+      // 2e. 家電費用
+      for (const a of appliances) {
+        const firstAge = initialAge + Number(a.firstAfterYears ?? 0);
+        if (age >= firstAge) {
+          const diff = age - firstAge;
+          if (diff === 0 || (Number(a.cycleYears) > 0 && diff % Number(a.cycleYears) === 0)) {
+            applianceExpense += Number(a.cost10kJPY) * 10000;
+          }
+        }
+      }
+
+      // 各種費用の合計
+      const totalExpense =
+        livingExpense +
+        childExpense +
+        careExpense +
+        carExpense +
+        housingExpense +
+        marriageExpense +
+        applianceExpense +
+        retirementExpense;
 
       // 3. 収支と資産更新
       const balance = income - totalExpense - yearlyRecurringInvestmentJPY - yearlySpotJPY;
