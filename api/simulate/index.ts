@@ -244,7 +244,11 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     const firstBornAge = n(body.children?.firstBornAge);
     const educationPattern = body.children?.educationPattern || '公立中心';
 
-    const appliances = body.appliances || [];
+    const appliances = (body.appliances ?? []).filter(a =>
+    a && String(a.name ?? '').trim().length > 0 &&
+    Number(a.cost10kJPY) > 0 &&
+    Number(a.cycleYears) > 0
+  );
 
     const parentCareAssume = body.care?.assume || false;
     const parentCurrentAge = n(body.care?.parentCurrentAge);
@@ -368,23 +372,26 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
       // 2f. 車費用
       if (carPriceJPY > 0 && carFirstAfterYears >= 0 && carFrequencyYears > 0) {
-        const eventAge = initialAge + carFirstAfterYears;
-        for (let k = 0; ; k++) {
-          const eventAgeK = eventAge + k * carFrequencyYears;
-          if (eventAgeK > age) break; // 現在の年齢を超えたら終了
+        const base = initialAge + carFirstAfterYears;
+        const yearsSinceFirst = age - base;
 
-          if (carLoanUse) {
-            let annualRatePercent = 2.5;
-            if (carLoanType === '銀行ローン') annualRatePercent = 1.5;
-            else if (carLoanType === 'ディーラーローン') annualRatePercent = 4.5;
+        if (yearsSinceFirst >= 0) {
+          for (let k = 0; k <= Math.floor(yearsSinceFirst / carFrequencyYears); k++) {
+            const eventAge = base + k * carFrequencyYears;
 
-            const annualPay = calculateLoanPayment(carPriceJPY, annualRatePercent, carLoanYears);
-            if (age >= eventAgeK && age < eventAgeK + carLoanYears) {
-              carExpense += annualPay;
-            }
-          } else {
-            if (age === eventAgeK) {
-              carExpense += carPriceJPY;
+            if (carLoanUse) {
+              let annualRatePercent = 2.5;
+              if (carLoanType === '銀行ローン') annualRatePercent = 1.5;
+              else if (carLoanType === 'ディーラーローン') annualRatePercent = 4.5;
+
+              const annualPay = calculateLoanPayment(carPriceJPY, annualRatePercent, carLoanYears);
+              if (age >= eventAge && age < eventAge + carLoanYears) {
+                carExpense += annualPay;
+              }
+            } else {
+              if (age === eventAge) {
+                carExpense += carPriceJPY;
+              }
             }
           }
         }
@@ -456,12 +463,15 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
         }
       });
 
-      // 2e. 合計費用
-      if (expenseMode === 'detailed') {
-        carExpense = 0;
-        housingExpense = 0;
-        applianceExpense = 0;
-        childExpense = 0;
+      // 2e. 家電費用
+      for (const a of appliances) {
+        const firstAge = initialAge + Number(a.firstAfterYears ?? 0);
+        if (age >= firstAge) {
+          const diff = age - firstAge;
+          if (diff === 0 || (Number(a.cycleYears) > 0 && diff % Number(a.cycleYears) === 0)) {
+            applianceExpense += Number(a.cost10kJPY) * 10000;
+          }
+        }
       }
 
       // 各種費用の合計
