@@ -26,12 +26,12 @@ interface InputParams {
     loan: {
       use: boolean;
       years?: number;
-      type?: '銀行ローン' | 'ディーラーローン';
+      type?: '銀行ローン' | 'チE��ーラーローン';
     };
   };
 
   housing: {
-    type: '賃貸' | '持ち家（ローン中）' | '持ち家（完済）';
+    type: '賁E��' | '持ち家�E�ローン中�E�E | '持ち家�E�完済！E;
     currentLoan?: {
       monthlyPaymentJPY: number;
       remainingYears: number;
@@ -61,7 +61,7 @@ interface InputParams {
   children?: {
     count: number;
     firstBornAge: number;
-    educationPattern: '公立中心' | '公私混合' | '私立中心';
+    educationPattern: '公立中忁E | '公私混吁E | '私立中忁E;
   };
 
   appliances?: {
@@ -125,9 +125,8 @@ interface YearlyData {
   };
 }
 
-// ユーティリティ関数
-// シード付きPRNG（mulberry32）
-function mulberry32(seed: number) {
+// ユーチE��リチE��関数
+// シード付きPRNG�E�Eulberry32�E�Efunction mulberry32(seed: number) {
   return function() {
     let t = (seed += 0x6D2B79F5);
     t = Math.imul(t ^ (t >>> 15), t | 1);
@@ -136,15 +135,14 @@ function mulberry32(seed: number) {
   };
 }
 
-// 標準正規（Box-Muller）
-function gaussian(rand: () => number): number {
+// 標準正規！Eox-Muller�E�Efunction gaussian(rand: () => number): number {
   let u = 0, v = 0;
   while (u === 0) u = rand();
   while (v === 0) v = rand();
   return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
 }
 
-// ベクトル標準化：平均0・標準偏差1
+// ベクトル標準化�E�平坁E・標準偏差1
 function standardize(xs: number[]): number[] {
   const n = xs.length;
   const m = xs.reduce((a, b) => a + b, 0) / n;
@@ -157,38 +155,35 @@ const n = (v: unknown): number => {
   return isFinite(num) ? num : 0;
 };
 
-// 資産リスクプリセットと資産キー配列を定義。
-const ASSET_SIGMA: Record<string, number> = {
+// 賁E��リスクプリセチE��と賁E��キー配�Eを定義、Econst ASSET_SIGMA: Record<string, number> = {
   equity_jp_us: 0.20,
   fund_foreign: 0.18,
   ideco_foreign: 0.18,
   bond_dev: 0.04,
   btc: 0.70,
 };
-const ASSETS = Object.keys(ASSET_SIGMA); // 等ウェイト
-
-// ローン返済額計算関数 (年額)
+const ASSETS = Object.keys(ASSET_SIGMA); // 等ウェイチE
+// ローン返済額計算関数 (年顁E
 const calculateLoanPayment = (principal: number, annualInterestRate: number, years: number): number => {
   if (principal <= 0 || annualInterestRate < 0 || years <= 0) {
     return 0;
   }
 
-  const monthlyInterestRate = annualInterestRate / 100 / 12; // 百分率を小数に変換し、月利に
+  const monthlyInterestRate = annualInterestRate / 100 / 12; // 百刁E��を小数に変換し、月利に
   const totalMonths = years * 12;
 
   if (monthlyInterestRate === 0) {
-    return principal / years; // 金利0の場合は元本を年数で割る
-  }
+    return principal / years; // 金利0の場合�E允E��を年数で割めE  }
 
   const monthlyPayment = principal * monthlyInterestRate * Math.pow((1 + monthlyInterestRate), totalMonths) / (Math.pow((1 + monthlyInterestRate), totalMonths) - 1);
   return monthlyPayment * 12; // 年額を返す
 };
 
-// 額面収入から手取り収入を計算する関数
+// 額面収�Eから手取り収入を計算する関数
 function computeNetAnnual(grossAnnualIncome: number): number {
   const income = n(grossAnnualIncome);
 
-  // 給与所得控除 (令和2年以降)
+  // 給与所得控除 (令咁E年以陁E
   let salaryIncomeDeduction: number;
   if (income <= 1625000) {
     salaryIncomeDeduction = 550000;
@@ -204,17 +199,15 @@ function computeNetAnnual(grossAnnualIncome: number): number {
     salaryIncomeDeduction = 1950000;
   }
 
-  // 社会保険料 (健康保険、厚生年金、雇用保険) - 簡略化のため一律15%とする
+  // 社会保険斁E(健康保険、厚生年金、E��用保険) - 簡略化�Eため一征E5%とする
   const socialInsurancePremium = income * 0.15;
 
-  // 基礎控除 (令和2年以降)
+  // 基礎控除 (令咁E年以陁E
   const basicDeduction = 480000;
 
-  // 課税所得
-  const taxableIncome = Math.max(0, income - salaryIncomeDeduction - socialInsurancePremium - basicDeduction);
+  // 課税所征E  const taxableIncome = Math.max(0, income - salaryIncomeDeduction - socialInsurancePremium - basicDeduction);
 
-  // 所得税
-  let incomeTax: number;
+  // 所得稁E  let incomeTax: number;
   if (taxableIncome <= 1950000) {
     incomeTax = taxableIncome * 0.05;
   } else if (taxableIncome <= 3300000) {
@@ -231,11 +224,9 @@ function computeNetAnnual(grossAnnualIncome: number): number {
     incomeTax = taxableIncome * 0.45 - 4796000;
   }
 
-  // 住民税 (均等割5,000円 + 所得割10%) - 簡略化
-  const residentTax = taxableIncome * 0.1 + 5000;
+  // 住民稁E(坁E��割5,000冁E+ 所得割10%) - 簡略匁E  const residentTax = taxableIncome * 0.1 + 5000;
 
-  // 手取り収入 = 額面収入 - 社会保険料 - 所得税 - 住民税
-  const netAnnualIncome = income - socialInsurancePremium - incomeTax - residentTax;
+  // 手取り収入 = 額面収�E - 社会保険斁E- 所得稁E- 住民稁E  const netAnnualIncome = income - socialInsurancePremium - incomeTax - residentTax;
 
   return Math.max(0, netAnnualIncome);
 }
@@ -279,7 +270,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
 
     const stressTestEnabled = interestScenario === 'ランダム変動';
 
-    const mu = Math.max(-1, Math.min(1, n(expectedReturn))); // 小数, 例0.04
+    const mu = Math.max(-1, Math.min(1, n(expectedReturn))); // 小数, 侁E.04
     const scenario = interestScenario || '固定利回り';
     const stEnabled = stressTestEnabled; // stressTestEnabled は既に定義済み
     const seedBase = n(body.inputParams.stressTest?.seed) || 123456789; // body.inputParams.stressTest?.seed を使用
@@ -288,13 +279,10 @@ export default async function (req: VercelRequest, res: VercelResponse) {
 
     let currentAge = initialAge;
     let savings = currentSavingsJPY;
-    const nisa = 0; // NISAは今回はシミュレーション対象外
-    const ideco = 0; // iDeCoは今回はシミュレーション対象外
-    const currentInvestmentsJPY_corrected = n(currentInvestmentsJPY) * 10000; // 万円を円に変換
-    let investedPrincipal = currentInvestmentsJPY_corrected; // 初期元本
+    const nisa = 0; // NISAは今回はシミュレーション対象夁E    const ideco = 0; // iDeCoは今回はシミュレーション対象夁E    const currentInvestmentsJPY_corrected = n(currentInvestmentsJPY) * 10000; // 丁E�Eを�Eに変換
+    let investedPrincipal = currentInvestmentsJPY_corrected; // 初期允E��
 
-    // 家電の正規化（受信直後）
-    const appliancesOnly = Array.isArray(appliances) ? appliances.filter(a =>
+    // 家電の正規化�E�受信直後！E    const appliancesOnly = Array.isArray(appliances) ? appliances.filter(a =>
       a && String(a.name ?? '').trim().length > 0 &&
       Number(a.cost10kJPY) > 0 &&
       Number(a.cycleYears) > 0
@@ -306,12 +294,10 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     ASSETS.forEach((k, idx) => {
       const rand = mulberry32(seedBase + idx * 101);
       const zs = Array.from({ length: T }, () => gaussian(rand));
-      const zstd = standardize(zs); // 平均0, 分散1に補正（ここが「収束」の鍵）
-      const sigma = ASSET_SIGMA[k];
+      const zstd = standardize(zs); // 平坁E, 刁E��1に補正�E�ここが「収束」�E鍵�E�E      const sigma = ASSET_SIGMA[k];
       const ra = zstd.map(z => {
         let r = mu + sigma * z;
-        // 任意: 過度な外れ値抑制（±3σ）
-        const lo = mu - 3 * sigma, hi = mu + 3 * sigma;
+        // 任愁E 過度な外れ値抑制�E�±3ρE��E        const lo = mu - 3 * sigma, hi = mu + 3 * sigma;
         if (r < lo) r = lo;
         if (r > hi) r = hi;
         return r;
@@ -330,11 +316,10 @@ export default async function (req: VercelRequest, res: VercelResponse) {
       let careExpense = 0;
       let retirementExpense = 0;
 
-      // 1. 収入計算
-      let selfGrossIncome = mainJobIncomeGross * Math.pow(1 + incomeGrowthRate, i) + sideJobIncomeGross;
+      // 1. 収�E計箁E      let selfGrossIncome = mainJobIncomeGross * Math.pow(1 + incomeGrowthRate, i) + sideJobIncomeGross;
       let spouseGrossIncome = (spouseMainJobIncomeGross ?? 0) * Math.pow(1 + (spouseIncomeGrowthRate ?? 0), i) + (spouseSideJobIncomeGross ?? 0);
 
-      // 退職年齢以降の収入調整
+      // 退職年齢以降�E収�E調整
       if (currentAge >= retirementAge) {
         selfGrossIncome = 0;
         spouseGrossIncome = 0;
@@ -342,16 +327,15 @@ export default async function (req: VercelRequest, res: VercelResponse) {
 
       annualIncome = computeNetAnnual(selfGrossIncome) + computeNetAnnual(spouseGrossIncome);
 
-      // 2. 支出計算
-      if (expenseMode === 'simple') {
+      // 2. 支出計箁E      if (expenseMode === 'simple') {
         livingExpense = livingCostSimpleAnnual ?? 0;
       } else {
         livingExpense = (detailedFixedAnnual ?? 0) + (detailedVariableAnnual ?? 0);
       }
 
-      // 2a. 老後費用 (65歳以降の生活費と年金の差額)
+      // 2a. 老後費用 (65歳以降�E生活費と年金�E差顁E
       if (currentAge >= retirementAge) {
-        livingExpense = 0; // 退職年齢以降はlivingExpenseを0にする
+        livingExpense = 0; // 退職年齢以降�ElivingExpenseめEにする
         const postRetirementLivingAnnual = postRetirementLiving10kJPY * 10000 * 12;
         const pensionAnnual = (currentAge >= pensionStartAge ? pensionMonthly10kJPY * 10000 * 12 : 0);
         retirementExpense = Math.max(0, postRetirementLivingAnnual - pensionAnnual);
@@ -360,15 +344,14 @@ export default async function (req: VercelRequest, res: VercelResponse) {
       // 2b. 子供費用
       if (children) {
         for (let c = 0; c < children.count; c++) {
-          const childBirthAge = children.firstBornAge + c * 3; // 3年おきに生まれると仮定
-          const childAge = currentAge - childBirthAge;
+          const childBirthAge = children.firstBornAge + c * 3; // 3年おきに生まれると仮宁E          const childAge = currentAge - childBirthAge;
 
           if (childAge >= 0 && childAge <= 21) {
             let educationCost = 0;
             switch (children.educationPattern) {
-              case '公立中心': educationCost = 10000000 / 22; break;
-              case '公私混合': educationCost = 16000000 / 22; break;
-              case '私立中心': educationCost = 20000000 / 22; break;
+              case '公立中忁E: educationCost = 10000000 / 22; break;
+              case '公私混吁E: educationCost = 16000000 / 22; break;
+              case '私立中忁E: educationCost = 20000000 / 22; break;
             }
             childExpense += educationCost;
           }
@@ -413,7 +396,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
             if (car.loan.use) {
               let annualRatePercent = 2.5;
               if (car.loan.type === '銀行ローン') annualRatePercent = 1.5;
-              else if (car.loan.type === 'ディーラーローン') annualRatePercent = 4.5;
+              else if (car.loan.type === 'チE��ーラーローン') annualRatePercent = 4.5;
 
               const annualPay = calculateLoanPayment(car.priceJPY, annualRatePercent, car.loan.years ?? 0);
               if (currentAge >= eventAge && currentAge < eventAge + (car.loan.years ?? 0)) {
@@ -428,10 +411,9 @@ export default async function (req: VercelRequest, res: VercelResponse) {
         }
       }
 
-      // 2g. 住まい費用
-      if (housing.type === '持ち家（ローン中）' && housing.currentLoan?.monthlyPaymentJPY && housing.currentLoan?.remainingYears) {
-        // ループ開始年を起点に「残存年数」だけ計上
-        if (i < housing.currentLoan.remainingYears) {
+      // 2g. 住まぁE��用
+      if (housing.type === '持ち家�E�ローン中�E�E && housing.currentLoan?.monthlyPaymentJPY && housing.currentLoan?.remainingYears) {
+        // ループ開始年を起点に「残存年数」だけ計丁E        if (i < housing.currentLoan.remainingYears) {
           housingExpense += housing.currentLoan.monthlyPaymentJPY * 12;
         }
       }
@@ -462,8 +444,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
         childExpense = 0;
       }
 
-      // 各種費用の合計
-      const totalExpense =
+      // 吁E��費用の合訁E      const totalExpense =
         livingExpense +
         childExpense +
         careExpense +
@@ -494,15 +475,14 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     const cashFlow = annualIncome - totalExpense - annualInvestment + (monthlySavingsJPY * 12);
     savings += cashFlow;
 
-      // 生活防衛資金の補填
+      // 生活防衛賁E��の補填
       if (emergencyFundJPY > 0 && savings < emergencyFundJPY) {
         const shortfall = emergencyFundJPY - savings;
-        const draw = Math.min(shortfall, investedPrincipal); // 元本から取り崩し
-        investedPrincipal -= draw;
+        const draw = Math.min(shortfall, investedPrincipal); // 允E��から取り崩ぁE        investedPrincipal -= draw;
         savings += draw;
       }
 
-      // 資産配分 (今回は現金、NISA、iDeCoのみ)
+      // 賁E��配�E (今回は現金、NISA、iDeCoのみ)
       const totalAssets = savings + nisa + ideco + investedPrincipal;
 
       yearlyData.push({
@@ -516,9 +496,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
         childExpense: Math.round(childExpense),
         marriageExpense: Math.round(marriageExpense),
         careExpense: Math.round(careExpense),
-        medicalExpense: 0, // 今回は計算対象外
-        longTermCareExpense: 0, // 今回は計算対象外
-        retirementExpense: Math.round(retirementExpense),
+        medicalExpense: 0, // 今回は計算対象夁E        longTermCareExpense: 0, // 今回は計算対象夁E        retirementExpense: Math.round(retirementExpense),
         totalExpense: Math.round(totalExpense),
         savings: Math.round(savings),
         nisa: Math.round(nisa),
@@ -544,3 +522,4 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     res.status(405).json({ message: 'Method Not Allowed' });
   }
 }
+

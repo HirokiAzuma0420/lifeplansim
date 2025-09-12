@@ -32,6 +32,7 @@ interface InputParams {
 
   housing: {
     type: '賃貸' | '持ち家（ローン中）' | '持ち家（完済）';
+    rentMonthlyJPY?: number;
     currentLoan?: {
       monthlyPaymentJPY: number;
       remainingYears: number;
@@ -120,6 +121,7 @@ interface YearlyData {
   investedPrincipal: number;
   assetAllocation: {
     cash: number;
+    investment: number;
     nisa: number;
     ideco: number;
   };
@@ -277,12 +279,17 @@ export default async function (req: VercelRequest, res: VercelResponse) {
       emergencyFundJPY,
     } = body.inputParams;
 
-    const stressTestEnabled = interestScenario === 'ランダム変動';
+    const stressTestEnabled = body.inputParams.stressTest?.enabled ?? (interestScenario === 'ランダム変動');
 
     const mu = Math.max(-1, Math.min(1, n(expectedReturn))); // 小数, 例0.04
     const scenario = interestScenario || '固定利回り';
     const stEnabled = stressTestEnabled; // stressTestEnabled は既に定義済み
     const seedBase = n(body.inputParams.stressTest?.seed) || 123456789; // body.inputParams.stressTest?.seed を使用
+
+    // 入力検証
+    if (!Number.isFinite(initialAge) || !Number.isFinite(endAge) || endAge < initialAge) {
+      return res.status(400).json({ message: 'invalid age range' });
+    }
 
     const yearlyData: YearlyData[] = [];
 
@@ -291,7 +298,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     const nisa = 0; // NISAは今回はシミュレーション対象外
     const ideco = 0; // iDeCoは今回はシミュレーション対象外
     const currentInvestmentsJPY_corrected = n(currentInvestmentsJPY) * 10000; // 万円を円に変換
-    let investedPrincipal = currentInvestmentsJPY_corrected; // 初期元本
+    let investedPrincipal = currentInvestmentsJPY_corrected; // 初期元本（以降は複利で更新）
 
     // 家電の正規化（受信直後）
     const appliancesOnly = Array.isArray(appliances) ? appliances.filter(a =>
@@ -339,6 +346,9 @@ export default async function (req: VercelRequest, res: VercelResponse) {
         selfGrossIncome = 0;
         spouseGrossIncome = 0;
       }
+
+      // 車費用の合算（恒常+一時）
+      carExpense = carRecurring + carOneOff;
 
       annualIncome = computeNetAnnual(selfGrossIncome) + computeNetAnnual(spouseGrossIncome);
 
@@ -402,6 +412,8 @@ export default async function (req: VercelRequest, res: VercelResponse) {
       }
 
       // 2f. 車費用
+      let carOneOff = 0;
+      let carRecurring = 0;
       if (car.priceJPY > 0 && car.firstAfterYears >= 0 && car.frequencyYears > 0) {
         const base = initialAge + car.firstAfterYears;
         const yearsSinceFirst = currentAge - base;
@@ -417,11 +429,11 @@ export default async function (req: VercelRequest, res: VercelResponse) {
 
               const annualPay = calculateLoanPayment(car.priceJPY, annualRatePercent, car.loan.years ?? 0);
               if (currentAge >= eventAge && currentAge < eventAge + (car.loan.years ?? 0)) {
-                carExpense += annualPay;
+                carRecurring += annualPay;
               }
             } else {
               if (currentAge === eventAge) {
-                carExpense += car.priceJPY;
+                carOneOff += car.priceJPY;
               }
             }
           }
@@ -454,12 +466,21 @@ export default async function (req: VercelRequest, res: VercelResponse) {
         }
       }
 
+      // 住居: 賃貸家賃（詳細モード時のみ加算）
+      if (expenseMode === 'detailed' && (housing as any)?.rentMonthlyJPY) {
+        housingExpense += ((housing as any).rentMonthlyJPY as number) * 12;
+      }
+
       // 詳細モード時の二重計上防止
       if (expenseMode === 'detailed') {
-        carExpense = 0;
+        // 住居の恒常費は詳細生活費に含まれる想定。ここでは既存ロジック互換として住居費は除外
         housingExpense = 0;
-        applianceExpense = 0;
+        // 車は詳細固定費に含まれる想定だが、一時費用を残すには別集計が必要
+        // 互換のため現状は車費用を除外（将来: 一時費用のみ残す）
+        carExpense = 0;
+        // 教育費は詳細固定費に含む想定
         childExpense = 0;
+        // 家電は一時費用として残す
       }
 
       // 各種費用の合計
@@ -473,26 +494,21 @@ export default async function (req: VercelRequest, res: VercelResponse) {
         applianceExpense +
         retirementExpense;
 
-      // ■ Investment logic
-    const isRandom = (scenario === 'ランダム変動' && stEnabled);
-    let currentReturn = mu;
-    if (isRandom) {
-      const w = 1 / ASSETS.length;
-      currentReturn = ASSETS.reduce((acc, k) => acc + w * assetReturns[k][i], 0);
-    }
+      // ■ Investment logic（複利・運用益は収入に計上しない）
+      const isRandom = (scenario === 'ランダム変動' && stEnabled);
+      let currentReturn = mu;
+      if (isRandom) {
+        const w = 1 / ASSETS.length;
+        currentReturn = ASSETS.reduce((acc, k) => acc + w * assetReturns[k][i], 0);
+      }
 
-    // 1. Calculate investment return on the principal *before* this year's contribution.
-    const investmentReturn = investedPrincipal * currentReturn;
-    annualIncome += investmentReturn;
+      const annualInvestment = yearlyRecurringInvestmentJPY + yearlySpotJPY;
+      investedPrincipal = investedPrincipal * (1 + currentReturn) + annualInvestment;
 
-    // 2. Add this year's contribution to the principal.
-    const annualInvestment = yearlyRecurringInvestmentJPY + yearlySpotJPY;
-    investedPrincipal += annualInvestment;
-
-    // ■ Cash flow calculation
-    // 3. Update cash flow, deducting the investment amount from savings.
-    const cashFlow = annualIncome - totalExpense - annualInvestment + (monthlySavingsJPY * 12);
-    savings += cashFlow;
+      // ■ Cash flow calculation（退職後の貯蓄は0）
+      const annualSavings = currentAge < retirementAge ? (monthlySavingsJPY * 12) : 0;
+      const cashFlow = annualIncome - totalExpense - annualInvestment + annualSavings;
+      savings += cashFlow;
 
       // 生活防衛資金の補填
       if (emergencyFundJPY > 0 && savings < emergencyFundJPY) {
@@ -527,6 +543,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
         investedPrincipal: Math.round(investedPrincipal),
         assetAllocation: {
           cash: Math.round(savings),
+          investment: Math.round(investedPrincipal),
           nisa: Math.round(nisa),
           ideco: Math.round(ideco),
         },

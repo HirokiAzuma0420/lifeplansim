@@ -213,24 +213,26 @@ export default function FormPage() {
       const spouseMainJobIncomeGross = (formData.familyComposition === '既婚' ? n(formData.spouseMainIncome) : 0) * 10000;
       const spouseSideJobIncomeGross = (formData.familyComposition === '既婚' ? n(formData.spouseSideJobIncome) : 0) * 10000;
 
+      // 万円/月 → 円/年（住居・車は除外して合計）
       const detailedFixedAnnual = (
-        n(formData.housingCost) + n(formData.utilitiesCost) + n(formData.communicationCost) +
+        n(formData.utilitiesCost) + n(formData.communicationCost) +
         n(formData.carCost) + n(formData.insuranceCost) + n(formData.educationCost) + n(formData.otherFixedCost)
-      ) * 12;
+      ) * 10000 * 12; // 住居は除外、車は現状生活費に残す（次フェーズで分離）
 
       const detailedVariableAnnual = (
         n(formData.foodCost) + n(formData.dailyNecessitiesCost) + n(formData.transportationCost) +
         n(formData.clothingBeautyCost) + n(formData.socializingCost) + n(formData.hobbyEntertainmentCost) + n(formData.otherVariableCost)
-      ) * 12;
+      ) * 10000 * 12;
 
-      const currentInvestmentsJPY = n(formData.investmentStocksCurrent) + n(formData.investmentTrustCurrent) + n(formData.investmentBondsCurrent) +
-                                  n(formData.investmentIdecoCurrent) + n(formData.investmentCryptoCurrent) + n(formData.investmentOtherCurrent);
+      // 万円 → 円
+      const currentInvestmentsJPY = (n(formData.investmentStocksCurrent) + n(formData.investmentTrustCurrent) + n(formData.investmentBondsCurrent) +
+                                  n(formData.investmentIdecoCurrent) + n(formData.investmentCryptoCurrent) + n(formData.investmentOtherCurrent)) * 10000;
 
       const monthlyRecurringInvestment = Object.values(formData.monthlyInvestmentAmounts).reduce((sum, v) => sum + n(v), 0);
-      const yearlyRecurringInvestmentJPY = monthlyRecurringInvestment * 12;
+      const yearlyRecurringInvestmentJPY = monthlyRecurringInvestment * 10000 * 12; // 万円/月 → 円/年
 
-      const yearlySpotJPY = n(formData.investmentStocksAnnualSpot) + n(formData.investmentTrustAnnualSpot) + n(formData.investmentBondsAnnualSpot) +
-                            n(formData.investmentIdecoAnnualSpot) + n(formData.investmentCryptoAnnualSpot) + n(formData.investmentOtherAnnualSpot);
+      const yearlySpotJPY = (n(formData.investmentStocksAnnualSpot) + n(formData.investmentTrustAnnualSpot) + n(formData.investmentBondsAnnualSpot) +
+                            n(formData.investmentIdecoAnnualSpot) + n(formData.investmentCryptoAnnualSpot) + n(formData.investmentOtherAnnualSpot)) * 10000; // 万円/年 → 円/年
 
       const totalInvestmentRate = (n(formData.investmentStocksRate) + n(formData.investmentTrustRate) + n(formData.investmentBondsRate) + n(formData.investmentIdecoRate) + n(formData.investmentCryptoRate) + n(formData.investmentOtherRate)) / 6;
 
@@ -249,7 +251,8 @@ export default function FormPage() {
         spouseIncomeGrowthRate: formData.familyComposition === '既婚' ? n(spouseAnnualRaiseRate) / 100 : undefined,
 
         expenseMode: formData.expenseMethod === '簡単' ? 'simple' : 'detailed',
-        livingCostSimpleAnnual: formData.expenseMethod === '簡単' ? n(formData.livingCostSimple) * 12 : undefined,
+        // 万円/月 → 円/年
+        livingCostSimpleAnnual: formData.expenseMethod === '簡単' ? n(formData.livingCostSimple) * 10000 * 12 : undefined,
         detailedFixedAnnual: formData.expenseMethod === '詳細' ? detailedFixedAnnual : undefined,
         detailedVariableAnnual: formData.expenseMethod === '詳細' ? detailedVariableAnnual : undefined,
 
@@ -266,8 +269,9 @@ export default function FormPage() {
 
         housing: {
           type: formData.housingType,
+          rentMonthlyJPY: (formData.housingType === '賃貸' && formData.expenseMethod === '詳細') ? n(formData.housingCost) * 10000 : undefined,
           currentLoan: formData.housingType === '持ち家（ローン中）' && formData.expenseMethod === '簡単' ? {
-            monthlyPaymentJPY: n(formData.loanMonthlyPayment),
+            monthlyPaymentJPY: n(formData.loanMonthlyPayment) * 10000,
             remainingYears: n(formData.loanRemainingYears),
           } : undefined,
           purchasePlan: formData.housePurchasePlan ? {
@@ -323,7 +327,7 @@ export default function FormPage() {
         pensionMonthly10kJPY: n(formData.pensionAmount),
 
         currentSavingsJPY: n(formData.currentSavings) * 10000,
-        monthlySavingsJPY: n(formData.monthlySavings),
+        monthlySavingsJPY: n(formData.monthlySavings) * 10000,
 
         currentInvestmentsJPY,
         yearlyRecurringInvestmentJPY,
