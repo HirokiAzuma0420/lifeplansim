@@ -28,6 +28,10 @@ interface InputParams {
       years?: number;
       type?: '銀行ローン' | 'ディーラーローン';
     };
+    currentLoan?: {
+      monthlyPaymentJPY: number;
+      remainingYears: number;
+    };
   };
 
   housing: {
@@ -331,7 +335,6 @@ export default async function (req: VercelRequest, res: VercelResponse) {
       let annualIncome = 0;
       let livingExpense = 0;
       let housingExpense = 0;
-      let carExpense = 0;
       let childExpense = 0;
       let marriageExpense = 0;
       let careExpense = 0;
@@ -348,7 +351,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
       }
 
       // 車費用の合算（恒常+一時）
-      carExpense = carRecurring + carOneOff;
+      // carExpense is derived after computing carRecurring/carOneOff below
 
       annualIncome = computeNetAnnual(selfGrossIncome) + computeNetAnnual(spouseGrossIncome);
 
@@ -414,6 +417,12 @@ export default async function (req: VercelRequest, res: VercelResponse) {
       // 2f. 車費用
       let carOneOff = 0;
       let carRecurring = 0;
+      // 現在の自動車ローン（残期間中は年額計上）
+      if (car?.currentLoan?.monthlyPaymentJPY && car?.currentLoan?.remainingYears) {
+        if (i < car.currentLoan.remainingYears) {
+          carRecurring += car.currentLoan.monthlyPaymentJPY * 12;
+        }
+      }
       if (car.priceJPY > 0 && car.firstAfterYears >= 0 && car.frequencyYears > 0) {
         const base = initialAge + car.firstAfterYears;
         const yearsSinceFirst = currentAge - base;
@@ -465,21 +474,29 @@ export default async function (req: VercelRequest, res: VercelResponse) {
           }
         }
       }
+      // 賃貸家賃（月次）: 購入期間や現ローンがない期間のみ加算（重複防止）
+      {
+        const __inPurchase = !!(housing.purchasePlan && currentAge >= housing.purchasePlan.age && currentAge < housing.purchasePlan.age + housing.purchasePlan.years);
+        const __hasCurrentLoan = !!(housing.currentLoan?.monthlyPaymentJPY && i < (housing.currentLoan?.remainingYears ?? 0));
+        if (!__inPurchase && !__hasCurrentLoan && housing.rentMonthlyJPY) {
+          housingExpense += housing.rentMonthlyJPY * 12;
+        }
+      }
 
       // 住居: 賃貸家賃（詳細モード時のみ加算）
-      if (expenseMode === 'detailed' && (housing as any)?.rentMonthlyJPY) {
-        housingExpense += ((housing as any).rentMonthlyJPY as number) * 12;
+      if (expenseMode === 'detailed' && housing.rentMonthlyJPY) {
+        // housingExpense += ((housing as any).rentMonthlyJPY as number) * 12; // 統合ロジックへ移行
       }
 
       // 詳細モード時の二重計上防止
       if (expenseMode === 'detailed') {
         // 住居の恒常費は詳細生活費に含まれる想定。ここでは既存ロジック互換として住居費は除外
-        housingExpense = 0;
+        // housingExpense = 0; // 詳細モードでも住まい費用は別集計として保持
         // 車は詳細固定費に含まれる想定だが、一時費用を残すには別集計が必要
         // 互換のため現状は車費用を除外（将来: 一時費用のみ残す）
-        carExpense = 0;
+        // carExpense = 0; // 詳細モードでも車費用は別集計として保持
         // 教育費は詳細固定費に含む想定
-        childExpense = 0;
+        // childExpense = 0; // 詳細モードでも教育費の扱いは別途検討
         // 家電は一時費用として残す
       }
 
@@ -488,7 +505,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
         livingExpense +
         childExpense +
         careExpense +
-        carExpense +
+        (carRecurring + carOneOff) +
         housingExpense +
         marriageExpense +
         applianceExpense +
@@ -527,7 +544,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
         income: Math.round(annualIncome),
         livingExpense: Math.round(livingExpense),
         housingExpense: Math.round(housingExpense),
-        carExpense: Math.round(carExpense),
+        carExpense: Math.round(carRecurring + carOneOff),
         applianceExpense: Math.round(applianceExpense),
         childExpense: Math.round(childExpense),
         marriageExpense: Math.round(marriageExpense),

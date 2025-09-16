@@ -342,6 +342,8 @@ export default function FormPage() {
         emergencyFundJPY: n(formData.emergencyFund) * 10000,
       };
 
+      // TODO: UIの「今の家賃/返済」欄（円）をそのまま params.housing に反映する実装は別パッチで対応
+
       const response = await fetch('/api/simulate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
