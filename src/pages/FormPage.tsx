@@ -228,6 +228,8 @@ export default function FormPage() {
       const currentInvestmentsJPY = (n(formData.investmentStocksCurrent) + n(formData.investmentTrustCurrent) + n(formData.investmentBondsCurrent) +
                                   n(formData.investmentIdecoCurrent) + n(formData.investmentCryptoCurrent) + n(formData.investmentOtherCurrent)) * 10000;
 
+      // 万円で合算した currentInvestments を円に変換して送信
+      const currentInvestmentsJPY_YEN = currentInvestmentsJPY * 10000;
       const monthlyRecurringInvestment = Object.values(formData.monthlyInvestmentAmounts).reduce((sum, v) => sum + n(v), 0);
       const yearlyRecurringInvestmentJPY = monthlyRecurringInvestment * 10000 * 12; // 万円/月 → 円/年
 
@@ -329,7 +331,7 @@ export default function FormPage() {
         currentSavingsJPY: n(formData.currentSavings) * 10000,
         monthlySavingsJPY: n(formData.monthlySavings) * 10000,
 
-        currentInvestmentsJPY,
+        currentInvestmentsJPY: currentInvestmentsJPY_YEN,
         yearlyRecurringInvestmentJPY,
         yearlySpotJPY,
         expectedReturn: totalInvestmentRate / 100,

@@ -283,6 +283,29 @@ export default async function (req: VercelRequest, res: VercelResponse) {
       emergencyFundJPY,
     } = body.inputParams;
 
+    // ラベル正規化（UIとAPI内部の表記揺れ対策）
+    if (car?.loan) {
+      type LoanType = InputParams['car']['loan']['type'];
+      const dealerOld = 'チE��ーラーローン' as LoanType;
+      const dealerNew = 'ディーラーローン' as LoanType;
+      if (car.loan.type === dealerNew) {
+        (car as InputParams['car']).loan.type = dealerOld;
+      }
+    }
+    if (children) {
+      type Edu = NonNullable<InputParams['children']>['educationPattern'];
+      const map: Record<string, Edu> = {
+        '公立中心': '公立中忁E' as unknown as Edu,
+        '公私混合': '公私混吁E' as unknown as Edu,
+        '私立中心': '私立中忁E' as unknown as Edu,
+      };
+      const epStr = (children.educationPattern as unknown as string);
+      const mapped = map[epStr];
+      if (mapped) {
+        (children as NonNullable<InputParams['children']>).educationPattern = mapped;
+      }
+    }
+
     const stressTestEnabled = body.inputParams.stressTest?.enabled ?? (interestScenario === 'ランダム変動');
 
     const mu = Math.max(-1, Math.min(1, n(expectedReturn))); // 小数, 例0.04
@@ -302,7 +325,9 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     const nisa = 0; // NISAは今回はシミュレーション対象外
     const ideco = 0; // iDeCoは今回はシミュレーション対象外
     const currentInvestmentsJPY_corrected = n(currentInvestmentsJPY) * 10000; // 万円を円に変換
-    let investedPrincipal = currentInvestmentsJPY_corrected; // 初期元本（以降は複利で更新）
+    void currentInvestmentsJPY_corrected;
+    // APIは円（JPY）前提で計算する: 初期投資元本はそのまま円で扱う
+    let investedPrincipal = n(currentInvestmentsJPY); // 初期元本（以降は複利で更新）
 
     // 家電の正規化（受信直後）
     const appliancesOnly = Array.isArray(appliances) ? appliances.filter(a =>
@@ -452,6 +477,12 @@ export default async function (req: VercelRequest, res: VercelResponse) {
       // 2g. 住まい費用
       if (housing.type === '持ち家（ローン中）' && housing.currentLoan?.monthlyPaymentJPY && housing.currentLoan?.remainingYears) {
         // ループ開始年を起点に「残存年数」だけ計上
+        if (i < housing.currentLoan.remainingYears) {
+          housingExpense += housing.currentLoan.monthlyPaymentJPY * 12;
+        }
+      }
+      // 現在の住宅ローン（typeに依存せずcurrentLoanがあれば計上）
+      if (housing.currentLoan?.monthlyPaymentJPY && housing.currentLoan?.remainingYears) {
         if (i < housing.currentLoan.remainingYears) {
           housingExpense += housing.currentLoan.monthlyPaymentJPY * 12;
         }
