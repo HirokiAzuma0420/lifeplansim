@@ -1,5 +1,20 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
+type InvestmentTaxation = {
+  nisa: {
+    currentHoldingsJPY: number;
+    annualRecurringContributionJPY: number;
+    annualSpotContributionJPY: number;
+  };
+  taxable: {
+    currentHoldingsJPY: number;
+    annualRecurringContributionJPY: number;
+    annualSpotContributionJPY: number;
+  };
+};
+
+const SPECIFIC_ACCOUNT_TAX_RATE = 0.20315;
+
 interface InputParams {
   initialAge: number;
   spouseInitialAge?: number;
@@ -94,6 +109,7 @@ interface InputParams {
   yearlyRecurringInvestmentJPY: number;
   yearlySpotJPY: number;
   expectedReturn: number;
+  investmentTaxation?: InvestmentTaxation;
   stressTest: {
     enabled: boolean;
     seed?: number;
@@ -279,6 +295,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
       yearlyRecurringInvestmentJPY,
       yearlySpotJPY,
       expectedReturn,
+      investmentTaxation,
       interestScenario,
       emergencyFundJPY,
     } = body.inputParams;
@@ -322,14 +339,30 @@ export default async function (req: VercelRequest, res: VercelResponse) {
 
     let currentAge = initialAge;
     let savings = currentSavingsJPY;
-    const nisa = 0; // NISAは今回はシミュレーション対象外
+    let nisa = n(investmentTaxation?.nisa?.currentHoldingsJPY ?? 0);
     const ideco = 0; // iDeCoは今回はシミュレーション対象外
-    const currentInvestmentsJPY_corrected = n(currentInvestmentsJPY) * 10000; // 万円を円に変換
-    void currentInvestmentsJPY_corrected;
-    // APIは円（JPY）前提で計算する: 初期投資元本はそのまま円で扱う
-    let investedPrincipal = n(currentInvestmentsJPY); // 初期元本（以降は複利で更新）
+    const fallbackCurrentInvestmentsJPY = n(currentInvestmentsJPY);
+    const fallbackTaxableCurrent = fallbackCurrentInvestmentsJPY - nisa;
+    let investedPrincipal = n(investmentTaxation?.taxable?.currentHoldingsJPY ?? fallbackTaxableCurrent);
+    if (investedPrincipal < 0) {
+      investedPrincipal = 0;
+    }
 
-    // 家電の正規化（受信直後）
+    const fallbackRecurring = n(yearlyRecurringInvestmentJPY);
+    const fallbackSpot = n(yearlySpotJPY);
+    const annualNisaRecurring = n(investmentTaxation?.nisa?.annualRecurringContributionJPY ?? 0);
+    const annualNisaSpot = n(investmentTaxation?.nisa?.annualSpotContributionJPY ?? 0);
+    let annualTaxableRecurring = n(investmentTaxation?.taxable?.annualRecurringContributionJPY ?? (fallbackRecurring - annualNisaRecurring));
+    let annualTaxableSpot = n(investmentTaxation?.taxable?.annualSpotContributionJPY ?? (fallbackSpot - annualNisaSpot));
+    if (annualTaxableRecurring < 0) {
+      annualTaxableRecurring = 0;
+    }
+    if (annualTaxableSpot < 0) {
+      annualTaxableSpot = 0;
+    }
+    const fallbackTotalContribution = fallbackRecurring + fallbackSpot;
+
+    // 家電の正規化: 受信直後のみフィルタリング
     const appliancesOnly = Array.isArray(appliances) ? appliances.filter(a =>
       a && String(a.name ?? '').trim().length > 0 &&
       Number(a.cost10kJPY) > 0 &&
@@ -550,21 +583,42 @@ export default async function (req: VercelRequest, res: VercelResponse) {
         currentReturn = ASSETS.reduce((acc, k) => acc + w * assetReturns[k][i], 0);
       }
 
-      const annualInvestment = yearlyRecurringInvestmentJPY + yearlySpotJPY;
-      investedPrincipal = investedPrincipal * (1 + currentReturn) + annualInvestment;
+      const taxableContribution = annualTaxableRecurring + annualTaxableSpot;
+      const nisaContribution = annualNisaRecurring + annualNisaSpot;
+      const combinedContribution = taxableContribution + nisaContribution;
+      const residualContribution = Math.max(0, fallbackTotalContribution - combinedContribution);
+      investedPrincipal = investedPrincipal * (1 + currentReturn) + taxableContribution + residualContribution;
+      nisa = nisa * (1 + currentReturn) + nisaContribution;
 
       // ■ Cash flow calculation（退職後の貯蓄は0）
       const annualSavings = currentAge < retirementAge ? (monthlySavingsJPY * 12) : 0;
-      const cashFlow = annualIncome - totalExpense - annualInvestment + annualSavings;
+      const totalInvestmentOutflow = combinedContribution + residualContribution;
+      const cashFlow = annualIncome - totalExpense - totalInvestmentOutflow + annualSavings;
       savings += cashFlow;
 
       // 生活防衛資金の補填
       if (emergencyFundJPY > 0 && savings < emergencyFundJPY) {
-        const shortfall = emergencyFundJPY - savings;
-        const draw = Math.min(shortfall, investedPrincipal); // 元本から取り崩し
-        investedPrincipal -= draw;
-        savings += draw;
+        let remainingShortfall = emergencyFundJPY - savings;
+
+        if (remainingShortfall > 0 && investedPrincipal > 0) {
+          const maxNetFromTaxable = investedPrincipal * (1 - SPECIFIC_ACCOUNT_TAX_RATE);
+          const netFromTaxable = Math.min(remainingShortfall, maxNetFromTaxable);
+          if (netFromTaxable > 0) {
+            const grossRequired = netFromTaxable / (1 - SPECIFIC_ACCOUNT_TAX_RATE);
+            investedPrincipal = Math.max(0, investedPrincipal - grossRequired);
+            savings += netFromTaxable;
+            remainingShortfall -= netFromTaxable;
+          }
+        }
+
+        if (remainingShortfall > 0 && nisa > 0) {
+          const drawFromNisa = Math.min(remainingShortfall, nisa);
+          nisa -= drawFromNisa;
+          savings += drawFromNisa;
+          remainingShortfall -= drawFromNisa;
+        }
       }
+
 
       // 資産配分 (今回は現金、NISA、iDeCoのみ)
       const totalAssets = savings + nisa + ideco + investedPrincipal;

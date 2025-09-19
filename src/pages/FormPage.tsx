@@ -69,6 +69,7 @@ function computeNetAnnual(grossAnnualIncome: number): number {
 import { Trash2 } from "lucide-react";
 
 import AssetAccordion from "../components/AssetAccordion";
+import type { InvestmentFormValues, InvestmentMonthlyAmounts } from "../types/investment";
 
 const sections = [
   '家族構成',
@@ -98,7 +99,16 @@ export default function FormPage() {
   const [result, setResult] = useState<object | string | null>(null);
   const [loading, setLoading] = useState(false);
   const [totalNetAnnualIncome, setTotalNetAnnualIncome] = useState(0);
-  
+
+  const initialMonthlyInvestmentAmounts: InvestmentMonthlyAmounts = {
+    investmentStocksMonthly: '0',
+    investmentTrustMonthly: '0',
+    investmentBondsMonthly: '0',
+    investmentIdecoMonthly: '0',
+    investmentCryptoMonthly: '0',
+    investmentOtherMonthly: '0',
+  };
+
   const [formData, setFormData] = useState({
     familyComposition: '', // 独身／既婚
     personAge: '',
@@ -173,14 +183,9 @@ export default function FormPage() {
     investmentIdecoCurrent: '',
     investmentCryptoCurrent: '',
     investmentOtherCurrent: '',
-    monthlyInvestmentAmounts: {
-      investmentStocksMonthly: '0',
-      investmentTrustMonthly: '0',
-      investmentBondsMonthly: '0',
-      investmentIdecoMonthly: '0',
-      investmentCryptoMonthly: '0',
-      investmentOtherMonthly: '0',
-    },
+    investmentStocksAccountType: 'taxable' as 'nisa' | 'taxable',
+    investmentTrustAccountType: 'taxable' as 'nisa' | 'taxable',
+    monthlyInvestmentAmounts: { ...initialMonthlyInvestmentAmounts },
     investmentStocksAnnualSpot: '0',
     investmentTrustAnnualSpot: '0',
     investmentBondsAnnualSpot: '0',
@@ -235,6 +240,38 @@ export default function FormPage() {
 
       const yearlySpotJPY = (n(formData.investmentStocksAnnualSpot) + n(formData.investmentTrustAnnualSpot) + n(formData.investmentBondsAnnualSpot) +
                             n(formData.investmentIdecoAnnualSpot) + n(formData.investmentCryptoAnnualSpot) + n(formData.investmentOtherAnnualSpot)) * 10000; // 万円/年 → 円/年
+
+      const stocksCurrentYen = n(formData.investmentStocksCurrent) * 10000;
+      const trustCurrentYen = n(formData.investmentTrustCurrent) * 10000;
+      const otherCurrentYen = (n(formData.investmentBondsCurrent) + n(formData.investmentIdecoCurrent) + n(formData.investmentCryptoCurrent) + n(formData.investmentOtherCurrent)) * 10000;
+
+      const monthlyStocksYen = n(formData.monthlyInvestmentAmounts.investmentStocksMonthly) * 10000;
+      const monthlyTrustYen = n(formData.monthlyInvestmentAmounts.investmentTrustMonthly) * 10000;
+      const monthlyOtherYen = (
+        n(formData.monthlyInvestmentAmounts.investmentBondsMonthly) +
+        n(formData.monthlyInvestmentAmounts.investmentIdecoMonthly) +
+        n(formData.monthlyInvestmentAmounts.investmentCryptoMonthly) +
+        n(formData.monthlyInvestmentAmounts.investmentOtherMonthly)
+      ) * 10000;
+      const yearlyStocksRecurringYen = monthlyStocksYen * 12;
+      const yearlyTrustRecurringYen = monthlyTrustYen * 12;
+      const yearlyOtherRecurringYen = monthlyOtherYen * 12;
+
+      const stocksSpotYen = n(formData.investmentStocksAnnualSpot) * 10000;
+      const trustSpotYen = n(formData.investmentTrustAnnualSpot) * 10000;
+      const otherSpotYen = (n(formData.investmentBondsAnnualSpot) + n(formData.investmentIdecoAnnualSpot) + n(formData.investmentCryptoAnnualSpot) + n(formData.investmentOtherAnnualSpot)) * 10000;
+
+      const stocksAccountType = formData.investmentStocksAccountType;
+      const trustAccountType = formData.investmentTrustAccountType;
+
+      const nisaCurrentHoldingsJPY = (stocksAccountType === 'nisa' ? stocksCurrentYen : 0) + (trustAccountType === 'nisa' ? trustCurrentYen : 0);
+      const taxableCurrentHoldingsJPY = (stocksAccountType === 'taxable' ? stocksCurrentYen : 0) + (trustAccountType === 'taxable' ? trustCurrentYen : 0) + otherCurrentYen;
+
+      const nisaRecurringAnnualJPY = (stocksAccountType === 'nisa' ? yearlyStocksRecurringYen : 0) + (trustAccountType === 'nisa' ? yearlyTrustRecurringYen : 0);
+      const taxableRecurringAnnualJPY = (stocksAccountType === 'taxable' ? yearlyStocksRecurringYen : 0) + (trustAccountType === 'taxable' ? yearlyTrustRecurringYen : 0) + yearlyOtherRecurringYen;
+
+      const nisaSpotAnnualJPY = (stocksAccountType === 'nisa' ? stocksSpotYen : 0) + (trustAccountType === 'nisa' ? trustSpotYen : 0);
+      const taxableSpotAnnualJPY = (stocksAccountType === 'taxable' ? stocksSpotYen : 0) + (trustAccountType === 'taxable' ? trustSpotYen : 0) + otherSpotYen;
 
       const totalInvestmentRate = (n(formData.investmentStocksRate) + n(formData.investmentTrustRate) + n(formData.investmentBondsRate) + n(formData.investmentIdecoRate) + n(formData.investmentCryptoRate) + n(formData.investmentOtherRate)) / 6;
 
@@ -335,6 +372,18 @@ export default function FormPage() {
         yearlyRecurringInvestmentJPY,
         yearlySpotJPY,
         expectedReturn: totalInvestmentRate / 100,
+        investmentTaxation: {
+          nisa: {
+            currentHoldingsJPY: nisaCurrentHoldingsJPY,
+            annualRecurringContributionJPY: nisaRecurringAnnualJPY,
+            annualSpotContributionJPY: nisaSpotAnnualJPY,
+          },
+          taxable: {
+            currentHoldingsJPY: taxableCurrentHoldingsJPY,
+            annualRecurringContributionJPY: taxableRecurringAnnualJPY,
+            annualSpotContributionJPY: taxableSpotAnnualJPY,
+          },
+        },
         stressTest: {
           enabled: formData.interestRateScenario === 'ランダム変動',
           seed: n(formData.stressTestSeed), // 新しく追加するformDataのプロパティ
@@ -343,6 +392,14 @@ export default function FormPage() {
         interestScenario: formData.interestRateScenario as '固定利回り' | 'ランダム変動',
         emergencyFundJPY: n(formData.emergencyFund) * 10000,
       };
+
+      // 単位統一の最終調整（すべて円でAPIへ渡す）
+      // 1) 生活費（簡単）は「円/月」入力 → 年間円へ変換
+      if (params.expenseMode === 'simple') {
+        params.livingCostSimpleAnnual = n(formData.livingCostSimple) * 12;
+      }
+      // 2) 投資の月積立は「円/月」入力 → 年間円へ変換
+      params.yearlyRecurringInvestmentJPY = monthlyRecurringInvestment * 12;
 
       // TODO: UIの「今の家賃/返済」欄（円）をそのまま params.housing に反映する実装は別パッチで対応
 
@@ -963,7 +1020,7 @@ export default function FormPage() {
             <div className={`mb-4 accordion-content ${formData.expenseMethod === '簡単' ? 'open' : ''}`}>
                 <div className={`mb-4 accordion-content ${formData.expenseMethod === '簡単' ? 'open' : ''}`}>
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="livingCostSimple">
-                  生活費（住居費含む、貯蓄・投資除く）[円]
+                  生活費（住居費、自動車費、貯蓄・投資除く）[円]
                 </label>
                 <input
                   type="number"
@@ -979,12 +1036,18 @@ export default function FormPage() {
 
             <div id="detailed-expense" className={`accordion-content ${formData.expenseMethod === '詳細' ? 'open' : ''}`}>
                 <h3 className="text-lg font-semibold mb-2">固定費</h3>
-                <div className="mb-4">
-                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="housingCost">
-                    住宅[円]
-                  </label>
-                  <input type="number" id="housingCost" name="housingCost" value={formData.housingCost} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
-                </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="housingCost">
+                住居費[万円]
+              </label>
+              <input type="number" id="housingCost" name="housingCost" value={formData.housingCost} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carCost">
+                自動車（ローン含む）[万円]
+              </label>
+              <input type="number" id="carCost" name="carCost" value={formData.carCost} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+            </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="utilitiesCost">
                     水道・光熱費[円]
@@ -996,12 +1059,6 @@ export default function FormPage() {
                     通信費[円]
                   </label>
                   <input type="number" id="communicationCost" name="communicationCost" value={formData.communicationCost} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carCost">
-                    自動車（ローン含む）[円]
-                  </label>
-                  <input type="number" id="carCost" name="carCost" value={formData.carCost} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="insuranceCost">
@@ -1713,7 +1770,28 @@ export default function FormPage() {
             </div>
           </div>
         );
-      case '投資':
+      case '投資': {
+        const investmentFormValues: InvestmentFormValues = {
+          investmentStocksCurrent: formData.investmentStocksCurrent,
+          investmentStocksAnnualSpot: formData.investmentStocksAnnualSpot,
+          investmentStocksRate: formData.investmentStocksRate,
+          investmentTrustCurrent: formData.investmentTrustCurrent,
+          investmentTrustAnnualSpot: formData.investmentTrustAnnualSpot,
+          investmentTrustRate: formData.investmentTrustRate,
+          investmentBondsCurrent: formData.investmentBondsCurrent,
+          investmentBondsAnnualSpot: formData.investmentBondsAnnualSpot,
+          investmentBondsRate: formData.investmentBondsRate,
+          investmentIdecoCurrent: formData.investmentIdecoCurrent,
+          investmentIdecoAnnualSpot: formData.investmentIdecoAnnualSpot,
+          investmentIdecoRate: formData.investmentIdecoRate,
+          investmentCryptoCurrent: formData.investmentCryptoCurrent,
+          investmentCryptoAnnualSpot: formData.investmentCryptoAnnualSpot,
+          investmentCryptoRate: formData.investmentCryptoRate,
+          investmentOtherCurrent: formData.investmentOtherCurrent,
+          investmentOtherAnnualSpot: formData.investmentOtherAnnualSpot,
+          investmentOtherRate: formData.investmentOtherRate,
+        };
+
         return (
           <div className="p-4">
             {/* Image placeholder */}
@@ -1725,48 +1803,53 @@ export default function FormPage() {
               <AssetAccordion
                 assetName="株式"
                 assetKey="investmentStocks"
-                formData={formData}
+                formData={investmentFormValues}
                 handleInputChange={handleInputChange}
                 monthlyInvestmentAmounts={formData.monthlyInvestmentAmounts}
+                accountTypeFieldName="investmentStocksAccountType"
+                accountTypeValue={formData.investmentStocksAccountType}
               />
               <AssetAccordion
                 assetName="投資信託"
                 assetKey="investmentTrust"
-                formData={formData}
+                formData={investmentFormValues}
                 handleInputChange={handleInputChange}
                 monthlyInvestmentAmounts={formData.monthlyInvestmentAmounts}
+                accountTypeFieldName="investmentTrustAccountType"
+                accountTypeValue={formData.investmentTrustAccountType}
               />
               <AssetAccordion
                 assetName="債券"
                 assetKey="investmentBonds"
-                formData={formData}
+                formData={investmentFormValues}
                 handleInputChange={handleInputChange}
                 monthlyInvestmentAmounts={formData.monthlyInvestmentAmounts}
               />
               <AssetAccordion
                 assetName="iDeCo"
                 assetKey="investmentIdeco"
-                formData={formData}
+                formData={investmentFormValues}
                 handleInputChange={handleInputChange}
                 monthlyInvestmentAmounts={formData.monthlyInvestmentAmounts}
               />
               <AssetAccordion
                 assetName="仮想通貨"
                 assetKey="investmentCrypto"
-                formData={formData}
+                formData={investmentFormValues}
                 handleInputChange={handleInputChange}
                 monthlyInvestmentAmounts={formData.monthlyInvestmentAmounts}
               />
               <AssetAccordion
                 assetName="その他"
                 assetKey="investmentOther"
-                formData={formData}
+                formData={investmentFormValues}
                 handleInputChange={handleInputChange}
                 monthlyInvestmentAmounts={formData.monthlyInvestmentAmounts}
               />
             </div>
           </div>
         );
+      }
       case 'シミュレーション設定':
         return (
           <div className="p-4">

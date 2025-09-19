@@ -54,6 +54,50 @@ export default function JsonTestPage() {
           f.investmentOtherAnnualSpot,
         ].reduce<number>((acc, v) => acc + toNum(v), 0) * 10000; // 万円→円/年
 
+        const stocksCurrentYen = toNum(f.investmentStocksCurrent) * 10000;
+        const trustCurrentYen = toNum(f.investmentTrustCurrent) * 10000;
+        const otherCurrentYen = (
+          toNum(f.investmentBondsCurrent) +
+          toNum(f.investmentIdecoCurrent) +
+          toNum(f.investmentCryptoCurrent) +
+          toNum(f.investmentOtherCurrent)
+        ) * 10000;
+
+        const monthlyStocksYen = toNum((f.monthlyInvestmentAmounts as Record<string, unknown> | undefined)?.investmentStocksMonthly);
+        const monthlyTrustYen = toNum((f.monthlyInvestmentAmounts as Record<string, unknown> | undefined)?.investmentTrustMonthly);
+        const monthlyOtherYen = [
+          (f.monthlyInvestmentAmounts as Record<string, unknown> | undefined)?.investmentBondsMonthly,
+          (f.monthlyInvestmentAmounts as Record<string, unknown> | undefined)?.investmentIdecoMonthly,
+          (f.monthlyInvestmentAmounts as Record<string, unknown> | undefined)?.investmentCryptoMonthly,
+          (f.monthlyInvestmentAmounts as Record<string, unknown> | undefined)?.investmentOtherMonthly,
+        ].reduce<number>((acc, v) => acc + toNum(v), 0);
+        const yearlyStocksRecurringYen = monthlyStocksYen * 12;
+        const yearlyTrustRecurringYen = monthlyTrustYen * 12;
+        const yearlyOtherRecurringYen = monthlyOtherYen * 12;
+
+        const stocksSpotYen = toNum(f.investmentStocksAnnualSpot) * 10000;
+        const trustSpotYen = toNum(f.investmentTrustAnnualSpot) * 10000;
+        const otherSpotYen = (
+          toNum(f.investmentBondsAnnualSpot) +
+          toNum(f.investmentIdecoAnnualSpot) +
+          toNum(f.investmentCryptoAnnualSpot) +
+          toNum(f.investmentOtherAnnualSpot)
+        ) * 10000;
+
+        const stocksAccountTypeRaw = String(f.investmentStocksAccountType ?? 'taxable');
+        const trustAccountTypeRaw = String(f.investmentTrustAccountType ?? 'taxable');
+        const stocksAccountType = stocksAccountTypeRaw === 'nisa' ? 'nisa' : 'taxable';
+        const trustAccountType = trustAccountTypeRaw === 'nisa' ? 'nisa' : 'taxable';
+
+        const nisaCurrentHoldingsJPY = (stocksAccountType === 'nisa' ? stocksCurrentYen : 0) + (trustAccountType === 'nisa' ? trustCurrentYen : 0);
+        const taxableCurrentHoldingsJPY = (stocksAccountType === 'taxable' ? stocksCurrentYen : 0) + (trustAccountType === 'taxable' ? trustCurrentYen : 0) + otherCurrentYen;
+
+        const nisaRecurringAnnualJPY = (stocksAccountType === 'nisa' ? yearlyStocksRecurringYen : 0) + (trustAccountType === 'nisa' ? yearlyTrustRecurringYen : 0);
+        const taxableRecurringAnnualJPY = (stocksAccountType === 'taxable' ? yearlyStocksRecurringYen : 0) + (trustAccountType === 'taxable' ? yearlyTrustRecurringYen : 0) + yearlyOtherRecurringYen;
+
+        const nisaSpotAnnualJPY = (stocksAccountType === 'nisa' ? stocksSpotYen : 0) + (trustAccountType === 'nisa' ? trustSpotYen : 0);
+        const taxableSpotAnnualJPY = (stocksAccountType === 'taxable' ? stocksSpotYen : 0) + (trustAccountType === 'taxable' ? trustSpotYen : 0) + otherSpotYen;
+
         // expectedReturn: 各利回りの平均（%→小数）
         const rates = [
           f.investmentStocksRate,
@@ -203,6 +247,18 @@ export default function JsonTestPage() {
           yearlyRecurringInvestmentJPY,
           yearlySpotJPY,
           expectedReturn,
+          investmentTaxation: {
+            nisa: {
+              currentHoldingsJPY: nisaCurrentHoldingsJPY,
+              annualRecurringContributionJPY: nisaRecurringAnnualJPY,
+              annualSpotContributionJPY: nisaSpotAnnualJPY,
+            },
+            taxable: {
+              currentHoldingsJPY: taxableCurrentHoldingsJPY,
+              annualRecurringContributionJPY: taxableRecurringAnnualJPY,
+              annualSpotContributionJPY: taxableSpotAnnualJPY,
+            },
+          },
           stressTest: {
             enabled: false,
             seed: toNum(f.stressTestSeed),

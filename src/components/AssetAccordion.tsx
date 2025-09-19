@@ -1,12 +1,25 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+import type {
+  InvestmentAccountTypeField,
+  InvestmentAssetKey,
+  InvestmentFormValues,
+  InvestmentMonthlyAmounts,
+} from '../types/investment';
+
+const ACCOUNT_TYPE_OPTIONS = [
+  { value: 'nisa' as const, label: 'NISA (髱櫁ｪｲ遞・' },
+  { value: 'taxable' as const, label: '迚ｹ螳壼哨蠎ｧ (隱ｲ遞・' },
+];
 
 interface AssetAccordionProps {
   assetName: string;
-  formData: any; // TODO: Define a more specific type for formData
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  monthlyInvestmentAmounts: { [key: string]: string };
-  assetKey: string; // e.g., 'investmentStocks'
+  formData: InvestmentFormValues;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+  monthlyInvestmentAmounts: InvestmentMonthlyAmounts;
+  assetKey: InvestmentAssetKey;
+  accountTypeFieldName?: InvestmentAccountTypeField;
+  accountTypeValue?: 'nisa' | 'taxable';
 }
 
 const AssetAccordion: React.FC<AssetAccordionProps> = ({
@@ -15,6 +28,8 @@ const AssetAccordion: React.FC<AssetAccordionProps> = ({
   handleInputChange,
   monthlyInvestmentAmounts,
   assetKey,
+  accountTypeFieldName,
+  accountTypeValue,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -42,9 +57,29 @@ const AssetAccordion: React.FC<AssetAccordionProps> = ({
         }`}
       >
         <div className="p-4 border-t border-gray-200">
+          {accountTypeFieldName ? (
+            <div className="mb-4">
+              <span className="block text-gray-700 text-sm font-bold mb-2">蜿｣蠎ｧ遞ｮ蛻･</span>
+              <div className="flex flex-wrap gap-6 mt-2">
+                {ACCOUNT_TYPE_OPTIONS.map((option) => (
+                  <label key={option.value} className="inline-flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name={accountTypeFieldName}
+                      value={option.value}
+                      checked={(accountTypeValue ?? 'taxable') === option.value}
+                      onChange={handleInputChange}
+                      className="h-4 w-4"
+                    />
+                    <span className="text-sm text-gray-700">{option.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          ) : null}
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`${assetKey}Current`}>
-              現在の資産[万円]
+              迴ｾ蝨ｨ縺ｮ雉・肇[荳・・]
             </label>
             <input
               type="number"
@@ -53,13 +88,13 @@ const AssetAccordion: React.FC<AssetAccordionProps> = ({
               value={formData[`${assetKey}Current`]}
               onChange={handleInputChange}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              placeholder="例：300"
+              placeholder="萓具ｼ・00"
               min="0"
             />
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`${assetKey}Monthly`}>
-              月額積立[円]
+              譛磯｡咲ｩ咲ｫ擬蜀・
             </label>
             <input
               type="number"
@@ -74,7 +109,7 @@ const AssetAccordion: React.FC<AssetAccordionProps> = ({
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`${assetKey}AnnualSpot`}>
-              年間スポット[円]
+              蟷ｴ髢薙せ繝昴ャ繝・蜀・
             </label>
             <input
               type="number"
@@ -89,7 +124,7 @@ const AssetAccordion: React.FC<AssetAccordionProps> = ({
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`${assetKey}Rate`}>
-              想定利率[%]
+              諠ｳ螳壼茜邇Ⅷ%]
             </label>
             <input
               type="number"
@@ -109,3 +144,6 @@ const AssetAccordion: React.FC<AssetAccordionProps> = ({
 };
 
 export default AssetAccordion;
+
+
+
