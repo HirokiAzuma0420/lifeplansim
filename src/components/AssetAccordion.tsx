@@ -8,8 +8,8 @@ import type {
 } from '../types/investment';
 
 const ACCOUNT_TYPE_OPTIONS = [
-  { value: 'nisa' as const, label: 'NISA (髱櫁ｪｲ遞・' },
-  { value: 'taxable' as const, label: '迚ｹ螳壼哨蠎ｧ (隱ｲ遞・' },
+  { value: 'nisa' as const, label: 'NISA口座'},
+  { value: 'taxable' as const, label: '特定口座'},
 ];
 
 interface AssetAccordionProps {
@@ -59,7 +59,7 @@ const AssetAccordion: React.FC<AssetAccordionProps> = ({
         <div className="p-4 border-t border-gray-200">
           {accountTypeFieldName ? (
             <div className="mb-4">
-              <span className="block text-gray-700 text-sm font-bold mb-2">蜿｣蠎ｧ遞ｮ蛻･</span>
+              <span className="block text-gray-700 text-sm font-bold mb-2">投資に関する質問</span>
               <div className="flex flex-wrap gap-6 mt-2">
                 {ACCOUNT_TYPE_OPTIONS.map((option) => (
                   <label key={option.value} className="inline-flex items-center gap-2">
@@ -79,7 +79,7 @@ const AssetAccordion: React.FC<AssetAccordionProps> = ({
           ) : null}
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`${assetKey}Current`}>
-              迴ｾ蝨ｨ縺ｮ雉・肇[荳・・]
+              現在の資産[万円]
             </label>
             <input
               type="number"
@@ -88,13 +88,13 @@ const AssetAccordion: React.FC<AssetAccordionProps> = ({
               value={formData[`${assetKey}Current`]}
               onChange={handleInputChange}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              placeholder="萓具ｼ・00"
+              placeholder="例：300"
               min="0"
             />
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`${assetKey}Monthly`}>
-              譛磯｡咲ｩ咲ｫ擬蜀・
+              月額積立[円]
             </label>
             <input
               type="number"
@@ -109,7 +109,7 @@ const AssetAccordion: React.FC<AssetAccordionProps> = ({
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`${assetKey}AnnualSpot`}>
-              蟷ｴ髢薙せ繝昴ャ繝・蜀・
+              年間スポット[円]
             </label>
             <input
               type="number"
@@ -124,7 +124,7 @@ const AssetAccordion: React.FC<AssetAccordionProps> = ({
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`${assetKey}Rate`}>
-              諠ｳ螳壼茜邇Ⅷ%]
+              想定利率[%]
             </label>
             <input
               type="number"
