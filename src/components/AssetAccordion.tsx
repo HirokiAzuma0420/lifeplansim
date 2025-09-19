@@ -59,7 +59,7 @@ const AssetAccordion: React.FC<AssetAccordionProps> = ({
         <div className="p-4 border-t border-gray-200">
           {accountTypeFieldName ? (
             <div className="mb-4">
-              <span className="block text-gray-700 text-sm font-bold mb-2">投資に関する質問</span>
+              <span className="block text-gray-700 text-sm font-bold mb-2">口座を選択</span>
               <div className="flex flex-wrap gap-6 mt-2">
                 {ACCOUNT_TYPE_OPTIONS.map((option) => (
                   <label key={option.value} className="inline-flex items-center gap-2">
