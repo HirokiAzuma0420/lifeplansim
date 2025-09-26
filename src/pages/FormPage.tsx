@@ -221,16 +221,25 @@ export default function FormPage() {
       const spouseMainJobIncomeGross = (formData.familyComposition === '既婚' ? n(formData.spouseMainIncome) : 0) * 10000;
       const spouseSideJobIncomeGross = (formData.familyComposition === '既婚' ? n(formData.spouseSideJobIncome) : 0) * 10000;
 
-      // 万円/月 → 円/年（住居・車は除外して合計）
-      const detailedFixedAnnual = (
-        n(formData.utilitiesCost) + n(formData.communicationCost) +
-        n(formData.carCost) + n(formData.insuranceCost) + n(formData.educationCost) + n(formData.otherFixedCost)
-      ) * 10000 * 12; // 住居は除外、車は現状生活費に残す（次フェーズで分離）
+      // Detailed expenses: convert monthly inputs (yen per month, car in 10k yen) into annual totals.
+      const monthlyFixedExpense =
+        n(formData.utilitiesCost) +
+        n(formData.communicationCost) +
+        n(formData.insuranceCost) +
+        n(formData.educationCost) +
+        n(formData.otherFixedCost);
+      const monthlyCarExpense = n(formData.carCost) * 10000;
+      const detailedFixedAnnual = (monthlyFixedExpense + monthlyCarExpense) * 12;
 
-      const detailedVariableAnnual = (
-        n(formData.foodCost) + n(formData.dailyNecessitiesCost) + n(formData.transportationCost) +
-        n(formData.clothingBeautyCost) + n(formData.socializingCost) + n(formData.hobbyEntertainmentCost) + n(formData.otherVariableCost)
-      ) * 10000 * 12;
+      const monthlyVariableExpense =
+        n(formData.foodCost) +
+        n(formData.dailyNecessitiesCost) +
+        n(formData.transportationCost) +
+        n(formData.clothingBeautyCost) +
+        n(formData.socializingCost) +
+        n(formData.hobbyEntertainmentCost) +
+        n(formData.otherVariableCost);
+      const detailedVariableAnnual = monthlyVariableExpense * 12;
 
       // 資産(円)の集計
       const currentInvestmentsJPY = (
