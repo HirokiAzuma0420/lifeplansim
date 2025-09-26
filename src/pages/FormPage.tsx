@@ -232,14 +232,18 @@ export default function FormPage() {
         n(formData.clothingBeautyCost) + n(formData.socializingCost) + n(formData.hobbyEntertainmentCost) + n(formData.otherVariableCost)
       ) * 10000 * 12;
 
-      // 万円 → 円
-      const currentInvestmentsJPY = (n(formData.investmentStocksCurrent) + n(formData.investmentTrustCurrent) + n(formData.investmentBondsCurrent) +
-                                  n(formData.investmentIdecoCurrent) + n(formData.investmentCryptoCurrent) + n(formData.investmentOtherCurrent)) * 10000;
+      // 資産(円)の集計
+      const currentInvestmentsJPY = (
+        n(formData.investmentStocksCurrent) +
+        n(formData.investmentTrustCurrent) +
+        n(formData.investmentBondsCurrent) +
+        n(formData.investmentIdecoCurrent) +
+        n(formData.investmentCryptoCurrent) +
+        n(formData.investmentOtherCurrent)
+      ) * 10000;
 
-      // 万円で合算した currentInvestments を円に変換して送信
-      const currentInvestmentsJPY_YEN = currentInvestmentsJPY * 10000;
       const monthlyRecurringInvestment = Object.values(formData.monthlyInvestmentAmounts).reduce((sum, v) => sum + n(v), 0);
-      const yearlyRecurringInvestmentJPY = monthlyRecurringInvestment * 10000 * 12; // 万円/月 → 円/年
+      const yearlyRecurringInvestmentJPY = monthlyRecurringInvestment * 12;
 
       const yearlySpotJPY = (n(formData.investmentStocksAnnualSpot) + n(formData.investmentTrustAnnualSpot) + n(formData.investmentBondsAnnualSpot) +
                             n(formData.investmentIdecoAnnualSpot) + n(formData.investmentCryptoAnnualSpot) + n(formData.investmentOtherAnnualSpot)) * 10000; // 万円/年 → 円/年
@@ -248,8 +252,8 @@ export default function FormPage() {
       const trustCurrentYen = n(formData.investmentTrustCurrent) * 10000;
       const otherCurrentYen = (n(formData.investmentBondsCurrent) + n(formData.investmentIdecoCurrent) + n(formData.investmentCryptoCurrent) + n(formData.investmentOtherCurrent)) * 10000;
 
-      const monthlyStocksYen = n(formData.monthlyInvestmentAmounts.investmentStocksMonthly) * 10000;
-      const monthlyTrustYen = n(formData.monthlyInvestmentAmounts.investmentTrustMonthly) * 10000;
+      const monthlyStocksYen = n(formData.monthlyInvestmentAmounts.investmentStocksMonthly);
+      const monthlyTrustYen = n(formData.monthlyInvestmentAmounts.investmentTrustMonthly);
       const monthlyOtherYen = (
         n(formData.monthlyInvestmentAmounts.investmentBondsMonthly) +
         n(formData.monthlyInvestmentAmounts.investmentIdecoMonthly) +
@@ -369,9 +373,9 @@ export default function FormPage() {
         pensionMonthly10kJPY: n(formData.pensionAmount),
 
         currentSavingsJPY: n(formData.currentSavings) * 10000,
-        monthlySavingsJPY: n(formData.monthlySavings) * 10000,
+        monthlySavingsJPY: n(formData.monthlySavings),
 
-        currentInvestmentsJPY: currentInvestmentsJPY_YEN,
+        currentInvestmentsJPY: currentInvestmentsJPY,
         yearlyRecurringInvestmentJPY,
         yearlySpotJPY,
         expectedReturn: totalInvestmentRate / 100,
