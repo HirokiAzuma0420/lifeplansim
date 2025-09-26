@@ -1,4 +1,6 @@
 import React, { useState, useMemo, useEffect} from 'react';
+import { useNavigate } from 'react-router-dom';
+import type { YearlyData, SimulationInputParams } from '../types/simulation';
 
 function computeNetAnnual(grossAnnualIncome: number): number {
     // 簡略化された税・社会保障費計算
@@ -90,6 +92,7 @@ const sections = [
 
 
 export default function FormPage() {
+  const navigate = useNavigate();
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const [showBackModal, setShowBackModal] = useState(false);
   const [visitedSections, setVisitedSections] = useState<Set<number>>(new Set([0]));
@@ -414,10 +417,13 @@ export default function FormPage() {
         throw new Error(data.message || 'シミュレーションエラー');
       }
 
-      const yearly = data.yearlyData;
-      await navigator.clipboard.writeText(JSON.stringify(yearly, null, 2));
-      alert('シミュレーション結果(yearlyData)をクリップボードにコピーしました');
-      setResult(yearly);
+      const yearly = Array.isArray(data.yearlyData) ? (data.yearlyData as YearlyData[]) : [];
+      if (yearly.length === 0) {
+        throw new Error('シミュレーション結果が空です');
+      }
+
+      setResult(null);
+      navigate('/result', { state: { yearlyData: yearly, inputParams: params as SimulationInputParams } });
 
     } catch (error: unknown)  {
       console.error(error);
