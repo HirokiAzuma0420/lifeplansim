@@ -82,7 +82,7 @@ export default function JsonTestPage() {
           f.investmentIdecoAnnualSpot,
           f.investmentCryptoAnnualSpot,
           f.investmentOtherAnnualSpot,
-        ].reduce<number>((acc, v) => acc + toNum(v), 0) * 10000; // 丁E�E→�E/年
+        ].reduce<number>((acc, v) => acc + toNum(v), 0); // already provided in yen/year
 
         const stocksCurrentYen = toNum(f.investmentStocksCurrent) * 10000;
         const trustCurrentYen = toNum(f.investmentTrustCurrent) * 10000;
@@ -91,7 +91,7 @@ export default function JsonTestPage() {
           toNum(f.investmentIdecoCurrent) +
           toNum(f.investmentCryptoCurrent) +
           toNum(f.investmentOtherCurrent)
-        ) ;
+        ) * 10000;
 
         const monthlyStocksYen = toNum((f.monthlyInvestmentAmounts as Record<string, unknown> | undefined)?.investmentStocksMonthly);
         const monthlyTrustYen = toNum((f.monthlyInvestmentAmounts as Record<string, unknown> | undefined)?.investmentTrustMonthly);
@@ -105,14 +105,14 @@ export default function JsonTestPage() {
         const yearlyTrustRecurringYen = monthlyTrustYen * 12;
         const yearlyOtherRecurringYen = monthlyOtherYen * 12;
 
-        const stocksSpotYen = toNum(f.investmentStocksAnnualSpot) * 10000;
-        const trustSpotYen = toNum(f.investmentTrustAnnualSpot) * 10000;
+        const stocksSpotYen = toNum(f.investmentStocksAnnualSpot);
+        const trustSpotYen = toNum(f.investmentTrustAnnualSpot);
         const otherSpotYen = (
           toNum(f.investmentBondsAnnualSpot) +
           toNum(f.investmentIdecoAnnualSpot) +
           toNum(f.investmentCryptoAnnualSpot) +
           toNum(f.investmentOtherAnnualSpot)
-        ) * 10000;
+        );
 
         const stocksAccountTypeRaw = String(f.investmentStocksAccountType ?? 'taxable');
         const trustAccountTypeRaw = String(f.investmentTrustAccountType ?? 'taxable');
