@@ -208,7 +208,8 @@ export default function SavingsPositionChart({ age, income, savings }: SavingsPo
     } else if (max === null) { // 3,000万円以上
       isMatch = savingsInMan >= min;
     } else { // Other ranges
-      isMatch = savingsInMan >= min && savingsInMan <= max;
+      const upperExclusive = max + 1; // treat JSON max as inclusive man-unit boundary
+      isMatch = savingsInMan >= min && savingsInMan < upperExclusive;
     }
     return isMatch;
   });
