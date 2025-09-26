@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect} from 'react';
+﻿import React, { useState, useMemo, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { YearlyData, SimulationInputParams } from '../types/simulation';
 
@@ -259,7 +259,7 @@ export default function FormPage() {
         n(formData.monthlyInvestmentAmounts.investmentIdecoMonthly) +
         n(formData.monthlyInvestmentAmounts.investmentCryptoMonthly) +
         n(formData.monthlyInvestmentAmounts.investmentOtherMonthly)
-      ) * 10000;
+       );
       const yearlyStocksRecurringYen = monthlyStocksYen * 12;
       const yearlyTrustRecurringYen = monthlyTrustYen * 12;
       const yearlyOtherRecurringYen = monthlyOtherYen * 12;
@@ -298,7 +298,7 @@ export default function FormPage() {
 
         expenseMode: formData.expenseMethod === '簡単' ? 'simple' : 'detailed',
         // 万円/月 → 円/年
-        livingCostSimpleAnnual: formData.expenseMethod === '簡単' ? n(formData.livingCostSimple) * 10000 * 12 : undefined,
+        livingCostSimpleAnnual: formData.expenseMethod === '簡単' ? n(formData.livingCostSimple) * 12 : undefined,
         detailedFixedAnnual: formData.expenseMethod === '詳細' ? detailedFixedAnnual : undefined,
         detailedVariableAnnual: formData.expenseMethod === '詳細' ? detailedVariableAnnual : undefined,
 
