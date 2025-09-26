@@ -44,7 +44,7 @@ export default function JsonTestPage() {
 
       const isYes = (value: unknown): boolean => {
         const normalized = String(value ?? '').trim().toLowerCase();
-        return normalized === 'yes' || normalized === 'true' || normalized === '1' || normalized === '‚Í‚¢';
+        return normalized === 'yes' || normalized === 'true' || normalized === '1' || normalized === 'ï¿½Í‚ï¿½';
       };
 
       const extractNavInputParams = (raw: unknown): SimulationInputParams | null => {
@@ -82,7 +82,7 @@ export default function JsonTestPage() {
           f.investmentIdecoAnnualSpot,
           f.investmentCryptoAnnualSpot,
           f.investmentOtherAnnualSpot,
-        ].reduce<number>((acc, v) => acc + toNum(v), 0) * 10000; // ä¸EEâ†’åE/å¹´
+        ].reduce<number>((acc, v) => acc + toNum(v), 0) * 10000; // ä¸Eï¿½Eâ†’ï¿½E/å¹´
 
         const stocksCurrentYen = toNum(f.investmentStocksCurrent) * 10000;
         const trustCurrentYen = toNum(f.investmentTrustCurrent) * 10000;
@@ -91,7 +91,7 @@ export default function JsonTestPage() {
           toNum(f.investmentIdecoCurrent) +
           toNum(f.investmentCryptoCurrent) +
           toNum(f.investmentOtherCurrent)
-        ) * 10000;
+        ) ;
 
         const monthlyStocksYen = toNum((f.monthlyInvestmentAmounts as Record<string, unknown> | undefined)?.investmentStocksMonthly);
         const monthlyTrustYen = toNum((f.monthlyInvestmentAmounts as Record<string, unknown> | undefined)?.investmentTrustMonthly);
@@ -128,7 +128,7 @@ export default function JsonTestPage() {
         const nisaSpotAnnualJPY = (stocksAccountType === 'nisa' ? stocksSpotYen : 0) + (trustAccountType === 'nisa' ? trustSpotYen : 0);
         const taxableSpotAnnualJPY = (stocksAccountType === 'taxable' ? stocksSpotYen : 0) + (trustAccountType === 'taxable' ? trustSpotYen : 0) + otherSpotYen;
 
-        // expectedReturn: åEˆ©å›ã‚Šã®å¹³åE¼Eâ†’å°æ•°EE
+        // expectedReturn: åEï¿½ï¿½å›ã‚Šã®å¹³åEï¿½ï¿½Eâ†’å°æ•°ï¿½Eï¿½E
         const rates = [
           f.investmentStocksRate,
           f.investmentTrustRate,
@@ -142,18 +142,18 @@ export default function JsonTestPage() {
         // è»E
         const carLoanUse = isYes(f.carLoanUsage);
         const car = {
-          priceJPY: toNum(f.carPrice) * 10000, // ä¸EEâ†’åE
+          priceJPY: toNum(f.carPrice) * 10000, // ä¸Eï¿½Eâ†’ï¿½E
           firstAfterYears: toNum(f.carFirstReplacementAfterYears),
           frequencyYears: toNum(f.carReplacementFrequency),
           loan: {
             use: carLoanUse,
             years: carLoanUse ? toNum(f.carLoanYears) : undefined,
-            // æ–E­—åEã¯ããEã¾ã¾EEPIå´ã§æ­£è¦åŒ–EE
+            // æ–Eï¿½ï¿½ï¿½Eã¯ãï¿½Eã¾ã¾ï¿½Eï¿½EPIå´ã§æ­£è¦åŒ–ï¿½Eï¿½E
             type: carLoanUse ? (f.carLoanType as string | undefined) : undefined,
           },
           currentLoan: undefined as | { monthlyPaymentJPY: number; remainingYears: number } | undefined,
         };
-        // è»ŠãEç¾åœ¨ãƒ­ãƒ¼ãƒ³EˆåE/æœˆï¼E
+        // è»Šï¿½Eç¾åœ¨ãƒ­ãƒ¼ãƒ³ï¿½Eï¿½ï¿½E/æœˆï¼E
         const carMonthly = toNum(f.carCurrentLoanMonthly);
         const carRemain = toNum(f.carCurrentLoanRemainingYears);
         const carInPay = isYes(f.carCurrentLoanInPayment);
@@ -162,18 +162,18 @@ export default function JsonTestPage() {
         }
 
         // ä½ã¾ãE
-        const rentYen = toNum(f.currentRentLoanPayment); // ‰~/Œ
-        const houseLoanMonthly = toNum(f.loanMonthlyPayment); // ‰~/Œ
+        const rentYen = toNum(f.currentRentLoanPayment); // ï¿½~/ï¿½ï¿½
+        const houseLoanMonthly = toNum(f.loanMonthlyPayment); // ï¿½~/ï¿½ï¿½
         const houseLoanRemain = toNum(f.loanRemainingYears);
         const housingTypeRaw = String(f.housingType ?? '');
-        const HOUSING_RENT = '’À‘İ';
-        const HOUSING_LOAN = '‚¿‰Æiƒ[ƒ“‚ ‚èj';
-        const HOUSING_OWNED = '‚¿‰ÆiŠ®Ïj';
+        const HOUSING_RENT = 'ï¿½ï¿½ï¿½ï¿½';
+        const HOUSING_LOAN = 'ï¿½ï¿½ï¿½ï¿½ï¿½Æiï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½j';
+        const HOUSING_OWNED = 'ï¿½ï¿½ï¿½ï¿½ï¿½Æiï¿½ï¿½ï¿½Ïj';
 
         let housingType = HOUSING_OWNED;
         if (housingTypeRaw.includes(HOUSING_RENT) || rentYen > 0) {
           housingType = HOUSING_RENT;
-        } else if (housingTypeRaw.includes('ƒ[ƒ“') || (houseLoanMonthly > 0 && houseLoanRemain > 0)) {
+        } else if (housingTypeRaw.includes('ï¿½ï¿½ï¿½[ï¿½ï¿½') || (houseLoanMonthly > 0 && houseLoanRemain > 0)) {
           housingType = HOUSING_LOAN;
         }
         const purchase = (f.housePurchasePlan as Record<string, unknown> | undefined);
@@ -190,8 +190,8 @@ export default function JsonTestPage() {
             : undefined,
           purchasePlan: purchase ? {
             age: toNum(purchase.age),
-            priceJPY: toNum(purchase.price) * 10000, // ä¸EEâ†’åE
-            downPaymentJPY: toNum(purchase.downPayment) * 10000, // ä¸EEâ†’åE
+            priceJPY: toNum(purchase.price) * 10000, // ä¸Eï¿½Eâ†’ï¿½E
+            downPaymentJPY: toNum(purchase.downPayment) * 10000, // ä¸Eï¿½Eâ†’ï¿½E
             years: toNum(purchase.loanYears),
             rate: toNum(purchase.interestRate), // % å‰æ
           } : undefined,
@@ -199,13 +199,13 @@ export default function JsonTestPage() {
             const cycleYearsRaw = 'cycleYears' in r ? r.cycleYears : undefined;
             return {
               age: toNum(r.age),
-              costJPY: toNum(r.cost) * 10000, // ä¸EEâ†’åE
+              costJPY: toNum(r.cost) * 10000, // ä¸Eï¿½Eâ†’ï¿½E
               cycleYears: cycleYearsRaw == null ? undefined : toNum(cycleYearsRaw),
             };
           }),
         };
 
-        // å®¶é›»EE0kå†E˜ä½ãEã¾ã¾EE
+        // å®¶é›»ï¿½Eï¿½E0kå†Eï¿½ï¿½ä½ï¿½Eã¾ã¾ï¿½Eï¿½E
         const applianceEntries = Array.isArray(f.appliances)
           ? f.appliances.filter(isRecord)
           : [];
@@ -223,13 +223,13 @@ export default function JsonTestPage() {
             name,
             cycleYears: toNum(a.cycle),
             firstAfterYears: toNum(a.firstReplacementAfterYears),
-            cost10kJPY: toNum(a.cost), // ä¸EE = 10kå†E‰±ãEEãŸã‚ã“ãEã¾ã¾ã§è‰¯ãE
+            cost10kJPY: toNum(a.cost), // ä¸Eï¿½E = 10kå†Eï¿½ï¿½ãEï¿½EãŸã‚ã“ï¿½Eã¾ã¾ã§è‰¯ãE
           });
           return acc;
         }, []);
 
 
-        // ç”Ÿæ´»è²»Eˆç°¡åEè©³ç´°E‰ãEæ¨å®E
+        // ç”Ÿæ´»è²»ï¿½Eï¿½ç°¡åEè©³ç´°ï¿½Eï¿½ï¿½Eæ¨å®E
         const simpleMode = toNum(f.livingCostSimple) > 0;
 
         return {
@@ -238,10 +238,10 @@ export default function JsonTestPage() {
           retirementAge: toNum(f.retirementAge),
           pensionStartAge: toNum(f.pensionStartAge),
 
-          mainJobIncomeGross: toNum(f.mainIncome) * 10000, // ä¸EEâ†’åE
-          sideJobIncomeGross: toNum(f.sideJobIncome) * 10000, // ä¸EEâ†’åE
-          spouseMainJobIncomeGross: toNum(f.spouseMainIncome) * 10000, // ä¸EEâ†’åE
-          spouseSideJobIncomeGross: toNum(f.spouseSideJobIncome) * 10000, // ä¸EEâ†’åE
+          mainJobIncomeGross: toNum(f.mainIncome) * 10000, // ä¸Eï¿½Eâ†’ï¿½E
+          sideJobIncomeGross: toNum(f.sideJobIncome) * 10000, // ä¸Eï¿½Eâ†’ï¿½E
+          spouseMainJobIncomeGross: toNum(f.spouseMainIncome) * 10000, // ä¸Eï¿½Eâ†’ï¿½E
+          spouseSideJobIncomeGross: toNum(f.spouseSideJobIncome) * 10000, // ä¸Eï¿½Eâ†’ï¿½E
           incomeGrowthRate: 0, // ä¸åœ¨ãªã‚Eã§
           spouseIncomeGrowthRate: 0,
 
@@ -257,7 +257,7 @@ export default function JsonTestPage() {
             honeymoonJPY: toNum(f.honeymoonCost) * 10000,
             movingJPY: toNum(f.newHomeMovingCost) * 10000,
           } : undefined,
-          // childrenã¯æ–E­—åŒ–ã‘ãEãŸã‚çœç•¥Eˆå¿E¦ãªã‚‰æ‰‹å½“ï¼E
+          // childrenã¯æ–Eï¿½ï¿½åŒ–ã‘ï¿½EãŸã‚çœç•¥ï¿½Eï¿½å¿Eï¿½ï¿½ãªã‚‰æ‰‹å½“ï¼E
           appliances,
           care: {
             assume: isYes(f.parentCareAssumption),
@@ -270,7 +270,7 @@ export default function JsonTestPage() {
           postRetirementLiving10kJPY: toNum(f.postRetirementLivingCost),
           pensionMonthly10kJPY: toNum(f.pensionAmount),
 
-          currentSavingsJPY: toNum(f.currentSavings) * 10000, // ä¸EEâ†’åE
+          currentSavingsJPY: toNum(f.currentSavings) * 10000, // ä¸Eï¿½Eâ†’ï¿½E
           monthlySavingsJPY: toNum(f.monthlySavings), // å†EæœE
 
           currentInvestmentsJPY: (
