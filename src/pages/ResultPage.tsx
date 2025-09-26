@@ -1,4 +1,4 @@
-﻿import { useMemo } from 'react';
+﻿import { useMemo, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import IncomePositionChart from '../components/dashboard/IncomePositionChart';
 import SavingsPositionChart from '../components/dashboard/SavingsPositionChart';
@@ -29,6 +29,26 @@ export default function ResultPage() {
   const inputParams = state?.inputParams;
 
   const dataset = useMemo(() => buildDashboardDataset(yearlyData), [yearlyData]);
+
+  const handleSaveOutput = useCallback(() => {
+    if (!yearlyData.length || typeof window === 'undefined') {
+      return;
+    }
+
+    try {
+      const blob = new Blob([JSON.stringify(yearlyData, null, 2)], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'output.json';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('failed to export simulation result', error);
+    }
+  }, [yearlyData]);
 
   if (!inputParams || dataset.enrichedData.length === 0) {
     return (
@@ -103,6 +123,14 @@ export default function ResultPage() {
             <p className="text-gray-600 mt-1">フォーム入力をもとに {dataset.firstYear?.year ?? '-'} 年から {dataset.latestYear?.year ?? '-'} 年までの推移を可視化しました。</p>
           </div>
           <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={handleSaveOutput}
+              className={`px-4 py-2 rounded text-white ${yearlyData.length ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-gray-300 cursor-not-allowed'}`}
+              disabled={!yearlyData.length}
+            >
+              結果を保存
+            </button>
             <button
               type="button"
               onClick={() => navigate('/form')}

@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import type { SimulationInputParams, YearlyData } from '../types/simulation';
 
 // Standalone tester page for posting raw JSON to /api/simulate.
 // ASCII-only labels to avoid encoding issues.
 export default function JsonTestPage() {
+  const navigate = useNavigate();
   const [jsonText, setJsonText] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [busy, setBusy] = useState<boolean>(false);
-  const [result, setResult] = useState<Record<string, unknown> | null>(null);
 
-  const handleFile = async (file: File) => {
+  const handleFile = useCallback(async (file: File) => {
     try {
       const text = await file.text();
       setJsonText(text);
@@ -16,12 +18,11 @@ export default function JsonTestPage() {
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     }
-  };
+  }, []);
 
-  const handleExecute = async () => {
+  const handleExecute = useCallback(async () => {
     setBusy(true);
     setError("");
-    setResult(null);
     try {
       const parsed = JSON.parse(jsonText) as unknown;
 
@@ -41,10 +42,39 @@ export default function JsonTestPage() {
         return !!obj && typeof obj === 'object' && ('personAge' in (obj as Record<string, unknown>) || 'simulationPeriodAge' in (obj as Record<string, unknown>));
       };
 
+      const isYes = (value: unknown): boolean => {
+        const normalized = String(value ?? '').trim().toLowerCase();
+        return normalized === 'yes' || normalized === 'true' || normalized === '1' || normalized === '�͂�';
+      };
+
+      const extractNavInputParams = (raw: unknown): SimulationInputParams | null => {
+        if (!isRecord(raw)) return null;
+        const record = raw as Record<string, unknown>;
+        if (!('initialAge' in record) || !('retirementAge' in record)) {
+          return null;
+        }
+        return {
+          initialAge: toNum(record.initialAge),
+          spouseInitialAge: 'spouseInitialAge' in record ? toNum(record.spouseInitialAge) : undefined,
+          retirementAge: toNum(record.retirementAge),
+          mainJobIncomeGross: toNum(record.mainJobIncomeGross),
+          sideJobIncomeGross: toNum(record.sideJobIncomeGross),
+          spouseMainJobIncomeGross: 'spouseMainJobIncomeGross' in record ? toNum(record.spouseMainJobIncomeGross) : undefined,
+          spouseSideJobIncomeGross: 'spouseSideJobIncomeGross' in record ? toNum(record.spouseSideJobIncomeGross) : undefined,
+          currentSavingsJPY: toNum(record.currentSavingsJPY),
+          monthlySavingsJPY: toNum(record.monthlySavingsJPY),
+          currentInvestmentsJPY: toNum(record.currentInvestmentsJPY),
+          yearlyRecurringInvestmentJPY: toNum(record.yearlyRecurringInvestmentJPY),
+          yearlySpotJPY: toNum(record.yearlySpotJPY),
+          expectedReturn: Number(record.expectedReturn ?? 0),
+          emergencyFundJPY: toNum(record.emergencyFundJPY),
+        };
+      };
+
       const buildFromForm = (f: Record<string, unknown>) => {
         const monthlyRecurringInvestment = Object.values((f.monthlyInvestmentAmounts as Record<string, unknown> | undefined) ?? {})
-          .reduce<number>((acc, v) => acc + toNum(v), 0); // 円/月
-        const yearlyRecurringInvestmentJPY = monthlyRecurringInvestment * 12; // 円/年
+          .reduce<number>((acc, v) => acc + toNum(v), 0); // 冁E朁E
+        const yearlyRecurringInvestmentJPY = monthlyRecurringInvestment * 12; // 冁E年
         const yearlySpotJPY = [
           f.investmentStocksAnnualSpot,
           f.investmentTrustAnnualSpot,
@@ -52,7 +82,7 @@ export default function JsonTestPage() {
           f.investmentIdecoAnnualSpot,
           f.investmentCryptoAnnualSpot,
           f.investmentOtherAnnualSpot,
-        ].reduce<number>((acc, v) => acc + toNum(v), 0) * 10000; // 万円→円/年
+        ].reduce<number>((acc, v) => acc + toNum(v), 0) * 10000; // 丁E�E→�E/年
 
         const stocksCurrentYen = toNum(f.investmentStocksCurrent) * 10000;
         const trustCurrentYen = toNum(f.investmentTrustCurrent) * 10000;
@@ -98,7 +128,7 @@ export default function JsonTestPage() {
         const nisaSpotAnnualJPY = (stocksAccountType === 'nisa' ? stocksSpotYen : 0) + (trustAccountType === 'nisa' ? trustSpotYen : 0);
         const taxableSpotAnnualJPY = (stocksAccountType === 'taxable' ? stocksSpotYen : 0) + (trustAccountType === 'taxable' ? trustSpotYen : 0) + otherSpotYen;
 
-        // expectedReturn: 各利回りの平均（%→小数）
+        // expectedReturn: 吁E��回りの平坁E��E→小数�E�E
         const rates = [
           f.investmentStocksRate,
           f.investmentTrustRate,
@@ -109,36 +139,43 @@ export default function JsonTestPage() {
         ].map(toNum).filter((x) => Number.isFinite(x));
         const expectedReturn = (rates.length ? rates.reduce((a, b) => a + b, 0) / rates.length : 4) / 100;
 
-        // 車
-        const carLoanUse = String(f.carLoanUsage ?? '').includes('はい');
+        // 軁E
+        const carLoanUse = isYes(f.carLoanUsage);
         const car = {
-          priceJPY: toNum(f.carPrice) * 10000, // 万円→円
+          priceJPY: toNum(f.carPrice) * 10000, // 丁E�E→�E
           firstAfterYears: toNum(f.carFirstReplacementAfterYears),
           frequencyYears: toNum(f.carReplacementFrequency),
           loan: {
             use: carLoanUse,
             years: carLoanUse ? toNum(f.carLoanYears) : undefined,
-            // 文字列はそのまま（API側で正規化）
+            // 斁E���Eはそ�Eまま�E�EPI側で正規化�E�E
             type: carLoanUse ? (f.carLoanType as string | undefined) : undefined,
           },
           currentLoan: undefined as | { monthlyPaymentJPY: number; remainingYears: number } | undefined,
         };
-        // 車の現在ローン（円/月）
+        // 車�E現在ローン�E��E/月！E
         const carMonthly = toNum(f.carCurrentLoanMonthly);
         const carRemain = toNum(f.carCurrentLoanRemainingYears);
-        const carInPay = String(f.carCurrentLoanInPayment ?? '').includes('はい');
+        const carInPay = isYes(f.carCurrentLoanInPayment);
         if (carInPay && carMonthly > 0 && carRemain > 0) {
           car.currentLoan = { monthlyPaymentJPY: carMonthly, remainingYears: carRemain };
         }
 
-        // 住まい
-        const rentYen = toNum(f.currentRentLoanPayment); // 円/月
-        const houseLoanMonthly = toNum(f.loanMonthlyPayment); // 円/月
+        // 住まぁE
+        const rentYen = toNum(f.currentRentLoanPayment); // �~/��
+        const houseLoanMonthly = toNum(f.loanMonthlyPayment); // �~/��
         const houseLoanRemain = toNum(f.loanRemainingYears);
         const housingTypeRaw = String(f.housingType ?? '');
-        let housingType: '賃貸' | '持ち家（ローン中）' | '持ち家（完済）' = '持ち家（完済）';
-        if (housingTypeRaw.includes('賃') || rentYen > 0) housingType = '賃貸';
-        else if (housingTypeRaw.includes('ローン') || (houseLoanMonthly > 0 && houseLoanRemain > 0)) housingType = '持ち家（ローン中）';
+        const HOUSING_RENT = '����';
+        const HOUSING_LOAN = '�����Ɓi���[������j';
+        const HOUSING_OWNED = '�����Ɓi���ρj';
+
+        let housingType = HOUSING_OWNED;
+        if (housingTypeRaw.includes(HOUSING_RENT) || rentYen > 0) {
+          housingType = HOUSING_RENT;
+        } else if (housingTypeRaw.includes('���[��') || (houseLoanMonthly > 0 && houseLoanRemain > 0)) {
+          housingType = HOUSING_LOAN;
+        }
         const purchase = (f.housePurchasePlan as Record<string, unknown> | undefined);
 
         const renovationEntries = Array.isArray(f.houseRenovationPlans)
@@ -147,14 +184,14 @@ export default function JsonTestPage() {
 
         const housing = {
           type: housingType,
-          rentMonthlyJPY: housingType === '賃貸' && rentYen > 0 ? rentYen : undefined,
-          currentLoan: housingType === '持ち家（ローン中）' && houseLoanMonthly > 0 && houseLoanRemain > 0
+          rentMonthlyJPY: housingType === HOUSING_RENT && rentYen > 0 ? rentYen : undefined,
+          currentLoan: housingType === HOUSING_LOAN && houseLoanMonthly > 0 && houseLoanRemain > 0
             ? { monthlyPaymentJPY: houseLoanMonthly, remainingYears: houseLoanRemain }
             : undefined,
           purchasePlan: purchase ? {
             age: toNum(purchase.age),
-            priceJPY: toNum(purchase.price) * 10000, // 万円→円
-            downPaymentJPY: toNum(purchase.downPayment) * 10000, // 万円→円
+            priceJPY: toNum(purchase.price) * 10000, // 丁E�E→�E
+            downPaymentJPY: toNum(purchase.downPayment) * 10000, // 丁E�E→�E
             years: toNum(purchase.loanYears),
             rate: toNum(purchase.interestRate), // % 前提
           } : undefined,
@@ -162,13 +199,13 @@ export default function JsonTestPage() {
             const cycleYearsRaw = 'cycleYears' in r ? r.cycleYears : undefined;
             return {
               age: toNum(r.age),
-              costJPY: toNum(r.cost) * 10000, // 万円→円
+              costJPY: toNum(r.cost) * 10000, // 丁E�E→�E
               cycleYears: cycleYearsRaw == null ? undefined : toNum(cycleYearsRaw),
             };
           }),
         };
 
-        // 家電（10k円単位のまま）
+        // 家電�E�E0k冁E��位�Eまま�E�E
         const applianceEntries = Array.isArray(f.appliances)
           ? f.appliances.filter(isRecord)
           : [];
@@ -186,13 +223,13 @@ export default function JsonTestPage() {
             name,
             cycleYears: toNum(a.cycle),
             firstAfterYears: toNum(a.firstReplacementAfterYears),
-            cost10kJPY: toNum(a.cost), // 万円 = 10k円扱いのためこのままで良い
+            cost10kJPY: toNum(a.cost), // 丁E�E = 10k冁E��ぁE�Eためこ�Eままで良ぁE
           });
           return acc;
         }, []);
 
 
-        // 生活費（簡単/詳細）の推定
+        // 生活費�E�簡十E詳細�E��E推宁E
         const simpleMode = toNum(f.livingCostSimple) > 0;
 
         return {
@@ -201,15 +238,15 @@ export default function JsonTestPage() {
           retirementAge: toNum(f.retirementAge),
           pensionStartAge: toNum(f.pensionStartAge),
 
-          mainJobIncomeGross: toNum(f.mainIncome) * 10000, // 万円→円
-          sideJobIncomeGross: toNum(f.sideJobIncome) * 10000, // 万円→円
-          spouseMainJobIncomeGross: toNum(f.spouseMainIncome) * 10000, // 万円→円
-          spouseSideJobIncomeGross: toNum(f.spouseSideJobIncome) * 10000, // 万円→円
-          incomeGrowthRate: 0, // 不在なら0で
+          mainJobIncomeGross: toNum(f.mainIncome) * 10000, // 丁E�E→�E
+          sideJobIncomeGross: toNum(f.sideJobIncome) * 10000, // 丁E�E→�E
+          spouseMainJobIncomeGross: toNum(f.spouseMainIncome) * 10000, // 丁E�E→�E
+          spouseSideJobIncomeGross: toNum(f.spouseSideJobIncome) * 10000, // 丁E�E→�E
+          incomeGrowthRate: 0, // 不在なめEで
           spouseIncomeGrowthRate: 0,
 
           expenseMode: simpleMode ? 'simple' : 'detailed',
-          livingCostSimpleAnnual: simpleMode ? toNum(f.livingCostSimple) * 12 : undefined, // 円/月 → 円/年
+          livingCostSimpleAnnual: simpleMode ? toNum(f.livingCostSimple) * 12 : undefined, // 冁E朁EↁE冁E年
 
           car,
           housing,
@@ -220,10 +257,10 @@ export default function JsonTestPage() {
             honeymoonJPY: toNum(f.honeymoonCost) * 10000,
             movingJPY: toNum(f.newHomeMovingCost) * 10000,
           } : undefined,
-          // childrenは文字化けのため省略（必要なら手当）
+          // childrenは斁E��化け�Eため省略�E�忁E��なら手当！E
           appliances,
           care: {
-            assume: String(f.parentCareAssumption ?? '') === 'はい',
+            assume: isYes(f.parentCareAssumption),
             parentCurrentAge: toNum(f.parentCurrentAge),
             parentCareStartAge: toNum(f.parentCareStartAge),
             years: toNum(f.parentCareYears),
@@ -233,8 +270,8 @@ export default function JsonTestPage() {
           postRetirementLiving10kJPY: toNum(f.postRetirementLivingCost),
           pensionMonthly10kJPY: toNum(f.pensionAmount),
 
-          currentSavingsJPY: toNum(f.currentSavings) * 10000, // 万円→円
-          monthlySavingsJPY: toNum(f.monthlySavings), // 円/月
+          currentSavingsJPY: toNum(f.currentSavings) * 10000, // 丁E�E→�E
+          monthlySavingsJPY: toNum(f.monthlySavings), // 冁E朁E
 
           currentInvestmentsJPY: (
             toNum(f.investmentStocksCurrent) +
@@ -270,13 +307,20 @@ export default function JsonTestPage() {
       };
 
       // Build payload
-      let payload: { inputParams: unknown } | Record<string, unknown>;
+      let navCandidate: SimulationInputParams | null = null;
+      let payload: { inputParams: Record<string, unknown> };
       if (isWrapped(parsed)) {
-        payload = parsed;
+        const inputParamsRaw = parsed.inputParams as Record<string, unknown>;
+        payload = { inputParams: inputParamsRaw };
+        navCandidate = extractNavInputParams(inputParamsRaw);
       } else if (isInputParams(parsed)) {
-        payload = { inputParams: parsed };
+        const inputParamsRaw = parsed as Record<string, unknown>;
+        payload = { inputParams: inputParamsRaw };
+        navCandidate = extractNavInputParams(inputParamsRaw);
       } else if (isFormLike(parsed)) {
-        payload = { inputParams: buildFromForm(parsed as Record<string, unknown>) };
+        const built = buildFromForm(parsed as Record<string, unknown>);
+        payload = { inputParams: built };
+        navCandidate = extractNavInputParams(built);
       } else {
         throw new Error('Unsupported JSON format. Provide InputParams or { inputParams: {...} } or Form-like JSON.');
       }
@@ -286,22 +330,38 @@ export default function JsonTestPage() {
         body: JSON.stringify(payload),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.message || 'API error');
-      setResult(data as Record<string, unknown>);
-      try { await navigator.clipboard.writeText(JSON.stringify(data, null, 2)); } catch (e) { void e; }
+      if (!res.ok) {
+        const message = (data && typeof data === 'object' && 'message' in (data as Record<string, unknown>))
+          ? String((data as Record<string, unknown>).message)
+          : 'API error';
+        throw new Error(message);
+      }
+
+      const dataRecord = data as Record<string, unknown>;
+      const yearlyRaw = dataRecord.yearlyData;
+      const yearlyData = Array.isArray(yearlyRaw) ? (yearlyRaw as YearlyData[]) : [];
+      if (yearlyData.length === 0) {
+        throw new Error('Simulation API returned no yearlyData array.');
+      }
+      if (!navCandidate) {
+        throw new Error('Unable to derive the minimal input parameters required for ResultPage navigation.');
+      }
+
+      navigate('/result', { state: { yearlyData, inputParams: navCandidate } });
+      return;
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Invalid JSON');
     } finally {
       setBusy(false);
     }
-  };
+  }, [jsonText, navigate]);
 
   return (
     <div className="min-h-screen bg-slate-50 p-4">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-2xl font-bold mb-2">JSON Test Input (/json-test)</h1>
         <p className="text-sm text-gray-600 mb-4">
-          Post JSON to /api/simulate. Provide either the full body with inputParams, or the InputParams object (will be wrapped).
+          Upload or paste simulation JSON, send it to /api/simulate, and jump straight to the dashboard view rendered by ResultPage.
         </p>
 
         <div className="bg-white rounded border p-4 mb-4">
@@ -326,20 +386,11 @@ export default function JsonTestPage() {
             onClick={handleExecute}
             disabled={busy || !jsonText.trim()}
           >
-            {busy ? 'Running...' : 'Run API'}
+            {busy ? 'Running...' : 'Run & View Result'}
           </button>
           {error && <div className="mt-3 text-sm text-red-600">{error}</div>}
         </div>
 
-        {result !== null && (
-          <div className="bg-white rounded border p-4">
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="font-semibold">Response JSON</h2>
-              <span className="text-xs text-gray-500">Also copied to clipboard</span>
-            </div>
-            <pre className="text-xs bg-gray-50 p-3 rounded max-h-[70vh] overflow-auto">{JSON.stringify(result, null, 2)}</pre>
-          </div>
-        )}
       </div>
     </div>
   );
