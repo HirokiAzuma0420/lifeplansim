@@ -254,8 +254,14 @@ export default function FormPage() {
       const monthlyRecurringInvestment = Object.values(formData.monthlyInvestmentAmounts).reduce((sum, v) => sum + n(v), 0);
       const yearlyRecurringInvestmentJPY = monthlyRecurringInvestment * 12;
 
-      const yearlySpotJPY = (n(formData.investmentStocksAnnualSpot) + n(formData.investmentTrustAnnualSpot) + n(formData.investmentBondsAnnualSpot) +
-                            n(formData.investmentIdecoAnnualSpot) + n(formData.investmentCryptoAnnualSpot) + n(formData.investmentOtherAnnualSpot)) * 10000; // 万円/年 → 円/年
+      const yearlySpotJPY = (
+        n(formData.investmentStocksAnnualSpot) +
+        n(formData.investmentTrustAnnualSpot) +
+        n(formData.investmentBondsAnnualSpot) +
+        n(formData.investmentIdecoAnnualSpot) +
+        n(formData.investmentCryptoAnnualSpot) +
+        n(formData.investmentOtherAnnualSpot)
+      ); // yen per year
 
       const stocksCurrentYen = n(formData.investmentStocksCurrent) * 10000;
       const trustCurrentYen = n(formData.investmentTrustCurrent) * 10000;
@@ -273,9 +279,14 @@ export default function FormPage() {
       const yearlyTrustRecurringYen = monthlyTrustYen * 12;
       const yearlyOtherRecurringYen = monthlyOtherYen * 12;
 
-      const stocksSpotYen = n(formData.investmentStocksAnnualSpot) * 10000;
-      const trustSpotYen = n(formData.investmentTrustAnnualSpot) * 10000;
-      const otherSpotYen = (n(formData.investmentBondsAnnualSpot) + n(formData.investmentIdecoAnnualSpot) + n(formData.investmentCryptoAnnualSpot) + n(formData.investmentOtherAnnualSpot)) * 10000;
+      const stocksSpotYen = n(formData.investmentStocksAnnualSpot);
+      const trustSpotYen = n(formData.investmentTrustAnnualSpot);
+      const otherSpotYen = (
+        n(formData.investmentBondsAnnualSpot) +
+        n(formData.investmentIdecoAnnualSpot) +
+        n(formData.investmentCryptoAnnualSpot) +
+        n(formData.investmentOtherAnnualSpot)
+      );
 
       const stocksAccountType = formData.investmentStocksAccountType;
       const trustAccountType = formData.investmentTrustAccountType;
