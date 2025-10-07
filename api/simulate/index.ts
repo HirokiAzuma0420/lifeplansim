@@ -1,4 +1,4 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+﻿import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 type InvestmentTaxation = {
   nisa: {
@@ -304,7 +304,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     // ラベル正規化（UIとAPI内部の表記揺れ対策）
     if (car?.loan) {
       type LoanType = InputParams['car']['loan']['type'];
-      const dealerOld = 'チE��ーラーローン' as LoanType;
+      const dealerOld = 'ディーラーローン' as LoanType;
       const dealerNew = 'ディーラーローン' as LoanType;
       if (car.loan.type === dealerNew) {
         (car as InputParams['car']).loan.type = dealerOld;
@@ -313,9 +313,9 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     if (children) {
       type Edu = NonNullable<InputParams['children']>['educationPattern'];
       const map: Record<string, Edu> = {
-        '公立中心': '公立中忁E' as unknown as Edu,
-        '公私混合': '公私混吁E' as unknown as Edu,
-        '私立中心': '私立中忁E' as unknown as Edu,
+        '公立中心': '公立中心' as unknown as Edu,
+        '公私混合': '公私混合' as unknown as Edu,
+        '私立中心': '私立中心' as unknown as Edu,
       };
       const epStr = (children.educationPattern as unknown as string);
       const mapped = map[epStr];
