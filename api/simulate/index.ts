@@ -14,6 +14,7 @@ type InvestmentTaxation = {
 };
 
 const SPECIFIC_ACCOUNT_TAX_RATE = 0.20315;
+const NISA_CONTRIBUTION_CAP = 18_000_000;
 
 interface InputParams {
   initialAge: number;
@@ -340,6 +341,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     let currentAge = initialAge;
     let savings = currentSavingsJPY;
     let nisa = n(investmentTaxation?.nisa?.currentHoldingsJPY ?? 0);
+    let cumulativeNisaContribution = Math.max(0, n(investmentTaxation?.nisa?.currentHoldingsJPY ?? 0));
     const ideco = 0; // iDeCoは今回はシミュレーション対象外
     const fallbackCurrentInvestmentsJPY = n(currentInvestmentsJPY);
     const fallbackTaxableCurrent = fallbackCurrentInvestmentsJPY - nisa;
@@ -350,17 +352,16 @@ export default async function (req: VercelRequest, res: VercelResponse) {
 
     const fallbackRecurring = n(yearlyRecurringInvestmentJPY);
     const fallbackSpot = n(yearlySpotJPY);
-    const annualNisaRecurring = n(investmentTaxation?.nisa?.annualRecurringContributionJPY ?? 0);
-    const annualNisaSpot = n(investmentTaxation?.nisa?.annualSpotContributionJPY ?? 0);
-    let annualTaxableRecurring = n(investmentTaxation?.taxable?.annualRecurringContributionJPY ?? (fallbackRecurring - annualNisaRecurring));
-    let annualTaxableSpot = n(investmentTaxation?.taxable?.annualSpotContributionJPY ?? (fallbackSpot - annualNisaSpot));
-    if (annualTaxableRecurring < 0) {
-      annualTaxableRecurring = 0;
+    const baseAnnualNisaRecurring = n(investmentTaxation?.nisa?.annualRecurringContributionJPY ?? 0);
+    const baseAnnualNisaSpot = n(investmentTaxation?.nisa?.annualSpotContributionJPY ?? 0);
+    let baseAnnualTaxableRecurring = n(investmentTaxation?.taxable?.annualRecurringContributionJPY ?? (fallbackRecurring - baseAnnualNisaRecurring));
+    let baseAnnualTaxableSpot = n(investmentTaxation?.taxable?.annualSpotContributionJPY ?? (fallbackSpot - baseAnnualNisaSpot));
+    if (baseAnnualTaxableRecurring < 0) {
+      baseAnnualTaxableRecurring = 0;
     }
-    if (annualTaxableSpot < 0) {
-      annualTaxableSpot = 0;
+    if (baseAnnualTaxableSpot < 0) {
+      baseAnnualTaxableSpot = 0;
     }
-    const fallbackTotalContribution = fallbackRecurring + fallbackSpot;
 
     // 家電の正規化: 受信直後のみフィルタリング
     const appliancesOnly = Array.isArray(appliances) ? appliances.filter(a =>
@@ -583,16 +584,37 @@ export default async function (req: VercelRequest, res: VercelResponse) {
         currentReturn = ASSETS.reduce((acc, k) => acc + w * assetReturns[k][i], 0);
       }
 
-      const taxableContribution = annualTaxableRecurring + annualTaxableSpot;
-      const nisaContribution = annualNisaRecurring + annualNisaSpot;
+      let taxableRecurringThisYear = baseAnnualTaxableRecurring;
+      let taxableSpotThisYear = baseAnnualTaxableSpot;
+      const nisaRecurringThisYear = baseAnnualNisaRecurring;
+      const nisaSpotThisYear = baseAnnualNisaSpot;
+
+      if (currentAge >= retirementAge) {
+        taxableRecurringThisYear = 0;
+        taxableSpotThisYear = 0;
+      }
+
+      let appliedNisaRecurring = 0;
+      let appliedNisaSpot = 0;
+      let remainingNisaAllowance = Math.max(0, NISA_CONTRIBUTION_CAP - cumulativeNisaContribution);
+
+      if (remainingNisaAllowance > 0) {
+        appliedNisaRecurring = Math.min(nisaRecurringThisYear, remainingNisaAllowance);
+        remainingNisaAllowance -= appliedNisaRecurring;
+        appliedNisaSpot = Math.min(nisaSpotThisYear, remainingNisaAllowance);
+      }
+
+      const taxableContribution = Math.max(0, taxableRecurringThisYear + taxableSpotThisYear);
+      const nisaContribution = Math.max(0, appliedNisaRecurring + appliedNisaSpot);
+      cumulativeNisaContribution += nisaContribution;
       const combinedContribution = taxableContribution + nisaContribution;
-      const residualContribution = Math.max(0, fallbackTotalContribution - combinedContribution);
-      investedPrincipal = investedPrincipal * (1 + currentReturn) + taxableContribution + residualContribution;
+
+      investedPrincipal = investedPrincipal * (1 + currentReturn) + taxableContribution;
       nisa = nisa * (1 + currentReturn) + nisaContribution;
 
-      // ■ Cash flow calculation（退職後の貯蓄は0）
+      // Cash flow calculation
       const annualSavings = currentAge < retirementAge ? (monthlySavingsJPY * 12) : 0;
-      const totalInvestmentOutflow = combinedContribution + residualContribution;
+      const totalInvestmentOutflow = combinedContribution;
       const cashFlow = annualIncome - totalExpense - totalInvestmentOutflow + annualSavings;
       savings += cashFlow;
 
