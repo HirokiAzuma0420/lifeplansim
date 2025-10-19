@@ -335,7 +335,7 @@ export default function FormPage() {
 
         housing: {
           type: formData.housingType,
-          rentMonthlyJPY: (formData.housingType === '賃貸') ? n(formData.currentRentLoanPayment) : undefined,
+          rentMonthlyJPY: (!formData.housingType?.startsWith('持ち家')) ? n(formData.currentRentLoanPayment) : undefined,
           currentLoan: formData.housingType === '持ち家（ローン中）' && Number(formData.loanMonthlyPayment) > 0 && Number(formData.loanRemainingYears) > 0 ? {
             monthlyPaymentJPY: n(formData.loanMonthlyPayment),
             remainingYears: n(formData.loanRemainingYears),
@@ -1317,6 +1317,13 @@ export default function FormPage() {
                     <span className="ml-2">いいえ</span>
                   </label>
                 </div>
+
+                {!formData.housingType?.startsWith('持ち家') && (
+                  <div className="mt-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="currentRentLoanPayment">家賃（円/月）</label>
+                    <input type="number" id="currentRentLoanPayment" name="currentRentLoanPayment" value={formData.currentRentLoanPayment} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                  </div>
+                )}
 
                 {formData.housePurchasePlan && (
                   <div className="mt-4 space-y-4">
