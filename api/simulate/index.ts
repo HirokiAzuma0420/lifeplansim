@@ -14,7 +14,10 @@ type InvestmentTaxation = {
 };
 
 const SPECIFIC_ACCOUNT_TAX_RATE = 0.20315;
-const NISA_CONTRIBUTION_CAP = 18_000_000;
+const NISA_CONTRIBUTION_CAP = 18_000_000; // 生涯上限（新NISAの成長投資枠+つみたて枠の合計目安として扱う）
+// 年間上限（新NISA）
+const NISA_RECURRING_ANNUAL_CAP = 1_200_000; // つみたて投資枠（年）
+const NISA_SPOT_ANNUAL_CAP = 2_400_000;     // 成長投資枠（年）
 
 interface InputParams {
   initialAge: number;
@@ -586,12 +589,21 @@ export default async function (req: VercelRequest, res: VercelResponse) {
 
       let taxableRecurringThisYear = baseAnnualTaxableRecurring;
       let taxableSpotThisYear = baseAnnualTaxableSpot;
-      const nisaRecurringThisYear = baseAnnualNisaRecurring;
-      const nisaSpotThisYear = baseAnnualNisaSpot;
+      // NISAの年間上限をまず適用（その後、生涯残枠でさらに制限）
+      let nisaRecurringThisYear = Math.max(0, Math.min(baseAnnualNisaRecurring, NISA_RECURRING_ANNUAL_CAP));
+      let nisaSpotThisYear = Math.max(0, Math.min(baseAnnualNisaSpot, NISA_SPOT_ANNUAL_CAP));
 
       if (currentAge >= retirementAge) {
         taxableRecurringThisYear = 0;
         taxableSpotThisYear = 0;
+        nisaRecurringThisYear = 0;
+        nisaSpotThisYear = 0;
+      }
+
+      // 生涯拠出枠に到達していれば以降のNISA拠出は停止
+      if (cumulativeNisaContribution >= NISA_CONTRIBUTION_CAP) {
+        nisaRecurringThisYear = 0;
+        nisaSpotThisYear = 0;
       }
 
       let appliedNisaRecurring = 0;

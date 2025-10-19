@@ -1,0 +1,469 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = default_1;
+const SPECIFIC_ACCOUNT_TAX_RATE = 0.20315;
+const NISA_CONTRIBUTION_CAP = 18000000;
+// ユーティリティ関数
+// シード付きPRNG（mulberry32）
+function mulberry32(seed) {
+    return function () {
+        let t = (seed += 0x6D2B79F5);
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+}
+// 標準正規（Box-Muller）
+function gaussian(rand) {
+    let u = 0, v = 0;
+    while (u === 0)
+        u = rand();
+    while (v === 0)
+        v = rand();
+    return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+}
+// ベクトル標準化：平均0・標準偏差1
+function standardize(xs) {
+    const n = xs.length;
+    const m = xs.reduce((a, b) => a + b, 0) / n;
+    const s = Math.sqrt(xs.reduce((a, b) => a + (b - m) ** 2, 0) / n) || 1;
+    return xs.map(z => (z - m) / s);
+}
+const n = (v) => {
+    const num = Number(v);
+    return isFinite(num) ? num : 0;
+};
+// 資産リスクプリセットと資産キー配列を定義。
+const ASSET_SIGMA = {
+    equity_jp_us: 0.20,
+    fund_foreign: 0.18,
+    ideco_foreign: 0.18,
+    bond_dev: 0.04,
+    btc: 0.70,
+};
+const ASSETS = Object.keys(ASSET_SIGMA); // 等ウェイト
+// ローン返済額計算関数 (年額)
+const calculateLoanPayment = (principal, annualInterestRate, years) => {
+    if (principal <= 0 || annualInterestRate < 0 || years <= 0) {
+        return 0;
+    }
+    const monthlyInterestRate = annualInterestRate / 100 / 12; // 百分率を小数に変換し、月利に
+    const totalMonths = years * 12;
+    if (monthlyInterestRate === 0) {
+        return principal / years; // 金利0の場合は元本を年数で割る
+    }
+    const monthlyPayment = principal * monthlyInterestRate * Math.pow((1 + monthlyInterestRate), totalMonths) / (Math.pow((1 + monthlyInterestRate), totalMonths) - 1);
+    return monthlyPayment * 12; // 年額を返す
+};
+// 額面収入から手取り収入を計算する関数
+function computeNetAnnual(grossAnnualIncome) {
+    const income = n(grossAnnualIncome);
+    // 給与所得控除 (令和2年以降)
+    let salaryIncomeDeduction;
+    if (income <= 1625000) {
+        salaryIncomeDeduction = 550000;
+    }
+    else if (income <= 1800000) {
+        salaryIncomeDeduction = income * 0.4 - 100000;
+    }
+    else if (income <= 3600000) {
+        salaryIncomeDeduction = income * 0.3 + 80000;
+    }
+    else if (income <= 6600000) {
+        salaryIncomeDeduction = income * 0.2 + 440000;
+    }
+    else if (income <= 8500000) {
+        salaryIncomeDeduction = income * 0.1 + 1100000;
+    }
+    else {
+        salaryIncomeDeduction = 1950000;
+    }
+    // 社会保険料 (健康保険、厚生年金、雇用保険) - 簡略化のため一律15%とする
+    const socialInsurancePremium = income * 0.15;
+    // 基礎控除 (令和2年以降)
+    const basicDeduction = 480000;
+    // 課税所得
+    const taxableIncome = Math.max(0, income - salaryIncomeDeduction - socialInsurancePremium - basicDeduction);
+    // 所得税
+    let incomeTax;
+    if (taxableIncome <= 1950000) {
+        incomeTax = taxableIncome * 0.05;
+    }
+    else if (taxableIncome <= 3300000) {
+        incomeTax = taxableIncome * 0.1 - 97500;
+    }
+    else if (taxableIncome <= 6950000) {
+        incomeTax = taxableIncome * 0.2 - 427500;
+    }
+    else if (taxableIncome <= 9000000) {
+        incomeTax = taxableIncome * 0.23 - 636000;
+    }
+    else if (taxableIncome <= 18000000) {
+        incomeTax = taxableIncome * 0.33 - 1536000;
+    }
+    else if (taxableIncome <= 40000000) {
+        incomeTax = taxableIncome * 0.4 - 2796000;
+    }
+    else {
+        incomeTax = taxableIncome * 0.45 - 4796000;
+    }
+    // 住民税 (均等割5,000円 + 所得割10%) - 簡略化
+    const residentTax = taxableIncome * 0.1 + 5000;
+    // 手取り収入 = 額面収入 - 社会保険料 - 所得税 - 住民税
+    const netAnnualIncome = income - socialInsurancePremium - incomeTax - residentTax;
+    return Math.max(0, netAnnualIncome);
+}
+async function default_1(req, res) {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4;
+    if (req.method === 'POST') {
+        const body = req.body;
+        const { initialAge, endAge, retirementAge, pensionStartAge, mainJobIncomeGross, sideJobIncomeGross, spouseMainJobIncomeGross, spouseSideJobIncomeGross, incomeGrowthRate, spouseIncomeGrowthRate, expenseMode, livingCostSimpleAnnual, detailedFixedAnnual, detailedVariableAnnual, car, housing, marriage, children, appliances, care, postRetirementLiving10kJPY, pensionMonthly10kJPY, currentSavingsJPY, monthlySavingsJPY, currentInvestmentsJPY, yearlyRecurringInvestmentJPY, yearlySpotJPY, expectedReturn, investmentTaxation, interestScenario, emergencyFundJPY, } = body.inputParams;
+        // ラベル正規化（UIとAPI内部の表記揺れ対策）
+        if (car === null || car === void 0 ? void 0 : car.loan) {
+            const dealerOld = 'ディーラーローン';
+            const dealerNew = 'ディーラーローン';
+            if (car.loan.type === dealerNew) {
+                car.loan.type = dealerOld;
+            }
+        }
+        if (children) {
+            const map = {
+                '公立中心': '公立中心',
+                '公私混合': '公私混合',
+                '私立中心': '私立中心',
+            };
+            const epStr = children.educationPattern;
+            const mapped = map[epStr];
+            if (mapped) {
+                children.educationPattern = mapped;
+            }
+        }
+        const stressTestEnabled = (_b = (_a = body.inputParams.stressTest) === null || _a === void 0 ? void 0 : _a.enabled) !== null && _b !== void 0 ? _b : (interestScenario === 'ランダム変動');
+        const mu = Math.max(-1, Math.min(1, n(expectedReturn))); // 小数, 例0.04
+        const scenario = interestScenario || '固定利回り';
+        const stEnabled = stressTestEnabled; // stressTestEnabled は既に定義済み
+        const seedBase = n((_c = body.inputParams.stressTest) === null || _c === void 0 ? void 0 : _c.seed) || 123456789; // body.inputParams.stressTest?.seed を使用
+        // 入力検証
+        if (!Number.isFinite(initialAge) || !Number.isFinite(endAge) || endAge < initialAge) {
+            return res.status(400).json({ message: 'invalid age range' });
+        }
+        const yearlyData = [];
+        let currentAge = initialAge;
+        let savings = currentSavingsJPY;
+        let nisa = n((_e = (_d = investmentTaxation === null || investmentTaxation === void 0 ? void 0 : investmentTaxation.nisa) === null || _d === void 0 ? void 0 : _d.currentHoldingsJPY) !== null && _e !== void 0 ? _e : 0);
+        let cumulativeNisaContribution = Math.max(0, n((_g = (_f = investmentTaxation === null || investmentTaxation === void 0 ? void 0 : investmentTaxation.nisa) === null || _f === void 0 ? void 0 : _f.currentHoldingsJPY) !== null && _g !== void 0 ? _g : 0));
+        const ideco = 0; // iDeCoは今回はシミュレーション対象外
+        const fallbackCurrentInvestmentsJPY = n(currentInvestmentsJPY);
+        const fallbackTaxableCurrent = fallbackCurrentInvestmentsJPY - nisa;
+        let investedPrincipal = n((_j = (_h = investmentTaxation === null || investmentTaxation === void 0 ? void 0 : investmentTaxation.taxable) === null || _h === void 0 ? void 0 : _h.currentHoldingsJPY) !== null && _j !== void 0 ? _j : fallbackTaxableCurrent);
+        if (investedPrincipal < 0) {
+            investedPrincipal = 0;
+        }
+        const fallbackRecurring = n(yearlyRecurringInvestmentJPY);
+        const fallbackSpot = n(yearlySpotJPY);
+        const baseAnnualNisaRecurring = n((_l = (_k = investmentTaxation === null || investmentTaxation === void 0 ? void 0 : investmentTaxation.nisa) === null || _k === void 0 ? void 0 : _k.annualRecurringContributionJPY) !== null && _l !== void 0 ? _l : 0);
+        const baseAnnualNisaSpot = n((_o = (_m = investmentTaxation === null || investmentTaxation === void 0 ? void 0 : investmentTaxation.nisa) === null || _m === void 0 ? void 0 : _m.annualSpotContributionJPY) !== null && _o !== void 0 ? _o : 0);
+        let baseAnnualTaxableRecurring = n((_q = (_p = investmentTaxation === null || investmentTaxation === void 0 ? void 0 : investmentTaxation.taxable) === null || _p === void 0 ? void 0 : _p.annualRecurringContributionJPY) !== null && _q !== void 0 ? _q : (fallbackRecurring - baseAnnualNisaRecurring));
+        let baseAnnualTaxableSpot = n((_s = (_r = investmentTaxation === null || investmentTaxation === void 0 ? void 0 : investmentTaxation.taxable) === null || _r === void 0 ? void 0 : _r.annualSpotContributionJPY) !== null && _s !== void 0 ? _s : (fallbackSpot - baseAnnualNisaSpot));
+        if (baseAnnualTaxableRecurring < 0) {
+            baseAnnualTaxableRecurring = 0;
+        }
+        if (baseAnnualTaxableSpot < 0) {
+            baseAnnualTaxableSpot = 0;
+        }
+        // 家電の正規化: 受信直後のみフィルタリング
+        const appliancesOnly = Array.isArray(appliances) ? appliances.filter(a => {
+            var _a;
+            return a && String((_a = a.name) !== null && _a !== void 0 ? _a : '').trim().length > 0 &&
+                Number(a.cost10kJPY) > 0 &&
+                Number(a.cycleYears) > 0;
+        }) : [];
+        const baseYear = new Date().getFullYear();
+        const T = (endAge - initialAge) + 1; // ループ回数に合わせる
+        const assetReturns = {};
+        ASSETS.forEach((k, idx) => {
+            const rand = mulberry32(seedBase + idx * 101);
+            const zs = Array.from({ length: T }, () => gaussian(rand));
+            const zstd = standardize(zs); // 平均0, 分散1に補正（ここが「収束」の鍵）
+            const sigma = ASSET_SIGMA[k];
+            const ra = zstd.map(z => {
+                let r = mu + sigma * z;
+                // 任意: 過度な外れ値抑制（±3σ）
+                const lo = mu - 3 * sigma, hi = mu + 3 * sigma;
+                if (r < lo)
+                    r = lo;
+                if (r > hi)
+                    r = hi;
+                return r;
+            });
+            assetReturns[k] = ra;
+        });
+        for (let i = 0; currentAge <= endAge; i++) {
+            const year = baseYear + i;
+            let annualIncome = 0;
+            let livingExpense = 0;
+            let housingExpense = 0;
+            let childExpense = 0;
+            let marriageExpense = 0;
+            let careExpense = 0;
+            let retirementExpense = 0;
+            // 1. 収入計算
+            let selfGrossIncome = mainJobIncomeGross * Math.pow(1 + incomeGrowthRate, i) + sideJobIncomeGross;
+            let spouseGrossIncome = (spouseMainJobIncomeGross !== null && spouseMainJobIncomeGross !== void 0 ? spouseMainJobIncomeGross : 0) * Math.pow(1 + (spouseIncomeGrowthRate !== null && spouseIncomeGrowthRate !== void 0 ? spouseIncomeGrowthRate : 0), i) + (spouseSideJobIncomeGross !== null && spouseSideJobIncomeGross !== void 0 ? spouseSideJobIncomeGross : 0);
+            // 退職年齢以降の収入調整
+            if (currentAge >= retirementAge) {
+                selfGrossIncome = 0;
+                spouseGrossIncome = 0;
+            }
+            // 車費用の合算（恒常+一時）
+            // carExpense is derived after computing carRecurring/carOneOff below
+            annualIncome = computeNetAnnual(selfGrossIncome) + computeNetAnnual(spouseGrossIncome);
+            // 2. 支出計算
+            if (expenseMode === 'simple') {
+                livingExpense = livingCostSimpleAnnual !== null && livingCostSimpleAnnual !== void 0 ? livingCostSimpleAnnual : 0;
+            }
+            else {
+                livingExpense = (detailedFixedAnnual !== null && detailedFixedAnnual !== void 0 ? detailedFixedAnnual : 0) + (detailedVariableAnnual !== null && detailedVariableAnnual !== void 0 ? detailedVariableAnnual : 0);
+            }
+            // 2a. 老後費用 (65歳以降の生活費と年金の差額)
+            if (currentAge >= retirementAge) {
+                livingExpense = 0; // 退職年齢以降はlivingExpenseを0にする
+                const postRetirementLivingAnnual = postRetirementLiving10kJPY * 10000 * 12;
+                const pensionAnnual = (currentAge >= pensionStartAge ? pensionMonthly10kJPY * 10000 * 12 : 0);
+                retirementExpense = Math.max(0, postRetirementLivingAnnual - pensionAnnual);
+            }
+            // 2b. 子供費用
+            if (children) {
+                for (let c = 0; c < children.count; c++) {
+                    const childBirthAge = children.firstBornAge + c * 3; // 3年おきに生まれると仮定
+                    const childAge = currentAge - childBirthAge;
+                    if (childAge >= 0 && childAge <= 21) {
+                        let educationCost = 0;
+                        switch (children.educationPattern) {
+                            case '公立中心':
+                                educationCost = 10000000 / 22;
+                                break;
+                            case '公私混合':
+                                educationCost = 16000000 / 22;
+                                break;
+                            case '私立中心':
+                                educationCost = 20000000 / 22;
+                                break;
+                        }
+                        childExpense += educationCost;
+                    }
+                }
+            }
+            // 2c. 介護費用
+            if ((care === null || care === void 0 ? void 0 : care.assume) && care.parentCurrentAge && care.parentCareStartAge && care.years && care.monthly10kJPY) {
+                const parentAge = care.parentCurrentAge + i;
+                if (parentAge >= care.parentCareStartAge && parentAge < care.parentCareStartAge + care.years) {
+                    careExpense = care.monthly10kJPY * 10000 * 12;
+                }
+            }
+            // 2d. 結婚費用
+            if (marriage && currentAge === marriage.age) {
+                marriageExpense = marriage.engagementJPY + marriage.weddingJPY + marriage.honeymoonJPY + marriage.movingJPY;
+            }
+            // 2e. 家電費用
+            let applianceExpense = 0;
+            for (const a of appliancesOnly) {
+                const firstAge = initialAge + Number((_t = a.firstAfterYears) !== null && _t !== void 0 ? _t : 0);
+                if (currentAge >= firstAge) {
+                    const diff = currentAge - firstAge;
+                    const cyc = Number(a.cycleYears);
+                    if (diff === 0 || (cyc > 0 && diff % cyc === 0)) {
+                        applianceExpense += Number(a.cost10kJPY) * 10000;
+                    }
+                }
+            }
+            // 2f. 車費用
+            let carOneOff = 0;
+            let carRecurring = 0;
+            // 現在の自動車ローン（残期間中は年額計上）
+            if (((_u = car === null || car === void 0 ? void 0 : car.currentLoan) === null || _u === void 0 ? void 0 : _u.monthlyPaymentJPY) && ((_v = car === null || car === void 0 ? void 0 : car.currentLoan) === null || _v === void 0 ? void 0 : _v.remainingYears)) {
+                if (i < car.currentLoan.remainingYears) {
+                    carRecurring += car.currentLoan.monthlyPaymentJPY * 12;
+                }
+            }
+            if (car.priceJPY > 0 && car.firstAfterYears >= 0 && car.frequencyYears > 0) {
+                const base = initialAge + car.firstAfterYears;
+                const yearsSinceFirst = currentAge - base;
+                if (yearsSinceFirst >= 0) {
+                    for (let k = 0; k <= Math.floor(yearsSinceFirst / car.frequencyYears); k++) {
+                        const eventAge = base + k * car.frequencyYears;
+                        if (car.loan.use) {
+                            let annualRatePercent = 2.5;
+                            if (car.loan.type === '銀行ローン')
+                                annualRatePercent = 1.5;
+                            else if (car.loan.type === 'ディーラーローン')
+                                annualRatePercent = 4.5;
+                            const annualPay = calculateLoanPayment(car.priceJPY, annualRatePercent, (_w = car.loan.years) !== null && _w !== void 0 ? _w : 0);
+                            if (currentAge >= eventAge && currentAge < eventAge + ((_x = car.loan.years) !== null && _x !== void 0 ? _x : 0)) {
+                                carRecurring += annualPay;
+                            }
+                        }
+                        else {
+                            if (currentAge === eventAge) {
+                                carOneOff += car.priceJPY;
+                            }
+                        }
+                    }
+                }
+            }
+            // 2g. 住まい費用
+            if (housing.type === '持ち家（ローン中）' && ((_y = housing.currentLoan) === null || _y === void 0 ? void 0 : _y.monthlyPaymentJPY) && ((_z = housing.currentLoan) === null || _z === void 0 ? void 0 : _z.remainingYears)) {
+                // ループ開始年を起点に「残存年数」だけ計上
+                if (i < housing.currentLoan.remainingYears) {
+                    housingExpense += housing.currentLoan.monthlyPaymentJPY * 12;
+                }
+            }
+            // 現在の住宅ローン（typeに依存せずcurrentLoanがあれば計上）
+            if (((_0 = housing.currentLoan) === null || _0 === void 0 ? void 0 : _0.monthlyPaymentJPY) && ((_1 = housing.currentLoan) === null || _1 === void 0 ? void 0 : _1.remainingYears)) {
+                if (i < housing.currentLoan.remainingYears) {
+                    housingExpense += housing.currentLoan.monthlyPaymentJPY * 12;
+                }
+            }
+            if (housing.purchasePlan && currentAge >= housing.purchasePlan.age && currentAge < housing.purchasePlan.age + housing.purchasePlan.years) {
+                if (currentAge === housing.purchasePlan.age) {
+                    housingExpense += housing.purchasePlan.downPaymentJPY; // 頭金一括
+                }
+                const loanPrincipal = housing.purchasePlan.priceJPY - housing.purchasePlan.downPaymentJPY;
+                housingExpense += calculateLoanPayment(loanPrincipal, housing.purchasePlan.rate, housing.purchasePlan.years);
+            }
+            if (housing.renovations) {
+                for (const renovation of housing.renovations) {
+                    const renovationAge = renovation.age;
+                    if (currentAge >= renovationAge) {
+                        const diff = currentAge - renovationAge;
+                        if (diff === 0 || (renovation.cycleYears && renovation.cycleYears > 0 && diff % renovation.cycleYears === 0)) {
+                            housingExpense += renovation.costJPY;
+                        }
+                    }
+                }
+            }
+            // 賃貸家賃（月次）: 購入期間や現ローンがない期間のみ加算（重複防止）
+            {
+                const __inPurchase = !!(housing.purchasePlan && currentAge >= housing.purchasePlan.age && currentAge < housing.purchasePlan.age + housing.purchasePlan.years);
+                const __hasCurrentLoan = !!(((_2 = housing.currentLoan) === null || _2 === void 0 ? void 0 : _2.monthlyPaymentJPY) && i < ((_4 = (_3 = housing.currentLoan) === null || _3 === void 0 ? void 0 : _3.remainingYears) !== null && _4 !== void 0 ? _4 : 0));
+                if (!__inPurchase && !__hasCurrentLoan && housing.rentMonthlyJPY) {
+                    housingExpense += housing.rentMonthlyJPY * 12;
+                }
+            }
+            // 住居: 賃貸家賃（詳細モード時のみ加算）
+            if (expenseMode === 'detailed' && housing.rentMonthlyJPY) {
+                // housingExpense += ((housing as any).rentMonthlyJPY as number) * 12; // 統合ロジックへ移行
+            }
+            // 詳細モード時の二重計上防止
+            if (expenseMode === 'detailed') {
+                // 住居の恒常費は詳細生活費に含まれる想定。ここでは既存ロジック互換として住居費は除外
+                // housingExpense = 0; // 詳細モードでも住まい費用は別集計として保持
+                // 車は詳細固定費に含まれる想定だが、一時費用を残すには別集計が必要
+                // 互換のため現状は車費用を除外（将来: 一時費用のみ残す）
+                // carExpense = 0; // 詳細モードでも車費用は別集計として保持
+                // 教育費は詳細固定費に含む想定
+                // childExpense = 0; // 詳細モードでも教育費の扱いは別途検討
+                // 家電は一時費用として残す
+            }
+            // 各種費用の合計
+            const totalExpense = livingExpense +
+                childExpense +
+                careExpense +
+                (carRecurring + carOneOff) +
+                housingExpense +
+                marriageExpense +
+                applianceExpense +
+                retirementExpense;
+            // ■ Investment logic（複利・運用益は収入に計上しない）
+            const isRandom = (scenario === 'ランダム変動' && stEnabled);
+            let currentReturn = mu;
+            if (isRandom) {
+                const w = 1 / ASSETS.length;
+                currentReturn = ASSETS.reduce((acc, k) => acc + w * assetReturns[k][i], 0);
+            }
+            let taxableRecurringThisYear = baseAnnualTaxableRecurring;
+            let taxableSpotThisYear = baseAnnualTaxableSpot;
+            const nisaRecurringThisYear = baseAnnualNisaRecurring;
+            const nisaSpotThisYear = baseAnnualNisaSpot;
+            if (currentAge >= retirementAge) {
+                taxableRecurringThisYear = 0;
+                taxableSpotThisYear = 0;
+            }
+            let appliedNisaRecurring = 0;
+            let appliedNisaSpot = 0;
+            let remainingNisaAllowance = Math.max(0, NISA_CONTRIBUTION_CAP - cumulativeNisaContribution);
+            if (remainingNisaAllowance > 0) {
+                appliedNisaRecurring = Math.min(nisaRecurringThisYear, remainingNisaAllowance);
+                remainingNisaAllowance -= appliedNisaRecurring;
+                appliedNisaSpot = Math.min(nisaSpotThisYear, remainingNisaAllowance);
+            }
+            const taxableContribution = Math.max(0, taxableRecurringThisYear + taxableSpotThisYear);
+            const nisaContribution = Math.max(0, appliedNisaRecurring + appliedNisaSpot);
+            cumulativeNisaContribution += nisaContribution;
+            const combinedContribution = taxableContribution + nisaContribution;
+            investedPrincipal = investedPrincipal * (1 + currentReturn) + taxableContribution;
+            nisa = nisa * (1 + currentReturn) + nisaContribution;
+            // Cash flow calculation
+            const annualSavings = currentAge < retirementAge ? (monthlySavingsJPY * 12) : 0;
+            const totalInvestmentOutflow = combinedContribution;
+            const cashFlow = annualIncome - totalExpense - totalInvestmentOutflow + annualSavings;
+            savings += cashFlow;
+            // 生活防衛資金の補填
+            if (emergencyFundJPY > 0 && savings < emergencyFundJPY) {
+                let remainingShortfall = emergencyFundJPY - savings;
+                if (remainingShortfall > 0 && investedPrincipal > 0) {
+                    const maxNetFromTaxable = investedPrincipal * (1 - SPECIFIC_ACCOUNT_TAX_RATE);
+                    const netFromTaxable = Math.min(remainingShortfall, maxNetFromTaxable);
+                    if (netFromTaxable > 0) {
+                        const grossRequired = netFromTaxable / (1 - SPECIFIC_ACCOUNT_TAX_RATE);
+                        investedPrincipal = Math.max(0, investedPrincipal - grossRequired);
+                        savings += netFromTaxable;
+                        remainingShortfall -= netFromTaxable;
+                    }
+                }
+                if (remainingShortfall > 0 && nisa > 0) {
+                    const drawFromNisa = Math.min(remainingShortfall, nisa);
+                    nisa -= drawFromNisa;
+                    savings += drawFromNisa;
+                    remainingShortfall -= drawFromNisa;
+                }
+            }
+            // 資産配分 (今回は現金、NISA、iDeCoのみ)
+            const totalAssets = savings + nisa + ideco + investedPrincipal;
+            yearlyData.push({
+                age: currentAge,
+                year: year,
+                income: Math.round(annualIncome),
+                livingExpense: Math.round(livingExpense),
+                housingExpense: Math.round(housingExpense),
+                carExpense: Math.round(carRecurring + carOneOff),
+                applianceExpense: Math.round(applianceExpense),
+                childExpense: Math.round(childExpense),
+                marriageExpense: Math.round(marriageExpense),
+                careExpense: Math.round(careExpense),
+                medicalExpense: 0, // 今回は計算対象外
+                longTermCareExpense: 0, // 今回は計算対象外
+                retirementExpense: Math.round(retirementExpense),
+                totalExpense: Math.round(totalExpense),
+                savings: Math.round(savings),
+                nisa: Math.round(nisa),
+                ideco: Math.round(ideco),
+                totalAssets: Math.round(totalAssets),
+                investedPrincipal: Math.round(investedPrincipal),
+                assetAllocation: {
+                    cash: Math.round(savings),
+                    investment: Math.round(investedPrincipal),
+                    nisa: Math.round(nisa),
+                    ideco: Math.round(ideco),
+                },
+            });
+            const __applianceDebug = { year: year, age: currentAge, count: appliancesOnly.length, applianceExpense };
+            console.debug('appliance-check', __applianceDebug);
+            currentAge++;
+        }
+        res.status(200).json({ yearlyData });
+    }
+    else {
+        res.status(405).json({ message: 'Method Not Allowed' });
+    }
+}

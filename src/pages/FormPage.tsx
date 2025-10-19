@@ -335,9 +335,9 @@ export default function FormPage() {
 
         housing: {
           type: formData.housingType,
-          rentMonthlyJPY: (formData.housingType === '賃貸' && formData.expenseMethod === '詳細') ? n(formData.housingCost) * 10000 : undefined,
-          currentLoan: formData.housingType === '持ち家（ローン中）' && formData.expenseMethod === '簡単' ? {
-            monthlyPaymentJPY: n(formData.loanMonthlyPayment) * 10000,
+          rentMonthlyJPY: (formData.housingType === '賃貸') ? n(formData.currentRentLoanPayment) : undefined,
+          currentLoan: formData.housingType === '持ち家（ローン中）' && Number(formData.loanMonthlyPayment) > 0 && Number(formData.loanRemainingYears) > 0 ? {
+            monthlyPaymentJPY: n(formData.loanMonthlyPayment),
             remainingYears: n(formData.loanRemainingYears),
           } : undefined,
           purchasePlan: formData.housePurchasePlan ? {
@@ -961,6 +961,18 @@ export default function FormPage() {
                 />
               </div>
             )}
+
+            {formData.housingType === '賃貸' && (
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold mb-2">家賃の入力</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="currentRentLoanPayment">家賃（円/月）</label>
+                    <input type="number" id="currentRentLoanPayment" name="currentRentLoanPayment" value={formData.currentRentLoanPayment} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                  </div>
+                </div>
+              </div>
+            )}
             <div className={`mb-4 accordion-content ${formData.familyComposition === '既婚' ? 'open' : ''} flex items-end space-x-4`}>
                 <div className="flex-1">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="spouseMainIncome">
@@ -1368,7 +1380,7 @@ export default function FormPage() {
               </div>
             )}
 
-            {(formData.housingType === '持ち家（ローン中）' && formData.expenseMethod === '簡単') && (
+            {(formData.housingType === '持ち家（ローン中）') && (
               <div className="mt-6">
                 <h3 className="text-lg font-semibold mb-2">住宅ローンの補足情報</h3>
                 <p className="text-sm text-gray-600 mb-4">簡単入力モードのため、生活費に含まれるローン返済額と残りの期間を教えてください。</p>
@@ -2098,3 +2110,6 @@ export default function FormPage() {
     </div>
   );
 }
+
+
+
