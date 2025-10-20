@@ -151,14 +151,14 @@ export default function JsonTestPage() {
             // 斁E���Eはそ�Eまま�E�EPI側で正規化�E�E
             type: carLoanUse ? (f.carLoanType as string | undefined) : undefined,
           },
-          currentLoan: undefined as | { monthlyPaymentJPY: number; remainingYears: number } | undefined,
+          currentLoan: undefined as | { monthlyPaymentJPY: number; remainingMonths: number } | undefined,
         };
         // 車�E現在ローン�E��E/月！E
         const carMonthly = toNum(f.carCurrentLoanMonthly);
-        const carRemain = toNum(f.carCurrentLoanRemainingYears);
+        const carRemain = toNum(f.carCurrentLoanRemainingMonths);
         const carInPay = isYes(f.carCurrentLoanInPayment);
         if (carInPay && carMonthly > 0 && carRemain > 0) {
-          car.currentLoan = { monthlyPaymentJPY: carMonthly, remainingYears: carRemain };
+          car.currentLoan = { monthlyPaymentJPY: carMonthly, remainingMonths: carRemain };
         }
 
         // 住まぁE

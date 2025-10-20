@@ -107,11 +107,11 @@ const car = {
 };
 
 const carMonthly = toNum(form.carCurrentLoanMonthly);
-const carRemainingYears = toNum(form.carCurrentLoanRemainingYears);
-if (isYes(form.carCurrentLoanInPayment) && carMonthly > 0 && carRemainingYears > 0) {
+const carRemainingMonths = toNum(form.carCurrentLoanRemainingMonths);
+if (isYes(form.carCurrentLoanInPayment) && carMonthly > 0 && carRemainingMonths > 0) {
   car.currentLoan = {
     monthlyPaymentJPY: carMonthly,
-    remainingYears: carRemainingYears,
+    remainingMonths: carRemainingMonths,
   };
 }
 
@@ -139,7 +139,7 @@ const housing = {
   currentLoan: housingType === HOUSING_LOAN && houseLoanMonthly > 0 && houseLoanRemainingYears > 0
     ? {
         monthlyPaymentJPY: houseLoanMonthly,
-        remainingYears: houseLoanRemainingYears,
+        remainingMonths: houseLoanRemainingYears,
       }
     : undefined,
   purchasePlan: purchasePlan
@@ -262,3 +262,5 @@ Promise.resolve(handler(req, res)).catch((err) => {
   console.error(err);
   process.exitCode = 1;
 });
+
+

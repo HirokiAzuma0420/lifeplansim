@@ -49,7 +49,8 @@ interface InputParams {
     };
     currentLoan?: {
       monthlyPaymentJPY: number;
-      remainingYears: number;
+      remainingMonths?: number;
+      remainingYears?: number;
     };
   };
 
@@ -340,6 +341,16 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     }
 
     const yearlyData: YearlyData[] = [];
+    const carCurrentLoanMonthly = n(car?.currentLoan?.monthlyPaymentJPY ?? 0);
+    let carCurrentLoanMonthsRemaining = Math.max(
+      0,
+      Math.floor(
+        n(
+          car?.currentLoan?.remainingMonths ??
+          ((car?.currentLoan?.remainingYears ?? 0) * 12)
+        ),
+      ),
+    );
 
     let currentAge = initialAge;
     let savings = currentSavingsJPY;
@@ -479,11 +490,11 @@ export default async function (req: VercelRequest, res: VercelResponse) {
       // 2f. 車費用
       let carOneOff = 0;
       let carRecurring = 0;
-      // 現在の自動車ローン（残期間中は年額計上）
-      if (car?.currentLoan?.monthlyPaymentJPY && car?.currentLoan?.remainingYears) {
-        if (i < car.currentLoan.remainingYears) {
-          carRecurring += car.currentLoan.monthlyPaymentJPY * 12;
-        }
+      // 現在の車ローン返済（残回数ベース）
+      if (carCurrentLoanMonthly > 0 && carCurrentLoanMonthsRemaining > 0) {
+        const monthsThisYear = Math.min(12, carCurrentLoanMonthsRemaining);
+        carRecurring += carCurrentLoanMonthly * monthsThisYear;
+        carCurrentLoanMonthsRemaining -= monthsThisYear;
       }
       if (car.priceJPY > 0 && car.firstAfterYears >= 0 && car.frequencyYears > 0) {
         const base = initialAge + car.firstAfterYears;
@@ -699,3 +710,4 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     res.status(405).json({ message: 'Method Not Allowed' });
   }
 }
+

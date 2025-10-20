@@ -143,6 +143,9 @@ export default function FormPage() {
     carLoanYears: '',
     carLoanType: '',
     housingType: '' as '賃貸' | '持ち家（ローン中）' | '持ち家（完済）',
+    carCurrentLoanInPayment: 'no',
+    carCurrentLoanMonthly: '',
+    carCurrentLoanRemainingMonths: '',
     housePurchasePlan: null as { age: number, price: number, downPayment: number, loanYears: number, interestRate: number } | null,
     houseRenovationPlans: [] as { age: number, cost: number, cycleYears?: number }[],
     housePurchaseAge: '',
@@ -331,6 +334,7 @@ export default function FormPage() {
             years: formData.carLoanUsage === 'はい' ? n(formData.carLoanYears) : undefined,
             type: formData.carLoanUsage === 'はい' ? formData.carLoanType as '銀行ローン' | 'ディーラーローン' : undefined,
           },
+          currentLoan: (Number(formData.carCurrentLoanMonthly) > 0 && Number(formData.carCurrentLoanRemainingMonths) > 0) ? { monthlyPaymentJPY: n(formData.carCurrentLoanMonthly), remainingMonths: n(formData.carCurrentLoanRemainingMonths) }: undefined,
         },
 
         housing: {
@@ -1237,6 +1241,31 @@ export default function FormPage() {
                   />
                   <span className="ml-2">いいえ</span>
                 </label>
+            <div className="mt-6">
+              <label className="block text-gray-700 text-sm font-bold mb-2">現在ローン返済中ですか？</label>
+              <div className="mt-2 flex flex-wrap gap-4">
+                <label className="inline-flex items-center gap-2">
+                  <input type="radio" className="custom-radio" name="carCurrentLoanInPayment" value="yes" checked={formData.carCurrentLoanInPayment === 'yes'} onChange={handleRadioChange} />
+                  <span>はい</span>
+                </label>
+                <label className="inline-flex items-center gap-2">
+                  <input type="radio" className="custom-radio" name="carCurrentLoanInPayment" value="no" checked={formData.carCurrentLoanInPayment !== 'yes'} onChange={handleRadioChange} />
+                  <span>いいえ</span>
+                </label>
+              </div>
+              <div className={`overflow-hidden transition-all duration-300 ease-in-out ${formData.carCurrentLoanInPayment === 'yes' ? 'max-h-64 opacity-100 mt-4' : 'max-h-0 opacity-0'}`}>
+                <div className="mt-4 grid gap-4 md:grid-cols-2">
+                  <div>
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carCurrentLoanMonthly">月々の返済額（円/月）</label>
+                    <input type="number" id="carCurrentLoanMonthly" name="carCurrentLoanMonthly" value={formData.carCurrentLoanMonthly} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carCurrentLoanRemainingMonths">残り支払い回数（ヶ月）</label>
+                    <input type="number" id="carCurrentLoanRemainingMonths" name="carCurrentLoanRemainingMonths" value={formData.carCurrentLoanRemainingMonths} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                  </div>
+                </div>
+              </div>
+            </div>
               </div>
             </div>
             {formData.carLoanUsage === 'はい' && (
@@ -2134,6 +2163,9 @@ export default function FormPage() {
     </div>
   );
 }
+
+
+
 
 
 
