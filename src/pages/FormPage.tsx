@@ -335,7 +335,7 @@ export default function FormPage() {
 
         housing: {
           type: formData.housingType,
-          rentMonthlyJPY: (!formData.housingType?.startsWith('持ち家')) ? n(formData.currentRentLoanPayment) : undefined,
+          rentMonthlyJPY: formData.housingType === '賃貸' ? n(formData.currentRentLoanPayment) : undefined,
           currentLoan: formData.housingType === '持ち家（ローン中）' && Number(formData.loanMonthlyPayment) > 0 && Number(formData.loanRemainingYears) > 0 ? {
             monthlyPaymentJPY: n(formData.loanMonthlyPayment),
             remainingYears: n(formData.loanRemainingYears),
@@ -489,6 +489,46 @@ export default function FormPage() {
   const handleRemoveAppliance = (index: number) => {
     setApplianceReplacements((prev) => prev.filter((_, i) => i !== index));
   };
+
+  type RenovationPlan = { age: number; cost: number; cycleYears?: number };
+
+  const handleAddRenovationPlan = (plan: RenovationPlan) => {
+    setFormData((prev) => ({
+      ...prev,
+      houseRenovationPlans: [...prev.houseRenovationPlans, plan],
+    }));
+  };
+
+  const handleRemoveRenovationPlan = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      houseRenovationPlans: prev.houseRenovationPlans.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleRenovationPlanChange = (
+    index: number,
+    key: keyof RenovationPlan,
+    value: string,
+  ) => {
+    setFormData((prev) => {
+      const plans = [...prev.houseRenovationPlans];
+      if (!plans[index]) {
+        return prev;
+      }
+
+      const updated: RenovationPlan = { ...plans[index] };
+      if (key === 'cycleYears') {
+        updated[key] = value === '' ? undefined : Number(value);
+      } else {
+        updated[key] = Number(value);
+      }
+
+      plans[index] = updated;
+      return { ...prev, houseRenovationPlans: plans };
+    });
+  };
+
 
   const displayTotalApplianceCost = useMemo(() => {
     return applianceReplacements
@@ -962,17 +1002,6 @@ export default function FormPage() {
               </div>
             )}
 
-            {formData.housingType === '賃貸' && (
-              <div className="mt-6">
-                <h3 className="text-lg font-semibold mb-2">家賃の入力</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="currentRentLoanPayment">家賃（円/月）</label>
-                    <input type="number" id="currentRentLoanPayment" name="currentRentLoanPayment" value={formData.currentRentLoanPayment} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
-                  </div>
-                </div>
-              </div>
-            )}
             <div className={`mb-4 accordion-content ${formData.familyComposition === '既婚' ? 'open' : ''} flex items-end space-x-4`}>
                 <div className="flex-1">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="spouseMainIncome">
@@ -1279,19 +1308,19 @@ export default function FormPage() {
           <div className="p-4">
             {/* Image placeholder */}
             <div className="w-full h-auto bg-white mb-8 flex items-center justify-center text-gray-500 max-w-[800px] mx-auto">
-              <img src="/form/Q4-home.png"></img>
+              <img src="/form/Q4-home.png" alt="住まいのイラスト"></img>
             </div>
             <h2 className="text-2xl font-bold text-center mb-4">住まいに関する質問</h2>
 
-            {/* 1. 住居形態の確認 */}
+            {/* 1. 現住居の確認 */}
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">現在の住まいはどちらですか？</label>
-              <div className="mt-2">
-                <label className="inline-flex items-center mr-4">
+              <div className="mt-2 flex flex-wrap gap-4">
+                <label className="inline-flex items-center">
                   <input type="radio" className="custom-radio" name="housingType" value="賃貸" checked={formData.housingType === '賃貸'} onChange={handleRadioChange} required />
                   <span className="ml-2">賃貸</span>
                 </label>
-                <label className="inline-flex items-center mr-4">
+                <label className="inline-flex items-center">
                   <input type="radio" className="custom-radio" name="housingType" value="持ち家（ローン中）" checked={formData.housingType === '持ち家（ローン中）'} onChange={handleRadioChange} required />
                   <span className="ml-2">持ち家（ローン返済中）</span>
                 </label>
@@ -1300,9 +1329,29 @@ export default function FormPage() {
                   <span className="ml-2">持ち家（ローン完済）</span>
                 </label>
               </div>
+
+              <div className={`overflow-hidden transition-all duration-300 ease-in-out ${formData.housingType === '賃貸' ? 'max-h-24 opacity-100 mt-3' : 'max-h-0 opacity-0'}`}>
+                <div className="mt-3">
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="currentRentLoanPayment">家賃（円/月）</label>
+                  <input type="number" id="currentRentLoanPayment" name="currentRentLoanPayment" value={formData.currentRentLoanPayment} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                </div>
+              </div>
+
+              <div className={`overflow-hidden transition-all duration-300 ease-in-out ${formData.housingType === '持ち家（ローン中）' ? 'max-h-64 opacity-100 mt-3' : 'max-h-0 opacity-0'}`}>
+                <div className="mt-3 space-y-4">
+                  <div>
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="loanMonthlyPayment">月額返済（円/月）</label>
+                    <input type="number" id="loanMonthlyPayment" name="loanMonthlyPayment" value={formData.loanMonthlyPayment} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="loanRemainingYears">残存年数（年）</label>
+                    <input type="number" id="loanRemainingYears" name="loanRemainingYears" value={formData.loanRemainingYears} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* 2. 分岐処理 */}
+            {/* 2. 将来の住宅購入について */}
             {formData.housingType === '賃貸' && (
               <div className="mt-6">
                 <h3 className="text-lg font-semibold mb-2">将来の住宅購入について</h3>
@@ -1318,13 +1367,6 @@ export default function FormPage() {
                   </label>
                 </div>
 
-                {!formData.housingType?.startsWith('持ち家') && (
-                  <div className="mt-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="currentRentLoanPayment">家賃（円/月）</label>
-                    <input type="number" id="currentRentLoanPayment" name="currentRentLoanPayment" value={formData.currentRentLoanPayment} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
-                  </div>
-                )}
-
                 {formData.housePurchasePlan && (
                   <div className="mt-4 space-y-4">
                     <div>
@@ -1332,7 +1374,7 @@ export default function FormPage() {
                       <input type="number" name="housePurchasePlan.age" onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
                     </div>
                     <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-2">購入金額[万円]</label>
+                      <label className="block text-gray-700 text-sm font-bold mb-2">予定価格[万円]</label>
                       <input type="number" name="housePurchasePlan.price" onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
                     </div>
                     <div>
@@ -1340,106 +1382,63 @@ export default function FormPage() {
                       <input type="number" name="housePurchasePlan.downPayment" onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
                     </div>
                     <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-2">ローン期間</label>
+                      <label className="block text-gray-700 text-sm font-bold mb-2">ローン年数</label>
                       <input type="number" name="housePurchasePlan.loanYears" onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
                     </div>
                     <div>
-                        <label className="block text-gray-700 text-sm font-bold mb-2">ローン金利の想定</label>
-                        <div className="mt-2">
-                            <label className="inline-flex items-center mr-4">
-                            <input type="radio" className="custom-radio" name="housingLoanInterestRateType" value="一般的な想定" checked={formData.housingLoanInterestRateType === '一般的な想定'} onChange={handleRadioChange} />
-                            <span className="ml-2">一般的な想定（1.5%）</span>
-                            </label>
-                            <label className="inline-flex items-center">
-                            <input type="radio" className="custom-radio" name="housingLoanInterestRateType" value="指定" checked={formData.housingLoanInterestRateType === '指定'} onChange={handleRadioChange} />
-                            <span className="ml-2">自分で金利を指定する</span>
-                            </label>
-                        </div>
+                      <label className="block text-gray-700 text-sm font-bold mb-2">想定金利（%）</label>
+                      <input type="number" name="housePurchasePlan.interestRate" onChange={handleInputChange} step="0.1" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
                     </div>
-                    {formData.housingLoanInterestRateType === '指定' && (
-                        <div>
-                            <label className="block text-gray-700 text-sm font-bold mb-2">ローン金利 (%)</label>
-                            <input type="number" name="housingLoanInterestRate" value={formData.housingLoanInterestRate} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
-                        </div>
-                    )}
                   </div>
                 )}
               </div>
             )}
 
-            {(formData.housingType === '持ち家（ローン中）' && formData.expenseMethod === '詳細') && (
-                 <div className="mt-6">
-                 <h3 className="text-lg font-semibold mb-2">現在の住宅ローンについて</h3>
-                 <div>
-                    <p>入力された住居費：{formData.housingCost || '未入力'}</p>
-                    <p>これは月のローン返済額と一致していますか？</p>
-                 </div>
-                 <div className="mt-2">
-                    <label className="inline-flex items-center mr-4">
-                      <input type="radio" className="custom-radio" name="housingCostConfirmation" value="yes" onChange={() => setFormData({...formData, housePurchasePlan: { age: 0, price: 0, downPayment: 0, loanYears: 0, interestRate: 0 }})} />
-                      <span className="ml-2">はい</span>
-                    </label>
-                    <label className="inline-flex items-center">
-                      <input type="radio" className="custom-radio" name="housingCostConfirmation" value="no" onChange={() => setFormData({...formData, housePurchasePlan: null})} />
-                      <span className="ml-2">いいえ</span>
-                    </label>
-                  </div>
-              </div>
-            )}
-
-            {(formData.housingType === '持ち家（ローン中）') && (
-              <div className="mt-6">
-                <h3 className="text-lg font-semibold mb-2">住宅ローンの補足情報</h3>
-                <p className="text-sm text-gray-600 mb-4">簡単入力モードのため、生活費に含まれるローン返済額と残りの期間を教えてください。</p>
-                <div className="space-y-4">
-                    <div>
-                        <label className="block text-gray-700 text-sm font-bold mb-2">ローン返済額（月額）[円]</label>
-                        <input type="number" name="loanMonthlyPayment" value={formData.loanMonthlyPayment} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
-                    </div>
-                    <div>
-                        <label className="block text-gray-700 text-sm font-bold mb-2">ローン残存年数[年]</label>
-                        <input type="number" name="loanRemainingYears" value={formData.loanRemainingYears} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
-                    </div>
-                </div>
-              </div>
-            )}
-            
             {(formData.housingType.startsWith('持ち家') || formData.housePurchasePlan) && (
               <div className="mt-6">
-                <h3 className="text-lg font-semibold mb-2">リフォーム・修繕の予定</h3>
-                <label className="block text-gray-700 text-sm font-bold mb-2">将来的にリフォーム・修繕の予定はありますか？</label>
+                <h3 className="text-lg font-semibold mb-2">将来リフォームの予定はありますか？</h3>
+                <label className="block text-gray-700 text-sm font-bold mb-2">将来的にリフォームする予定はありますか？</label>
                 <div className="mt-2">
-                    <label className="inline-flex items-center mr-4">
-                      <input type="radio" className="custom-radio" name="renovationPlanToggle" value="yes" onChange={() => setFormData({...formData, houseRenovationPlans: [{ age: 0, cost: 150 }]})} />
-                      <span className="ml-2">はい</span>
-                    </label>
-                    <label className="inline-flex items-center">
-                      <input type="radio" className="custom-radio" name="renovationPlanToggle" value="no" onChange={() => setFormData({...formData, houseRenovationPlans: []})} />
-                      <span className="ml-2">いいえ</span>
-                    </label>
+                  <label className="inline-flex items-center mr-4">
+                    <input type="radio" className="custom-radio" name="renovationPlanToggle" value="yes" onChange={() => setFormData({...formData, houseRenovationPlans: [{ age: 0, cost: 150 }]})} />
+                    <span className="ml-2">はい</span>
+                  </label>
+                  <label className="inline-flex items-center">
+                    <input type="radio" className="custom-radio" name="renovationPlanToggle" value="no" onChange={() => setFormData({...formData, houseRenovationPlans: []})} />
+                    <span className="ml-2">いいえ</span>
+                  </label>
                 </div>
 
                 {formData.houseRenovationPlans.map((plan, index) => (
-                  <div key={index} className="mt-4 space-y-4 border-t pt-4">
-                    <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-2">初回リフォーム年齢</label>
-                      <input type="number" name={`houseRenovationPlans[${index}].age`} value={plan.age} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                  <div key={index} className="mt-4 space-y-4 border rounded p-4">
+                    <div className="flex justify-between items-center">
+                      <h4 className="text-md font-semibold">リフォーム計画 {index + 1}</h4>
+                      <button type="button" onClick={() => handleRemoveRenovationPlan(index)} className="text-red-500">
+                        <Trash2 size={18} />
+                      </button>
                     </div>
                     <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-2">リフォーム費用[万円]</label>
-                      <input type="number" name={`houseRenovationPlans[${index}].cost`} value={plan.cost} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                      <label className="block text-gray-700 text-sm font-bold mb-2">実施予定年齢</label>
+                      <input type="number" value={plan.age || ''} onChange={(e) => handleRenovationPlanChange(index, 'age', e.target.value)} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
                     </div>
                     <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-2">リフォーム周期（任意）</label>
-                      <input type="number" name={`houseRenovationPlans[${index}].cycleYears`} value={plan.cycleYears} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                      <label className="block text-gray-700 text-sm font-bold mb-2">費用[万円]</label>
+                      <input type="number" value={plan.cost || ''} onChange={(e) => handleRenovationPlanChange(index, 'cost', e.target.value)} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                    </div>
+                    <div>
+                      <label className="block text-gray-700 text-sm font-bold mb-2">繰り返し頻度[年]</label>
+                      <input type="number" value={plan.cycleYears || ''} onChange={(e) => handleRenovationPlanChange(index, 'cycleYears', e.target.value)} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
                     </div>
                   </div>
                 ))}
+
+                <button type="button" onClick={() => handleAddRenovationPlan({ age: 0, cost: 150, cycleYears: 10 })} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+                  + リフォーム計画を追加
+                </button>
               </div>
             )}
           </div>
-        );
-      case 'ライフイベント - 結婚':
+        );      case 'ライフイベント - 結婚':
         return (
           <div className="p-4">
             {/* Image placeholder */}
@@ -2117,6 +2116,9 @@ export default function FormPage() {
     </div>
   );
 }
+
+
+
 
 
 
