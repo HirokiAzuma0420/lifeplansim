@@ -14,6 +14,8 @@
     nisa: number;
     ideco: number;
   };
+  // API拡張: 商品別の年末残高（存在時のみ）
+  products?: Record<string, number>;
 }
 
 export interface SimulationInputParams {

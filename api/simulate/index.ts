@@ -13,6 +13,16 @@ type InvestmentTaxation = {
   };
 };
 
+// 商品別投資の詳細（任意）
+type InvestmentProduct = {
+  key: 'stocks' | 'trust' | 'bonds' | 'crypto' | 'other' | 'ideco';
+  account: '課税' | '非課税' | 'iDeCo';
+  currentJPY: number;
+  recurringJPY: number; // 年間つみたて額（円/年）
+  spotJPY: number;      // 年間スポット（円/年）
+  expectedReturn: number; // 小数（例: 0.05）
+};
+
 const SPECIFIC_ACCOUNT_TAX_RATE = 0.20315;
 const NISA_CONTRIBUTION_CAP = 18_000_000; // 生涯上限（新NISAの成長投資枠+つみたて枠の合計目安として扱う）
 // 年間上限（新NISA）
@@ -115,6 +125,8 @@ interface InputParams {
   yearlySpotJPY: number;
   expectedReturn: number;
   investmentTaxation?: InvestmentTaxation;
+  // 追加: 金融商品ごとの詳細（存在時は口座別集約ではなく商品別で計算）
+  products?: InvestmentProduct[];
   stressTest: {
     enabled: boolean;
     seed?: number;
@@ -150,6 +162,8 @@ interface YearlyData {
     nisa: number;
     ideco: number;
   };
+  // 追加: 商品別の年末残高（存在時のみ）
+  products?: Record<string, number>;
 }
 
 // ユーティリティ関数
@@ -356,7 +370,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     let savings = currentSavingsJPY;
     let nisa = n(investmentTaxation?.nisa?.currentHoldingsJPY ?? 0);
     let cumulativeNisaContribution = Math.max(0, n(investmentTaxation?.nisa?.currentHoldingsJPY ?? 0));
-    const ideco = 0; // iDeCoは今回はシミュレーション対象外
+    let ideco = 0; // iDeCoは今回はシミュレーション対象外（後続でproductsがあれば上書き）
     const fallbackCurrentInvestmentsJPY = n(currentInvestmentsJPY);
     const fallbackTaxableCurrent = fallbackCurrentInvestmentsJPY - nisa;
     let investedPrincipal = n(investmentTaxation?.taxable?.currentHoldingsJPY ?? fallbackTaxableCurrent);
@@ -370,11 +384,35 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     const baseAnnualNisaSpot = n(investmentTaxation?.nisa?.annualSpotContributionJPY ?? 0);
     let baseAnnualTaxableRecurring = n(investmentTaxation?.taxable?.annualRecurringContributionJPY ?? (fallbackRecurring - baseAnnualNisaRecurring));
     let baseAnnualTaxableSpot = n(investmentTaxation?.taxable?.annualSpotContributionJPY ?? (fallbackSpot - baseAnnualNisaSpot));
-    if (baseAnnualTaxableRecurring < 0) {
-      baseAnnualTaxableRecurring = 0;
-    }
-    if (baseAnnualTaxableSpot < 0) {
-      baseAnnualTaxableSpot = 0;
+    if (baseAnnualTaxableRecurring < 0) baseAnnualTaxableRecurring = 0;
+    if (baseAnnualTaxableSpot < 0) baseAnnualTaxableSpot = 0;
+
+    // Optional: 商品別詳細が来ていればこちらを優先
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    const productList: InvestmentProduct[] = Array.isArray((body as any).inputParams?.products)
+      ? ((body as any).inputParams.products as any[]).map((p) => ({
+          key: (p.key ?? 'other') as InvestmentProduct['key'],
+          account: (p.account ?? '課税') as InvestmentProduct['account'],
+          currentJPY: n(p.currentJPY),
+          recurringJPY: n(p.recurringJPY),
+          spotJPY: n(p.spotJPY),
+          expectedReturn: Math.max(-1, Math.min(1, Number(p.expectedReturn ?? mu))),
+        }))
+      : [];
+    /* eslint-enable @typescript-eslint/no-explicit-any */
+    const useProducts = productList.length > 0;
+    const productBalances: Record<string, number> = {};
+    if (useProducts) {
+      for (const p of productList) {
+        if (p.account === 'iDeCo') {
+          ideco += Math.max(0, p.currentJPY);
+        } else if (p.account === '非課税') {
+          nisa += Math.max(0, p.currentJPY);
+          cumulativeNisaContribution += Math.max(0, p.currentJPY);
+        } else {
+          productBalances[p.key] = Math.max(0, p.currentJPY);
+        }
+      }
     }
 
     // 家電の正規化: 受信直後のみフィルタリング
@@ -426,7 +464,18 @@ export default async function (req: VercelRequest, res: VercelResponse) {
       // 車費用の合算（恒常+一時）
       // carExpense is derived after computing carRecurring/carOneOff below
 
-      annualIncome = computeNetAnnual(selfGrossIncome) + computeNetAnnual(spouseGrossIncome);
+      // iDeCo拠出は所得控除：productsモード時のみ厳密適用
+      let idecoDeductionThisYear = 0;
+      if (useProducts && currentAge < retirementAge) {
+        for (const p of productList) {
+          if (p.account === 'iDeCo') {
+            idecoDeductionThisYear += Math.max(0, p.recurringJPY + p.spotJPY);
+          }
+        }
+      }
+      const taxableSelf = Math.max(0, selfGrossIncome - idecoDeductionThisYear);
+      const taxableSpouse = Math.max(0, spouseGrossIncome);
+      annualIncome = computeNetAnnual(taxableSelf) + computeNetAnnual(taxableSpouse);
 
       // 2. 支出計算
       if (expenseMode === 'simple') {
@@ -600,6 +649,51 @@ export default async function (req: VercelRequest, res: VercelResponse) {
         currentReturn = ASSETS.reduce((acc, k) => acc + w * assetReturns[k][i], 0);
       }
 
+      let combinedContribution = 0;
+
+      // 商品別モード：拠出とリターンを商品ごとに適用
+      if (useProducts) {
+        if (currentAge >= retirementAge) {
+          // 退職以降は拠出停止、運用のみ
+          for (const p of productList) {
+            if (p.account === 'iDeCo') {
+              ideco = ideco * (1 + p.expectedReturn);
+            } else if (p.account === '非課税') {
+              nisa = nisa * (1 + p.expectedReturn);
+            } else {
+              productBalances[p.key] = (productBalances[p.key] ?? 0) * (1 + p.expectedReturn);
+            }
+          }
+        } else {
+          // 現役期：拠出 + 運用
+          let remainingNisaAllowance = Math.max(0, NISA_CONTRIBUTION_CAP - cumulativeNisaContribution);
+          for (const p of productList) {
+            const recur = Math.max(0, p.recurringJPY);
+            const spot = Math.max(0, p.spotJPY);
+            if (p.account === 'iDeCo') {
+              const add = recur + spot;
+              ideco = ideco * (1 + p.expectedReturn) + add;
+              combinedContribution += add;
+            } else if (p.account === '非課税') {
+              const allowR = Math.max(0, Math.min(NISA_RECURRING_ANNUAL_CAP, remainingNisaAllowance));
+              const usedR = Math.min(recur, allowR);
+              remainingNisaAllowance -= usedR;
+              const allowS = Math.max(0, Math.min(NISA_SPOT_ANNUAL_CAP, remainingNisaAllowance));
+              const usedS = Math.min(spot, allowS);
+              remainingNisaAllowance -= usedS;
+              const add = usedR + usedS;
+              nisa = nisa * (1 + p.expectedReturn) + add;
+              cumulativeNisaContribution += add;
+              combinedContribution += add;
+            } else {
+              const add = recur + spot;
+              productBalances[p.key] = (productBalances[p.key] ?? 0) * (1 + p.expectedReturn) + add;
+              combinedContribution += add;
+            }
+          }
+        }
+      }
+
       let taxableRecurringThisYear = baseAnnualTaxableRecurring;
       let taxableSpotThisYear = baseAnnualTaxableSpot;
       // NISAの年間上限をまず適用（その後、生涯残枠でさらに制限）
@@ -632,10 +726,11 @@ export default async function (req: VercelRequest, res: VercelResponse) {
       const taxableContribution = Math.max(0, taxableRecurringThisYear + taxableSpotThisYear);
       const nisaContribution = Math.max(0, appliedNisaRecurring + appliedNisaSpot);
       cumulativeNisaContribution += nisaContribution;
-      const combinedContribution = taxableContribution + nisaContribution;
-
-      investedPrincipal = investedPrincipal * (1 + currentReturn) + taxableContribution;
-      nisa = nisa * (1 + currentReturn) + nisaContribution;
+      if (!useProducts) {
+        combinedContribution = taxableContribution + nisaContribution;
+        investedPrincipal = investedPrincipal * (1 + currentReturn) + taxableContribution;
+        nisa = nisa * (1 + currentReturn) + nisaContribution;
+      }
 
       // Cash flow calculation
       const annualSavings = currentAge < retirementAge ? (monthlySavingsJPY * 12) : 0;
@@ -669,6 +764,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
 
       // 資産配分 (今回は現金、NISA、iDeCoのみ)
       const totalAssets = savings + nisa + ideco + investedPrincipal;
+      const productsOut = useProducts ? Object.fromEntries(Object.entries(productBalances).map(([k, v]) => [k, Math.round(v)])) : undefined;
 
       yearlyData.push({
         age: currentAge,
@@ -696,6 +792,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
           nisa: Math.round(nisa),
           ideco: Math.round(ideco),
         },
+        products: productsOut,
       });
 
       const __applianceDebug = { year: year, age: currentAge, count: appliancesOnly.length, applianceExpense };

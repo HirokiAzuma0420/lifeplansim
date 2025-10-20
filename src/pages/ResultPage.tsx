@@ -29,6 +29,12 @@ export default function ResultPage() {
   const inputParams = state?.inputParams;
 
   const dataset = useMemo(() => buildDashboardDataset(yearlyData), [yearlyData]);
+  // 商品別内訳（API拡張に対応：存在時のみ表示）
+  const latestProducts = useMemo<Record<string, number>>(() => {
+    if (!Array.isArray(yearlyData) || yearlyData.length === 0) return {};
+    const last = yearlyData[yearlyData.length - 1];
+    return last?.products ?? {};
+  }, [yearlyData]);
 
   const handleSaveOutput = useCallback(() => {
     if (!yearlyData.length || typeof window === 'undefined') {
@@ -80,6 +86,8 @@ export default function ResultPage() {
   const rankInfo = getAssetGrade(latestTotal);
 
   const annualInvestment = inputParams.yearlyRecurringInvestmentJPY + inputParams.yearlySpotJPY;
+
+  // latestProducts は上部でメモ化済み
 
   const summaryCards = [
     {
@@ -188,6 +196,30 @@ export default function ResultPage() {
             </div>
 
             <AssetTable enrichedData={dataset.enrichedData} />
+
+            {Object.keys(latestProducts).length > 0 && (
+              <div className="bg-white rounded-xl shadow p-4">
+                <h3 className="text-lg font-semibold mb-2">商品別内訳（最新年）</h3>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full table-auto text-sm">
+                    <thead>
+                      <tr className="bg-gray-100 text-gray-700">
+                        <th className="px-2 py-1 text-left">商品</th>
+                        <th className="px-2 py-1 text-right">残高</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.entries(latestProducts).map(([k, v]) => (
+                        <tr key={k} className="border-b">
+                          <td className="px-2 py-1">{k}</td>
+                          <td className="px-2 py-1 text-right">{formatCurrency(v)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
