@@ -1196,7 +1196,7 @@ export default function FormPage() {
               <img src="/form/Q4-car.png"></img>
             </div>
             <h2 className="text-2xl font-bold text-center mb-4">車に関する質問</h2>
-            <div className="mt-6">
+            <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">現在ローン返済中ですか？</label>
               <div className="mt-2 flex flex-wrap gap-4">
                 <label className="inline-flex items-center gap-2">
