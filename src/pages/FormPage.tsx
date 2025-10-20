@@ -492,19 +492,7 @@ export default function FormPage() {
 
   type RenovationPlan = { age: number; cost: number; cycleYears?: number };
 
-  const handleAddRenovationPlan = (plan: RenovationPlan) => {
-    setFormData((prev) => ({
-      ...prev,
-      houseRenovationPlans: [...prev.houseRenovationPlans, plan],
-    }));
-  };
 
-  const handleRemoveRenovationPlan = (index: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      houseRenovationPlans: prev.houseRenovationPlans.filter((_, i) => i !== index),
-    }));
-  };
 
   const handleRenovationPlanChange = (
     index: number,
@@ -1400,45 +1388,75 @@ export default function FormPage() {
                 <label className="block text-gray-700 text-sm font-bold mb-2">将来的にリフォームする予定はありますか？</label>
                 <div className="mt-2">
                   <label className="inline-flex items-center mr-4">
-                    <input type="radio" className="custom-radio" name="renovationPlanToggle" value="yes" onChange={() => setFormData({...formData, houseRenovationPlans: [{ age: 0, cost: 150 }]})} />
+                    <input
+                      type="radio"
+                      className="custom-radio"
+                      name="renovationPlanToggle"
+                      value="yes"
+                      onChange={() => setFormData((prev) => ({
+                        ...prev,
+                        houseRenovationPlans:
+                          prev.houseRenovationPlans.length > 0
+                            ? prev.houseRenovationPlans
+                            : [{ age: 0, cost: 150, cycleYears: 10 }],
+                      }))}
+                    />
                     <span className="ml-2">はい</span>
                   </label>
                   <label className="inline-flex items-center">
-                    <input type="radio" className="custom-radio" name="renovationPlanToggle" value="no" onChange={() => setFormData({...formData, houseRenovationPlans: []})} />
+                    <input
+                      type="radio"
+                      className="custom-radio"
+                      name="renovationPlanToggle"
+                      value="no"
+                      onChange={() => setFormData((prev) => ({
+                        ...prev,
+                        houseRenovationPlans: [],
+                      }))}
+                    />
                     <span className="ml-2">いいえ</span>
                   </label>
                 </div>
 
-                {formData.houseRenovationPlans.map((plan, index) => (
-                  <div key={index} className="mt-4 space-y-4 border rounded p-4">
-                    <div className="flex justify-between items-center">
-                      <h4 className="text-md font-semibold">リフォーム計画 {index + 1}</h4>
-                      <button type="button" onClick={() => handleRemoveRenovationPlan(index)} className="text-red-500">
-                        <Trash2 size={18} />
-                      </button>
+                {formData.houseRenovationPlans.length > 0 && (() => {
+                  const plan = formData.houseRenovationPlans[0];
+                  return (
+                    <div className="mt-4 space-y-4 border rounded p-4">
+                      <div>
+                        <label className="block text-gray-700 text-sm font-bold mb-2">実施予定年齢</label>
+                        <input
+                          type="number"
+                          value={plan?.age ?? ''}
+                          onChange={(e) => handleRenovationPlanChange(0, 'age', e.target.value)}
+                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-700 text-sm font-bold mb-2">費用[万円]</label>
+                        <input
+                          type="number"
+                          value={plan?.cost ?? ''}
+                          onChange={(e) => handleRenovationPlanChange(0, 'cost', e.target.value)}
+                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-700 text-sm font-bold mb-2">繰り返し頻度[年]</label>
+                        <input
+                          type="number"
+                          value={plan?.cycleYears ?? ''}
+                          onChange={(e) => handleRenovationPlanChange(0, 'cycleYears', e.target.value)}
+                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-2">実施予定年齢</label>
-                      <input type="number" value={plan.age || ''} onChange={(e) => handleRenovationPlanChange(index, 'age', e.target.value)} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-2">費用[万円]</label>
-                      <input type="number" value={plan.cost || ''} onChange={(e) => handleRenovationPlanChange(index, 'cost', e.target.value)} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-2">繰り返し頻度[年]</label>
-                      <input type="number" value={plan.cycleYears || ''} onChange={(e) => handleRenovationPlanChange(index, 'cycleYears', e.target.value)} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
-                    </div>
-                  </div>
-                ))}
-
-                <button type="button" onClick={() => handleAddRenovationPlan({ age: 0, cost: 150, cycleYears: 10 })} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
-                  + リフォーム計画を追加
-                </button>
+                  );
+                })()}
               </div>
             )}
           </div>
-        );      case 'ライフイベント - 結婚':
+        );
+      case 'ライフイベント - 結婚':
         return (
           <div className="p-4">
             {/* Image placeholder */}

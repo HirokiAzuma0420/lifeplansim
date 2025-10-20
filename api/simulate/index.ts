@@ -544,9 +544,11 @@ export default async function (req: VercelRequest, res: VercelResponse) {
       }
       // 賃貸家賃（月次）: 購入期間や現ローンがない期間のみ加算（重複防止）
       {
-        const __inPurchase = !!(housing.purchasePlan && currentAge >= housing.purchasePlan.age && currentAge < housing.purchasePlan.age + housing.purchasePlan.years);
+        const purchasePlan = housing.purchasePlan;
+        const __inPurchase = !!(purchasePlan && currentAge >= purchasePlan.age && currentAge < purchasePlan.age + purchasePlan.years);
         const __hasCurrentLoan = !!(housing.currentLoan?.monthlyPaymentJPY && i < (housing.currentLoan?.remainingYears ?? 0));
-        if (!__inPurchase && !__hasCurrentLoan && housing.rentMonthlyJPY) {
+        const purchaseStarted = !!(purchasePlan && currentAge >= purchasePlan.age);
+        if (!__inPurchase && !__hasCurrentLoan && !purchaseStarted && housing.rentMonthlyJPY) {
           housingExpense += housing.rentMonthlyJPY * 12;
         }
       }
