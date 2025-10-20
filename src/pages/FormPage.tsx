@@ -305,6 +305,85 @@ export default function FormPage() {
 
       const totalInvestmentRate = (n(formData.investmentStocksRate) + n(formData.investmentTrustRate) + n(formData.investmentBondsRate) + n(formData.investmentIdecoRate) + n(formData.investmentCryptoRate) + n(formData.investmentOtherRate)) / 6;
 
+      // 商品別（stocks/trust/bonds/crypto/other/iDeCo）を独立に構築
+      const bondsCurrentYen = n(formData.investmentBondsCurrent) * 10000;
+      const idecoCurrentYen = n(formData.investmentIdecoCurrent) * 10000;
+      const cryptoCurrentYen = n(formData.investmentCryptoCurrent) * 10000;
+      const otherOnlyCurrentYen = n(formData.investmentOtherCurrent) * 10000;
+
+      const monthlyBondsYen = n(formData.monthlyInvestmentAmounts.investmentBondsMonthly);
+      const monthlyIdecoOnlyYen = n(formData.monthlyInvestmentAmounts.investmentIdecoMonthly);
+      const monthlyCryptoYen = n(formData.monthlyInvestmentAmounts.investmentCryptoMonthly);
+      const monthlyOtherOnlyYen = n(formData.monthlyInvestmentAmounts.investmentOtherMonthly);
+
+      const yearlyBondsRecurringYen = monthlyBondsYen * 12;
+      const yearlyIdecoRecurringYen = monthlyIdecoOnlyYen * 12;
+      const yearlyCryptoRecurringYen = monthlyCryptoYen * 12;
+      const yearlyOtherOnlyRecurringYen = monthlyOtherOnlyYen * 12;
+
+      const bondsSpotYen = n(formData.investmentBondsAnnualSpot);
+      const idecoSpotYen = n(formData.investmentIdecoAnnualSpot);
+      const cryptoSpotYen = n(formData.investmentCryptoAnnualSpot);
+      const otherOnlySpotYen = n(formData.investmentOtherAnnualSpot);
+
+      const stocksRate = n(formData.investmentStocksRate) / 100;
+      const trustRate = n(formData.investmentTrustRate) / 100;
+      const bondsRate = n(formData.investmentBondsRate) / 100;
+      const idecoRate = n(formData.investmentIdecoRate) / 100;
+      const cryptoRate = n(formData.investmentCryptoRate) / 100;
+      const otherRate = n(formData.investmentOtherRate) / 100;
+
+      const products = [
+        {
+          key: 'stocks',
+          account: stocksAccountType === 'nisa' ? '非課税' : '課税',
+          currentJPY: stocksCurrentYen,
+          recurringJPY: yearlyStocksRecurringYen,
+          spotJPY: stocksSpotYen,
+          expectedReturn: stocksRate,
+        },
+        {
+          key: 'trust',
+          account: trustAccountType === 'nisa' ? '非課税' : '課税',
+          currentJPY: trustCurrentYen,
+          recurringJPY: yearlyTrustRecurringYen,
+          spotJPY: trustSpotYen,
+          expectedReturn: trustRate,
+        },
+        {
+          key: 'bonds',
+          account: '課税',
+          currentJPY: bondsCurrentYen,
+          recurringJPY: yearlyBondsRecurringYen,
+          spotJPY: bondsSpotYen,
+          expectedReturn: bondsRate,
+        },
+        {
+          key: 'crypto',
+          account: '課税',
+          currentJPY: cryptoCurrentYen,
+          recurringJPY: yearlyCryptoRecurringYen,
+          spotJPY: cryptoSpotYen,
+          expectedReturn: cryptoRate,
+        },
+        {
+          key: 'other',
+          account: '課税',
+          currentJPY: otherOnlyCurrentYen,
+          recurringJPY: yearlyOtherOnlyRecurringYen,
+          spotJPY: otherOnlySpotYen,
+          expectedReturn: otherRate,
+        },
+        {
+          key: 'ideco',
+          account: 'iDeCo',
+          currentJPY: idecoCurrentYen,
+          recurringJPY: yearlyIdecoRecurringYen,
+          spotJPY: idecoSpotYen,
+          expectedReturn: idecoRate,
+        },
+      ] as const;
+
       const params = {
         initialAge: n(formData.personAge),
         spouseInitialAge: formData.familyComposition === '既婚' ? n(formData.spouseAge) : undefined,
@@ -403,6 +482,11 @@ export default function FormPage() {
         yearlyRecurringInvestmentJPY,
         yearlySpotJPY,
         expectedReturn: totalInvestmentRate / 100,
+        products: products as unknown as Array<{
+          key: 'stocks' | 'trust' | 'bonds' | 'crypto' | 'other' | 'ideco';
+          account: '課税' | '非課税' | 'iDeCo';
+          currentJPY: number; recurringJPY: number; spotJPY: number; expectedReturn: number;
+        }>,
         investmentTaxation: {
           nisa: {
             currentHoldingsJPY: nisaCurrentHoldingsJPY,
