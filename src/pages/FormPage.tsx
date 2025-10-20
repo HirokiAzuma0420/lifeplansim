@@ -549,7 +549,7 @@ export default function FormPage() {
           [field]: Number(value)
         }
       });
-    } else if (name.endsWith('Monthly')) {
+    } else if (name.startsWith('investment') && name.endsWith('Monthly')) {
       setFormData(prev => ({
         ...prev,
         monthlyInvestmentAmounts: {
