@@ -245,7 +245,7 @@ function computeNetAnnual(grossAnnualIncome: number): number {
     salaryIncomeDeduction = 1950000;
   }
 
-  // 社会保険料 (健康保険、厚生年金、雇用保険) - 簡略化のため一律15%とする
+  // 社会保険料 (健康保険、厚生年金、雇用保険) - 簡略化のため一律15%とする.
   const socialInsurancePremium = income * 0.15;
 
   // 基礎控除 (令和2年以降)
