@@ -1,4 +1,6 @@
-﻿import type { VercelRequest, VercelResponse } from '@vercel/node';
+﻿// Local minimal types to avoid '@vercel/node' runtime/type dependency
+type VercelRequest = { method?: string; body?: unknown; query?: Record<string, unknown> };
+type VercelResponse = { status: (code: number) => { json: (data: unknown) => void } };
 
 type InvestmentTaxation = {
   nisa: {
@@ -281,9 +283,32 @@ function computeNetAnnual(grossAnnualIncome: number): number {
   return Math.max(0, netAnnualIncome);
 }
 
+// Type guard to validate request body shape at runtime and satisfy TS
+function isInputParamsBody(x: unknown): x is { inputParams: InputParams } {
+  if (!x || typeof x !== 'object') return false;
+  const r = x as Record<string, unknown>;
+  if (!('inputParams' in r)) return false;
+  const ip = (r as { inputParams: unknown }).inputParams;
+  if (!ip || typeof ip !== 'object') return false;
+  const m = ip as Record<string, unknown>;
+  // minimal required keys to consider it valid
+  return 'initialAge' in m && 'endAge' in m && 'retirementAge' in m;
+}
+
 export default async function (req: VercelRequest, res: VercelResponse) {
   if (req.method === 'POST') {
-    const body: { inputParams: InputParams } = req.body;
+    let rawBody: unknown = (req as { body?: unknown }).body;
+    try {
+      if (typeof rawBody === 'string') {
+        rawBody = JSON.parse(rawBody);
+      }
+    } catch {
+      return res.status(400).json({ message: 'invalid JSON body' });
+    }
+    if (!isInputParamsBody(rawBody)) {
+      return res.status(400).json({ message: 'invalid body: expected { inputParams }' });
+    }
+    const body = rawBody;
     const {
       initialAge,
       
@@ -404,7 +429,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     const productBalances: Record<string, number> = {};
     if (useProducts) {
       for (const p of productList) {
-        if (p.account === 'iDeCo') {
+        if ((p.account === 'iDeCo' || p.key === 'ideco')) {
           ideco += Math.max(0, p.currentJPY);
         } else if (p.account === '非課税') {
           nisa += Math.max(0, p.currentJPY);
@@ -468,7 +493,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
       let idecoDeductionThisYear = 0;
       if (useProducts && currentAge < retirementAge) {
         for (const p of productList) {
-          if (p.account === 'iDeCo') {
+          if ((p.account === 'iDeCo' || p.key === 'ideco')) {
             idecoDeductionThisYear += Math.max(0, p.recurringJPY + p.spotJPY);
           }
         }
@@ -656,7 +681,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
         if (currentAge >= retirementAge) {
           // 退職以降は拠出停止、運用のみ
           for (const p of productList) {
-            if (p.account === 'iDeCo') {
+            if ((p.account === 'iDeCo' || p.key === 'ideco')) {
               ideco = ideco * (1 + p.expectedReturn);
             } else if (p.account === '非課税') {
               nisa = nisa * (1 + p.expectedReturn);
@@ -670,7 +695,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
           for (const p of productList) {
             const recur = Math.max(0, p.recurringJPY);
             const spot = Math.max(0, p.spotJPY);
-            if (p.account === 'iDeCo') {
+            if ((p.account === 'iDeCo' || p.key === 'ideco')) {
               const add = recur + spot;
               ideco = ideco * (1 + p.expectedReturn) + add;
               combinedContribution += add;
@@ -726,8 +751,16 @@ export default async function (req: VercelRequest, res: VercelResponse) {
       const taxableContribution = Math.max(0, taxableRecurringThisYear + taxableSpotThisYear);
       const nisaContribution = Math.max(0, appliedNisaRecurring + appliedNisaSpot);
       cumulativeNisaContribution += nisaContribution;
-      if (!useProducts) {
-        combinedContribution = taxableContribution + nisaContribution;
+      // Apply fallback NISA/Taxable contributions when there are no non?iDeCo products.
+      // This lets JSON Test inputs send only iDeCo as product while keeping NISA/Taxable from investmentTaxation.
+      let hasNonIdecoProduct = false;
+      if (Array.isArray(productList) && productList.length > 0) {
+        for (const p of productList) {
+          if (p && p.account !== 'iDeCo') { hasNonIdecoProduct = true; break; }
+        }
+      }
+      if (!hasNonIdecoProduct) {
+        combinedContribution += taxableContribution + nisaContribution;
         investedPrincipal = investedPrincipal * (1 + currentReturn) + taxableContribution;
         nisa = nisa * (1 + currentReturn) + nisaContribution;
       }
@@ -807,4 +840,5 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     res.status(405).json({ message: 'Method Not Allowed' });
   }
 }
+
 
