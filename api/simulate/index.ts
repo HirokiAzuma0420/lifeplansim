@@ -448,6 +448,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     ) : [];
 
     const baseYear = new Date().getFullYear();
+    const idecoCashOutAge = Math.min(retirementAge, 75);
     const T = (endAge - initialAge) + 1; // ループ回数に合わせる
     const assetReturns: Record<string, number[]> = {};
     ASSETS.forEach((k, idx) => {
@@ -491,7 +492,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
 
       // iDeCo拠出は所得控除：productsモード時のみ厳密適用
       let idecoDeductionThisYear = 0;
-      if (useProducts && currentAge < retirementAge) {
+      if (useProducts && currentAge < idecoCashOutAge) {
         for (const p of productList) {
           if ((p.account === 'iDeCo' || p.key === 'ideco')) {
             idecoDeductionThisYear += Math.max(0, p.recurringJPY + p.spotJPY);
@@ -682,7 +683,13 @@ export default async function (req: VercelRequest, res: VercelResponse) {
           // 退職以降は拠出停止、運用のみ
           for (const p of productList) {
             if ((p.account === 'iDeCo' || p.key === 'ideco')) {
-              ideco = ideco * (1 + p.expectedReturn);
+              // iDeCoはidecoCashOutAgeの年まで運用
+              if (currentAge < idecoCashOutAge) {
+                ideco = ideco * (1 + p.expectedReturn);
+              } else if (currentAge === idecoCashOutAge) {
+                // 現金化の年の最後の運用
+                ideco = ideco * (1 + p.expectedReturn);
+              }
             } else if (p.account === '非課税') {
               nisa = nisa * (1 + p.expectedReturn);
             } else {
@@ -696,9 +703,15 @@ export default async function (req: VercelRequest, res: VercelResponse) {
             const recur = Math.max(0, p.recurringJPY);
             const spot = Math.max(0, p.spotJPY);
             if ((p.account === 'iDeCo' || p.key === 'ideco')) {
-              const add = recur + spot;
-              ideco = ideco * (1 + p.expectedReturn) + add;
-              combinedContribution += add;
+              // iDeCoはidecoCashOutAgeまで拠出
+              if (currentAge < idecoCashOutAge) {
+                const add = recur + spot;
+                ideco = ideco * (1 + p.expectedReturn) + add;
+                combinedContribution += add;
+              } else {
+                // idecoCashOutAge以降、retirementAgeまでの間は運用のみ
+                ideco = ideco * (1 + p.expectedReturn);
+              }
             } else if (p.account === '非課税') {
               const allowR = Math.max(0, Math.min(NISA_RECURRING_ANNUAL_CAP, remainingNisaAllowance));
               const usedR = Math.min(recur, allowR);
@@ -770,6 +783,12 @@ export default async function (req: VercelRequest, res: VercelResponse) {
       const totalInvestmentOutflow = combinedContribution;
       const cashFlow = annualIncome - totalExpense - totalInvestmentOutflow + annualSavings;
       savings += cashFlow;
+
+      // iDeCoの現金化
+      if (currentAge === idecoCashOutAge) {
+        savings += ideco;
+        ideco = 0;
+      }
 
       // 生活防衛資金の補填
       if (emergencyFundJPY > 0 && savings < emergencyFundJPY) {

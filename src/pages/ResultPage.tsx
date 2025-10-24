@@ -12,8 +12,13 @@ import type { SimulationNavigationState } from '../types/simulation';
 
 const COLORS = {
   現金: '#3B82F6',
-  NISA: '#10B981',
-  iDeCo: '#F59E0B',
+  nisa: '#10B981',
+  ideco: '#F59E0B',
+  stocks: '#EF4444',
+  trust: '#8B5CF6',
+  bonds: '#F97316',
+  crypto: '#FBBF24',
+  other: '#6B7280',
 };
 
 const formatCurrency = (value: number): string => `¥${Math.round(value).toLocaleString()}`;

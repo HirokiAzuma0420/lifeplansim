@@ -1,7 +1,7 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 interface InvestmentPrincipalChartProps {
-  enrichedData: { year: number; NISA: number; iDeCo: number; }[];
+  enrichedData: { year: number; NISA?: number; iDeCo?: number; [key: string]: any }[];
 }
 
 export default function InvestmentPrincipalChart({ enrichedData }: InvestmentPrincipalChartProps) {

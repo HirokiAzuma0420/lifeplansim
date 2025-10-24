@@ -1,5 +1,5 @@
 interface AssetTableProps {
-  enrichedData: { year: number; 現金: number; NISA: number; iDeCo: number; 総資産: number; }[];
+  enrichedData: { year: number; 現金?: number; NISA?: number; iDeCo?: number; 総資産?: number; [key: string]: any }[];
 }
 
 export default function AssetTable({ enrichedData }: AssetTableProps) {

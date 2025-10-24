@@ -3,10 +3,9 @@
 export type EnrichedYearlyAsset = {
   year: number;
   現金: number;
-  NISA: number;
-  iDeCo: number;
   総資産: number;
   投資元本: number;
+  [key: string]: number; // 商品別のキーを許容
 };
 
 export interface DashboardDataset {
@@ -31,25 +30,33 @@ export const buildDashboardDataset = (yearlyData: YearlyData[]): DashboardDatase
     };
   }
 
-  const enrichedData: EnrichedYearlyAsset[] = yearlyData.map((entry) => ({
-    year: entry.year,
-    現金: sanitize(entry.savings),
-    NISA: sanitize(entry.nisa),
-    iDeCo: sanitize(entry.ideco),
-    総資産: sanitize(entry.totalAssets),
-    投資元本: sanitize(entry.investedPrincipal),
-  }));
+  const enrichedData: EnrichedYearlyAsset[] = yearlyData.map((entry) => {
+    const productAssets = (entry.products && typeof entry.products === 'object')
+      ? Object.fromEntries(
+          Object.entries(entry.products).map(([key, value]) => [key, sanitize(value)])
+        )
+      : {};
+
+    return {
+      year: entry.year,
+      現金: sanitize(entry.savings),
+      nisa: sanitize(entry.nisa),
+      ideco: sanitize(entry.ideco),
+      ...productAssets,
+      総資産: sanitize(entry.totalAssets),
+      投資元本: sanitize(entry.investedPrincipal),
+    };
+  });
 
   const latestYear = yearlyData[yearlyData.length - 1];
   const firstYear = yearlyData[0];
 
   const latestEntry = enrichedData[enrichedData.length - 1];
   const pieData = latestEntry
-    ? ([
-        { name: '現金', value: Math.max(0, latestEntry.現金) },
-        { name: 'NISA', value: Math.max(0, latestEntry.NISA) },
-        { name: 'iDeCo', value: Math.max(0, latestEntry.iDeCo) },
-      ] as const).filter((item) => item.value > 0)
+    ? Object.entries(latestEntry)
+        .filter(([key]) => !['year', '総資産', '投資元本'].includes(key))
+        .map(([name, value]) => ({ name, value: Math.max(0, value) }))
+        .filter((item) => item.value > 0)
     : [];
 
   return {

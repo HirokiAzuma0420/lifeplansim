@@ -3,7 +3,7 @@ import type { TooltipProps } from 'recharts';
 import type { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
 
 interface TotalAssetChartProps {
-  enrichedData: { year: number; 現金: number; NISA: number; iDeCo: number; 総資産: number; }[];
+  enrichedData: { year: number; 総資産: number; [key: string]: number }[];
   rankInfo: { rank: string; color: string; commenttitle: string; comment: string; image: string };
   COLORS: { [key: string]: string };
   age: number;
@@ -39,15 +39,9 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameT
 export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, retireAge }: TotalAssetChartProps) {
   const retirementYear = enrichedData[0].year + (retireAge - age);
 
-  // 各資産の合計を計算
-  const assetTotals: { [key: string]: number } = {
-    '現金': enrichedData.reduce((acc, cur) => acc + cur.現金, 0),
-    'NISA': enrichedData.reduce((acc, cur) => acc + cur.NISA, 0),
-    'iDeCo': enrichedData.reduce((acc, cur) => acc + cur.iDeCo, 0),
-  };
-
-  // 資産を合計の昇順にソート
-  const sortedAssets = Object.keys(assetTotals).sort((a, b) => assetTotals[a] - assetTotals[b]);
+  const assetKeys = enrichedData.length > 0
+    ? Object.keys(enrichedData[0]).filter(key => !['year', '総資産', '投資元本'].includes(key))
+    : [];
 
   const CustomizedLabel = (props: LabelProps) => {
     const { x, y, index } = props;
@@ -96,7 +90,7 @@ export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, r
 
       return (
         <g>
-          <circle cx={x} cy={y} r={4} fill="white" stroke={COLORS.iDeCo} strokeWidth={2} />
+          <circle cx={x} cy={y} r={4} fill="white" stroke={COLORS.ideco || '#F59E0B'} strokeWidth={2} />
           <text x={x} y={y} dy={dyYear} fill="#666" fontSize={fontSize} textAnchor={textAnchor} dx={dxOffset}>
             {yearLabel}
           </text>
@@ -146,15 +140,15 @@ export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, r
           <YAxis tickFormatter={(v) => `${Math.round(v / 10000)}万円`} />
           <Tooltip content={<CustomTooltip />} />
           <Legend wrapperStyle={{ position: 'relative', top: -15 }} />
-          {sortedAssets.map((assetKey, index) => (
+          {assetKeys.map((assetKey, index) => (
             <Area
               key={assetKey}
               type="monotone"
               dataKey={assetKey}
               stackId="1"
-              stroke={COLORS[assetKey]}
-              fill={COLORS[assetKey]}
-              label={index === sortedAssets.length - 1 ? CustomizedLabel : undefined}
+              stroke={COLORS[assetKey] || '#8884d8'}
+              fill={COLORS[assetKey] || '#8884d8'}
+              label={index === assetKeys.length - 1 ? CustomizedLabel : undefined}
             />
           ))}
           {retirementYear >= enrichedData[0].year && retirementYear <= enrichedData[enrichedData.length - 1].year && (
