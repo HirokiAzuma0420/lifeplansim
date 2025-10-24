@@ -23,6 +23,7 @@ const keyToJapaneseMap: { [key: string]: string } = {
   bonds: '債券',
   crypto: '仮想通貨',
   other: 'その他',
+  investedPrincipal: '課税口座',
 };
 
 const sanitize = (value: number | undefined | null): number => {
@@ -47,6 +48,7 @@ export const buildDashboardDataset = (yearlyData: YearlyData[]): DashboardDatase
       savings: entry.savings,
       nisa: entry.nisa,
       ideco: entry.ideco,
+      investedPrincipal: entry.investedPrincipal,
       ...(entry.products || {}),
     };
 
@@ -69,7 +71,7 @@ export const buildDashboardDataset = (yearlyData: YearlyData[]): DashboardDatase
   const latestEntry = enrichedData[enrichedData.length - 1];
   const pieData = latestEntry
     ? Object.entries(latestEntry)
-        .filter(([key]) => !['year', '総資産', '投資元本'].includes(key))
+        .filter(([key]) => !['year', '総資産'].includes(key))
         .map(([name, value]) => ({ name, value: Math.max(0, value) }))
         .filter((item) => item.value > 0)
     : [];

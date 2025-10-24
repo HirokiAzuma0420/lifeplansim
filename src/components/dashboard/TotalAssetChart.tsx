@@ -43,6 +43,13 @@ export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, r
     ? Object.keys(enrichedData[0]).filter(key => !['year', '総資産', '投資元本'].includes(key))
     : [];
 
+  // 安定した積み上げ順序と、最も合計額が小さいものを一番下に表示するためにソートする
+  assetKeys.sort((a, b) => {
+    const totalA = enrichedData.reduce((sum, d) => sum + (d[a] || 0), 0);
+    const totalB = enrichedData.reduce((sum, d) => sum + (d[b] || 0), 0);
+    return totalA - totalB;
+  });
+
   const CustomizedLabel = (props: LabelProps) => {
     const { x, y, index } = props;
 
@@ -54,7 +61,7 @@ export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, r
       const dataPoint = enrichedData[index];
       if (!dataPoint) return null;
 
-      const totalAsset = dataPoint.総資産;
+      const totalAsset = assetKeys.reduce((sum, key) => sum + (dataPoint[key] || 0), 0);
       const formattedValue = `${Math.round(totalAsset / 10000).toLocaleString()}万円`;
       const yearLabel = index === 0 ? 'スタート' : `${index}年後`;
 
