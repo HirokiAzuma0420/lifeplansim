@@ -90,7 +90,7 @@ export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, r
 
       return (
         <g>
-          <circle cx={x} cy={y} r={4} fill="white" stroke={COLORS.ideco || '#F59E0B'} strokeWidth={2} />
+          <circle cx={x} cy={y} r={4} fill="white" stroke={rankInfo.color} strokeWidth={2} />
           <text x={x} y={y} dy={dyYear} fill="#666" fontSize={fontSize} textAnchor={textAnchor} dx={dxOffset}>
             {yearLabel}
           </text>

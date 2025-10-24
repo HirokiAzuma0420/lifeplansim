@@ -2,7 +2,6 @@
 
 export type EnrichedYearlyAsset = {
   year: number;
-  現金: number;
   総資産: number;
   投資元本: number;
   [key: string]: number; // 商品別のキーを許容
@@ -14,6 +13,17 @@ export interface DashboardDataset {
   latestYear?: YearlyData;
   firstYear?: YearlyData;
 }
+
+const keyToJapaneseMap: { [key: string]: string } = {
+  savings: '現金',
+  nisa: 'NISA',
+  ideco: 'iDeCo',
+  stocks: '株式',
+  trust: '投資信託',
+  bonds: '債券',
+  crypto: '仮想通貨',
+  other: 'その他',
+};
 
 const sanitize = (value: number | undefined | null): number => {
   if (!Number.isFinite(value ?? NaN)) return 0;
@@ -31,18 +41,23 @@ export const buildDashboardDataset = (yearlyData: YearlyData[]): DashboardDatase
   }
 
   const enrichedData: EnrichedYearlyAsset[] = yearlyData.map((entry) => {
-    const productAssets = (entry.products && typeof entry.products === 'object')
-      ? Object.fromEntries(
-          Object.entries(entry.products).map(([key, value]) => [key, sanitize(value)])
-        )
-      : {};
+    const assets: { [key: string]: number } = {};
+    
+    const allAssets = {
+      savings: entry.savings,
+      nisa: entry.nisa,
+      ideco: entry.ideco,
+      ...(entry.products || {}),
+    };
+
+    for (const [key, value] of Object.entries(allAssets)) {
+      const japaneseKey = keyToJapaneseMap[key] || key;
+      assets[japaneseKey] = sanitize(value);
+    }
 
     return {
       year: entry.year,
-      現金: sanitize(entry.savings),
-      nisa: sanitize(entry.nisa),
-      ideco: sanitize(entry.ideco),
-      ...productAssets,
+      ...assets,
       総資産: sanitize(entry.totalAssets),
       投資元本: sanitize(entry.investedPrincipal),
     };

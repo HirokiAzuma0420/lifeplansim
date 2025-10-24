@@ -12,13 +12,13 @@ import type { SimulationNavigationState } from '../types/simulation';
 
 const COLORS = {
   現金: '#3B82F6',
-  nisa: '#10B981',
-  ideco: '#F59E0B',
-  stocks: '#EF4444',
-  trust: '#8B5CF6',
-  bonds: '#F97316',
-  crypto: '#FBBF24',
-  other: '#6B7280',
+  NISA: '#10B981',
+  iDeCo: '#F59E0B',
+  株式: '#EF4444',
+  投資信託: '#8B5CF6',
+  債券: '#F97316',
+  仮想通貨: '#FBBF24',
+  その他: '#6B7280',
 };
 
 const formatCurrency = (value: number): string => `¥${Math.round(value).toLocaleString()}`;
