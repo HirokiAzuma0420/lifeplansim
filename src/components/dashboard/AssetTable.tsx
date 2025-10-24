@@ -1,5 +1,5 @@
 interface AssetTableProps {
-  enrichedData: { year: number; 現金?: number; NISA?: number; iDeCo?: number; 総資産?: number; [key: string]: any }[];
+  enrichedData: { year: number; 現金?: number; NISA?: number; iDeCo?: number; 総資産?: number; [key: string]: number | undefined }[];
 }
 
 export default function AssetTable({ enrichedData }: AssetTableProps) {
@@ -23,10 +23,10 @@ export default function AssetTable({ enrichedData }: AssetTableProps) {
             {enrichedData.map((d) => (
               <tr key={d.year} className="text-right border-b">
                 <td className="px-2 py-1 text-left">{d.year}</td>
-                <td className="px-2 py-1">{d.現金.toLocaleString()}</td>
-                <td className="px-2 py-1">{d.NISA.toLocaleString()}</td>
-                <td className="px-2 py-1">{d.iDeCo.toLocaleString()}</td>
-                <td className="px-2 py-1 font-semibold">{d.総資産.toLocaleString()}</td>
+                <td className="px-2 py-1">{(d.現金 ?? 0).toLocaleString()}</td>
+                <td className="px-2 py-1">{(d.NISA ?? 0).toLocaleString()}</td>
+                <td className="px-2 py-1">{(d.iDeCo ?? 0).toLocaleString()}</td>
+                <td className="px-2 py-1 font-semibold">{(d.総資産 ?? 0).toLocaleString()}</td>
                 <td className="px-2 py-1">{d['NISA']?.toLocaleString() ?? '-'}</td>
                 <td className="px-2 py-1">{d['iDeCo']?.toLocaleString() ?? '-'}</td>
               </tr>
