@@ -81,10 +81,27 @@ export default function ResultPage() {
 
   const currentAge = inputParams.initialAge || dataset.firstYear?.age || 0;
   const retireAge = inputParams.retirementAge || currentAge;
-  const firstYearTotal = dataset.firstYear?.totalAssets ?? 0;
-  const latestTotal = dataset.latestYear?.totalAssets ?? 0;
+
+  // グラフに表示される資産キーを取得するヘルパー
+  const getChartAssetKeys = (entry: { [key: string]: number }): string[] => {
+    return Object.keys(entry).filter(key => !['year', '総資産', '投資元本', '課税口座'].includes(key));
+  };
+
+  // 表示用の総資産（グラフの積み上げと一致）を計算するヘルパー
+  const calculateDisplayTotal = (entry?: { [key: string]: number }): number => {
+    if (!entry) return 0;
+    const keys = getChartAssetKeys(entry);
+    return keys.reduce((sum, key) => sum + (entry[key] || 0), 0);
+  };
+
+  const firstYearTotal = calculateDisplayTotal(dataset.enrichedData[0]);
+  const latestTotal = calculateDisplayTotal(dataset.enrichedData[dataset.enrichedData.length - 1]);
   const growthAmount = latestTotal - firstYearTotal;
-  const peakAssetValue = dataset.enrichedData.reduce((max, entry) => Math.max(max, entry.総資産), Number.NEGATIVE_INFINITY);
+  const peakAssetValue = dataset.enrichedData.reduce((max, entry) => {
+    const currentTotal = calculateDisplayTotal(entry);
+    return Math.max(max, currentTotal);
+  }, Number.NEGATIVE_INFINITY);
+
   const incomeForChart = dataset.firstYear?.income ?? 0;
   const savingsForChart = dataset.firstYear?.totalAssets ?? 0;
 
