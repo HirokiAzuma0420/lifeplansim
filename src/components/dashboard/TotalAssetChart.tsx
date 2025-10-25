@@ -173,7 +173,7 @@ export default function TotalAssetChart({ enrichedData, detailedAssetData, rankI
       </div>
       {/* グラフ本体 */}
       <ResponsiveContainer width="100%" height={400}>
-        <AreaChart data={enrichedData} stackOffset="none" margin={{ top: 80, right: 30, left: 50, bottom: 5 }}>
+        <AreaChart data={enrichedData} stackOffset="none" margin={{ top: 80, right: 30, left: 70, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="year" interval="preserveStartEnd" />
           <YAxis // domain を削除し、Rechartsの自動計算に任せる
