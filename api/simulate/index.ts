@@ -394,6 +394,8 @@ function runSimulation(params: InputParams): YearlyData[] {
       selfGrossIncome = (n(params.mainJobIncomeGross) * Math.pow(1 + n(params.incomeGrowthRate), i) + n(params.sideJobIncomeGross)) * yearFraction;
       spouseGrossIncome = ((n(params.spouseMainJobIncomeGross) ?? 0) * Math.pow(1 + (n(params.spouseIncomeGrowthRate) ?? 0), i) + (n(params.spouseSideJobIncomeGross) ?? 0)) * yearFraction;
     }
+    // 年金収入を計算
+    const pensionAnnual = (currentAge >= params.pensionStartAge ? n(params.pensionMonthly10kJPY) * 10000 * 12 : 0);
 
     let idecoDeductionThisYear = 0;
     if (currentAge < idecoCashOutAge) {
@@ -401,7 +403,8 @@ function runSimulation(params: InputParams): YearlyData[] {
         idecoDeductionThisYear += (n(p.recurringJPY) + n(p.spotJPY)) * yearFraction;
       });
     }
-    const annualIncome = computeNetAnnual(selfGrossIncome - idecoDeductionThisYear) + computeNetAnnual(spouseGrossIncome);
+    // 退職後は年金収入を、退職前は給与収入を手取り計算して年間収入とする
+    const annualIncome = (currentAge >= params.retirementAge) ? pensionAnnual : (computeNetAnnual(selfGrossIncome - idecoDeductionThisYear) + computeNetAnnual(spouseGrossIncome));
 
     // iDeCoの現金化 (60-75歳)
     // 支出や投資の拠出より先に処理することで、現金化の年に意図せず拠出されるのを防ぐ
@@ -422,9 +425,8 @@ function runSimulation(params: InputParams): YearlyData[] {
     let livingExpense = 0;
     let retirementExpense = 0;
     if (currentAge >= params.retirementAge) {
-      const postRetirementLivingAnnual = n(params.postRetirementLiving10kJPY) * 10000 * 12 * yearFraction;
-      const pensionAnnual = (currentAge >= params.pensionStartAge ? n(params.pensionMonthly10kJPY) * 10000 * 12 : 0);
-      retirementExpense = Math.max(0, postRetirementLivingAnnual - pensionAnnual);
+      // 老後の支出は、年金との差額ではなく、生活費そのものを計上する
+      retirementExpense = n(params.postRetirementLiving10kJPY) * 10000 * 12 * yearFraction;
     } else {
       livingExpense = (params.expenseMode === 'simple' ? n(params.livingCostSimpleAnnual) : (n(params.detailedFixedAnnual) + n(params.detailedVariableAnnual))) * yearFraction;
     }
