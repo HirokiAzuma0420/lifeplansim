@@ -189,6 +189,45 @@ function computeNetAnnual(grossAnnualIncome: number): number {
   return Math.max(0, netAnnualIncome);
 }
 
+// Helper function to generate normally distributed random numbers (Box-Muller transform)
+function boxMullerTransform(): [number, number] {
+  let u = 0, v = 0;
+  while (u === 0) u = Math.random(); //Converting [0,1) to (0,1)
+  while (v === 0) v = Math.random();
+  const R = Math.sqrt(-2.0 * Math.log(u));
+  const theta = 2.0 * Math.PI * v;
+  return [R * Math.cos(theta), R * Math.sin(theta)];
+}
+
+function generateNormalRandom(mean: number, stdDev: number): number {
+  // We generate two numbers, but only use one. Could be optimized to cache the second.
+  const [z0] = boxMullerTransform();
+  return z0 * stdDev + mean;
+}
+
+/**
+ * Generates a series of annual returns for a given number of years.
+ * @param averageReturn The expected average geometric mean return (e.g., 0.05 for 5%).
+ * @param volatility The volatility (standard deviation) of the return (e.g., 0.15 for 15%).
+ * @param years The number of years to generate returns for.
+ * @returns An array of annual returns.
+ */
+function generateReturnSeries(
+  averageReturn: number,
+  volatility: number,
+  years: number
+): number[] {
+  const returns: number[] = [];
+  // Convert geometric mean to arithmetic mean for the random walk
+  const arithmeticMean = averageReturn + (volatility ** 2) / 2;
+
+  for (let i = 0; i < years; i++) {
+    const yearReturn = generateNormalRandom(arithmeticMean, volatility);
+    returns.push(yearReturn);
+  }
+  return returns;
+}
+
 function isInputParamsBody(x: unknown): x is { inputParams: InputParams } {
   if (!x || typeof x !== 'object') return false;
   const r = x as Record<string, unknown>;
@@ -223,6 +262,22 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   const yearlyData: YearlyData[] = [];
   let currentAge = params.initialAge;
   const baseYear = new Date().getFullYear();
+  const productList: InvestmentProduct[] = Array.isArray(params.products) ? params.products : [];
+
+  // ストレステスト用のリターン系列を事前に生成
+  const stressTestEnabled = params.stressTest?.enabled ?? false;
+  const simulationYears = params.endAge - params.initialAge + 1;
+  const VOLATILITY = 0.15; // 固定のボラティリティ
+
+  const productReturnSeries = new Map<string, number[]>();
+  if (stressTestEnabled) {
+    productList.forEach((p, index) => {
+      const productId = `${p.key}-${index}`;
+      const series = generateReturnSeries(n(p.expectedReturn), VOLATILITY, simulationYears);
+      productReturnSeries.set(productId, series);
+    });
+  }
+
 
   // --- 資産の初期化 ---
   let savings = n(params.currentSavingsJPY);
@@ -230,22 +285,17 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   const ideco: AccountBucket = { principal: 0, balance: 0 };
   const taxable: AccountBucket = { principal: 0, balance: 0 };
 
-  const productList: InvestmentProduct[] = Array.isArray(params.products) ? params.products : [];
+  // 商品別の残高を管理する新しいデータ構造
+  const productBalances: Record<string, AccountBucket> = {};
 
   // 現在の資産を各バケットに振り分け
-  for (const p of productList) {
+  productList.forEach((p, index) => {
+    const productId = `${p.key}-${index}`; // 商品を一位に識別するID
     const current = n(p.currentJPY);
-    if (p.account === '非課税') {
-      nisa.principal += current;
-      nisa.balance += current;
-    } else if (p.account === 'iDeCo') {
-      ideco.principal += current;
-      ideco.balance += current;
-    } else { // 課税
-      taxable.principal += current;
-      taxable.balance += current;
-    }
-  }
+
+    // 新しいデータ構造を初期化
+    productBalances[productId] = { principal: current, balance: current };
+  });
 
   let cumulativeNisaContribution = nisa.principal;
   const idecoCashOutAge = Math.min(params.retirementAge, 75);
@@ -394,46 +444,67 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     if (currentAge < params.retirementAge) {
       let remainingNisaAllowance = Math.max(0, NISA_CONTRIBUTION_CAP - cumulativeNisaContribution);
 
-      for (const p of productList) {
+      productList.forEach((p, index) => {
+        const productId = `${p.key}-${index}`;
         const recur = n(p.recurringJPY);
         const spot = n(p.spotJPY);
         const contribution = recur + spot;
 
         if (p.account === '非課税') {
           const allowed = Math.min(contribution, remainingNisaAllowance);
-          nisa.principal += allowed;
-          nisa.balance += allowed;
+          productBalances[productId].principal += allowed;
+          productBalances[productId].balance += allowed;
+
           cumulativeNisaContribution += allowed;
           totalInvestmentOutflow += allowed;
         } else if (p.account === 'iDeCo' && currentAge < idecoCashOutAge) {
-          ideco.principal += contribution;
-          ideco.balance += contribution;
+          productBalances[productId].principal += contribution;
+          productBalances[productId].balance += contribution;
+
           totalInvestmentOutflow += contribution;
         } else if (p.account === '課税') {
-          taxable.principal += contribution;
-          taxable.balance += contribution;
+          productBalances[productId].principal += contribution;
+          productBalances[productId].balance += contribution;
+
           totalInvestmentOutflow += contribution;
         }
-      }
+      });
     }
 
-    // 資産の成長
-    const calculateGrowth = (bucket: AccountBucket, productKey: 'nisa' | 'ideco' | 'taxable') => {
-      const relevantProducts = productList.filter(p => {
-        if (productKey === 'nisa') return p.account === '非課税';
-        if (productKey === 'ideco') return p.account === 'iDeCo';
-        if (productKey === 'taxable') return p.account === '課税';
-        return false;
-      });
-      if (relevantProducts.length === 0 || bucket.balance === 0) return;
+    // 資産の成長（商品ごと）
+    productList.forEach((p, index) => {
+      const productId = `${p.key}-${index}`;
+      const productBucket = productBalances[productId];
+      if (productBucket.balance <= 0) return;
 
-      const weightedReturn = relevantProducts.reduce((acc, p) => acc + n(p.expectedReturn) * (p.currentJPY / bucket.balance), 0);
-      bucket.balance *= (1 + weightedReturn);
-    };
+      let yearlyReturn = 0;
+      if (stressTestEnabled) {
+        yearlyReturn = productReturnSeries.get(productId)![i];
+      } else {
+        yearlyReturn = n(p.expectedReturn);
+      }
+      
+      productBucket.balance *= (1 + yearlyReturn);
+    });
 
-    calculateGrowth(nisa, 'nisa');
-    calculateGrowth(ideco, 'ideco');
-    calculateGrowth(taxable, 'taxable');
+    // 商品別残高を口座別残高に集計
+    nisa.principal = 0; nisa.balance = 0;
+    ideco.principal = 0; ideco.balance = 0;
+    taxable.principal = 0; taxable.balance = 0;
+    productList.forEach((p, index) => {
+      const productId = `${p.key}-${index}`;
+      const productBucket = productBalances[productId];
+      if (p.account === '非課税') {
+        nisa.principal += productBucket.principal;
+        nisa.balance += productBucket.balance;
+      } else if (p.account === 'iDeCo') {
+        ideco.principal += productBucket.principal;
+        ideco.balance += productBucket.balance;
+      } else { // 課税
+        taxable.principal += productBucket.principal;
+        taxable.balance += productBucket.balance;
+      }
+    });
 
     // --- 4. キャッシュフローと資産の変動 ---
     const annualSavings = currentAge < params.retirementAge ? (n(params.monthlySavingsJPY) * 12) : 0;
