@@ -76,11 +76,12 @@ export default function ResultPage() {
 
   const state = location.state as SimulationNavigationState | undefined;
   const rawYearlyData = state?.yearlyData;
+  const percentileData = state?.percentileData;
   // SimulationInputParams に products を追加
   const yearlyData = useMemo(() => rawYearlyData ?? [], [rawYearlyData]);
   const inputParams = state?.inputParams as (SimulationNavigationState['inputParams'] & { products?: InvestmentProduct[] }) | undefined;
 
-  const dataset = useMemo(() => buildDashboardDataset(yearlyData), [yearlyData]);
+  const dataset = useMemo(() => buildDashboardDataset(yearlyData, percentileData), [yearlyData, percentileData]);
   // 商品別内訳（API拡張に対応：存在時のみ表示）
   const latestProducts = useMemo<Record<string, number>>(() => {
     if (!Array.isArray(yearlyData) || yearlyData.length === 0) return {};

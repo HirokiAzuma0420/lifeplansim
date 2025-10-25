@@ -1,10 +1,12 @@
-﻿import type { YearlyData, AccountBucket } from '../types/simulation';
+﻿﻿import type { PercentileData, YearlyData, AccountBucket } from '../types/simulation';
 
 // グラフ描画用のデータ形式
 export type EnrichedYearlyAsset = {
   year: number;
   総資産: number;
   投資元本: number;
+  p10?: number;
+  p90?: number;
   現金: number;
   NISA: number;
   iDeCo: number;
@@ -32,7 +34,7 @@ const sanitize = (value: number | undefined | null): number => {
   return Math.round(value as number);
 };
 
-export const buildDashboardDataset = (yearlyData: YearlyData[]): DashboardDataset => {
+export const buildDashboardDataset = (yearlyData: YearlyData[], percentileData?: PercentileData): DashboardDataset => {
   if (!Array.isArray(yearlyData) || yearlyData.length === 0) {
     return {
       enrichedData: [],
@@ -43,10 +45,12 @@ export const buildDashboardDataset = (yearlyData: YearlyData[]): DashboardDatase
     };
   }
 
-  const enrichedData: EnrichedYearlyAsset[] = yearlyData.map((entry) => {
+  const enrichedData: EnrichedYearlyAsset[] = yearlyData.map((entry, i) => {
     const totalPrincipal = entry.nisa.principal + entry.ideco.principal + entry.taxable.principal;
     return {
       year: entry.year,
+      p10: percentileData?.p10[i],
+      p90: percentileData?.p90[i],
       総資産: sanitize(entry.totalAssets),
       投資元本: sanitize(totalPrincipal),
       現金: sanitize(entry.savings),

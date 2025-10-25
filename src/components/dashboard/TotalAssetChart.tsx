@@ -1,7 +1,7 @@
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Line } from 'recharts';
 import type { TooltipProps } from 'recharts';
 import type { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
-import type { DetailedAssetData } from '../../utils/simulation';
+import type { DetailedAssetData, EnrichedYearlyAsset } from '../../utils/simulation';
 
 interface TotalAssetChartProps {
   enrichedData: { year: number; 総資産: number; [key: string]: number }[];
@@ -68,11 +68,11 @@ const CustomTooltip = ({ active, payload, label, detailedAssetData }: TooltipPro
   return null;
 };
 
-export default function TotalAssetChart({ enrichedData, detailedAssetData, rankInfo, COLORS, age, retireAge, yAxisMax }: TotalAssetChartProps) {
+export default function TotalAssetChart({ enrichedData, detailedAssetData, rankInfo, COLORS, age, retireAge, yAxisMax }: TotalAssetChartProps & { enrichedData: EnrichedYearlyAsset[] }) {
   const retirementYear = enrichedData[0].year + (retireAge - age);
 
   const assetKeys = enrichedData.length > 0
-    ? Object.keys(enrichedData[0]).filter(key => !['year', '総資産', '投資元本'].includes(key))
+    ? Object.keys(enrichedData[0]).filter(key => !['year', '総資産', '投資元本', 'p10', 'p90'].includes(key))
     : [];
 
   // 安定した積み上げ順序と、最も合計額が小さいものを一番下に表示するためにソートする
@@ -184,6 +184,28 @@ export default function TotalAssetChart({ enrichedData, detailedAssetData, rankI
           />
           <Tooltip content={<CustomTooltip detailedAssetData={detailedAssetData} />} />
           <Legend wrapperStyle={{ position: 'relative', top: -15 }} />
+          {enrichedData[0]?.p10 != null && (
+            <Area
+              type="monotone"
+              dataKey="p90"
+              stackId="2"
+              stroke="none"
+              fill="#8884d8"
+              fillOpacity={0.2}
+              name="楽観ケース(上位10%)"
+            />
+          )}
+          {enrichedData[0]?.p10 != null && (
+            <Area
+              type="monotone"
+              dataKey="p10"
+              stackId="3"
+              stroke="none"
+              fill="white"
+              fillOpacity={1}
+              name="悲観ケース(下位10%)"
+            />
+          )}
           {assetKeys.map((assetKey, index) => (
             <Area
               key={assetKey}
@@ -195,6 +217,14 @@ export default function TotalAssetChart({ enrichedData, detailedAssetData, rankI
               label={index === assetKeys.length - 1 ? CustomizedLabel : undefined}
             />
           ))}
+          <Line
+            type="monotone"
+            dataKey="総資産"
+            stroke="#8884d8"
+            strokeWidth={2}
+            dot={false}
+            name="平均ケース"
+          />
           {retirementYear >= enrichedData[0].year && retirementYear <= enrichedData[enrichedData.length - 1].year && (
             <ReferenceLine x={retirementYear} stroke="red" strokeDasharray="3 3" label={{
               value: '退職',

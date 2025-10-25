@@ -242,6 +242,74 @@ function generateReturnSeries(
   return correctedReturns;
 }
 
+function runMonteCarloSimulation(params: InputParams, numberOfSimulations: number): YearlyData[] {
+  const allSimulations: YearlyData[][] = [];
+
+  // 1. runSimulationを100回実行
+  for (let i = 0; i < numberOfSimulations; i++) {
+    // 毎回異なるリターン系列を生成するために、シードを少し変更する
+    // stressTestが有効でない場合でも、この関数が呼ばれたら有効にする
+    const simParams: InputParams = {
+      ...params,
+      stressTest: {
+        ...params.stressTest,
+        enabled: true, // モンテカルロでは常にランダム変動を有効にする
+        seed: (params.stressTest?.seed ?? Date.now()) + i,
+      },
+    };
+    allSimulations.push(runSimulation(simParams));
+  }
+
+  if (allSimulations.length === 0) return [];
+
+  // 2. 平均値を計算
+  const firstSimulation = allSimulations[0];
+  const numYears = firstSimulation.length;
+  const averageYearlyData: YearlyData[] = [];
+
+  for (let i = 0; i < numYears; i++) {
+    // 最初のシミュレーション結果をベースに、各年の静的なデータをコピー
+    const yearDataTemplate = { ...firstSimulation[i] };
+
+    // 平均化するキーを定義
+    const keysToAverage: (keyof YearlyData)[] = ['income', 'totalExpense', 'savings', 'totalAssets'];
+    const bucketKeys: (keyof AccountBucket)[] = ['principal', 'balance'];
+
+    const averagedYearData: YearlyData = { ...yearDataTemplate };
+
+    // 各数値プロパティの平均を計算
+    for (const key of keysToAverage) {
+      const sum = allSimulations.reduce((acc, sim) => acc + (n(sim[i][key])), 0);
+      (averagedYearData[key] as number) = sum / numberOfSimulations;
+    }
+
+    // 各口座の principal と balance の平均を計算
+    for (const account of ['nisa', 'ideco', 'taxable'] as const) {
+      for (const key of bucketKeys) {
+        const sum = allSimulations.reduce((acc, sim) => acc + (n(sim[i][account]?.[key])), 0);
+        averagedYearData[account][key] = sum / numberOfSimulations;
+      }
+    }
+
+    // assetAllocation も平均化
+    const assetAllocationSum = { cash: 0, investment: 0, nisa: 0, ideco: 0 };
+    for (const sim of allSimulations) {
+      assetAllocationSum.cash += n(sim[i].assetAllocation.cash);
+      assetAllocationSum.investment += n(sim[i].assetAllocation.investment);
+      assetAllocationSum.nisa += n(sim[i].assetAllocation.nisa);
+      assetAllocationSum.ideco += n(sim[i].assetAllocation.ideco);
+    }
+    averagedYearData.assetAllocation.cash = assetAllocationSum.cash / numberOfSimulations;
+    averagedYearData.assetAllocation.investment = assetAllocationSum.investment / numberOfSimulations;
+    averagedYearData.assetAllocation.nisa = assetAllocationSum.nisa / numberOfSimulations;
+    averagedYearData.assetAllocation.ideco = assetAllocationSum.ideco / numberOfSimulations;
+
+    averageYearlyData.push(averagedYearData);
+  }
+
+  return averageYearlyData;
+}
+
 function isInputParamsBody(x: unknown): x is { inputParams: InputParams } {
   if (!x || typeof x !== 'object') return false;
   const r = x as Record<string, unknown>;
@@ -252,27 +320,10 @@ function isInputParamsBody(x: unknown): x is { inputParams: InputParams } {
   return 'initialAge' in m && 'endAge' in m && 'retirementAge' in m;
 }
 
-export default async function (req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method Not Allowed' });
-  }
-
-  let rawBody: unknown = req.body;
-  try {
-    if (typeof rawBody === 'string') {
-      rawBody = JSON.parse(rawBody);
-    }
-  } catch {
-    return res.status(400).json({ message: 'invalid JSON body' });
-  }
-
-  if (!isInputParamsBody(rawBody)) {
-    return res.status(400).json({ message: 'invalid body: expected { inputParams }' });
-  }
-
-  const params = rawBody.inputParams;
+function runSimulation(params: InputParams): YearlyData[] {
 
   // --- シミュレーション準備 ---
+  // yearlyData, currentAge などの変数を runSimulation 関数内に移動
   const yearlyData: YearlyData[] = [];
   let currentAge = params.initialAge;
 
@@ -280,7 +331,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   const baseYear = now.getFullYear();
   const startMonth = now.getMonth(); // 0-indexed (0-11)
   const firstYearRemainingMonths = 12 - startMonth;
-  const productList: InvestmentProduct[] = Array.isArray(params.products) ? params.products : [];
+  const productList: InvestmentProduct[] = Array.isArray(params.products) ? params.products : []; // productList は runSimulation 内で利用
 
   // ストレステスト用のリターン系列を事前に生成
   const stressTestEnabled = params.stressTest?.enabled ?? false;
@@ -288,7 +339,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   const VOLATILITY = 0.15; // 固定のボラティリティ
 
   const productReturnSeries = new Map<string, number[]>();
-  if (stressTestEnabled) {
+  if (params.interestScenario === 'ランダム変動' || stressTestEnabled) {
     productList.forEach((p, index) => {
       const productId = `${p.key}-${index}`;
       const series = generateReturnSeries(n(p.expectedReturn), VOLATILITY, simulationYears);
@@ -297,6 +348,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   }
 
 
+  // --- 資産の初期化 --- (runSimulation 内に移動)
   // --- 資産の初期化 ---
   let savings = n(params.currentSavingsJPY);
   const nisa: AccountBucket = { principal: 0, balance: 0 };
@@ -323,9 +375,11 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   const idecoCashOutAge = Math.min(params.retirementAge, 75);
 
   // ループ外で状態を保持する変数
+  // (runSimulation 内に移動)
   let carCurrentLoanMonthsRemaining = Math.max(0, n(params.car?.currentLoan?.remainingMonths));
   const appliancesOnly = Array.isArray(params.appliances) ? params.appliances.filter(a => a && String(a.name ?? '').trim().length > 0 && Number(a.cost10kJPY) > 0 && Number(a.cycleYears) > 0) : [];
 
+  // --- ループ開始 --- (runSimulation 内に移動)
   // --- ループ開始 ---
   for (let i = 0; currentAge <= params.endAge; i++, currentAge++) {
     const year = baseYear + i;
@@ -520,7 +574,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
       let yearlyReturn = 0;
       if (stressTestEnabled) {
         yearlyReturn = productReturnSeries.get(productId)![i];
-      } else {
+      } else if (params.interestScenario === '固定利回り') {
         yearlyReturn = n(p.expectedReturn);
       }
       
@@ -608,5 +662,27 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     });
   }
 
-  res.status(200).json({ yearlyData });
+  return yearlyData;
+}
+
+export default async function(req: VercelRequest, res: VercelResponse) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method Not Allowed' });
+  }
+
+  let rawBody: unknown = req.body;
+  try {
+    if (typeof rawBody === 'string') {
+      rawBody = JSON.parse(rawBody);
+    }
+  } catch {
+    return res.status(400).json({ message: 'invalid JSON body' });
+  }
+
+  if (!isInputParamsBody(rawBody)) {
+    return res.status(400).json({ message: 'invalid body: expected { inputParams }' });
+  }
+  const params = rawBody.inputParams;
+  const averageYearlyData = runMonteCarloSimulation(params, 100);
+  res.status(200).json({ yearlyData: averageYearlyData });
 }

@@ -3,6 +3,7 @@ import { data } from '../assets/sampleData';
 import { useNavigate } from 'react-router-dom';
 
 import { getAssetGrade } from '../assets/getAssetGrade';
+import type { EnrichedYearlyAsset } from '../utils/simulation';
 
 // Dashboard Components
 import IncomePositionChart from '../components/dashboard/IncomePositionChart';
@@ -26,7 +27,9 @@ export default function SamplePage() {
   const enrichedData = data.map((d) => ({
     ...d,
     総資産: d.現金 + d.NISA + d.iDeCo,
-  }));
+    投資元本: (d.NISA累積 || 0) + (d.iDeCo累積 || 0), // 暫定対応
+    課税口座: 0, // 暫定対応
+  })) as EnrichedYearlyAsset[];
 
   const latest = enrichedData[enrichedData.length - 1];
 
@@ -120,7 +123,7 @@ export default function SamplePage() {
         />
 
         <TotalAssetChart
-          enrichedData={enrichedData as { [key: string]: number; year: number; 総資産: number; }[]}
+          enrichedData={enrichedData}
           detailedAssetData={[]}
           rankInfo={rankInfo}
           COLORS={COLORS}

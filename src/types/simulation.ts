@@ -23,6 +23,11 @@ export interface YearlyData {
   products?: Record<string, number>;
 }
 
+export interface PercentileData {
+  p10: number[];
+  p90: number[];
+}
+
 export interface SimulationInputParams {
   initialAge: number;
   spouseInitialAge?: number;
@@ -42,5 +47,6 @@ export interface SimulationInputParams {
 
 export interface SimulationNavigationState {
   yearlyData: YearlyData[];
+  percentileData?: PercentileData;
   inputParams: SimulationInputParams;
 }
