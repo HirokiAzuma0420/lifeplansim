@@ -59,6 +59,10 @@ export default function SamplePage() {
 
   const rankInfo = getAssetGrade(currentTotalAsset);
 
+  const yAxisMax = Math.max(
+    ...enrichedData.map(d => d.総資産)
+  );
+
   return (
     <div className="relative bg-gray-100 min-h-screen">
       <button
@@ -122,6 +126,7 @@ export default function SamplePage() {
           COLORS={COLORS}
           age={parseInt(formData.age)}
           retireAge={parseInt(formData.retireAge)}
+          yAxisMax={yAxisMax}
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -134,4 +139,3 @@ export default function SamplePage() {
     </div>
   );
 }
-
