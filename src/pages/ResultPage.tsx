@@ -238,8 +238,8 @@ export default function ResultPage() {
 
           <div className="lg:col-span-3 space-y-6">
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-              <IncomePositionChart age={currentAge} income={selfNetAnnualIncome} />
-              <SavingsPositionChart age={currentAge} income={selfNetAnnualIncome} savings={savingsForChart} />
+              <IncomePositionChart age={currentAge} income={selfGrossIncome} />
+              <SavingsPositionChart age={currentAge} income={selfGrossIncome} savings={savingsForChart} />
             </div>
 
             <TotalAssetChart

@@ -243,7 +243,7 @@ export default function SavingsPositionChart({ age, income, savings }: SavingsPo
   return (
     <div className="bg-white rounded-xl shadow p-3 mb-6">
       <h3 className="text-lg font-semibold mb-2">
-        {ageBracket}・年収{Math.round(income / 10000).toLocaleString()}万円における金融資産の位置<br />
+        {ageBracket}・年間額面収入{Math.round(income / 10000).toLocaleString()}万円における金融資産の位置<br />
         <span className="text-sm text-gray-600">
           あなたの金融資産は <strong className="text-blue-600">上位 {topPercent}%</strong> に位置しています
         </span>
