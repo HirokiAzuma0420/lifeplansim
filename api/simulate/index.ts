@@ -633,7 +633,7 @@ function runSimulation(params: InputParams): YearlyData[] {
       if (shortfall > 0 && nisa.balance > 0) {
         const withdrawal = Math.min(nisa.balance, shortfall);
         savings += withdrawal;
-        const principalRatio = nisa.principal / nisa.balance;
+        const principalRatio = nisa.balance > 0 ? nisa.principal / nisa.balance : 0;
         nisa.balance -= withdrawal;
         nisa.principal -= withdrawal * principalRatio;
         shortfall -= withdrawal;
