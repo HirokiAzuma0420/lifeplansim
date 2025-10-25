@@ -601,8 +601,8 @@ function runSimulation(params: InputParams): YearlyData[] {
     });
 
     // --- 4. キャッシュフローと資産の変動 ---
-    const annualSavings = currentAge < params.retirementAge ? (n(params.monthlySavingsJPY) * 12 * yearFraction) : 0;
-    const cashFlow = annualIncome - totalExpense - totalInvestmentOutflow + annualSavings;
+    // 年間キャッシュフロー = 手取り収入 - 総支出 - 投資拠出
+    const cashFlow = annualIncome - totalExpense - totalInvestmentOutflow;
     savings += cashFlow;
 
     // 生活防衛資金の補填ロジック
