@@ -82,16 +82,11 @@ export default function ResultPage() {
   const currentAge = inputParams.initialAge || dataset.firstYear?.age || 0;
   const retireAge = inputParams.retirementAge || currentAge;
 
-  // グラフに表示される資産キーを取得するヘルパー
-  const getChartAssetKeys = (entry: { [key: string]: number }): string[] => {
-    return Object.keys(entry).filter(key => !['year', '総資産', '投資元本', '課税口座'].includes(key));
-  };
-
   // 表示用の総資産（グラフの積み上げと一致）を計算するヘルパー
   const calculateDisplayTotal = (entry?: { [key: string]: number }): number => {
     if (!entry) return 0;
-    const keys = getChartAssetKeys(entry);
-    return keys.reduce((sum, key) => sum + (entry[key] || 0), 0);
+    // buildDashboardDatasetで作成された明確なキーを直接合計する
+    return (entry['現金'] || 0) + (entry['NISA'] || 0) + (entry['iDeCo'] || 0) + (entry['課税口座'] || 0);
   };
 
   const firstYearTotal = calculateDisplayTotal(dataset.enrichedData[0]);
@@ -206,6 +201,7 @@ export default function ResultPage() {
 
             <TotalAssetChart
               enrichedData={dataset.enrichedData}
+              detailedAssetData={dataset.detailedAssetData}
               rankInfo={rankInfo}
               COLORS={COLORS}
               age={currentAge}

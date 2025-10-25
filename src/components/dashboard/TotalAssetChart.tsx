@@ -1,9 +1,11 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import type { TooltipProps } from 'recharts';
 import type { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
+import type { DetailedAssetData } from '../../utils/simulation';
 
 interface TotalAssetChartProps {
   enrichedData: { year: number; 総資産: number; [key: string]: number }[];
+  detailedAssetData: DetailedAssetData[];
   rankInfo: { rank: string; color: string; commenttitle: string; comment: string; image: string };
   COLORS: { [key: string]: string };
   age: number;
@@ -17,26 +19,55 @@ interface LabelProps {
   index: number;
 }
 
-const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameType>) => {
+const CustomTooltip = ({ active, payload, label, detailedAssetData }: TooltipProps<ValueType, NameType> & { detailedAssetData: DetailedAssetData[] }) => {
   if (active && payload && payload.length) {
+    const year = Number(label);
+    const yearDetails = detailedAssetData.find(d => d.year === year);
+
     const total = payload.reduce((sum, entry) => sum + (typeof entry.value === 'number' ? entry.value : 0), 0);
+
     return (
-      <div className="bg-white p-2 border rounded text-sm shadow">
-        <p className="font-bold">{`${label}年`}</p>
-        {payload.map((entry, index) => (
-          <p key={index} style={{ color: entry.color }}>
-            {entry.name}: ¥{typeof entry.value === 'number' ? entry.value.toLocaleString() : '―'}
-          </p>
-        ))}
-        <hr className="my-1" />
-        <p className="font-semibold">総資産: ¥{total.toLocaleString()}</p>
+      <div className="bg-white p-3 border rounded-lg text-sm shadow-lg">
+        <p className="font-bold text-base mb-2">{`${label}年`}</p>
+        {payload.map((entry) => {
+          const name = entry.name as keyof typeof yearDetails;
+          if (!yearDetails || typeof name !== 'string' || !(name in yearDetails) || name === '現金') {
+            // 現金など、詳細データがない項目
+            return (
+              <div key={entry.name} className="mb-1">
+                <p style={{ color: entry.color }} className="font-semibold">
+                  {entry.name}: ¥{typeof entry.value === 'number' ? entry.value.toLocaleString() : '―'}
+                </p>
+              </div>
+            );
+          }
+
+          const details = yearDetails[name as keyof Omit<DetailedAssetData, 'year'>];
+          const balance = typeof entry.value === 'number' ? entry.value : 0;
+          const principal = details.principal;
+          const gain = balance - principal;
+
+          return (
+            <div key={entry.name} className="mb-2">
+              <p style={{ color: entry.color }} className="font-semibold">
+                {entry.name}: ¥{balance.toLocaleString()}
+              </p>
+              <ul className="pl-4 text-xs text-gray-600">
+                <li>元本: ¥{principal.toLocaleString()}</li>
+                <li>含み益: <span className={gain >= 0 ? 'text-green-600' : 'text-red-600'}>¥{gain.toLocaleString()}</span></li>
+              </ul>
+            </div>
+          );
+        })}
+        <hr className="my-2" />
+        <p className="font-bold">総資産: ¥{total.toLocaleString()}</p>
       </div>
     );
   }
   return null;
 };
 
-export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, retireAge }: TotalAssetChartProps) {
+export default function TotalAssetChart({ enrichedData, detailedAssetData, rankInfo, COLORS, age, retireAge }: TotalAssetChartProps) {
   const retirementYear = enrichedData[0].year + (retireAge - age);
 
   const assetKeys = enrichedData.length > 0
@@ -145,7 +176,7 @@ export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, r
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="year" interval="preserveStartEnd" />
           <YAxis tickFormatter={(v) => `${Math.round(v / 10000)}万円`} />
-          <Tooltip content={<CustomTooltip />} />
+          <Tooltip content={<CustomTooltip detailedAssetData={detailedAssetData} />} />
           <Legend wrapperStyle={{ position: 'relative', top: -15 }} />
           {assetKeys.map((assetKey, index) => (
             <Area

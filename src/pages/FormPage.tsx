@@ -191,6 +191,7 @@ export default function FormPage() {
     investmentOtherCurrent: '',
     investmentStocksAccountType: 'taxable' as 'nisa' | 'taxable',
     investmentTrustAccountType: 'taxable' as 'nisa' | 'taxable',
+    investmentOtherAccountType: 'taxable' as 'nisa' | 'taxable',
     monthlyInvestmentAmounts: { ...initialMonthlyInvestmentAmounts },
     investmentStocksAnnualSpot: '0',
     investmentTrustAnnualSpot: '0',
@@ -368,7 +369,7 @@ export default function FormPage() {
         },
         {
           key: 'other',
-          account: '課税',
+          account: formData.investmentOtherAccountType === 'nisa' ? '非課税' : '課税',
           currentJPY: otherOnlyCurrentYen,
           recurringJPY: yearlyOtherOnlyRecurringYen,
           spotJPY: otherOnlySpotYen,
@@ -2024,6 +2025,8 @@ export default function FormPage() {
                 formData={investmentFormValues}
                 handleInputChange={handleInputChange}
                 monthlyInvestmentAmounts={formData.monthlyInvestmentAmounts}
+                accountTypeFieldName="investmentOtherAccountType"
+                accountTypeValue={formData.investmentOtherAccountType}
               />
             </div>
           </div>

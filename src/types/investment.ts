@@ -13,7 +13,8 @@ export type InvestmentValueField =
 
 export type InvestmentAccountTypeField =
   | 'investmentStocksAccountType'
-  | 'investmentTrustAccountType';
+  | 'investmentTrustAccountType'
+  | 'investmentOtherAccountType';
 
 export type InvestmentMonthlyField = `${InvestmentAssetKey}Monthly`;
 

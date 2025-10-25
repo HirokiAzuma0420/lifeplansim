@@ -1,13 +1,18 @@
-﻿export interface YearlyData {
+﻿export interface AccountBucket {
+  principal: number;
+  balance: number;
+}
+
+export interface YearlyData {
   year: number;
   age: number;
   income: number;
   totalExpense: number;
   savings: number;
-  nisa: number;
-  ideco: number;
+  nisa: AccountBucket;
+  ideco: AccountBucket;
+  taxable: AccountBucket;
   totalAssets: number;
-  investedPrincipal: number;
   assetAllocation: {
     cash: number;
     investment: number;
