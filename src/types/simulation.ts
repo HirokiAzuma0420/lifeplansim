@@ -48,5 +48,6 @@ export interface SimulationInputParams {
 export interface SimulationNavigationState {
   yearlyData: YearlyData[];
   percentileData?: PercentileData;
-  inputParams: SimulationInputParams;
+  inputParams: Record<string, any>;
+  rawFormData?: Record<string, any>;
 }

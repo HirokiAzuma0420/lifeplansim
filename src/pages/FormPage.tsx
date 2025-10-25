@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo, useEffect} from 'react';
+﻿﻿import React, { useState, useMemo, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { YearlyData, SimulationInputParams } from '../types/simulation';
 
@@ -536,7 +536,7 @@ export default function FormPage() {
       }
 
       setResult(null);
-      navigate('/result', { state: { yearlyData: yearly, inputParams: params as SimulationInputParams } });
+      navigate('/result', { state: { yearlyData: yearly, percentileData: data.percentileData, inputParams: params as SimulationInputParams, rawFormData: formData } });
 
     } catch (error: unknown)  {
       console.error(error);
@@ -2250,12 +2250,3 @@ export default function FormPage() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-

@@ -8,7 +8,7 @@ import AssetPieChart from '../components/dashboard/AssetPieChart';
 import AssetTable from '../components/dashboard/AssetTable';
 import { getAssetGrade } from '../assets/getAssetGrade';
 import { buildDashboardDataset } from '../utils/simulation';
-import type { SimulationNavigationState } from '../types/simulation';
+import type { SimulationInputParams, SimulationNavigationState } from '../types/simulation';
 
 // InvestmentProduct 型を ResultPage.tsx にも定義
 type InvestmentProduct = {
@@ -76,11 +76,12 @@ export default function ResultPage() {
 
   const state = location.state as SimulationNavigationState | undefined;
   const rawYearlyData = state?.yearlyData;
-  const percentileData = state?.percentileData;
+  const rawFormData = state?.rawFormData as Record<string, any> | undefined;
   // SimulationInputParams に products を追加
   const yearlyData = useMemo(() => rawYearlyData ?? [], [rawYearlyData]);
-  const inputParams = state?.inputParams as (SimulationNavigationState['inputParams'] & { products?: InvestmentProduct[] }) | undefined;
+  const inputParams = state?.inputParams as (SimulationInputParams & { products?: InvestmentProduct[] }) | undefined;
 
+  const percentileData = state?.percentileData;
   const dataset = useMemo(() => buildDashboardDataset(yearlyData, percentileData), [yearlyData, percentileData]);
   // 商品別内訳（API拡張に対応：存在時のみ表示）
   const latestProducts = useMemo<Record<string, number>>(() => {
@@ -218,7 +219,7 @@ export default function ResultPage() {
             </button>
             <button
               type="button"
-              onClick={() => navigate('/form')}
+              onClick={() => navigate('/form', { state: { rawFormData: rawFormData, sectionIndex: 12 } })}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             >
               条件を修正する
