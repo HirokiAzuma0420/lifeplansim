@@ -367,10 +367,10 @@ function runSimulation(params: InputParams): YearlyData[] {
     productBalances[productId] = { principal: current, balance: current };
   });
 
-  // NISAの累計投資額を初期化。初年度の按分を考慮する。
+  // NISAの累計投資額を初期化。初期元本を累計に含める。
   let cumulativeNisaContribution = productList
     .filter(p => p.account === '非課税')
-    .reduce((sum, p) => sum + n(p.currentJPY), 0) * (firstYearRemainingMonths / 12);
+    .reduce((sum, p) => sum + n(p.currentJPY), 0);
 
   const idecoCashOutAge = Math.min(params.retirementAge, 75);
 
