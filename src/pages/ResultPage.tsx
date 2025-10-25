@@ -1,4 +1,4 @@
-﻿﻿import { useMemo, useCallback } from 'react';
+﻿﻿import { useMemo, useCallback, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import IncomePositionChart from '../components/dashboard/IncomePositionChart';
 import SavingsPositionChart from '../components/dashboard/SavingsPositionChart';
@@ -31,6 +31,23 @@ const COLORS = {
   仮想通貨: '#FBBF24',
   その他: '#6B7280',
 };
+
+// FormPage.tsxからセクション定義を移植
+const sections = [
+  '家族構成',
+  '現在の収入',
+  '現在の支出',
+  'ライフイベント - 車',
+  'ライフイベント - 家',
+  'ライフイベント - 結婚',
+  'ライフイベント - 子供',
+  'ライフイベント - 生活',
+  'ライフイベント - 親の介護',
+  'ライフイベント - 老後',
+  '貯蓄',
+  '投資',
+  'シミュレーション設定',
+];
 
 const formatCurrency = (value: number): string => `¥${Math.round(value).toLocaleString()}`;
 const formatPercent = (value: number): string => `${(value * 100).toFixed(1)}%`;
@@ -76,6 +93,7 @@ export default function ResultPage() {
   const location = useLocation();
 
   const state = location.state as SimulationNavigationState | undefined;
+  const [showSectionModal, setShowSectionModal] = useState(false);
   const rawYearlyData = state?.yearlyData;
   const rawFormData = state?.rawFormData as Record<string, any> | undefined;
   // SimulationInputParams に products を追加
@@ -220,7 +238,7 @@ export default function ResultPage() {
             </button>
             <button
               type="button"
-              onClick={() => navigate('/form', { state: { rawFormData: rawFormData, sectionIndex: 12 } })}
+              onClick={() => setShowSectionModal(true)}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             >
               条件を修正する
@@ -306,6 +324,34 @@ export default function ResultPage() {
           </div>
         </div>
       </div>
+      {showSectionModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+            <h2 className="text-lg font-semibold mb-4">どのセクションに戻りますか？</h2>
+            <ul className="space-y-2 max-h-64 overflow-y-auto">
+              {sections.map((section, i) => (
+                <li key={i}>
+                  <button
+                    onClick={() => {
+                      navigate('/form', { state: { rawFormData: rawFormData, sectionIndex: i } });
+                      setShowSectionModal(false);
+                    }}
+                    className="w-full text-left px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded"
+                  >
+                    {section}
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <button
+              onClick={() => setShowSectionModal(false)}
+              className="mt-4 px-4 py-2 text-sm text-gray-600 hover:text-gray-900 underline"
+            >
+              キャンセル
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

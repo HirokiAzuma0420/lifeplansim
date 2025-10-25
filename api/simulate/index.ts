@@ -537,35 +537,34 @@ function runSimulation(params: InputParams): YearlyData[] {
 
     // --- 3. 投資の計算 (拠出と成長) ---
     let totalInvestmentOutflow = 0;
-    if (currentAge < params.retirementAge) {
-      let remainingNisaAllowance = Math.max(0, NISA_CONTRIBUTION_CAP - cumulativeNisaContribution);
+    const canInvest = currentAge < params.retirementAge;
+    let remainingNisaAllowance = Math.max(0, NISA_CONTRIBUTION_CAP - cumulativeNisaContribution);
 
-      productList.forEach((p, index) => {
-        const productId = `${p.key}-${index}`;
-        const recur = n(p.recurringJPY);
-        const spot = n(p.spotJPY);
-        const contribution = (recur + spot) * yearFraction;
+    productList.forEach((p, index) => {
+      if (!canInvest) return;
 
-        if (p.account === '非課税') {
-          const allowed = Math.min(contribution, remainingNisaAllowance);
-          productBalances[productId].principal += allowed;
-          productBalances[productId].balance += allowed;
+      const productId = `${p.key}-${index}`;
+      const recur = n(p.recurringJPY);
+      const spot = n(p.spotJPY);
+      const contribution = (recur + spot) * yearFraction;
 
-          cumulativeNisaContribution += allowed;
-          totalInvestmentOutflow += allowed;
-        } else if (p.account === 'iDeCo' && currentAge < idecoCashOutAge) {
-          productBalances[productId].principal += contribution;
-          productBalances[productId].balance += contribution;
-
-          totalInvestmentOutflow += contribution;
-        } else if (p.account === '課税') {
-          productBalances[productId].principal += contribution;
-          productBalances[productId].balance += contribution;
-
-          totalInvestmentOutflow += contribution;
-        }
-      });
-    }
+      if (p.account === '非課税') {
+        const allowed = Math.min(contribution, remainingNisaAllowance);
+        productBalances[productId].principal += allowed;
+        productBalances[productId].balance += allowed;
+        cumulativeNisaContribution += allowed;
+        totalInvestmentOutflow += allowed;
+        remainingNisaAllowance -= allowed;
+      } else if (p.account === 'iDeCo' && currentAge < idecoCashOutAge) {
+        productBalances[productId].principal += contribution;
+        productBalances[productId].balance += contribution;
+        totalInvestmentOutflow += contribution;
+      } else if (p.account === '課税') {
+        productBalances[productId].principal += contribution;
+        productBalances[productId].balance += contribution;
+        totalInvestmentOutflow += contribution;
+      }
+    });
 
     // 資産の成長（商品ごと）
     productList.forEach((p, index) => {
