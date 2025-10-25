@@ -206,26 +206,40 @@ function generateNormalRandom(mean: number, stdDev: number): number {
 }
 
 /**
- * Generates a series of annual returns for a given number of years.
+ * Generates a series of annual returns for a given number of years, ensuring the arithmetic mean of the series matches the target.
  * @param averageReturn The expected average geometric mean return (e.g., 0.05 for 5%).
  * @param volatility The volatility (standard deviation) of the return (e.g., 0.15 for 15%).
  * @param years The number of years to generate returns for.
- * @returns An array of annual returns.
+ * @returns An array of annual returns, corrected to match the target mean.
  */
 function generateReturnSeries(
   averageReturn: number,
   volatility: number,
   years: number
 ): number[] {
-  const returns: number[] = [];
-  // Convert geometric mean to arithmetic mean for the random walk
-  const arithmeticMean = averageReturn + (volatility ** 2) / 2;
+  if (years <= 0) return [];
 
+  // 1. 目標とする算術平均を計算 (幾何平均からの変換)
+  const targetArithmeticMean = averageReturn + (volatility ** 2) / 2;
+
+  // 2. ひとまずランダムなリターン系列を生成
+  const returns: number[] = [];
   for (let i = 0; i < years; i++) {
-    const yearReturn = generateNormalRandom(arithmeticMean, volatility);
+    // 平均0の乱数を生成し、後でシフトする方が数値的に安定することがあるが、ここでは直接生成する
+    const yearReturn = generateNormalRandom(targetArithmeticMean, volatility);
     returns.push(yearReturn);
   }
-  return returns;
+
+  // 3. 生成された系列の実績の算術平均を計算
+  const actualMean = returns.reduce((sum, val) => sum + val, 0) / years;
+
+  // 4. 目標平均と実績平均の差分を計算
+  const correction = targetArithmeticMean - actualMean;
+
+  // 5. 各リターン値に差分を加えて補正する
+  const correctedReturns = returns.map(r => r + correction);
+
+  return correctedReturns;
 }
 
 function isInputParamsBody(x: unknown): x is { inputParams: InputParams } {
