@@ -10,6 +10,7 @@ interface TotalAssetChartProps {
   COLORS: { [key: string]: string };
   age: number;
   retireAge: number;
+  yAxisMax: number;
 }
 
 // Rechartsから渡されるカスタムラベルのpropsの型
@@ -67,7 +68,7 @@ const CustomTooltip = ({ active, payload, label, detailedAssetData }: TooltipPro
   return null;
 };
 
-export default function TotalAssetChart({ enrichedData, detailedAssetData, rankInfo, COLORS, age, retireAge }: TotalAssetChartProps) {
+export default function TotalAssetChart({ enrichedData, detailedAssetData, rankInfo, COLORS, age, retireAge, yAxisMax }: TotalAssetChartProps) {
   const retirementYear = enrichedData[0].year + (retireAge - age);
 
   const assetKeys = enrichedData.length > 0
@@ -175,11 +176,11 @@ export default function TotalAssetChart({ enrichedData, detailedAssetData, rankI
         <AreaChart data={enrichedData} stackOffset="none" margin={{ top: 80, right: 30, left: 50, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="year" interval="preserveStartEnd" />
-          <YAxis
-            type="number" // Y軸が数値を扱うことを明示
+          <YAxis // domain を削除し、Rechartsの自動計算に任せる
+            type="number"
             tickFormatter={(v) => `${Math.round(v / 10000)}万円`} // 単位を万円に
-            tickCount={8} // 目盛りの数を調整
             allowDecimals={false} // 小数点を非表示に
+            domain={[0, yAxisMax * 1.1]}
           />
           <Tooltip content={<CustomTooltip detailedAssetData={detailedAssetData} />} />
           <Legend wrapperStyle={{ position: 'relative', top: -15 }} />

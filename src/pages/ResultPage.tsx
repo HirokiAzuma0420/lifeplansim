@@ -1,4 +1,4 @@
-﻿import { useMemo, useCallback } from 'react';
+﻿﻿import { useMemo, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import IncomePositionChart from '../components/dashboard/IncomePositionChart';
 import SavingsPositionChart from '../components/dashboard/SavingsPositionChart';
@@ -89,13 +89,13 @@ export default function ResultPage() {
     return (entry['現金'] || 0) + (entry['NISA'] || 0) + (entry['iDeCo'] || 0) + (entry['課税口座'] || 0);
   };
 
-  const firstYearTotal = calculateDisplayTotal(dataset.enrichedData[0]);
-  const latestTotal = calculateDisplayTotal(dataset.enrichedData[dataset.enrichedData.length - 1]);
-  const growthAmount = latestTotal - firstYearTotal;
-  const peakAssetValue = dataset.enrichedData.reduce((max, entry) => {
+  const firstYearTotal = calculateDisplayTotal(dataset.enrichedData[0]) || 0;
+  const latestTotal = calculateDisplayTotal(dataset.enrichedData[dataset.enrichedData.length - 1]) || 0;
+  const growthAmount = latestTotal - firstYearTotal || 0;
+  const peakAssetValue = Math.max(0, ...dataset.enrichedData.map(entry => {
     const currentTotal = calculateDisplayTotal(entry);
-    return Math.max(max, currentTotal);
-  }, Number.NEGATIVE_INFINITY);
+    return currentTotal;
+  }));
 
   const incomeForChart = dataset.firstYear?.income ?? 0;
   const savingsForChart = dataset.firstYear?.totalAssets ?? 0;
@@ -206,6 +206,7 @@ export default function ResultPage() {
               COLORS={COLORS}
               age={currentAge}
               retireAge={retireAge}
+              yAxisMax={peakAssetValue}
             />
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
