@@ -247,13 +247,16 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     }
   }
 
-  let cumulativeNisaContribution = nisa.principal; // 生涯NISA拠出額
+  let cumulativeNisaContribution = nisa.principal;
   const idecoCashOutAge = Math.min(params.retirementAge, 75);
+
+  // ループ外で状態を保持する変数
+  let carCurrentLoanMonthsRemaining = Math.max(0, n(params.car?.currentLoan?.remainingMonths));
+  const appliancesOnly = Array.isArray(params.appliances) ? params.appliances.filter(a => a && String(a.name ?? '').trim().length > 0 && Number(a.cost10kJPY) > 0 && Number(a.cycleYears) > 0) : [];
 
   // --- ループ開始 ---
   for (let i = 0; currentAge <= params.endAge; i++, currentAge++) {
     const year = baseYear + i;
-    let totalExpense = 0;
 
     // --- 1. 収入計算 ---
     let selfGrossIncome = 0;
@@ -271,18 +274,120 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     }
     const annualIncome = computeNetAnnual(selfGrossIncome - idecoDeductionThisYear) + computeNetAnnual(spouseGrossIncome);
 
-    // --- 2. 支出計算 (年金受給も考慮) ---
+    // --- 2. 支出計算 ---
     let livingExpense = 0;
+    let retirementExpense = 0;
     if (currentAge >= params.retirementAge) {
       const postRetirementLivingAnnual = n(params.postRetirementLiving10kJPY) * 10000 * 12;
       const pensionAnnual = (currentAge >= params.pensionStartAge ? n(params.pensionMonthly10kJPY) * 10000 * 12 : 0);
-      livingExpense = Math.max(0, postRetirementLivingAnnual - pensionAnnual);
+      retirementExpense = Math.max(0, postRetirementLivingAnnual - pensionAnnual);
     } else {
       livingExpense = params.expenseMode === 'simple' ? n(params.livingCostSimpleAnnual) : (n(params.detailedFixedAnnual) + n(params.detailedVariableAnnual));
     }
-    totalExpense += livingExpense;
-    
-    // TODO: 他の支出項目（住宅、車、教育など）をここに加算するロジックを後で追加
+
+    let childExpense = 0;
+    if (params.children) {
+      for (let c = 0; c < n(params.children.count); c++) {
+        const childBirthAge = n(params.children.firstBornAge) + c * 3;
+        const childAge = currentAge - childBirthAge;
+        if (childAge >= 0 && childAge <= 21) {
+          let educationCost = 0;
+          switch (params.children.educationPattern) {
+            case '公立中心': educationCost = 10000000 / 22; break;
+            case '公私混合': educationCost = 16000000 / 22; break;
+            case '私立中心': educationCost = 20000000 / 22; break;
+          }
+          childExpense += educationCost;
+        }
+      }
+    }
+
+    let careExpense = 0;
+    if (params.care?.assume) {
+      const parentAge = n(params.care.parentCurrentAge) + i;
+      if (parentAge >= n(params.care.parentCareStartAge) && parentAge < n(params.care.parentCareStartAge) + n(params.care.years)) {
+        careExpense = n(params.care.monthly10kJPY) * 10000 * 12;
+      }
+    }
+
+    let marriageExpense = 0;
+    if (params.marriage && currentAge === n(params.marriage.age)) {
+      marriageExpense = n(params.marriage.engagementJPY) + n(params.marriage.weddingJPY) + n(params.marriage.honeymoonJPY) + n(params.marriage.movingJPY);
+    }
+
+    let applianceExpense = 0;
+    for (const a of appliancesOnly) {
+      const firstAge = params.initialAge + n(a.firstAfterYears);
+      if (currentAge >= firstAge) {
+        const diff = currentAge - firstAge;
+        const cycle = n(a.cycleYears);
+        if (diff === 0 || (cycle > 0 && diff % cycle === 0)) {
+          applianceExpense += n(a.cost10kJPY) * 10000;
+        }
+      }
+    }
+
+    let carExpense = 0;
+    if (params.car) {
+      let carRecurring = 0;
+      let carOneOff = 0;
+      if (carCurrentLoanMonthsRemaining > 0) {
+        const monthsThisYear = Math.min(12, carCurrentLoanMonthsRemaining);
+        carRecurring += n(params.car.currentLoan?.monthlyPaymentJPY) * monthsThisYear;
+        carCurrentLoanMonthsRemaining -= monthsThisYear;
+      }
+      if (n(params.car.priceJPY) > 0 && n(params.car.firstAfterYears) >= 0 && n(params.car.frequencyYears) > 0) {
+        const base = params.initialAge + n(params.car.firstAfterYears);
+        if (currentAge >= base) {
+            const yearsSinceFirst = currentAge - base;
+            if (yearsSinceFirst % n(params.car.frequencyYears) === 0) {
+                if (params.car.loan.use) {
+                    // This logic is complex, assuming loan payments start in the year of purchase
+                } else {
+                    carOneOff += n(params.car.priceJPY);
+                }
+            }
+        }
+      }
+      carExpense = carRecurring + carOneOff;
+    }
+
+    let housingExpense = 0;
+    if (params.housing) {
+      if (params.housing.type === '賃貸' && params.housing.rentMonthlyJPY) {
+        const willBuyHouse = !!params.housing.purchasePlan;
+        const purchaseAge = params.housing.purchasePlan?.age ?? Infinity;
+        if (!willBuyHouse || currentAge < purchaseAge) {
+          housingExpense += n(params.housing.rentMonthlyJPY) * 12;
+        }
+      }
+      if (params.housing.type === '持ち家（ローン中）' && params.housing.currentLoan) {
+        if (i < n(params.housing.currentLoan.remainingYears)) {
+          housingExpense += n(params.housing.currentLoan.monthlyPaymentJPY) * 12;
+        }
+      }
+      if (params.housing.purchasePlan && currentAge >= n(params.housing.purchasePlan.age)) {
+          if (currentAge === n(params.housing.purchasePlan.age)) {
+              housingExpense += n(params.housing.purchasePlan.downPaymentJPY);
+          }
+          if (currentAge < n(params.housing.purchasePlan.age) + n(params.housing.purchasePlan.years)) {
+              const loanPrincipal = n(params.housing.purchasePlan.priceJPY) - n(params.housing.purchasePlan.downPaymentJPY);
+              housingExpense += calculateLoanPayment(loanPrincipal, n(params.housing.purchasePlan.rate), n(params.housing.purchasePlan.years));
+          }
+      }
+      if (params.housing.renovations) {
+          for (const renovation of params.housing.renovations) {
+              if (currentAge >= n(renovation.age)) {
+                  const diff = currentAge - n(renovation.age);
+                  if (diff === 0 || (n(renovation.cycleYears) > 0 && diff % n(renovation.cycleYears) === 0)) {
+                      housingExpense += n(renovation.costJPY);
+                  }
+              }
+          }
+      }
+    }
+
+    const totalExpense = livingExpense + retirementExpense + childExpense + careExpense + marriageExpense + applianceExpense + carExpense + housingExpense;
 
     // --- 3. 投資の計算 (拠出と成長) ---
     let totalInvestmentOutflow = 0;

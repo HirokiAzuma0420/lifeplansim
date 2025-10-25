@@ -1,13 +1,13 @@
 {
   "familyComposition": "既婚",
-  "personAge": "37",
-  "spouseAge": "46",
-  "mainIncome": "680",
-  "spouseMainIncome": "280",
+  "personAge": "35",
+  "spouseAge": "43",
+  "mainIncome": "420",
+  "spouseMainIncome": "250",
   "sideJobIncome": "0",
   "spouseSideJobIncome": "0",
   "expenseMethod": "簡単",
-  "livingCostSimple": "300000",
+  "livingCostSimple": "210000",
   "housingCost": "",
   "utilitiesCost": "",
   "communicationCost": "",
@@ -26,26 +26,14 @@
   "carPrice": "350",
   "carReplacementFrequency": "10",
   "carLoanUsage": "はい",
-  "carLoanYears": "5",
+  "carLoanYears": "7",
   "carLoanType": "銀行ローン",
   "housingType": "賃貸",
   "carCurrentLoanInPayment": "yes",
   "carCurrentLoanMonthly": "29600",
-  "carCurrentLoanRemainingMonths": "24",
-  "housePurchasePlan": {
-    "age": 51,
-    "price": 1500,
-    "downPayment": 500,
-    "loanYears": 10,
-    "interestRate": 1.5
-  },
-  "houseRenovationPlans": [
-    {
-      "age": 70,
-      "cost": 150,
-      "cycleYears": 10
-    }
-  ],
+  "carCurrentLoanRemainingMonths": "36",
+  "housePurchasePlan": null,
+  "houseRenovationPlans": [],
   "housePurchaseAge": "",
   "housePurchasePrice": "",
   "headDownPayment": "",
@@ -67,43 +55,44 @@
   "numberOfChildren": "",
   "firstBornAge": "",
   "educationPattern": "",
-  "currentRentLoanPayment": "61000",
+  "currentRentLoanPayment": "76000",
   "otherLargeExpenses": "",
-  "parentCurrentAge": "75",
+  "parentCurrentAge": "72",
   "parentCareStartAge": "85",
   "parentCareAssumption": "はい",
-  "parentCareMonthlyCost": "5",
+  "parentCareMonthlyCost": "10",
   "parentCareYears": "5",
   "retirementAge": "65",
-  "postRetirementLivingCost": "30",
+  "postRetirementLivingCost": "27",
   "pensionStartAge": "65",
-  "pensionAmount": "22",
-  "currentSavings": "550",
+  "pensionAmount": "18",
+  "currentSavings": "600",
   "monthlySavings": "20000",
   "hasInvestment": "",
-  "investmentStocksCurrent": "220",
-  "investmentTrustCurrent": "445",
+  "investmentStocksCurrent": "100",
+  "investmentTrustCurrent": "",
   "investmentBondsCurrent": "",
-  "investmentIdecoCurrent": "55",
+  "investmentIdecoCurrent": "",
   "investmentCryptoCurrent": "",
   "investmentOtherCurrent": "",
   "investmentStocksAccountType": "taxable",
-  "investmentTrustAccountType": "nisa",
+  "investmentTrustAccountType": "taxable",
+  "investmentOtherAccountType": "taxable",
   "monthlyInvestmentAmounts": {
     "investmentStocksMonthly": "0",
-    "investmentTrustMonthly": "140000",
+    "investmentTrustMonthly": "0",
     "investmentBondsMonthly": "0",
-    "investmentIdecoMonthly": "20000",
+    "investmentIdecoMonthly": "0",
     "investmentCryptoMonthly": "0",
     "investmentOtherMonthly": "0"
   },
-  "investmentStocksAnnualSpot": "0",
-  "investmentTrustAnnualSpot": "300000",
+  "investmentStocksAnnualSpot": "100000",
+  "investmentTrustAnnualSpot": "0",
   "investmentBondsAnnualSpot": "0",
   "investmentIdecoAnnualSpot": "0",
   "investmentCryptoAnnualSpot": "0",
   "investmentOtherAnnualSpot": "0",
-  "investmentStocksRate": "6.0",
+  "investmentStocksRate": "5.0",
   "investmentTrustRate": "4.0",
   "investmentBondsRate": "1.0",
   "investmentIdecoRate": "4.0",
@@ -118,37 +107,37 @@
       "name": "冷蔵庫",
       "cycle": 10,
       "cost": 15,
-      "firstReplacementAfterYears": "10"
+      "firstReplacementAfterYears": "8"
     },
     {
       "name": "洗濯機",
       "cycle": 8,
       "cost": 12,
-      "firstReplacementAfterYears": "10"
+      "firstReplacementAfterYears": "8"
     },
     {
       "name": "エアコン",
       "cycle": 10,
       "cost": 10,
-      "firstReplacementAfterYears": "10"
+      "firstReplacementAfterYears": "8"
     },
     {
       "name": "テレビ",
       "cycle": 10,
       "cost": 8,
-      "firstReplacementAfterYears": "10"
+      "firstReplacementAfterYears": "8"
     },
     {
       "name": "電子レンジ",
       "cycle": 8,
       "cost": 3,
-      "firstReplacementAfterYears": "10"
+      "firstReplacementAfterYears": "8"
     },
     {
       "name": "掃除機",
       "cycle": 6,
       "cost": 2,
-      "firstReplacementAfterYears": "10"
+      "firstReplacementAfterYears": "8"
     }
   ]
 }
