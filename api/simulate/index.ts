@@ -311,7 +311,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     productBalances[productId] = { principal: current, balance: current };
   });
 
-  let cumulativeNisaContribution = nisa.principal;
+  let cumulativeNisaContribution = 0;
   const idecoCashOutAge = Math.min(params.retirementAge, 75);
 
   // ループ外で状態を保持する変数
@@ -337,6 +337,21 @@ export default async function (req: VercelRequest, res: VercelResponse) {
       });
     }
     const annualIncome = computeNetAnnual(selfGrossIncome - idecoDeductionThisYear) + computeNetAnnual(spouseGrossIncome);
+
+    // iDeCoの現金化 (60-75歳)
+    // 支出や投資の拠出より先に処理することで、現金化の年に意図せず拠出されるのを防ぐ
+    if (currentAge === idecoCashOutAge) {
+      savings += ideco.balance;
+      ideco.principal = 0;
+      ideco.balance = 0;
+      // iDeCo関連の商品別残高もすべてリセットする
+      productList.forEach((p, index) => {
+        if (p.account === 'iDeCo') {
+          const productId = `${p.key}-${index}`;
+          productBalances[productId] = { principal: 0, balance: 0 };
+        }
+      });
+    }
 
     // --- 2. 支出計算 ---
     let livingExpense = 0;
@@ -524,13 +539,6 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     const annualSavings = currentAge < params.retirementAge ? (n(params.monthlySavingsJPY) * 12) : 0;
     const cashFlow = annualIncome - totalExpense - totalInvestmentOutflow + annualSavings;
     savings += cashFlow;
-
-    // iDeCoの現金化 (60-75歳)
-    if (currentAge === idecoCashOutAge) {
-      savings += ideco.balance;
-      ideco.principal = 0;
-      ideco.balance = 0;
-    }
 
     // 生活防衛資金の補填ロジック
     if (savings < n(params.emergencyFundJPY)) {

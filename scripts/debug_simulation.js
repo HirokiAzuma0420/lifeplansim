@@ -147,6 +147,17 @@ function runSimulation(params) {
         cumulativeNisaContribution = nisa.principal;
     }
 
+    if (currentAge === idecoCashOutAge) {
+        savings += ideco.balance;
+        ideco.principal = 0;
+        ideco.balance = 0;
+        productList.forEach((p, index) => {
+            if (p.account === 'iDeCo') {
+                const productId = `${p.key}-${index}`;
+                productBalances[productId] = { principal: 0, balance: 0 };
+            }
+        });
+    }
     const annualIncome = (currentAge < params.retirementAge) ? (n(params.mainJobIncomeGross) + n(params.spouseMainJobIncomeGross)) : 0;
     const totalExpense = (currentAge < params.retirementAge) ? n(params.livingCostSimpleAnnual) : (200000 * 12); // Simplified
 
