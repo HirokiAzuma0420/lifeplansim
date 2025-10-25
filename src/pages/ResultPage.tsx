@@ -24,6 +24,42 @@ const COLORS = {
 const formatCurrency = (value: number): string => `¥${Math.round(value).toLocaleString()}`;
 const formatPercent = (value: number): string => `${(value * 100).toFixed(1)}%`;
 
+// FormPage.tsxから computeNetAnnual 関数を移植
+function computeNetAnnual(grossAnnualIncome: number): number {
+  const n = (v: unknown): number => {
+    const num = Number(v);
+    return isFinite(num) ? num : 0;
+  };
+
+  const income = n(grossAnnualIncome);
+
+  let salaryIncomeDeduction: number;
+  if (income <= 1625000) { salaryIncomeDeduction = 550000; }
+  else if (income <= 1800000) { salaryIncomeDeduction = income * 0.4 - 100000; }
+  else if (income <= 3600000) { salaryIncomeDeduction = income * 0.3 + 80000; }
+  else if (income <= 6600000) { salaryIncomeDeduction = income * 0.2 + 440000; }
+  else if (income <= 8500000) { salaryIncomeDeduction = income * 0.1 + 1100000; }
+  else { salaryIncomeDeduction = 1950000; }
+
+  const socialInsurancePremium = income * 0.15;
+  const basicDeduction = 480000;
+  const taxableIncome = Math.max(0, income - salaryIncomeDeduction - socialInsurancePremium - basicDeduction);
+
+  let incomeTax: number;
+  if (taxableIncome <= 1950000) { incomeTax = taxableIncome * 0.05; }
+  else if (taxableIncome <= 3300000) { incomeTax = taxableIncome * 0.1 - 97500; }
+  else if (taxableIncome <= 6950000) { incomeTax = taxableIncome * 0.2 - 427500; }
+  else if (taxableIncome <= 9000000) { incomeTax = taxableIncome * 0.23 - 636000; }
+  else if (taxableIncome <= 18000000) { incomeTax = taxableIncome * 0.33 - 1536000; }
+  else if (taxableIncome <= 40000000) { incomeTax = taxableIncome * 0.4 - 2796000; }
+  else { incomeTax = taxableIncome * 0.45 - 4796000; }
+
+  const residentTax = taxableIncome * 0.1 + 5000;
+  const netAnnualIncome = income - socialInsurancePremium - incomeTax - residentTax;
+
+  return Math.max(0, netAnnualIncome);
+}
+
 export default function ResultPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -97,12 +133,19 @@ export default function ResultPage() {
     return currentTotal;
   }));
 
-  const incomeForChart = dataset.firstYear?.income ?? 0;
+  // 収入偏差値グラフ用に、按分されていない「本人」の手取り年収を計算
+  const selfGrossIncome = (inputParams.mainJobIncomeGross ?? 0) + (inputParams.sideJobIncomeGross ?? 0);
+  const selfNetAnnualIncome = computeNetAnnual(selfGrossIncome);
+
+  // サマリー表示用に、按分されていない「世帯」の手取り年収を計算
+  const spouseGrossIncome = (inputParams.spouseMainJobIncomeGross ?? 0) + (inputParams.spouseSideJobIncomeGross ?? 0);
+  const totalNetAnnualIncome = selfNetAnnualIncome + computeNetAnnual(spouseGrossIncome);
+
   const savingsForChart = dataset.firstYear?.totalAssets ?? 0;
 
   const rankInfo = getAssetGrade(latestTotal);
 
-  const annualInvestment = inputParams.yearlyRecurringInvestmentJPY + inputParams.yearlySpotJPY;
+  const annualInvestment = (inputParams.yearlyRecurringInvestmentJPY ?? 0) + (inputParams.yearlySpotJPY ?? 0);
 
   // latestProducts は上部でメモ化済み
 
@@ -187,16 +230,16 @@ export default function ResultPage() {
               <ul className="space-y-1 text-sm text-gray-700">
                 <li>現在年齢: {currentAge} 歳</li>
                 <li>退職予定: {retireAge} 歳</li>
-                <li>年間手取り: {formatCurrency(incomeForChart)}</li>
-                <li>初期積立額: {formatCurrency(savingsForChart)}</li>
+                <li>年間手取り: {formatCurrency(totalNetAnnualIncome)}</li>
+                <li>初期資産額: {formatCurrency(savingsForChart)}</li>
               </ul>
             </div>
           </div>
 
           <div className="lg:col-span-3 space-y-6">
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-              <IncomePositionChart age={currentAge} income={incomeForChart} />
-              <SavingsPositionChart age={currentAge} income={incomeForChart} savings={savingsForChart} />
+              <IncomePositionChart age={currentAge} income={selfNetAnnualIncome} />
+              <SavingsPositionChart age={currentAge} income={selfNetAnnualIncome} savings={savingsForChart} />
             </div>
 
             <TotalAssetChart

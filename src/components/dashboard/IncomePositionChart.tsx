@@ -163,7 +163,7 @@ export default function IncomePositionChart({ age, income }: IncomePositionChart
   return (
     <div className="bg-white rounded-xl shadow p-4 mb-6">
       <h3 className="text-lg font-semibold mb-2">
-        年齢 {age} 歳における年間収入の位置<br />
+        年間収入の位置（{age}歳時点・本人）<br />
         <span className="text-sm text-gray-600">
           あなたの収入は同年代の中で <strong className="text-blue-600">上位 {topPercent}%</strong> に位置しています
         </span>
