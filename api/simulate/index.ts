@@ -275,7 +275,11 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   // --- シミュレーション準備 ---
   const yearlyData: YearlyData[] = [];
   let currentAge = params.initialAge;
-  const baseYear = new Date().getFullYear();
+
+  const now = new Date();
+  const baseYear = now.getFullYear();
+  const startMonth = now.getMonth(); // 0-indexed (0-11)
+  const firstYearRemainingMonths = 12 - startMonth;
   const productList: InvestmentProduct[] = Array.isArray(params.products) ? params.products : [];
 
   // ストレステスト用のリターン系列を事前に生成
@@ -322,18 +326,21 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   for (let i = 0; currentAge <= params.endAge; i++, currentAge++) {
     const year = baseYear + i;
 
+    // 初年度は残り月数で按分、2年目以降は1年分として計算
+    const yearFraction = (i === 0) ? firstYearRemainingMonths / 12 : 1;
+
     // --- 1. 収入計算 ---
     let selfGrossIncome = 0;
     let spouseGrossIncome = 0;
     if (currentAge < params.retirementAge) {
-      selfGrossIncome = n(params.mainJobIncomeGross) * Math.pow(1 + n(params.incomeGrowthRate), i) + n(params.sideJobIncomeGross);
-      spouseGrossIncome = (n(params.spouseMainJobIncomeGross) ?? 0) * Math.pow(1 + (n(params.spouseIncomeGrowthRate) ?? 0), i) + (n(params.spouseSideJobIncomeGross) ?? 0);
+      selfGrossIncome = (n(params.mainJobIncomeGross) * Math.pow(1 + n(params.incomeGrowthRate), i) + n(params.sideJobIncomeGross)) * yearFraction;
+      spouseGrossIncome = ((n(params.spouseMainJobIncomeGross) ?? 0) * Math.pow(1 + (n(params.spouseIncomeGrowthRate) ?? 0), i) + (n(params.spouseSideJobIncomeGross) ?? 0)) * yearFraction;
     }
 
     let idecoDeductionThisYear = 0;
     if (currentAge < idecoCashOutAge) {
       productList.filter(p => p.account === 'iDeCo').forEach(p => {
-        idecoDeductionThisYear += n(p.recurringJPY) + n(p.spotJPY);
+        idecoDeductionThisYear += (n(p.recurringJPY) + n(p.spotJPY)) * yearFraction;
       });
     }
     const annualIncome = computeNetAnnual(selfGrossIncome - idecoDeductionThisYear) + computeNetAnnual(spouseGrossIncome);
@@ -357,11 +364,11 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     let livingExpense = 0;
     let retirementExpense = 0;
     if (currentAge >= params.retirementAge) {
-      const postRetirementLivingAnnual = n(params.postRetirementLiving10kJPY) * 10000 * 12;
+      const postRetirementLivingAnnual = n(params.postRetirementLiving10kJPY) * 10000 * 12 * yearFraction;
       const pensionAnnual = (currentAge >= params.pensionStartAge ? n(params.pensionMonthly10kJPY) * 10000 * 12 : 0);
       retirementExpense = Math.max(0, postRetirementLivingAnnual - pensionAnnual);
     } else {
-      livingExpense = params.expenseMode === 'simple' ? n(params.livingCostSimpleAnnual) : (n(params.detailedFixedAnnual) + n(params.detailedVariableAnnual));
+      livingExpense = (params.expenseMode === 'simple' ? n(params.livingCostSimpleAnnual) : (n(params.detailedFixedAnnual) + n(params.detailedVariableAnnual))) * yearFraction;
     }
 
     let childExpense = 0;
@@ -376,7 +383,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
             case '公私混合': educationCost = 16000000 / 22; break;
             case '私立中心': educationCost = 20000000 / 22; break;
           }
-          childExpense += educationCost;
+          childExpense += educationCost * yearFraction;
         }
       }
     }
@@ -385,13 +392,13 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     if (params.care?.assume) {
       const parentAge = n(params.care.parentCurrentAge) + i;
       if (parentAge >= n(params.care.parentCareStartAge) && parentAge < n(params.care.parentCareStartAge) + n(params.care.years)) {
-        careExpense = n(params.care.monthly10kJPY) * 10000 * 12;
+        careExpense = n(params.care.monthly10kJPY) * 10000 * 12 * yearFraction;
       }
     }
 
     let marriageExpense = 0;
     if (params.marriage && currentAge === n(params.marriage.age)) {
-      marriageExpense = n(params.marriage.engagementJPY) + n(params.marriage.weddingJPY) + n(params.marriage.honeymoonJPY) + n(params.marriage.movingJPY);
+      marriageExpense = (n(params.marriage.engagementJPY) + n(params.marriage.weddingJPY) + n(params.marriage.honeymoonJPY) + n(params.marriage.movingJPY)) * yearFraction;
     }
 
     let applianceExpense = 0;
@@ -412,7 +419,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
       let carOneOff = 0;
       if (carCurrentLoanMonthsRemaining > 0) {
         const monthsThisYear = Math.min(12, carCurrentLoanMonthsRemaining);
-        carRecurring += n(params.car.currentLoan?.monthlyPaymentJPY) * monthsThisYear;
+        carRecurring += n(params.car.currentLoan?.monthlyPaymentJPY) * Math.min(monthsThisYear, firstYearRemainingMonths);
         carCurrentLoanMonthsRemaining -= monthsThisYear;
       }
       if (n(params.car.priceJPY) > 0 && n(params.car.firstAfterYears) >= 0 && n(params.car.frequencyYears) > 0) {
@@ -437,12 +444,12 @@ export default async function (req: VercelRequest, res: VercelResponse) {
         const willBuyHouse = !!params.housing.purchasePlan;
         const purchaseAge = params.housing.purchasePlan?.age ?? Infinity;
         if (!willBuyHouse || currentAge < purchaseAge) {
-          housingExpense += n(params.housing.rentMonthlyJPY) * 12;
+          housingExpense += n(params.housing.rentMonthlyJPY) * 12 * yearFraction;
         }
       }
       if (params.housing.type === '持ち家（ローン中）' && params.housing.currentLoan) {
         if (i < n(params.housing.currentLoan.remainingYears)) {
-          housingExpense += n(params.housing.currentLoan.monthlyPaymentJPY) * 12;
+          housingExpense += n(params.housing.currentLoan.monthlyPaymentJPY) * 12 * yearFraction;
         }
       }
       if (params.housing.purchasePlan && currentAge >= n(params.housing.purchasePlan.age)) {
@@ -451,7 +458,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
           }
           if (currentAge < n(params.housing.purchasePlan.age) + n(params.housing.purchasePlan.years)) {
               const loanPrincipal = n(params.housing.purchasePlan.priceJPY) - n(params.housing.purchasePlan.downPaymentJPY);
-              housingExpense += calculateLoanPayment(loanPrincipal, n(params.housing.purchasePlan.rate), n(params.housing.purchasePlan.years));
+              housingExpense += calculateLoanPayment(loanPrincipal, n(params.housing.purchasePlan.rate), n(params.housing.purchasePlan.years)) * yearFraction;
           }
       }
       if (params.housing.renovations) {
@@ -477,7 +484,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
         const productId = `${p.key}-${index}`;
         const recur = n(p.recurringJPY);
         const spot = n(p.spotJPY);
-        const contribution = recur + spot;
+        const contribution = (recur + spot) * yearFraction;
 
         if (p.account === '非課税') {
           const allowed = Math.min(contribution, remainingNisaAllowance);
@@ -513,7 +520,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
         yearlyReturn = n(p.expectedReturn);
       }
       
-      productBucket.balance *= (1 + yearlyReturn);
+      productBucket.balance *= ((1 + yearlyReturn) ** yearFraction);
     });
 
     // 商品別残高を口座別残高に集計
@@ -536,7 +543,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     });
 
     // --- 4. キャッシュフローと資産の変動 ---
-    const annualSavings = currentAge < params.retirementAge ? (n(params.monthlySavingsJPY) * 12) : 0;
+    const annualSavings = currentAge < params.retirementAge ? (n(params.monthlySavingsJPY) * 12 * yearFraction) : 0;
     const cashFlow = annualIncome - totalExpense - totalInvestmentOutflow + annualSavings;
     savings += cashFlow;
 

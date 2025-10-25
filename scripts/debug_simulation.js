@@ -91,7 +91,11 @@ function generateReturnSeries(averageReturn, volatility, years) {
 function runSimulation(params) {
   const yearlyData = [];
   let currentAge = params.initialAge;
-  const baseYear = new Date().getFullYear();
+
+  const now = new Date();
+  const baseYear = now.getFullYear();
+  const startMonth = now.getMonth(); // 0-indexed
+  const firstYearRemainingMonths = 12 - startMonth;
   const productList = Array.isArray(params.products) ? params.products : [];
 
   const stressTestEnabled = params.stressTest?.enabled ?? false;
@@ -124,6 +128,8 @@ function runSimulation(params) {
 
   for (let i = 0; currentAge <= params.endAge; i++, currentAge++) {
     const year = baseYear + i;
+    // 初年度は残り月数で按分
+    const yearFraction = (i === 0) ? firstYearRemainingMonths / 12 : 1;
 
     // At the beginning of the loop, aggregate product balances to account balances
     nisa.principal = 0; nisa.balance = 0;
@@ -158,14 +164,14 @@ function runSimulation(params) {
             }
         });
     }
-    const annualIncome = (currentAge < params.retirementAge) ? (n(params.mainJobIncomeGross) + n(params.spouseMainJobIncomeGross)) : 0;
-    const totalExpense = (currentAge < params.retirementAge) ? n(params.livingCostSimpleAnnual) : (200000 * 12); // Simplified
+    const annualIncome = ((currentAge < params.retirementAge) ? (n(params.mainJobIncomeGross) + n(params.spouseMainJobIncomeGross)) : 0) * yearFraction;
+    const totalExpense = ((currentAge < params.retirementAge) ? n(params.livingCostSimpleAnnual) : (200000 * 12)) * yearFraction; // Simplified
 
     let totalInvestmentOutflow = 0;
     if (currentAge < params.retirementAge) {
         productList.forEach((p, index) => {
             const productId = `${p.key}-${index}`;
-            const contribution = n(p.recurringJPY) + n(p.spotJPY);
+            const contribution = (n(p.recurringJPY) + n(p.spotJPY)) * yearFraction;
             if (p.account === '非課税') {
                 productBalances[productId].principal += contribution;
                 productBalances[productId].balance += contribution;
@@ -192,7 +198,7 @@ function runSimulation(params) {
       } else {
         yearlyReturn = n(p.expectedReturn);
       }
-      productBucket.balance *= (1 + yearlyReturn);
+      productBucket.balance *= ((1 + yearlyReturn) ** yearFraction);
     });
 
     const cashFlow = annualIncome - totalExpense - totalInvestmentOutflow;
