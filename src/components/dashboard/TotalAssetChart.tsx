@@ -82,6 +82,12 @@ export default function TotalAssetChart({ enrichedData, detailedAssetData, rankI
     return totalA - totalB;
   });
 
+  // p90とp10の差分を計算した新しいデータを作成
+  const dataWithDiff = enrichedData.map(d => ({
+    ...d,
+    p90_diff: (d.p90 ?? 0) - (d.p10 ?? 0),
+  }));
+
   const CustomizedLabel = (props: LabelProps) => {
     const { x, y, index } = props;
 
@@ -173,37 +179,39 @@ export default function TotalAssetChart({ enrichedData, detailedAssetData, rankI
       </div>
       {/* グラフ本体 */}
       <ResponsiveContainer width="100%" height={400}>
-        <AreaChart data={enrichedData} stackOffset="none" margin={{ top: 80, right: 30, left: 70, bottom: 5 }}>
+        <AreaChart data={dataWithDiff} stackOffset="none" margin={{ top: 80, right: 30, left: 70, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="year" interval="preserveStartEnd" />
           <YAxis // domain を削除し、Rechartsの自動計算に任せる
             type="number"
             tickFormatter={(v) => `${Math.round(v / 10000)}万円`} // 単位を万円に
             allowDecimals={false} // 小数点を非表示に
-            domain={[0, yAxisMax * 1.1]}
+            domain={[0, yAxisMax > 0 ? yAxisMax * 1.1 : 1000000]}
           />
           <Tooltip content={<CustomTooltip detailedAssetData={detailedAssetData} />} />
           <Legend wrapperStyle={{ position: 'relative', top: -15 }} />
           {enrichedData[0]?.p10 != null && (
             <Area
               type="monotone"
-              dataKey="p90"
-              stackId="2"
+              dataKey="p10"
+              stackId="range"
               stroke="none"
               fill="#8884d8"
               fillOpacity={0.2}
-              name="楽観ケース(上位10%)"
+              name="楽観/悲観ケース"
+              hide // 凡例には表示しない
             />
           )}
           {enrichedData[0]?.p10 != null && (
             <Area
               type="monotone"
-              dataKey="p10"
-              stackId="3"
+              dataKey="p90_diff"
+              stackId="range"
               stroke="none"
-              fill="white"
-              fillOpacity={1}
-              name="悲観ケース(下位10%)"
+              fill="#8884d8"
+              fillOpacity={0.2}
+              name="p90_diff"
+              hide // 凡例には表示しない
             />
           )}
           {assetKeys.map((assetKey, index) => (
