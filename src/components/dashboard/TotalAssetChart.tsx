@@ -175,7 +175,8 @@ export default function TotalAssetChart({ enrichedData, detailedAssetData, rankI
         <AreaChart data={enrichedData} stackOffset="none" margin={{ top: 80, right: 30, left: 50, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="year" interval="preserveStartEnd" />
-          <YAxis // domain を削除し、Rechartsの自動計算に任せる
+          <YAxis
+            type="number" // Y軸が数値を扱うことを明示
             tickFormatter={(v) => `${Math.round(v / 10000)}万円`} // 単位を万円に
             tickCount={8} // 目盛りの数を調整
             allowDecimals={false} // 小数点を非表示に
