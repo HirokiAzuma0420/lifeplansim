@@ -77,7 +77,7 @@ export const buildDashboardDataset = (yearlyData: YearlyData[], percentileData?:
   const latestEntry = enrichedData[enrichedData.length - 1];
   const pieData = latestEntry
     ? Object.entries(latestEntry)
-        .filter(([key]) => ['現金', 'NISA', 'iDeCo', '課税口座'].includes(key))
+        .filter(([key]) => ['現金', 'NISA', 'iDeCo', '課税口座', '株式', '投資信託', '債券', '仮想通貨', 'その他'].includes(key))
         .map(([name, value]) => ({ name, value: Math.max(0, value) }))
         .filter((item) => item.value > 0)
     : [];
