@@ -81,6 +81,11 @@ export default function TotalAssetChart({ enrichedData, detailedAssetData, rankI
     return totalA - totalB;
   });
 
+  // Y軸の最大値を計算（データの最大値に10%の余裕を持たせる）
+  const maxTotalAsset = Math.max(
+    ...enrichedData.map(d => assetKeys.reduce((sum, key) => sum + (d[key] || 0), 0))
+  );
+
   const CustomizedLabel = (props: LabelProps) => {
     const { x, y, index } = props;
 
@@ -175,7 +180,10 @@ export default function TotalAssetChart({ enrichedData, detailedAssetData, rankI
         <AreaChart data={enrichedData} stackOffset="none" margin={{ top: 80, right: 30, left: 50, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="year" interval="preserveStartEnd" />
-          <YAxis tickFormatter={(v) => `${Math.round(v / 10000)}万円`} />
+          <YAxis
+            tickFormatter={(v) => `${Math.round(v / 10000)}万円`}
+            domain={[0, maxTotalAsset * 1.1]}
+          />
           <Tooltip content={<CustomTooltip detailedAssetData={detailedAssetData} />} />
           <Legend wrapperStyle={{ position: 'relative', top: -15 }} />
           {assetKeys.map((assetKey, index) => (
