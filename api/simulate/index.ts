@@ -219,8 +219,8 @@ function generateReturnSeries(
 ): number[] {
   if (years <= 0) return [];
 
-  // 1. 目標とする算術平均を計算 (幾何平均からの変換)
-  const targetArithmeticMean = averageReturn + (volatility ** 2) / 2;
+  // 1. 目標とする算術平均を定義
+  const targetArithmeticMean = averageReturn; // 幾何平均からの変換は行わず、入力値をそのまま目標算術平均とします
 
   // 2. ひとまずランダムなリターン系列を生成
   const returns: number[] = [];
@@ -591,6 +591,3 @@ export default async function (req: VercelRequest, res: VercelResponse) {
 
   res.status(200).json({ yearlyData });
 }
-
-
-
