@@ -920,7 +920,7 @@ export default function FormPage() {
   }, []);
 
   useEffect(() => {
-    if (!window.history.state?.formInitialized) {
+    if (!initialStateFromLocation && !window.history.state?.formInitialized) {
       window.history.pushState({ formInitialized: true, section: 0 }, "", "");
       setCurrentSectionIndex(0);
     }
