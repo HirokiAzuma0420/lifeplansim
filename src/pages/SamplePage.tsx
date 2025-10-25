@@ -117,6 +117,7 @@ export default function SamplePage() {
 
         <TotalAssetChart
           enrichedData={enrichedData as { [key: string]: number; year: number; 総資産: number; }[]}
+          detailedAssetData={[]}
           rankInfo={rankInfo}
           COLORS={COLORS}
           age={parseInt(formData.age)}
