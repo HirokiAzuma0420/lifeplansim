@@ -1,5 +1,5 @@
-﻿﻿import React, { useState, useMemo, useEffect} from 'react';
-import { useNavigate } from 'react-router-dom';
+﻿import React, { useState, useMemo, useEffect} from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import type { YearlyData, SimulationInputParams } from '../types/simulation';
 
 function computeNetAnnual(grossAnnualIncome: number): number {
@@ -89,13 +89,130 @@ const sections = [
   'シミュレーション設定',
 ];
 
+const initialMonthlyInvestmentAmounts: InvestmentMonthlyAmounts = {
+  investmentStocksMonthly: '0',
+  investmentTrustMonthly: '0',
+  investmentBondsMonthly: '0',
+  investmentIdecoMonthly: '0',
+  investmentCryptoMonthly: '0',
+  investmentOtherMonthly: '0',
+};
+
+const createDefaultFormData = () => ({
+  familyComposition: '', // 家族構成
+  personAge: '',
+  spouseAge: '',
+  mainIncome: '',
+  spouseMainIncome: '',
+  sideJobIncome: '0',
+  spouseSideJobIncome: '0',
+  expenseMethod: '', // 単純or詳細
+  livingCostSimple: '',
+  housingCost: '',
+  utilitiesCost: '',
+  communicationCost: '',
+  carCost: '',
+  insuranceCost: '',
+  educationCost: '',
+  otherFixedCost: '0',
+  foodCost: '',
+  dailyNecessitiesCost: '',
+  transportationCost: '',
+  clothingBeautyCost: '',
+  socializingCost: '',
+  hobbyEntertainmentCost: '',
+  otherVariableCost: '0',
+  carFirstReplacementAfterYears: '',
+  carPrice: '',
+  carReplacementFrequency: '',
+  carLoanUsage: '',
+  carLoanYears: '',
+  carLoanType: '',
+  housingType: '' as '賃貸' | '持ち家（ローン中）' | '持ち家（完済）',
+  carCurrentLoanInPayment: 'no',
+  carCurrentLoanMonthly: '',
+  carCurrentLoanRemainingMonths: '',
+  housePurchasePlan: null as { age: number, price: number, downPayment: number, loanYears: number, interestRate: number } | null,
+  houseRenovationPlans: [] as { age: number, cost: number, cycleYears?: number }[],
+  housePurchaseAge: '',
+  housePurchasePrice: '',
+  headDownPayment: '',
+  housingLoanYears: '',
+  housingLoanInterestRateType: '', // 固定or変動
+  housingLoanInterestRate: '',
+  housingLoanStatus: '', // これから借りるorすでに返済中or借入予定なし
+  loanOriginalAmount: '',
+  loanMonthlyPayment: '',
+  loanRemainingYears: '',
+  loanInterestRate: '',
+  planToMarry: '', // 結婚予定or予定なし
+  marriageAge: '',
+  engagementCost: '200',
+  weddingCost: '330',
+  honeymoonCost: '35',
+  newHomeMovingCost: '50',
+  hasChildren: '', // ありorなし
+  numberOfChildren: '',
+  firstBornAge: '',
+  educationPattern: '', // 公立のみor私立混在or私立のみ
+  currentRentLoanPayment: '',
+  otherLargeExpenses: '',
+  parentCurrentAge: '',
+  parentCareStartAge: '',
+  parentCareAssumption: '', // ありor未定orなし
+  parentCareMonthlyCost: '10',
+  parentCareYears: '5',
+  retirementAge: '65',
+  postRetirementLivingCost: '25',
+  pensionStartAge: '65',
+  pensionAmount: '15',
+  currentSavings: '',
+  monthlySavings: '',
+  hasInvestment: '', // ありorなし
+  investmentStocksCurrent: '',
+  investmentTrustCurrent: '',
+  investmentBondsCurrent: '',
+  investmentIdecoCurrent: '',
+  investmentCryptoCurrent: '',
+  investmentOtherCurrent: '',
+  investmentStocksAccountType: 'taxable' as 'nisa' | 'taxable',
+  investmentTrustAccountType: 'taxable' as 'nisa' | 'taxable',
+  investmentOtherAccountType: 'taxable' as 'nisa' | 'taxable',
+  monthlyInvestmentAmounts: { ...initialMonthlyInvestmentAmounts },
+  investmentStocksAnnualSpot: '0',
+  investmentTrustAnnualSpot: '0',
+  investmentBondsAnnualSpot: '0',
+  investmentIdecoAnnualSpot: '0',
+  investmentCryptoAnnualSpot: '0',
+  investmentOtherAnnualSpot: '0',
+  investmentStocksRate: '6.0',
+  investmentTrustRate: '4.0',
+  investmentBondsRate: '1.0',
+  investmentIdecoRate: '4.0',
+  investmentCryptoRate: '8.0',
+  investmentOtherRate: '0.5',
+  simulationPeriodAge: '90',
+  interestRateScenario: '', // 楽観orストレス
+  emergencyFund: '300',
+  stressTestSeed: '', // 追加
+});
+
+type FormDataState = ReturnType<typeof createDefaultFormData>;
+type FormLocationState = { rawFormData?: FormDataState; sectionIndex?: number };
+
 
 
 export default function FormPage() {
   const navigate = useNavigate();
-  const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
+  const location = useLocation();
+
+  const locationState = location.state as FormLocationState | null;
+  const initialStateFromLocation = locationState?.rawFormData;
+  const initialSectionIndex = locationState?.sectionIndex ?? 0;
+
+  const [currentSectionIndex, setCurrentSectionIndex] = useState(initialSectionIndex);
   const [showBackModal, setShowBackModal] = useState(false);
-  const [visitedSections, setVisitedSections] = useState<Set<number>>(new Set([0]));
+  const [visitedSections, setVisitedSections] = useState<Set<number>>(() => new Set(initialStateFromLocation ? sections.map((_, i) => i) : [0]));
   const [annualRaiseRate, setAnnualRaiseRate] = useState(1.5);
   const [spouseAnnualRaiseRate, setSpouseAnnualRaiseRate] = useState(1.5);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -103,113 +220,16 @@ export default function FormPage() {
   const [loading, setLoading] = useState(false);
   const [totalNetAnnualIncome, setTotalNetAnnualIncome] = useState(0);
 
-  const initialMonthlyInvestmentAmounts: InvestmentMonthlyAmounts = {
-    investmentStocksMonthly: '0',
-    investmentTrustMonthly: '0',
-    investmentBondsMonthly: '0',
-    investmentIdecoMonthly: '0',
-    investmentCryptoMonthly: '0',
-    investmentOtherMonthly: '0',
-  };
+  const [formData, setFormData] = useState<FormDataState>(() => initialStateFromLocation || createDefaultFormData());
 
-  const [formData, setFormData] = useState({
-    familyComposition: '', // 独身／既婚
-    personAge: '',
-    spouseAge: '',
-    mainIncome: '',
-    spouseMainIncome: '',
-    sideJobIncome: '0',
-    spouseSideJobIncome: '0',
-    expenseMethod: '', // 簡単／詳細
-    livingCostSimple: '',
-    housingCost: '',
-    utilitiesCost: '',
-    communicationCost: '',
-    carCost: '',
-    insuranceCost: '',
-    educationCost: '',
-    otherFixedCost: '0',
-    foodCost: '',
-    dailyNecessitiesCost: '',
-    transportationCost: '',
-    clothingBeautyCost: '',
-    socializingCost: '',
-    hobbyEntertainmentCost: '',
-    otherVariableCost: '0',
-    carFirstReplacementAfterYears: '',
-    carPrice: '',
-    carReplacementFrequency: '',
-    carLoanUsage: '',
-    carLoanYears: '',
-    carLoanType: '',
-    housingType: '' as '賃貸' | '持ち家（ローン中）' | '持ち家（完済）',
-    carCurrentLoanInPayment: 'no',
-    carCurrentLoanMonthly: '',
-    carCurrentLoanRemainingMonths: '',
-    housePurchasePlan: null as { age: number, price: number, downPayment: number, loanYears: number, interestRate: number } | null,
-    houseRenovationPlans: [] as { age: number, cost: number, cycleYears?: number }[],
-    housePurchaseAge: '',
-    housePurchasePrice: '',
-    headDownPayment: '',
-    housingLoanYears: '',
-    housingLoanInterestRateType: '', // 一般的な想定／指定
-    housingLoanInterestRate: '',
-    housingLoanStatus: '', // これから借りる予定／すでに返済中／借りる予定はない
-    loanOriginalAmount: '',
-    loanMonthlyPayment: '',
-    loanRemainingYears: '',
-    loanInterestRate: '',
-    planToMarry: '', // する／しない
-    marriageAge: '',
-    engagementCost: '200',
-    weddingCost: '330',
-    honeymoonCost: '35',
-    newHomeMovingCost: '50',
-    hasChildren: '', // はい／いいえ
-    numberOfChildren: '',
-    firstBornAge: '',
-    educationPattern: '', // 公立中心／公私混合／私立中心
-    currentRentLoanPayment: '',
-    otherLargeExpenses: '',
-    parentCurrentAge: '',
-    parentCareStartAge: '',
-    parentCareAssumption: '', // はい／いいえ／まだ分からない
-    parentCareMonthlyCost: '10',
-    parentCareYears: '5',
-    retirementAge: '65',
-    postRetirementLivingCost: '25',
-    pensionStartAge: '65',
-    pensionAmount: '15',
-    currentSavings: '',
-    monthlySavings: '',
-    hasInvestment: '', // はい／いいえ
-    investmentStocksCurrent: '',
-    investmentTrustCurrent: '',
-    investmentBondsCurrent: '',
-    investmentIdecoCurrent: '',
-    investmentCryptoCurrent: '',
-    investmentOtherCurrent: '',
-    investmentStocksAccountType: 'taxable' as 'nisa' | 'taxable',
-    investmentTrustAccountType: 'taxable' as 'nisa' | 'taxable',
-    investmentOtherAccountType: 'taxable' as 'nisa' | 'taxable',
-    monthlyInvestmentAmounts: { ...initialMonthlyInvestmentAmounts },
-    investmentStocksAnnualSpot: '0',
-    investmentTrustAnnualSpot: '0',
-    investmentBondsAnnualSpot: '0',
-    investmentIdecoAnnualSpot: '0',
-    investmentCryptoAnnualSpot: '0',
-    investmentOtherAnnualSpot: '0',
-    investmentStocksRate: '6.0',
-    investmentTrustRate: '4.0',
-    investmentBondsRate: '1.0',
-    investmentIdecoRate: '4.0',
-    investmentCryptoRate: '8.0',
-    investmentOtherRate: '0.5',
-    simulationPeriodAge: '90',
-    interestRateScenario: '', // 固定利回り／ランダム変動
-    emergencyFund: '300',
-    stressTestSeed: '', // 追加
-  });
+  // This effect ensures that if we return to the form, we don't show the completion screen
+  useEffect(() => {
+    if (initialStateFromLocation) {
+      setIsCompleted(false);
+    }
+  }, [initialStateFromLocation]);
+
+
 
   const handleSimulate = async () => {
     setLoading(true);
@@ -255,7 +275,7 @@ export default function FormPage() {
         n(formData.investmentOtherCurrent)
       ) * 10000;
 
-      const monthlyRecurringInvestment = Object.values(formData.monthlyInvestmentAmounts).reduce((sum, v) => sum + n(v), 0);
+      const monthlyRecurringInvestment = Object.values(formData.monthlyInvestmentAmounts).reduce((sum: number, v) => sum + n(v), 0);
       const yearlyRecurringInvestmentJPY = monthlyRecurringInvestment * 12;
 
       const yearlySpotJPY = (
@@ -401,7 +421,7 @@ export default function FormPage() {
 
         expenseMode: formData.expenseMethod === '簡単' ? 'simple' : 'detailed',
         // 万円/月 → 円/年
-        livingCostSimpleAnnual: formData.expenseMethod === '簡単' ? n(formData.livingCostSimple) * 12 : undefined,
+        livingCostSimpleAnnual: formData.expenseMethod === '簡単' ? n(formData.livingCostSimple) * 10000 * 12 : undefined,
         detailedFixedAnnual: formData.expenseMethod === '詳細' ? detailedFixedAnnual : undefined,
         detailedVariableAnnual: formData.expenseMethod === '詳細' ? detailedVariableAnnual : undefined,
 
@@ -458,11 +478,11 @@ export default function FormPage() {
             Number(a?.cost) > 0 &&
             Number(a?.cycle) > 0
           )
-          .map(a => ({
-            name: String(a.name),
-            cycleYears: Number(a.cycle),
-            firstAfterYears: Number(a.firstReplacementAfterYears ?? 0),
-            cost10kJPY: Number(a.cost) // 万円（サーバで×10000）
+          .map((p) => ({
+            name: String(p.name),
+            cycleYears: Number(p.cycle),
+            firstAfterYears: Number(p.firstReplacementAfterYears ?? 0),
+            cost10kJPY: Number(p.cost) // 万円（サーバで×10000）
           })),
 
         care: {
@@ -512,10 +532,10 @@ export default function FormPage() {
       // 単位統一の最終調整（すべて円でAPIへ渡す）
       // 1) 生活費（簡単）は「円/月」入力 → 年間円へ変換
       if (params.expenseMode === 'simple') {
-        params.livingCostSimpleAnnual = n(formData.livingCostSimple) * 12;
+        params.livingCostSimpleAnnual = n(formData.livingCostSimple) * 12; // 万円/月 -> 円/年
       }
       // 2) 投資の月積立は「円/月」入力 → 年間円へ変換
-      params.yearlyRecurringInvestmentJPY = monthlyRecurringInvestment * 12;
+      params.yearlyRecurringInvestmentJPY = monthlyRecurringInvestment;
 
       // TODO: UIの「今の家賃/返済」欄（円）をそのまま params.housing に反映する実装は別パッチで対応
 
@@ -556,7 +576,14 @@ export default function FormPage() {
     });
   }, [formData.familyComposition]);
 
-  const [applianceReplacements, setApplianceReplacements] = useState([
+  type ApplianceReplacement = {
+    name: string;
+    cycle: number;
+    cost: number;
+    firstReplacementAfterYears: number;
+  };
+
+  const [applianceReplacements, setApplianceReplacements] = useState<ApplianceReplacement[]>([
     { name: '冷蔵庫', cycle: 10, cost: 15, firstReplacementAfterYears: 0 },
     { name: '洗濯機', cycle: 8, cost: 12, firstReplacementAfterYears: 0 },
     { name: 'エアコン', cycle: 10, cost: 10, firstReplacementAfterYears: 0 },
@@ -566,9 +593,15 @@ export default function FormPage() {
   ]);
 
   const handleApplianceChange = (index: number, field: string, value: string) => {
-    const newAppliances = [...applianceReplacements];
-    newAppliances[index] = { ...newAppliances[index], [field]: value };
-    setApplianceReplacements(newAppliances);
+    setApplianceReplacements(prev => {
+      const newAppliances = [...prev];
+      const isNumberField = field === 'cycle' || field === 'cost' || field === 'firstReplacementAfterYears';
+      newAppliances[index] = {
+        ...newAppliances[index],
+        [field]: isNumberField ? Number(value) : value,
+      };
+      return newAppliances;
+    });
   };
 
   const addAppliance = () => {
@@ -576,7 +609,7 @@ export default function FormPage() {
   };
 
   const handleRemoveAppliance = (index: number) => {
-    setApplianceReplacements((prev) => prev.filter((_, i) => i !== index));
+    setApplianceReplacements(prev => prev.filter((_, i) => i !== index));
   };
 
   type RenovationPlan = { age: number; cost: number; cycleYears?: number };
@@ -588,7 +621,7 @@ export default function FormPage() {
     key: keyof RenovationPlan,
     value: string,
   ) => {
-    setFormData((prev) => {
+    setFormData(prev => {
       const plans = [...prev.houseRenovationPlans];
       if (!plans[index]) {
         return prev;
@@ -747,7 +780,7 @@ export default function FormPage() {
 
   const totalInvestment = useMemo(() => {
     const monthlyTotal = Object.values(formData.monthlyInvestmentAmounts).reduce(
-      (acc, val) => acc + Number(val),
+      (acc: number, val) => acc + Number(val),
       0
     );
 
@@ -949,7 +982,7 @@ export default function FormPage() {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, []);
+  }, []); // This should have no dependencies.
 
   const renderSection = () => {
     switch (effectiveSections[currentSectionIndex]) {
@@ -1464,7 +1497,7 @@ export default function FormPage() {
                     <span className="ml-2">はい</span>
                   </label>
                   <label className="inline-flex items-center">
-                    <input type="radio" className="custom-radio" name="housePurchasePlanToggle" value="no" onChange={() => setFormData({...formData, housePurchasePlan: null})} />
+                    <input type="radio" className="custom-radio" name="housePurchasePlanToggle" value="no" checked={formData.housePurchasePlan === null} onChange={() => setFormData({...formData, housePurchasePlan: null})} />
                     <span className="ml-2">いいえ</span>
                   </label>
                 </div>
@@ -1506,8 +1539,8 @@ export default function FormPage() {
                       type="radio"
                       className="custom-radio"
                       name="renovationPlanToggle"
-                      value="yes"
-                      onChange={() => setFormData((prev) => ({
+                      value="yes" checked={formData.houseRenovationPlans.length > 0}
+                      onChange={() => setFormData((prev: typeof formData) => ({
                         ...prev,
                         houseRenovationPlans:
                           prev.houseRenovationPlans.length > 0
@@ -1523,7 +1556,8 @@ export default function FormPage() {
                       className="custom-radio"
                       name="renovationPlanToggle"
                       value="no"
-                      onChange={() => setFormData((prev) => ({
+                      checked={formData.houseRenovationPlans.length === 0}
+                      onChange={() => setFormData((prev: typeof formData) => ({
                         ...prev,
                         houseRenovationPlans: [],
                       }))}
@@ -2224,7 +2258,7 @@ export default function FormPage() {
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
             <h2 className="text-lg font-semibold mb-4">どこに戻りますか？</h2>
             <ul className="space-y-2 max-h-64 overflow-y-auto">
-              {Array.from(visitedSections).map(i => (
+            {Array.from(visitedSections).sort((a, b) => a - b).map(i => (
                 <li key={i}>
                   <button
                     onClick={() => {
