@@ -10,6 +10,16 @@ import { getAssetGrade } from '../assets/getAssetGrade';
 import { buildDashboardDataset } from '../utils/simulation';
 import type { SimulationNavigationState } from '../types/simulation';
 
+// InvestmentProduct 型を ResultPage.tsx にも定義
+type InvestmentProduct = {
+  key: 'stocks' | 'trust' | 'bonds' | 'crypto' | 'other' | 'ideco';
+  account: '課税' | '非課税' | 'iDeCo';
+  currentJPY: number;
+  recurringJPY: number;
+  spotJPY: number;
+  expectedReturn: number;
+};
+
 const COLORS = {
   現金: '#3B82F6',
   NISA: '#10B981',
@@ -66,8 +76,9 @@ export default function ResultPage() {
 
   const state = location.state as SimulationNavigationState | undefined;
   const rawYearlyData = state?.yearlyData;
+  // SimulationInputParams に products を追加
   const yearlyData = useMemo(() => rawYearlyData ?? [], [rawYearlyData]);
-  const inputParams = state?.inputParams;
+  const inputParams = state?.inputParams as (SimulationNavigationState['inputParams'] & { products?: InvestmentProduct[] }) | undefined;
 
   const dataset = useMemo(() => buildDashboardDataset(yearlyData), [yearlyData]);
   // 商品別内訳（API拡張に対応：存在時のみ表示）
@@ -145,7 +156,12 @@ export default function ResultPage() {
 
   const rankInfo = getAssetGrade(latestTotal);
 
-  const annualInvestment = (inputParams.yearlyRecurringInvestmentJPY ?? 0) + (inputParams.yearlySpotJPY ?? 0);
+  // 期待利回りを、各商品の年間投資額で加重平均して計算する
+  const totalAnnualInvestment = inputParams.products?.reduce((sum: number, p: InvestmentProduct) => sum + (p.recurringJPY ?? 0) + (p.spotJPY ?? 0), 0) ?? 0;
+  const weightedAverageReturn = totalAnnualInvestment > 0
+    ? (inputParams.products?.reduce((sum: number, p: InvestmentProduct) => sum + ((p.recurringJPY ?? 0) + (p.spotJPY ?? 0)) * (p.expectedReturn ?? 0), 0) ?? 0) / totalAnnualInvestment
+    : 0;
+
 
   // latestProducts は上部でメモ化済み
 
@@ -167,8 +183,8 @@ export default function ResultPage() {
     },
     {
       label: '期待利回り',
-      value: formatPercent(inputParams.expectedReturn),
-      note: `年間投資額: ${formatCurrency(annualInvestment)}`,
+      value: formatPercent(weightedAverageReturn),
+      note: `年間投資額: ${formatCurrency(totalAnnualInvestment)}`,
     },
     {
       label: 'ピーク資産額',
@@ -230,7 +246,7 @@ export default function ResultPage() {
               <ul className="space-y-1 text-sm text-gray-700">
                 <li>現在年齢: {currentAge} 歳</li>
                 <li>退職予定: {retireAge} 歳</li>
-                <li>年間手取り: {formatCurrency(totalNetAnnualIncome)}</li>
+                <li>年間収入(世帯／手取り): {formatCurrency(totalNetAnnualIncome)}</li>
                 <li>初期資産額: {formatCurrency(savingsForChart)}</li>
               </ul>
             </div>
