@@ -6,6 +6,7 @@ import TotalAssetChart from '../components/dashboard/TotalAssetChart';
 import InvestmentPrincipalChart from '../components/dashboard/InvestmentPrincipalChart';
 import AssetPieChart from '../components/dashboard/AssetPieChart';
 import AssetTable from '../components/dashboard/AssetTable';
+import CashFlowTable from '../components/dashboard/CashFlowTable.tsx';
 import { getAssetGrade } from '../assets/getAssetGrade';
 import { buildDashboardDataset } from '../utils/simulation';
 import type { SimulationInputParams, SimulationNavigationState } from '../types/simulation';
@@ -276,6 +277,8 @@ export default function ResultPage() {
             </div>
 
             <AssetTable enrichedData={dataset.enrichedData} />
+
+            <CashFlowTable enrichedData={dataset.enrichedData} />
 
             {Object.keys(latestProducts).length > 0 && (
               <div className="bg-white rounded-xl shadow p-4">
