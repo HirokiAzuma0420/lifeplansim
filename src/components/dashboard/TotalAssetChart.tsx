@@ -72,7 +72,7 @@ export default function TotalAssetChart({ enrichedData, detailedAssetData, rankI
   const retirementYear = enrichedData[0].year + (retireAge - age);
 
   const assetKeys = enrichedData.length > 0
-    ? Object.keys(enrichedData[0]).filter(key => !['year', 'age', '総資産', '投資元本', 'p10', 'p90', '年間支出'].includes(key) && !key.endsWith('元本'))
+    ? Object.keys(enrichedData[0]).filter(key => !['year', 'age', '総資産', 'p10', 'p90', '年間支出'].includes(key) && !key.endsWith('元本'))
     : [];
 
   // 安定した積み上げ順序と、最も合計額が小さいものを一番下に表示するためにソートする

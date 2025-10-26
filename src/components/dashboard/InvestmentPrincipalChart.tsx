@@ -9,12 +9,18 @@ interface InvestmentPrincipalChartProps {
 export default function InvestmentPrincipalChart({ enrichedData, COLORS }: InvestmentPrincipalChartProps) {
   const principalKeys = useMemo(() => {
     if (enrichedData.length === 0) return [];
-    return Object.keys(enrichedData[0]).filter(key => key.endsWith('元本'));
+    // '投資元本' を除外
+    return Object.keys(enrichedData[0]).filter(key => key.endsWith('元本') && key !== '投資元本');
   }, [enrichedData]);
 
   const nameMapping: Record<string, string> = {
     'NISA元本': 'NISA',
     'iDeCo元本': 'iDeCo',
+    'stocks (課税)元本': '株式 (課税)',
+    'trust (課税)元本': '投資信託 (課税)',
+    'bonds (課税)元本': '債券 (課税)',
+    'crypto (課税)元本': '仮想通貨 (課税)',
+    'other (課税)元本': 'その他 (課税)',
   };
 
   return (
