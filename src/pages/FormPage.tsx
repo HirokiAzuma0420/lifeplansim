@@ -1,6 +1,6 @@
-﻿import React, { useState, useMemo, useEffect} from 'react';
+﻿﻿import React, { useState, useMemo, useEffect} from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import type { YearlyData, SimulationInputParams } from '../types/simulation';
+import type { YearlyData, SimulationInputParams, CarePlan } from '../types/simulation';
 
 function computeNetAnnual(grossAnnualIncome: number): number {
     // 簡略化された税・社会保障費計算
@@ -98,6 +98,14 @@ const initialMonthlyInvestmentAmounts: InvestmentMonthlyAmounts = {
   investmentOtherMonthly: '0',
 };
 
+const createDefaultCarePlan = (): Omit<CarePlan, 'id'> & { id: number } => ({
+  id: Date.now(),
+  parentCurrentAge: 70,
+  parentCareStartAge: 80,
+  monthly10kJPY: 10,
+  years: 5,
+});
+
 const createDefaultFormData = () => ({
   familyComposition: '', // 家族構成
   personAge: '',
@@ -159,11 +167,8 @@ const createDefaultFormData = () => ({
   educationPattern: '', // 公立のみor私立混在or私立のみ
   currentRentLoanPayment: '',
   otherLargeExpenses: '',
-  parentCurrentAge: '',
-  parentCareStartAge: '',
   parentCareAssumption: '', // ありor未定orなし
-  parentCareMonthlyCost: '10',
-  parentCareYears: '5',
+  parentCarePlans: [createDefaultCarePlan()],
   retirementAge: '65',
   postRetirementLivingCost: '25',
   spouseRetirementAge: '65',
@@ -365,10 +370,12 @@ export default function FormPage() {
       case 'ライフイベント - 親の介護':
         if (!formData.parentCareAssumption) newErrors.parentCareAssumption = '介護の想定を選択してください。';
         if (formData.parentCareAssumption === 'はい') {
-          if (!formData.parentCurrentAge) newErrors.parentCurrentAge = '親の現在の年齢を入力してください。';
-          if (!formData.parentCareStartAge) newErrors.parentCareStartAge = '介護開始年齢を入力してください。';
-          if (!formData.parentCareMonthlyCost) newErrors.parentCareMonthlyCost = '月額費用を入力してください。';
-          if (!formData.parentCareYears) newErrors.parentCareYears = '介護期間を入力してください。';
+          formData.parentCarePlans.forEach((plan, index) => {
+            if (!plan.parentCurrentAge) newErrors[`parentCarePlans[${index}].parentCurrentAge`] = `${index + 1}人目の親の現在の年齢を入力してください。`;
+            if (!plan.parentCareStartAge) newErrors[`parentCarePlans[${index}].parentCareStartAge`] = `${index + 1}人目の介護開始年齢を入力してください。`;
+            if (!plan.monthly10kJPY) newErrors[`parentCarePlans[${index}].monthly10kJPY`] = `${index + 1}人目の月額費用を入力してください。`;
+            if (!plan.years) newErrors[`parentCarePlans[${index}].years`] = `${index + 1}人目の介護期間を入力してください。`;
+          });
         }
         break;
       case 'ライフイベント - 老後':
@@ -667,13 +674,13 @@ export default function FormPage() {
             cost10kJPY: Number(p.cost) // 万円（サーバで×10000）
           })),
 
-        care: {
-          assume: formData.parentCareAssumption === 'はい',
-          parentCurrentAge: n(formData.parentCurrentAge),
-          parentCareStartAge: n(formData.parentCareStartAge),
-          years: n(formData.parentCareYears),
-          monthly10kJPY: n(formData.parentCareMonthlyCost),
-        },
+        cares: formData.parentCareAssumption === 'はい' ? formData.parentCarePlans.map(p => ({
+          id: p.id,
+          parentCurrentAge: n(p.parentCurrentAge),
+          parentCareStartAge: n(p.parentCareStartAge),
+          years: n(p.years),
+          monthly10kJPY: n(p.monthly10kJPY),
+        })) : [],
 
         postRetirementLiving10kJPY: n(formData.postRetirementLivingCost),
         pensionMonthly10kJPY: n(formData.pensionAmount),
@@ -799,6 +806,34 @@ export default function FormPage() {
     setFormData(prev => ({ ...prev, appliances: prev.appliances.filter((_, i) => i !== index) }));
   };
 
+  const handleCarePlanChange = (
+    index: number,
+    key: keyof Omit<CarePlan, 'id'>,
+    value: string,
+  ) => {
+    setFormData(prev => {
+      const newPlans = [...prev.parentCarePlans];
+      if (!newPlans[index]) return prev;
+      newPlans[index] = { ...newPlans[index], [key]: Number(value) };
+      return { ...prev, parentCarePlans: newPlans };
+    });
+  };
+
+  const addCarePlan = () => {
+    setFormData(prev => {
+      const firstPlan = prev.parentCarePlans[0] || createDefaultCarePlan();
+      const newPlan = { ...firstPlan, id: Date.now() };
+      return { ...prev, parentCarePlans: [...prev.parentCarePlans, newPlan] };
+    });
+  };
+
+  const removeCarePlan = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      parentCarePlans: prev.parentCarePlans.filter((_, i) => i !== index),
+    }));
+  };
+
   const displayTotalApplianceCost = useMemo(() => {
     return formData.appliances
       .map((item) => Number(item.cost) || 0)
@@ -897,13 +932,11 @@ export default function FormPage() {
   ]);
 
   const totalCareCost = useMemo(() => {
-    if (formData.parentCareAssumption !== 'はい') return 0;
-    return (
-      (Number(formData.parentCareMonthlyCost) || 0) *
-      (Number(formData.parentCareYears) || 0) *
-      12
-    );
-  }, [formData.parentCareAssumption, formData.parentCareMonthlyCost, formData.parentCareYears]);
+    if (formData.parentCareAssumption !== 'はい' || !formData.parentCarePlans) return 0;
+    return formData.parentCarePlans.reduce((total, plan) => {
+      return total + ((Number(plan.monthly10kJPY) || 0) * (Number(plan.years) || 0) * 12);
+    }, 0);
+  }, [formData.parentCareAssumption, formData.parentCarePlans]);
 
   const totalRetirementMonthly = useMemo(() => {
     const spousePension = formData.familyComposition === '既婚' ? (Number(formData.spousePensionAmount) || 0) : 0;
@@ -2078,20 +2111,6 @@ export default function FormPage() {
             </div>
             <h2 className="text-2xl font-bold text-center mb-4">親の介護に関する質問</h2>
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="parentCurrentAge">
-                親の現在の年齢[歳]
-              </label>
-              <input type="number" id="parentCurrentAge" name="parentCurrentAge" value={formData.parentCurrentAge} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.parentCurrentAge ? 'border-red-500' : ''}`} />
-              {errors.parentCurrentAge && <p className="text-red-500 text-xs italic mt-1">{errors.parentCurrentAge}</p>}
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="parentCareStartAge">
-                親の要介護開始年齢[歳]
-              </label>
-              <input type="number" id="parentCareStartAge" name="parentCareStartAge" value={formData.parentCareStartAge} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.parentCareStartAge ? 'border-red-500' : ''}`} />
-              {errors.parentCareStartAge && <p className="text-red-500 text-xs italic mt-1">{errors.parentCareStartAge}</p>}
-            </div>
-            <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 親の介護が将来発生すると想定しますか？
               </label>
@@ -2136,21 +2155,63 @@ export default function FormPage() {
               {errors.parentCareAssumption && <p className="text-red-500 text-xs italic mt-2">{errors.parentCareAssumption}</p>}
             </div>
             <div className={`accordion-content ${formData.parentCareAssumption === 'はい' ? 'open' : ''}`}>
-                <div className="mb-4">
-                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="parentCareMonthlyCost">
-                    介護費用の想定（月額）[万円]
-                  </label>
-                  <input type="number" id="parentCareMonthlyCost" name="parentCareMonthlyCost" value={formData.parentCareMonthlyCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.parentCareMonthlyCost ? 'border-red-500' : ''}`} defaultValue={10} />
-                  {errors.parentCareMonthlyCost && <p className="text-red-500 text-xs italic mt-1">{errors.parentCareMonthlyCost}</p>}
+              {formData.parentCarePlans.map((plan, index) => (
+                <div key={plan.id} className="border rounded p-4 mb-4 relative">
+                  <h3 className="text-lg font-semibold mb-2">{index + 1}人目の親の設定</h3>
+                  {formData.parentCarePlans.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeCarePlan(index)}
+                      className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+                      aria-label={`${index + 1}人目の設定を削除`}
+                      title="削除"
+                    >
+                      <Trash2 size={20} />
+                    </button>
+                  )}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`parentCarePlans[${index}].parentCurrentAge`}>
+                        現在の年齢[歳]
+                      </label>
+                      <input type="number" id={`parentCarePlans[${index}].parentCurrentAge`} value={plan.parentCurrentAge} onChange={(e) => handleCarePlanChange(index, 'parentCurrentAge', e.target.value)} className={`shadow border rounded w-full py-2 px-3 text-gray-700 ${errors[`parentCarePlans[${index}].parentCurrentAge`] ? 'border-red-500' : ''}`} />
+                      {errors[`parentCarePlans[${index}].parentCurrentAge`] && <p className="text-red-500 text-xs italic mt-1">{errors[`parentCarePlans[${index}].parentCurrentAge`]}</p>}
+                    </div>
+                    <div>
+                      <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`parentCarePlans[${index}].parentCareStartAge`}>
+                        介護開始年齢[歳]
+                      </label>
+                      <input type="number" id={`parentCarePlans[${index}].parentCareStartAge`} value={plan.parentCareStartAge} onChange={(e) => handleCarePlanChange(index, 'parentCareStartAge', e.target.value)} className={`shadow border rounded w-full py-2 px-3 text-gray-700 ${errors[`parentCarePlans[${index}].parentCareStartAge`] ? 'border-red-500' : ''}`} />
+                      {errors[`parentCarePlans[${index}].parentCareStartAge`] && <p className="text-red-500 text-xs italic mt-1">{errors[`parentCarePlans[${index}].parentCareStartAge`]}</p>}
+                    </div>
+                    <div>
+                      <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`parentCarePlans[${index}].monthly10kJPY`}>
+                        介護費用の想定（月額）[万円]
+                      </label>
+                      <input type="number" id={`parentCarePlans[${index}].monthly10kJPY`} value={plan.monthly10kJPY} onChange={(e) => handleCarePlanChange(index, 'monthly10kJPY', e.target.value)} className={`shadow border rounded w-full py-2 px-3 text-gray-700 ${errors[`parentCarePlans[${index}].monthly10kJPY`] ? 'border-red-500' : ''}`} />
+                      {errors[`parentCarePlans[${index}].monthly10kJPY`] && <p className="text-red-500 text-xs italic mt-1">{errors[`parentCarePlans[${index}].monthly10kJPY`]}</p>}
+                    </div>
+                    <div>
+                      <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`parentCarePlans[${index}].years`}>
+                        介護期間の想定[年]
+                      </label>
+                      <input type="number" id={`parentCarePlans[${index}].years`} value={plan.years} onChange={(e) => handleCarePlanChange(index, 'years', e.target.value)} className={`shadow border rounded w-full py-2 px-3 text-gray-700 ${errors[`parentCarePlans[${index}].years`] ? 'border-red-500' : ''}`} />
+                      {errors[`parentCarePlans[${index}].years`] && <p className="text-red-500 text-xs italic mt-1">{errors[`parentCarePlans[${index}].years`]}</p>}
+                    </div>
+                  </div>
                 </div>
-                <div className="mb-4">
-                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="parentCareYears">
-                    介護期間の想定[年]
-                  </label>
-                  <input type="number" id="parentCareYears" name="parentCareYears" value={formData.parentCareYears} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.parentCareYears ? 'border-red-500' : ''}`} defaultValue={5} />
-                  {errors.parentCareYears && <p className="text-red-500 text-xs italic mt-1">{errors.parentCareYears}</p>}
-                </div>
+              ))}
+              <div className="mt-4">
+                <button type="button" onClick={addCarePlan} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                  親の設定を追加する
+                </button>
+                {totalCareCost > 0 && (
+                  <div className="mt-4 text-right text-lg font-semibold">
+                    介護費用総額: <span className="text-blue-600">{totalCareCost.toLocaleString()}</span> 万円
+                  </div>
+                )}
               </div>
+            </div>
           </div>
         );
       case 'ライフイベント - 老後':

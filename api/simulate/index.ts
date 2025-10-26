@@ -1,4 +1,5 @@
-﻿// Local minimal types to avoid '@vercel/node' runtime/type dependency
+﻿
+// Local minimal types to avoid '@vercel/node' runtime/type dependency
 type VercelRequest = { method?: string; body?: unknown; query?: Record<string, unknown> };
 type VercelResponse = { status: (code: number) => { json: (data: unknown) => void } };
 
@@ -12,11 +13,19 @@ type InvestmentProduct = {
   expectedReturn: number; // 小数（例: 0.05）
 };
 
+interface CarePlan {
+  id: string | number;
+  parentCurrentAge: number;
+  parentCareStartAge: number;
+  years: number;
+  monthly10kJPY: number;
+}
+
 const SPECIFIC_ACCOUNT_TAX_RATE = 0.20315;
 const NISA_CONTRIBUTION_CAP = 18_000_000; // 生涯上限（新NISAの成長投資枠+つみたて枠の合計目安として扱う）
 // 年間上限（新NISA）
-const NISA_RECURRING_ANNUAL_CAP = 1_200_000; // つみたて投資枠（年）
-const NISA_SPOT_ANNUAL_CAP = 2_400_000;     // 成長投資枠（年）
+// const NISA_RECURRING_ANNUAL_CAP = 1_200_000; // つみたて投資枠（年）
+// const NISA_SPOT_ANNUAL_CAP = 2_400_000;     // 成長投資枠（年）
 
 interface InputParams {
   initialAge: number;
@@ -96,13 +105,7 @@ interface InputParams {
     cost10kJPY: number;
   }[];
 
-  care?: {
-    assume: boolean;
-    parentCurrentAge?: number;
-    parentCareStartAge?: number;
-    years?: number;
-    monthly10kJPY?: number;
-  };
+  cares?: CarePlan[];
 
   postRetirementLiving10kJPY: number;
   pensionMonthly10kJPY: number;
@@ -514,12 +517,15 @@ function runSimulation(params: InputParams): YearlyData[] {
     }
 
     let careExpense = 0;
-    if (params.care?.assume) {
-      const parentAge = n(params.care.parentCurrentAge) + i;
-      if (parentAge >= n(params.care.parentCareStartAge) && parentAge < n(params.care.parentCareStartAge) + n(params.care.years)) {
-        careExpense = n(params.care.monthly10kJPY) * 10000 * 12 * yearFraction;
-      }
-    }
+    if (Array.isArray(params.cares)) {
+      params.cares.forEach(plan => {
+        const parentAge = n(plan.parentCurrentAge) + i;
+        const careStartAge = n(plan.parentCareStartAge);
+        if (parentAge >= careStartAge && parentAge < careStartAge + n(plan.years)) {
+          careExpense += n(plan.monthly10kJPY) * 10000 * 12 * yearFraction;
+        }
+      });
+    } 
 
     let marriageExpense = 0;
     if (params.marriage && currentAge === n(params.marriage.age)) {

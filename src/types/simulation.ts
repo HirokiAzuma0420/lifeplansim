@@ -1,4 +1,4 @@
-﻿export type InvestmentProduct = {
+﻿﻿export type InvestmentProduct = {
   key: 'stocks' | 'trust' | 'bonds' | 'crypto' | 'other' | 'ideco';
   account: '課税' | '非課税' | 'iDeCo';
   currentJPY: number;
@@ -39,6 +39,14 @@ export interface PercentileData {
   p90: number[];
 }
 
+export interface CarePlan {
+  id: string | number; // フロントエンドでの識別のためのID
+  parentCurrentAge: number;
+  parentCareStartAge: number;
+  years: number;
+  monthly10kJPY: number;
+}
+
 export interface SimulationInputParams {
   initialAge: number;
   spouseInitialAge?: number;
@@ -54,12 +62,13 @@ export interface SimulationInputParams {
   yearlySpotJPY: number;
   expectedReturn: number;
   emergencyFundJPY: number;
+  cares?: CarePlan[]; // 介護プランを配列で受け取る
   products?: InvestmentProduct[];
 }
 
 export interface SimulationNavigationState {
   yearlyData: YearlyData[];
   percentileData?: PercentileData;
-  inputParams: Record<string, any>;
-  rawFormData?: Record<string, any>;
+  inputParams: SimulationInputParams;
+  rawFormData?: Record<string, unknown>;
 }

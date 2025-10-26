@@ -1,4 +1,4 @@
-﻿﻿import type { PercentileData, YearlyData, AccountBucket, SimulationInputParams, InvestmentProduct } from '../types/simulation';
+﻿import type { PercentileData, YearlyData, AccountBucket, SimulationInputParams, InvestmentProduct } from '../types/simulation';
 
 // グラフ描画用のデータ形式
 export type EnrichedYearlyAsset = {
@@ -14,10 +14,9 @@ export type EnrichedYearlyAsset = {
   年間投資額: number;
   年間収支: number;
   NISA: number;
-  iDeCo: number;
   課税口座: number;
   // 動的に追加されるプロパティを許容
-  [key: string]: any;
+  [key: string]: number | undefined;
 };
 
 // ツールチップ表示用の詳細データ形式
@@ -124,7 +123,7 @@ export const buildDashboardDataset = (
   const pieData = latestEntry
     ? Object.entries(latestEntry)
         .filter(([key]) => ['現金', 'NISA', 'iDeCo', '課税口座', '株式', '投資信託', '債券', '仮想通貨', 'その他'].includes(key))
-        .map(([name, value]) => ({ name, value: Math.max(0, value) }))
+        .map(([name, value]) => ({ name, value: Math.max(0, value || 0) }))
         .filter((item) => item.value > 0)
     : [];
 
