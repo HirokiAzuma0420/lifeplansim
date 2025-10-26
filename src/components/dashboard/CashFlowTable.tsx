@@ -30,33 +30,18 @@ export default function CashFlowTable({ enrichedData }: CashFlowTableProps) {
           </tr>
         </thead>
         <tbody className="text-gray-700">
-          {enrichedData.map((d, index) => {
-            if (index === 0) {
-              // 初年度の行は特別扱い
-              return (
-                <tr key={d.year} className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="px-4 py-2 font-medium">{d.year}年 ({d.age}歳)</td>
-                  <td className="px-4 py-2 text-right">-</td>
-                  <td className="px-4 py-2 text-right">-</td>
-                  <td className="px-4 py-2 text-right">-</td>
-                  <td className="px-4 py-2 text-right font-semibold">-</td>
-                  <td className="px-4 py-2 text-right">{formatCurrency(d.現金)}</td>
-                </tr>
-              );
-            }
-            return (
-              <tr key={d.year} className="border-b border-gray-200 hover:bg-gray-50">
-                <td className="px-4 py-2 font-medium">{d.year}年 ({d.age}歳)</td>
-                <td className="px-4 py-2 text-right">{formatCurrency(d.年間収入)}</td>
-                <td className="px-4 py-2 text-right">{formatCurrency(d.年間支出)}</td>
-                <td className="px-4 py-2 text-right">{formatCurrency(d.年間投資額)}</td>
-                <td className={`px-4 py-2 text-right font-semibold ${d.年間収支 >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
-                  {d.年間収支 >= 0 ? '+' : ''}{formatCurrency(d.年間収支)}
-                </td>
-                <td className="px-4 py-2 text-right">{formatCurrency(d.現金)}</td>
-              </tr>
-            );
-          })}
+          {enrichedData.map((d) => (
+            <tr key={d.year} className="border-b border-gray-200 hover:bg-gray-50">
+              <td className="px-4 py-2 font-medium">{d.year}年 ({d.age}歳)</td>
+              <td className="px-4 py-2 text-right">{formatCurrency(d.年間収入)}</td>
+              <td className="px-4 py-2 text-right">{formatCurrency(d.年間支出)}</td>
+              <td className="px-4 py-2 text-right">{formatCurrency(d.年間投資額)}</td>
+              <td className={`px-4 py-2 text-right font-semibold ${d.年間収支 >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
+                {d.年間収支 >= 0 ? '+' : ''}{formatCurrency(d.年間収支)}
+              </td>
+              <td className="px-4 py-2 text-right">{formatCurrency(d.現金)}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
