@@ -103,22 +103,6 @@ export default function ResultPage() {
 
   const percentileData = state?.percentileData;
   const dataset = useMemo(() => buildDashboardDataset(yearlyData, inputParams, percentileData), [yearlyData, inputParams, percentileData]);
-  // 商品別内訳（API拡張に対応：存在時のみ表示）
-  const latestProducts = useMemo<Record<string, number>>(() => {
-    if (!Array.isArray(yearlyData) || yearlyData.length === 0 || !inputParams?.products) return {};
-    const last = yearlyData[yearlyData.length - 1];
-    if (!last?.products) return {};
-
-    const productBalances: Record<string, number> = {};
-    inputParams.products.forEach((p, index) => {
-      const productId = `${p.key}-${index}`;
-      if (last.products[productId]) {
-        const name = `${p.key} (${p.account})`;
-        productBalances[name] = (productBalances[name] || 0) + last.products[productId].balance;
-      }
-    });
-    return productBalances;
-  }, [yearlyData, inputParams]);
 
   const handleSaveOutput = useCallback(() => {
     if (!yearlyData.length || typeof window === 'undefined') {
@@ -193,9 +177,6 @@ export default function ResultPage() {
   const weightedAverageReturn = totalAnnualInvestment > 0
     ? (inputParams.products?.reduce((sum: number, p: InvestmentProduct) => sum + ((p.recurringJPY ?? 0) + (p.spotJPY ?? 0)) * (p.expectedReturn ?? 0), 0) ?? 0) / totalAnnualInvestment
     : 0;
-
-
-  // latestProducts は上部でメモ化済み
 
   const summaryCards = [
     {
@@ -323,29 +304,6 @@ export default function ResultPage() {
               <CashFlowTable enrichedData={dataset.enrichedData} />
             </AccordionCard>
 
-
-            {Object.keys(latestProducts).length > 0 && (
-              <AccordionCard title="商品別内訳（最新年）">
-                <div className="overflow-x-auto">
-                  <table className="min-w-full table-auto text-sm">
-                    <thead>
-                      <tr className="bg-gray-100 text-gray-700">
-                        <th className="px-2 py-1 text-left">商品</th>
-                        <th className="px-2 py-1 text-right">残高</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.entries(latestProducts).map(([k, v]) => (
-                        <tr key={k} className="border-b">
-                          <td className="px-2 py-1">{k}</td>
-                          <td className="px-2 py-1 text-right">{formatCurrency(v)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </AccordionCard>
-            )}
           </div>
         </div>
       </div>
