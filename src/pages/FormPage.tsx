@@ -759,10 +759,11 @@ export default function FormPage() {
   }, [formData.parentCareAssumption, formData.parentCareMonthlyCost, formData.parentCareYears]);
 
   const totalRetirementMonthly = useMemo(() => {
+    const spousePension = formData.familyComposition === '既婚' ? (Number(formData.spousePensionAmount) || 0) : 0;
     return (
-        (Number(formData.postRetirementLivingCost) || 0) - (Number(formData.pensionAmount) || 0)
+        (Number(formData.postRetirementLivingCost) || 0) - ((Number(formData.pensionAmount) || 0) + spousePension)
     );
-  }, [formData.postRetirementLivingCost, formData.pensionAmount]);
+  }, [formData.postRetirementLivingCost, formData.pensionAmount, formData.spousePensionAmount, formData.familyComposition]);
 
   const totalCarLoanCost = useMemo(() => {
     if (formData.carLoanUsage !== 'はい') return 0;
