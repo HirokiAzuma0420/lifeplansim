@@ -306,7 +306,12 @@ export default function ResultPage() {
 
             <AssetTable enrichedData={dataset.enrichedData} />
 
-            <CashFlowTable enrichedData={dataset.enrichedData} />
+            <div className="bg-white rounded-xl shadow p-4">
+              <h3 className="text-lg font-semibold mb-2">年間収支詳細</h3>
+              <p className="text-sm text-gray-600 mb-4">初期資産額（現金預金）: {formatCurrency(inputParams.currentSavingsJPY)}</p>
+              <CashFlowTable enrichedData={dataset.enrichedData} />
+            </div>
+
 
             {Object.keys(latestProducts).length > 0 && (
               <div className="bg-white rounded-xl shadow p-4">
