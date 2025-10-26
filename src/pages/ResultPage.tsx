@@ -166,6 +166,7 @@ export default function ResultPage() {
 
   // サマリー表示用に、按分されていない「世帯」の手取り年収を計算
   const spouseGrossIncome = (inputParams.spouseMainJobIncomeGross ?? 0) + (inputParams.spouseSideJobIncomeGross ?? 0);
+  const totalGrossIncome = selfGrossIncome + spouseGrossIncome;
   const totalNetAnnualIncome = selfNetAnnualIncome + computeNetAnnual(spouseGrossIncome);
 
   const savingsForChart = dataset.firstYear?.totalAssets ?? 0;
@@ -284,7 +285,7 @@ export default function ResultPage() {
             <AccordionCard title="収入・貯蓄の同世代比較">
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                 <IncomePositionChart age={currentAge} income={selfGrossIncome} />
-                <SavingsPositionChart age={currentAge} income={selfGrossIncome} savings={savingsForChart} />
+                <SavingsPositionChart age={currentAge} income={totalGrossIncome} savings={savingsForChart} />
               </div>
             </AccordionCard>
 
