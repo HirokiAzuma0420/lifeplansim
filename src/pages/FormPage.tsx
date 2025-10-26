@@ -1205,8 +1205,11 @@ export default function FormPage() {
 
             <div className={`mb-4 accordion-content ${formData.expenseMethod === '簡単' ? 'open' : ''}`}>
                 <div className={`mb-4 accordion-content ${formData.expenseMethod === '簡単' ? 'open' : ''}`}>
+                <p className="text-sm text-gray-600 bg-blue-50 p-3 rounded-md mb-4">
+                  ※住居費、自動車関連費、貯蓄・投資は除いて入力してください。
+                </p>
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="livingCostSimple">
-                  生活費（住居費、自動車費、貯蓄・投資除く）[円]
+                  生活費[円]
                 </label>
                 <input
                   type="number"
