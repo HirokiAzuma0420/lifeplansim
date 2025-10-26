@@ -1,5 +1,7 @@
-﻿import { useMemo } from 'react';
+﻿import { useMemo, useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useOrientation } from '../../hooks/useOrientation';
+import RotatePrompt from './RotatePrompt';
 
 interface InvestmentPrincipalChartProps {
   enrichedData: { year: number; [key: string]: any }[];
@@ -9,6 +11,16 @@ interface InvestmentPrincipalChartProps {
 }
 
 export default function InvestmentPrincipalChart({ enrichedData, COLORS, age, retireAge }: InvestmentPrincipalChartProps) {
+  const orientation = useOrientation();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [showRotatePrompt, setShowRotatePrompt] = useState(isMobile && orientation === 'portrait');
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const principalKeys = useMemo(() => {
     if (enrichedData.length === 0) return [];
     // '投資元本' を除外
@@ -28,7 +40,10 @@ export default function InvestmentPrincipalChart({ enrichedData, COLORS, age, re
   const retirementYear = (enrichedData[0]?.year ?? new Date().getFullYear()) + (retireAge - age);
 
   return (
-    <div className="bg-white rounded-xl shadow p-4">
+    <div className="relative">
+      {isMobile && orientation === 'portrait' && showRotatePrompt && (
+        <RotatePrompt onClose={() => setShowRotatePrompt(false)} />
+      )}
       <h3 className="text-lg font-semibold mb-2">積立元本推移（〜{retirementYear}年）</h3>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart 

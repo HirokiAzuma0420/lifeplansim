@@ -1,7 +1,10 @@
+import { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Line } from 'recharts';
 import type { TooltipProps } from 'recharts';
 import type { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
 import type { DetailedAssetData, EnrichedYearlyAsset } from '../../utils/simulation';
+import { useOrientation } from '../../hooks/useOrientation';
+import RotatePrompt from './RotatePrompt';
 
 interface TotalAssetChartProps {
   enrichedData: { year: number; 総資産: number; [key: string]: number }[];
@@ -69,6 +72,17 @@ const CustomTooltip = ({ active, payload, label, detailedAssetData }: TooltipPro
 };
 
 export default function TotalAssetChart({ enrichedData, detailedAssetData, rankInfo, COLORS, age, retireAge, yAxisMax }: TotalAssetChartProps & { enrichedData: EnrichedYearlyAsset[] }) {
+  const orientation = useOrientation();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [showRotatePrompt, setShowRotatePrompt] = useState(isMobile && orientation === 'portrait');
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', checkMobile);
+    checkMobile(); // 初期チェック
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const retirementYear = enrichedData[0].year + (retireAge - age);
 
   const assetKeys = enrichedData.length > 0
@@ -164,7 +178,10 @@ export default function TotalAssetChart({ enrichedData, detailedAssetData, rankI
   };
 
   return (
-    <div className="bg-white rounded-xl shadow p-3 mb-6 relative">
+    <div className="relative">
+      {isMobile && orientation === 'portrait' && showRotatePrompt && (
+        <RotatePrompt onClose={() => setShowRotatePrompt(false)} />
+      )}
       {/* ランク表示カード */}
       <div className="w-full flex flex-col items-center md:flex-row md:justify-start md:pl-[15%]">
         <div className="bg-white relative w-full">

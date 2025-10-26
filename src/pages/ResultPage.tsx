@@ -268,15 +268,17 @@ export default function ResultPage() {
           <div className="lg:col-span-3 space-y-6">
             {/* モバイルではアコーディオンになるカード群 */}
             <AccordionCard title="総資産推移">
-              <TotalAssetChart
-                enrichedData={dataset.enrichedData}
-                detailedAssetData={dataset.detailedAssetData}
-                rankInfo={rankInfo}
-                COLORS={COLORS}
-                age={currentAge}
-                retireAge={retireAge}
-                yAxisMax={peakAssetValue}
-              />
+              <div className="bg-white rounded-xl shadow p-3 mb-6 relative">
+                <TotalAssetChart
+                  enrichedData={dataset.enrichedData}
+                  detailedAssetData={dataset.detailedAssetData}
+                  rankInfo={rankInfo}
+                  COLORS={COLORS}
+                  age={currentAge}
+                  retireAge={retireAge}
+                  yAxisMax={peakAssetValue}
+                />
+              </div>
             </AccordionCard>
 
             <AccordionCard title="収入・貯蓄の同世代比較">
@@ -287,9 +289,13 @@ export default function ResultPage() {
             </AccordionCard>
 
             <AccordionCard title="投資の状況">
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                <InvestmentPrincipalChart enrichedData={dataset.enrichedData} COLORS={COLORS} age={currentAge} retireAge={retireAge} />
-                <AssetPieChart pieData={dataset.pieData} />
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 ">
+                <div className="bg-white rounded-xl shadow p-4">
+                  <InvestmentPrincipalChart enrichedData={dataset.enrichedData} COLORS={COLORS} age={currentAge} retireAge={retireAge} />
+                </div>
+                <div className="bg-white rounded-xl shadow p-4">
+                  <AssetPieChart pieData={dataset.pieData} />
+                </div>
               </div>
             </AccordionCard>
 
