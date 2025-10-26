@@ -129,6 +129,14 @@ interface YearlyData {
   age: number;
   income: number;
   totalExpense: number;
+  livingExpense: number;
+  housingExpense: number;
+  carExpense: number;
+  applianceExpense: number;
+  childExpense: number;
+  marriageExpense: number;
+  careExpense: number;
+  retirementExpense: number;
   totalInvestment: number;
   cashFlow: number;
   savings: number;
@@ -683,6 +691,14 @@ function runSimulation(params: InputParams): YearlyData[] {
       age: currentAge,
       income: Math.round(annualIncome),
       totalExpense: Math.round(totalExpense),
+      livingExpense: Math.round(livingExpense),
+      housingExpense: Math.round(housingExpense),
+      carExpense: Math.round(carExpense),
+      applianceExpense: Math.round(applianceExpense),
+      childExpense: Math.round(childExpense),
+      marriageExpense: Math.round(marriageExpense),
+      careExpense: Math.round(careExpense),
+      retirementExpense: Math.round(retirementExpense),
       savings: Math.round(savings),
       totalInvestment: Math.round(totalInvestmentOutflow),
       cashFlow: Math.round(cashFlow),

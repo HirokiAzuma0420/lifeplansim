@@ -2,1405 +2,2917 @@
   {
     "year": 2025,
     "age": 37,
-    "income": 1413750,
-    "totalExpense": 1716800,
-    "savings": 4666950,
+    "income": 1925300,
+    "totalExpense": 1583000,
+    "savings": 4787300,
+    "totalInvestment": 555000,
+    "cashFlow": -212700,
     "nisa": {
-      "principal": 1030000,
-      "balance": 1045072.49
+      "principal": 5265000,
+      "balance": 5297002.42
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 630000,
+      "balance": 635397.4
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 3047192.34
     },
-    "totalAssets": 5712022.49,
+    "totalAssets": 13766892.27,
     "assetAllocation": {
-      "cash": 4666950,
-      "investment": 0,
-      "nisa": 1045072.49,
-      "ideco": 0
+      "cash": 4787300,
+      "investment": 3047192.34,
+      "nisa": 5297002.42,
+      "ideco": 635397.4
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 3047192.34
+      },
+      "trust-1": {
+        "principal": 5265000,
+        "balance": 5297002.42
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 630000,
+        "balance": 635397.4
+      }
     }
   },
   {
     "year": 2026,
     "age": 38,
-    "income": 5367439,
-    "totalExpense": 4600800,
-    "savings": 5313589,
+    "income": 7320485,
+    "totalExpense": 4332000,
+    "savings": 5555785,
+    "totalInvestment": 2220000,
+    "cashFlow": 768485,
     "nisa": {
-      "principal": 1150000,
-      "balance": 1201620.59
+      "principal": 7245000,
+      "balance": 7497052.49
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 870000,
+      "balance": 910633.54
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 3326289.93
     },
-    "totalAssets": 6515209.36,
+    "totalAssets": 17289761,
     "assetAllocation": {
-      "cash": 5313589,
-      "investment": 0,
-      "nisa": 1201620.59,
-      "ideco": 0
+      "cash": 5555785,
+      "investment": 3326289.93,
+      "nisa": 7497052.49,
+      "ideco": 910633.54
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 3326289.93
+      },
+      "trust-1": {
+        "principal": 7245000,
+        "balance": 7497052.49
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 870000,
+        "balance": 910633.54
+      }
     }
   },
   {
     "year": 2027,
     "age": 39,
-    "income": 5444770,
-    "totalExpense": 4541600,
-    "savings": 6096759,
+    "income": 7417910,
+    "totalExpense": 4332000,
+    "savings": 6421695,
+    "totalInvestment": 2220000,
+    "cashFlow": 865910,
     "nisa": {
-      "principal": 1270000,
-      "balance": 1356458.79
+      "principal": 9225000,
+      "balance": 9710646.79
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 1110000,
+      "balance": 1211391.32
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 3580053.18
     },
-    "totalAssets": 7453217.92,
+    "totalAssets": 20923786.11,
     "assetAllocation": {
-      "cash": 6096759,
-      "investment": 0,
-      "nisa": 1356458.79,
-      "ideco": 0
+      "cash": 6421695,
+      "investment": 3580053.18,
+      "nisa": 9710646.79,
+      "ideco": 1211391.32
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 3580053.18
+      },
+      "trust-1": {
+        "principal": 9225000,
+        "balance": 9710646.79
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 1110000,
+        "balance": 1211391.32
+      }
     }
   },
   {
     "year": 2028,
     "age": 40,
-    "income": 5523262,
-    "totalExpense": 4512000,
-    "savings": 6988021,
+    "income": 7516796,
+    "totalExpense": 4332000,
+    "savings": 7386491,
+    "totalInvestment": 2220000,
+    "cashFlow": 964796,
     "nisa": {
-      "principal": 1390000,
-      "balance": 1530272.38
+      "principal": 11205000,
+      "balance": 12476891.83
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 1350000,
+      "balance": 1499604.8
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 3781462.75
     },
-    "totalAssets": 8518293.37,
+    "totalAssets": 25144450.1,
     "assetAllocation": {
-      "cash": 6988021,
-      "investment": 0,
-      "nisa": 1530272.38,
-      "ideco": 0
+      "cash": 7386491,
+      "investment": 3781462.75,
+      "nisa": 12476891.83,
+      "ideco": 1499604.8
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 3781462.75
+      },
+      "trust-1": {
+        "principal": 11205000,
+        "balance": 12476891.83
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 1350000,
+        "balance": 1499604.8
+      }
     }
   },
   {
     "year": 2029,
     "age": 41,
-    "income": 5601555,
-    "totalExpense": 4512000,
-    "savings": 7957576,
+    "income": 7617165,
+    "totalExpense": 4332000,
+    "savings": 8451656,
+    "totalInvestment": 2220000,
+    "cashFlow": 1065165,
     "nisa": {
-      "principal": 1510000,
-      "balance": 1692156.96
+      "principal": 13185000,
+      "balance": 15273636.93
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 1590000,
+      "balance": 1872739.44
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 4054200.94
     },
-    "totalAssets": 9649732.63,
+    "totalAssets": 29652233.44,
     "assetAllocation": {
-      "cash": 7957576,
-      "investment": 0,
-      "nisa": 1692156.96,
-      "ideco": 0
+      "cash": 8451656,
+      "investment": 4054200.94,
+      "nisa": 15273636.93,
+      "ideco": 1872739.44
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 4054200.94
+      },
+      "trust-1": {
+        "principal": 13185000,
+        "balance": 15273636.93
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 1590000,
+        "balance": 1872739.44
+      }
     }
   },
   {
     "year": 2030,
     "age": 42,
-    "income": 5680246,
-    "totalExpense": 4512000,
-    "savings": 9005821,
+    "income": 7719040,
+    "totalExpense": 4332000,
+    "savings": 9618696,
+    "totalInvestment": 2220000,
+    "cashFlow": 1167040,
     "nisa": {
-      "principal": 1630000,
-      "balance": 1910048.11
+      "principal": 15165000,
+      "balance": 17566689.64
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 1830000,
+      "balance": 2216608.78
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 4244797.88
     },
-    "totalAssets": 10915869.32,
+    "totalAssets": 33646792.76,
     "assetAllocation": {
-      "cash": 9005821,
-      "investment": 0,
-      "nisa": 1910048.11,
-      "ideco": 0
+      "cash": 9618696,
+      "investment": 4244797.88,
+      "nisa": 17566689.64,
+      "ideco": 2216608.78
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 4244797.88
+      },
+      "trust-1": {
+        "principal": 15165000,
+        "balance": 17566689.64
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 1830000,
+        "balance": 2216608.78
+      }
     }
   },
   {
     "year": 2031,
     "age": 43,
-    "income": 5760117,
-    "totalExpense": 4532000,
-    "savings": 10113938,
+    "income": 7822443,
+    "totalExpense": 4352000,
+    "savings": 10869140,
+    "totalInvestment": 2220000,
+    "cashFlow": 1250443,
     "nisa": {
-      "principal": 1750000,
-      "balance": 2063590.62
+      "principal": 17145000,
+      "balance": 20437774.51
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 2070000,
+      "balance": 2608261.7
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 4426241.96
     },
-    "totalAssets": 12177528.5,
+    "totalAssets": 38341418.06,
     "assetAllocation": {
-      "cash": 10113938,
-      "investment": 0,
-      "nisa": 2063590.62,
-      "ideco": 0
+      "cash": 10869140,
+      "investment": 4426241.96,
+      "nisa": 20437774.51,
+      "ideco": 2608261.7
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 4426241.96
+      },
+      "trust-1": {
+        "principal": 17145000,
+        "balance": 20437774.51
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 2070000,
+        "balance": 2608261.7
+      }
     }
   },
   {
     "year": 2032,
     "age": 44,
-    "income": 5841186,
-    "totalExpense": 4512000,
-    "savings": 11323124,
+    "income": 7927398,
+    "totalExpense": 4332000,
+    "savings": 13369537,
+    "totalInvestment": 1095000,
+    "cashFlow": 2500398,
     "nisa": {
-      "principal": 1870000,
-      "balance": 2287157.21
+      "principal": 18000000,
+      "balance": 21972023.43
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 2310000,
+      "balance": 2939907.14
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 4550675.46
     },
-    "totalAssets": 13610280.99,
+    "totalAssets": 42832143.37,
     "assetAllocation": {
-      "cash": 11323124,
-      "investment": 0,
-      "nisa": 2287157.21,
-      "ideco": 0
+      "cash": 13369537,
+      "investment": 4550675.46,
+      "nisa": 21972023.43,
+      "ideco": 2939907.14
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 4550675.46
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 21972023.43
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 2310000,
+        "balance": 2939907.14
+      }
     }
   },
   {
     "year": 2033,
     "age": 45,
-    "income": 5923471,
-    "totalExpense": 4662000,
-    "savings": 12464595,
+    "income": 8033926,
+    "totalExpense": 4482000,
+    "savings": 16681464,
+    "totalInvestment": 240000,
+    "cashFlow": 3311926,
     "nisa": {
-      "principal": 1990000,
-      "balance": 2510481.65
+      "principal": 18000000,
+      "balance": 23744733.25
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 2550000,
+      "balance": 3336042.21
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 4773607.19
     },
-    "totalAssets": 14975076.72,
+    "totalAssets": 48535846.14,
     "assetAllocation": {
-      "cash": 12464595,
-      "investment": 0,
-      "nisa": 2510481.65,
-      "ideco": 0
+      "cash": 16681464,
+      "investment": 4773607.19,
+      "nisa": 23744733.25,
+      "ideco": 3336042.21
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 4773607.19
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 23744733.25
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 2550000,
+        "balance": 3336042.21
+      }
     }
   },
   {
     "year": 2034,
     "age": 46,
-    "income": 6006991,
-    "totalExpense": 4512000,
-    "savings": 13839586,
+    "income": 8142052,
+    "totalExpense": 4332000,
+    "savings": 20251516,
+    "totalInvestment": 240000,
+    "cashFlow": 3570052,
     "nisa": {
-      "principal": 2110000,
-      "balance": 2745506.34
+      "principal": 18000000,
+      "balance": 24682584.45
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 2790000,
+      "balance": 3622798.78
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 4922379.03
     },
-    "totalAssets": 16585092.22,
+    "totalAssets": 53479278.22,
     "assetAllocation": {
-      "cash": 13839586,
-      "investment": 0,
-      "nisa": 2745506.34,
-      "ideco": 0
+      "cash": 20251516,
+      "investment": 4922379.03,
+      "nisa": 24682584.45,
+      "ideco": 3622798.78
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 4922379.03
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 24682584.45
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 2790000,
+        "balance": 3622798.78
+      }
     }
   },
   {
     "year": 2035,
     "age": 47,
-    "income": 6091763,
-    "totalExpense": 6042000,
-    "savings": 13769349,
+    "income": 8251801,
+    "totalExpense": 9362000,
+    "savings": 18901317,
+    "totalInvestment": 240000,
+    "cashFlow": -1350199,
     "nisa": {
-      "principal": 2230000,
-      "balance": 2987074.06
+      "principal": 18000000,
+      "balance": 26249769.91
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3030000,
+      "balance": 3965336.86
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 5253830.58
     },
-    "totalAssets": 16756423.06,
+    "totalAssets": 54370254.04,
     "assetAllocation": {
-      "cash": 13769349,
-      "investment": 0,
-      "nisa": 2987074.06,
-      "ideco": 0
+      "cash": 18901317,
+      "investment": 5253830.58,
+      "nisa": 26249769.91,
+      "ideco": 3965336.86
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 5253830.58
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 26249769.91
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 3030000,
+        "balance": 3965336.86
+      }
     }
   },
   {
     "year": 2036,
     "age": 48,
-    "income": 6177807,
-    "totalExpense": 5712000,
-    "savings": 14115156,
+    "income": 8363195,
+    "totalExpense": 5532000,
+    "savings": 21492512,
+    "totalInvestment": 240000,
+    "cashFlow": 2591195,
     "nisa": {
-      "principal": 2350000,
-      "balance": 3221624.79
+      "principal": 18000000,
+      "balance": 26673890.48
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3270000,
+      "balance": 4338529.59
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 5318136.1
     },
-    "totalAssets": 17336780.9,
+    "totalAssets": 57823068.15,
     "assetAllocation": {
-      "cash": 14115156,
-      "investment": 0,
-      "nisa": 3221624.79,
-      "ideco": 0
+      "cash": 21492512,
+      "investment": 5318136.1,
+      "nisa": 26673890.48,
+      "ideco": 4338529.59
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 5318136.1
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 26673890.48
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 3270000,
+        "balance": 4338529.59
+      }
     }
   },
   {
     "year": 2037,
     "age": 49,
-    "income": 6265142,
-    "totalExpense": 5732000,
-    "savings": 14528298,
+    "income": 8476261,
+    "totalExpense": 5552000,
+    "savings": 24176773,
+    "totalInvestment": 240000,
+    "cashFlow": 2684261,
     "nisa": {
-      "principal": 2470000,
-      "balance": 3378111.04
+      "principal": 18000000,
+      "balance": 26850281.21
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3510000,
+      "balance": 4845074.93
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 5687996.27
     },
-    "totalAssets": 17906408.86,
+    "totalAssets": 61560125.03,
     "assetAllocation": {
-      "cash": 14528298,
-      "investment": 0,
-      "nisa": 3378111.04,
-      "ideco": 0
+      "cash": 24176773,
+      "investment": 5687996.27,
+      "nisa": 26850281.21,
+      "ideco": 4845074.93
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 5687996.27
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 26850281.21
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 3510000,
+        "balance": 4845074.93
+      }
     }
   },
   {
     "year": 2038,
     "age": 50,
-    "income": 6353786,
-    "totalExpense": 5712000,
-    "savings": 15050084,
+    "income": 8591022,
+    "totalExpense": 5532000,
+    "savings": 26995795,
+    "totalInvestment": 240000,
+    "cashFlow": 2819022,
     "nisa": {
-      "principal": 2590000,
-      "balance": 3679063.77
+      "principal": 18000000,
+      "balance": 27942263.51
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3750000,
+      "balance": 5197328.13
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 6057877.05
     },
-    "totalAssets": 18729147.97,
+    "totalAssets": 66193263.4,
     "assetAllocation": {
-      "cash": 15050084,
-      "investment": 0,
-      "nisa": 3679063.77,
-      "ideco": 0
+      "cash": 26995795,
+      "investment": 6057877.05,
+      "nisa": 27942263.51,
+      "ideco": 5197328.13
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 6057877.05
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 27942263.51
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 3750000,
+        "balance": 5197328.13
+      }
     }
   },
   {
     "year": 2039,
     "age": 51,
-    "income": 6443761,
-    "totalExpense": 5712000,
-    "savings": 15661845,
+    "income": 8707505,
+    "totalExpense": 10877498,
+    "savings": 24585802,
+    "totalInvestment": 240000,
+    "cashFlow": -2409993,
     "nisa": {
-      "principal": 2710000,
-      "balance": 3894746.71
+      "principal": 18000000,
+      "balance": 29875036.43
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3990000,
+      "balance": 5833333.72
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 6135483.79
     },
-    "totalAssets": 19556591.55,
+    "totalAssets": 66429655.63,
     "assetAllocation": {
-      "cash": 15661845,
-      "investment": 0,
-      "nisa": 3894746.71,
-      "ideco": 0
+      "cash": 24585802,
+      "investment": 6135483.79,
+      "nisa": 29875036.43,
+      "ideco": 5833333.72
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 6135483.79
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 29875036.43
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 3990000,
+        "balance": 5833333.72
+      }
     }
   },
   {
     "year": 2040,
     "age": 52,
-    "income": 6535085,
-    "totalExpense": 4512000,
-    "savings": 17564929,
+    "income": 8825735,
+    "totalExpense": 4677498,
+    "savings": 28494039,
+    "totalInvestment": 240000,
+    "cashFlow": 3908237,
     "nisa": {
-      "principal": 2830000,
-      "balance": 4092638.99
+      "principal": 18000000,
+      "balance": 31530645.7
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 4230000,
+      "balance": 6491469.85
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 6185173.02
     },
-    "totalAssets": 21657568.3,
+    "totalAssets": 72701327.22,
     "assetAllocation": {
-      "cash": 17564929,
-      "investment": 0,
-      "nisa": 4092638.99,
-      "ideco": 0
+      "cash": 28494039,
+      "investment": 6185173.02,
+      "nisa": 31530645.7,
+      "ideco": 6491469.85
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 6185173.02
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 31530645.7
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 4230000,
+        "balance": 6491469.85
+      }
     }
   },
   {
     "year": 2041,
     "age": 53,
-    "income": 6627778,
-    "totalExpense": 4662000,
-    "savings": 19410708,
+    "income": 8945739,
+    "totalExpense": 4827498,
+    "savings": 32372279,
+    "totalInvestment": 240000,
+    "cashFlow": 3878241,
     "nisa": {
-      "principal": 2950000,
-      "balance": 4380591.85
+      "principal": 18000000,
+      "balance": 34100855.68
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 4470000,
+      "balance": 6934513.38
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 6447014.81
     },
-    "totalAssets": 23791299.54,
+    "totalAssets": 79854663.07,
     "assetAllocation": {
-      "cash": 19410708,
-      "investment": 0,
-      "nisa": 4380591.85,
-      "ideco": 0
+      "cash": 32372279,
+      "investment": 6447014.81,
+      "nisa": 34100855.68,
+      "ideco": 6934513.38
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 6447014.81
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 34100855.68
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 4470000,
+        "balance": 6934513.38
+      }
     }
   },
   {
     "year": 2042,
     "age": 54,
-    "income": 6721862,
-    "totalExpense": 4512000,
-    "savings": 21500570,
+    "income": 9066889,
+    "totalExpense": 4677498,
+    "savings": 36521670,
+    "totalInvestment": 240000,
+    "cashFlow": 4149391,
     "nisa": {
-      "principal": 3070000,
-      "balance": 4565055.18
+      "principal": 18000000,
+      "balance": 35816380.78
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 4710000,
+      "balance": 7538768.82
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 6893760.82
     },
-    "totalAssets": 26065625.34,
+    "totalAssets": 86770580.76,
     "assetAllocation": {
-      "cash": 21500570,
-      "investment": 0,
-      "nisa": 4565055.18,
-      "ideco": 0
+      "cash": 36521670,
+      "investment": 6893760.82,
+      "nisa": 35816380.78,
+      "ideco": 7538768.82
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 6893760.82
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 35816380.78
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 4710000,
+        "balance": 7538768.82
+      }
     }
   },
   {
     "year": 2043,
     "age": 55,
-    "income": 6817358,
-    "totalExpense": 4532000,
-    "savings": 23665928,
+    "income": 9185767,
+    "totalExpense": 4697498,
+    "savings": 40769939,
+    "totalInvestment": 240000,
+    "cashFlow": 4248269,
     "nisa": {
-      "principal": 3190000,
-      "balance": 4757523.37
+      "principal": 18000000,
+      "balance": 35416949.31
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 4950000,
+      "balance": 8074715.15
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 7274051.85
     },
-    "totalAssets": 28423451.47,
+    "totalAssets": 91535655.5,
     "assetAllocation": {
-      "cash": 23665928,
-      "investment": 0,
-      "nisa": 4757523.37,
-      "ideco": 0
+      "cash": 40769939,
+      "investment": 7274051.85,
+      "nisa": 35416949.31,
+      "ideco": 8074715.15
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 7274051.85
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 35416949.31
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 4950000,
+        "balance": 8074715.15
+      }
     }
   },
   {
     "year": 2044,
     "age": 56,
-    "income": 6914286,
-    "totalExpense": 4512000,
-    "savings": 25948214,
+    "income": 9306428,
+    "totalExpense": 4677498,
+    "savings": 45158869,
+    "totalInvestment": 240000,
+    "cashFlow": 4388930,
     "nisa": {
-      "principal": 3310000,
-      "balance": 5062422.74
+      "principal": 18000000,
+      "balance": 34546472.96
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 5190000,
+      "balance": 8606245.37
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 7481396.84
     },
-    "totalAssets": 31010636.65,
+    "totalAssets": 95792984.28,
     "assetAllocation": {
-      "cash": 25948214,
-      "investment": 0,
-      "nisa": 5062422.74,
-      "ideco": 0
+      "cash": 45158869,
+      "investment": 7481396.84,
+      "nisa": 34546472.96,
+      "ideco": 8606245.37
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 7481396.84
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 34546472.96
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 5190000,
+        "balance": 8606245.37
+      }
     }
   },
   {
     "year": 2045,
     "age": 57,
-    "income": 7012668,
-    "totalExpense": 4842000,
-    "savings": 27998881,
+    "income": 9428899,
+    "totalExpense": 8507498,
+    "savings": 45840270,
+    "totalInvestment": 240000,
+    "cashFlow": 681401,
     "nisa": {
-      "principal": 3430000,
-      "balance": 5482470.87
+      "principal": 18000000,
+      "balance": 35961570.37
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 5430000,
+      "balance": 9082726.67
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 7834338.81
     },
-    "totalAssets": 33481352.38,
+    "totalAssets": 98718905.88,
     "assetAllocation": {
-      "cash": 27998881,
-      "investment": 0,
-      "nisa": 5482470.87,
-      "ideco": 0
+      "cash": 45840270,
+      "investment": 7834338.81,
+      "nisa": 35961570.37,
+      "ideco": 9082726.67
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 7834338.81
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 35961570.37
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 5430000,
+        "balance": 9082726.67
+      }
     }
   },
   {
     "year": 2046,
     "age": 58,
-    "income": 7112525,
-    "totalExpense": 4512000,
-    "savings": 30479407,
+    "income": 9553207,
+    "totalExpense": 4677498,
+    "savings": 50475979,
+    "totalInvestment": 240000,
+    "cashFlow": 4635709,
     "nisa": {
-      "principal": 3550000,
-      "balance": 5608285.39
+      "principal": 18000000,
+      "balance": 37178146.05
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 5670000,
+      "balance": 9454261.2
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 8209895.78
     },
-    "totalAssets": 36087691.9,
+    "totalAssets": 105318281.79,
     "assetAllocation": {
-      "cash": 30479407,
-      "investment": 0,
-      "nisa": 5608285.39,
-      "ideco": 0
+      "cash": 50475979,
+      "investment": 8209895.78,
+      "nisa": 37178146.05,
+      "ideco": 9454261.2
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 8209895.78
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 37178146.05
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 5670000,
+        "balance": 9454261.2
+      }
     }
   },
   {
     "year": 2047,
     "age": 59,
-    "income": 7213880,
-    "totalExpense": 4512000,
-    "savings": 33061287,
+    "income": 9679379,
+    "totalExpense": 4677498,
+    "savings": 55237860,
+    "totalInvestment": 240000,
+    "cashFlow": 4761881,
     "nisa": {
-      "principal": 3670000,
-      "balance": 6066824.79
+      "principal": 18000000,
+      "balance": 38318067.79
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 5910000,
+      "balance": 9799351.33
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 8409098.69
     },
-    "totalAssets": 39128111.82,
+    "totalAssets": 111764378.01,
     "assetAllocation": {
-      "cash": 33061287,
-      "investment": 0,
-      "nisa": 6066824.79,
-      "ideco": 0
+      "cash": 55237860,
+      "investment": 8409098.69,
+      "nisa": 38318067.79,
+      "ideco": 9799351.33
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 8409098.69
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 38318067.79
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 5910000,
+        "balance": 9799351.33
+      }
     }
   },
   {
     "year": 2048,
     "age": 60,
-    "income": 7316756,
-    "totalExpense": 4512000,
-    "savings": 35746043,
+    "income": 9807445,
+    "totalExpense": 4677498,
+    "savings": 60127807,
+    "totalInvestment": 240000,
+    "cashFlow": 4889947,
     "nisa": {
-      "principal": 3790000,
-      "balance": 6454524.52
+      "principal": 18000000,
+      "balance": 39440140.63
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6150000,
+      "balance": 10583167.7
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 8724125.13
     },
-    "totalAssets": 42200567.69,
+    "totalAssets": 118875240.44,
     "assetAllocation": {
-      "cash": 35746043,
-      "investment": 0,
-      "nisa": 6454524.52,
-      "ideco": 0
+      "cash": 60127807,
+      "investment": 8724125.13,
+      "nisa": 39440140.63,
+      "ideco": 10583167.7
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 8724125.13
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 39440140.63
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 6150000,
+        "balance": 10583167.7
+      }
     }
   },
   {
     "year": 2049,
     "age": 61,
-    "income": 7421175,
-    "totalExpense": 4682000,
-    "savings": 38365218,
+    "income": 9937431,
+    "totalExpense": 3770000,
+    "savings": 66055238,
+    "totalInvestment": 240000,
+    "cashFlow": 5927431,
     "nisa": {
-      "principal": 3910000,
-      "balance": 6724243.36
+      "principal": 18000000,
+      "balance": 42011220.99
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6390000,
+      "balance": 11565912.21
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 9199882.84
     },
-    "totalAssets": 45089461.67,
+    "totalAssets": 128832253.73,
     "assetAllocation": {
-      "cash": 38365218,
-      "investment": 0,
-      "nisa": 6724243.36,
-      "ideco": 0
+      "cash": 66055238,
+      "investment": 9199882.84,
+      "nisa": 42011220.99,
+      "ideco": 11565912.21
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 9199882.84
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 42011220.99
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 6390000,
+        "balance": 11565912.21
+      }
     }
   },
   {
     "year": 2050,
     "age": 62,
-    "income": 7526750,
-    "totalExpense": 4512000,
-    "savings": 41259968,
+    "income": 10069367,
+    "totalExpense": 3600000,
+    "savings": 72284604,
+    "totalInvestment": 240000,
+    "cashFlow": 6229367,
     "nisa": {
-      "principal": 4030000,
-      "balance": 7359809.03
+      "principal": 18000000,
+      "balance": 40758754.27
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6630000,
+      "balance": 12399814.23
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 9377067.29
     },
-    "totalAssets": 48619776.98,
+    "totalAssets": 134820240.21,
     "assetAllocation": {
-      "cash": 41259968,
-      "investment": 0,
-      "nisa": 7359809.03,
-      "ideco": 0
+      "cash": 72284604,
+      "investment": 9377067.29,
+      "nisa": 40758754.27,
+      "ideco": 12399814.23
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 9377067.29
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 40758754.27
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 6630000,
+        "balance": 12399814.23
+      }
     }
   },
   {
     "year": 2051,
     "age": 63,
-    "income": 7633508,
-    "totalExpense": 4512000,
-    "savings": 44261476,
+    "income": 10203282,
+    "totalExpense": 3600000,
+    "savings": 78647886,
+    "totalInvestment": 240000,
+    "cashFlow": 6363282,
     "nisa": {
-      "principal": 4150000,
-      "balance": 7472508.98
+      "principal": 18000000,
+      "balance": 41611929.66
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6870000,
+      "balance": 12462430.75
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 9841024.56
     },
-    "totalAssets": 51733985.48,
+    "totalAssets": 142563271.21,
     "assetAllocation": {
-      "cash": 44261476,
-      "investment": 0,
-      "nisa": 7472508.98,
-      "ideco": 0
+      "cash": 78647886,
+      "investment": 9841024.56,
+      "nisa": 41611929.66,
+      "ideco": 12462430.75
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 9841024.56
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 41611929.66
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 6870000,
+        "balance": 12462430.75
+      }
     }
   },
   {
     "year": 2052,
     "age": 64,
-    "income": 7741869,
-    "totalExpense": 4512000,
-    "savings": 47371345,
+    "income": 10339205,
+    "totalExpense": 3600000,
+    "savings": 85147092,
+    "totalInvestment": 240000,
+    "cashFlow": 6499205,
     "nisa": {
-      "principal": 4270000,
-      "balance": 7828429.45
+      "principal": 18000000,
+      "balance": 43058964.79
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 7110000,
+      "balance": 13261630.16
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 10561154.62
     },
-    "totalAssets": 55199774.42,
+    "totalAssets": 152028841.33,
     "assetAllocation": {
-      "cash": 47371345,
-      "investment": 0,
-      "nisa": 7828429.45,
-      "ideco": 0
+      "cash": 85147092,
+      "investment": 10561154.62,
+      "nisa": 43058964.79,
+      "ideco": 13261630.16
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 10561154.62
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 43058964.79
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 7110000,
+        "balance": 13261630.16
+      }
     }
   },
   {
     "year": 2053,
     "age": 65,
-    "income": 0,
-    "totalExpense": 2352000,
-    "savings": 45019345,
+    "income": 2640000,
+    "totalExpense": 3600000,
+    "savings": 97448721.87,
+    "totalInvestment": 0,
+    "cashFlow": -960000,
     "nisa": {
-      "principal": 4270000,
-      "balance": 8234997.16
+      "principal": 18000000,
+      "balance": 43256400.05
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 11127867.94
     },
-    "totalAssets": 53254342.15,
+    "totalAssets": 151832989.95,
     "assetAllocation": {
-      "cash": 45019345,
-      "investment": 0,
-      "nisa": 8234997.16,
+      "cash": 97448721.87,
+      "investment": 11127867.94,
+      "nisa": 43256400.05,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 11127867.94
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 43256400.05
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2054,
     "age": 66,
-    "income": 0,
-    "totalExpense": 2352000,
-    "savings": 42667345,
+    "income": 2640000,
+    "totalExpense": 3600000,
+    "savings": 96488721.87,
+    "totalInvestment": 0,
+    "cashFlow": -960000,
     "nisa": {
-      "principal": 4270000,
-      "balance": 8543191.6
+      "principal": 18000000,
+      "balance": 45813702.42
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 11651363.14
     },
-    "totalAssets": 51210536.55,
+    "totalAssets": 153953787.4,
     "assetAllocation": {
-      "cash": 42667345,
-      "investment": 0,
-      "nisa": 8543191.6,
+      "cash": 96488721.87,
+      "investment": 11651363.14,
+      "nisa": 45813702.42,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 11651363.14
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 45813702.42
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2055,
     "age": 67,
-    "income": 0,
-    "totalExpense": 2702000,
-    "savings": 39965345,
+    "income": 2640000,
+    "totalExpense": 7450000,
+    "savings": 91678721.87,
+    "totalInvestment": 0,
+    "cashFlow": -4810000,
     "nisa": {
-      "principal": 4270000,
-      "balance": 8513657.95
+      "principal": 18000000,
+      "balance": 46343985.98
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 12409252.42
     },
-    "totalAssets": 48479002.86,
+    "totalAssets": 150431960.37,
     "assetAllocation": {
-      "cash": 39965345,
-      "investment": 0,
-      "nisa": 8513657.95,
+      "cash": 91678721.87,
+      "investment": 12409252.42,
+      "nisa": 46343985.98,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 12409252.42
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 46343985.98
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2056,
     "age": 68,
-    "income": 0,
-    "totalExpense": 2352000,
-    "savings": 37613345,
+    "income": 2640000,
+    "totalExpense": 3600000,
+    "savings": 90718721.87,
+    "totalInvestment": 0,
+    "cashFlow": -960000,
     "nisa": {
-      "principal": 4270000,
-      "balance": 8687397.23
+      "principal": 18000000,
+      "balance": 46511070.43
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 12294274.53
     },
-    "totalAssets": 46300742.17,
+    "totalAssets": 149524066.97,
     "assetAllocation": {
-      "cash": 37613345,
-      "investment": 0,
-      "nisa": 8687397.23,
+      "cash": 90718721.87,
+      "investment": 12294274.53,
+      "nisa": 46511070.43,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 12294274.53
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 46511070.43
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2057,
     "age": 69,
-    "income": 0,
-    "totalExpense": 2502000,
-    "savings": 35111345,
+    "income": 2640000,
+    "totalExpense": 3750000,
+    "savings": 89608721.87,
+    "totalInvestment": 0,
+    "cashFlow": -1110000,
     "nisa": {
-      "principal": 4270000,
-      "balance": 8780167.61
+      "principal": 18000000,
+      "balance": 48596848.26
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 12925470.8
     },
-    "totalAssets": 43891512.59,
+    "totalAssets": 151131040.96,
     "assetAllocation": {
-      "cash": 35111345,
-      "investment": 0,
-      "nisa": 8780167.61,
+      "cash": 89608721.87,
+      "investment": 12925470.8,
+      "nisa": 48596848.26,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 12925470.8
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 48596848.26
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2058,
     "age": 70,
-    "income": 0,
-    "totalExpense": 2352000,
-    "savings": 32759345,
+    "income": 2640000,
+    "totalExpense": 3600000,
+    "savings": 88648721.87,
+    "totalInvestment": 0,
+    "cashFlow": -960000,
     "nisa": {
-      "principal": 4270000,
-      "balance": 8855253.7
+      "principal": 18000000,
+      "balance": 50707471.35
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 13879361.31
     },
-    "totalAssets": 41614598.68,
+    "totalAssets": 153235554.52,
     "assetAllocation": {
-      "cash": 32759345,
-      "investment": 0,
-      "nisa": 8855253.7,
+      "cash": 88648721.87,
+      "investment": 13879361.31,
+      "nisa": 50707471.35,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 13879361.31
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 50707471.35
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2059,
     "age": 71,
-    "income": 0,
-    "totalExpense": 2352000,
-    "savings": 30407345,
+    "income": 2640000,
+    "totalExpense": 3600000,
+    "savings": 87688721.87,
+    "totalInvestment": 0,
+    "cashFlow": -960000,
     "nisa": {
-      "principal": 4270000,
-      "balance": 9386934.7
+      "principal": 18000000,
+      "balance": 51774766.77
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 13939445.77
     },
-    "totalAssets": 39794279.65,
+    "totalAssets": 153402934.56,
     "assetAllocation": {
-      "cash": 30407345,
-      "investment": 0,
-      "nisa": 9386934.7,
+      "cash": 87688721.87,
+      "investment": 13939445.77,
+      "nisa": 51774766.77,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 13939445.77
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 51774766.77
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2060,
     "age": 72,
-    "income": 0,
-    "totalExpense": 2352000,
-    "savings": 28055345,
+    "income": 2640000,
+    "totalExpense": 3600000,
+    "savings": 86728721.87,
+    "totalInvestment": 0,
+    "cashFlow": -960000,
     "nisa": {
-      "principal": 4270000,
-      "balance": 9730115.8
+      "principal": 18000000,
+      "balance": 52242538.91
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 14497147.57
     },
-    "totalAssets": 37785460.77,
+    "totalAssets": 153468408.37,
     "assetAllocation": {
-      "cash": 28055345,
-      "investment": 0,
-      "nisa": 9730115.8,
+      "cash": 86728721.87,
+      "investment": 14497147.57,
+      "nisa": 52242538.91,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 14497147.57
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 52242538.91
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2061,
     "age": 73,
-    "income": 0,
-    "totalExpense": 2372000,
-    "savings": 25683345,
+    "income": 2640000,
+    "totalExpense": 3620000,
+    "savings": 85748721.87,
+    "totalInvestment": 0,
+    "cashFlow": -980000,
     "nisa": {
-      "principal": 4270000,
-      "balance": 9910451.5
+      "principal": 18000000,
+      "balance": 52950334.27
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 15493189.39
     },
-    "totalAssets": 35593796.47,
+    "totalAssets": 154192245.49,
     "assetAllocation": {
-      "cash": 25683345,
-      "investment": 0,
-      "nisa": 9910451.5,
+      "cash": 85748721.87,
+      "investment": 15493189.39,
+      "nisa": 52950334.27,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 15493189.39
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 52950334.27
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2062,
     "age": 74,
-    "income": 0,
-    "totalExpense": 2352000,
-    "savings": 23331345,
+    "income": 2640000,
+    "totalExpense": 3600000,
+    "savings": 84788721.87,
+    "totalInvestment": 0,
+    "cashFlow": -960000,
     "nisa": {
-      "principal": 4270000,
-      "balance": 10038695.13
+      "principal": 18000000,
+      "balance": 53000464.69
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 16083989.85
     },
-    "totalAssets": 33370040.08,
+    "totalAssets": 153873176.44,
     "assetAllocation": {
-      "cash": 23331345,
-      "investment": 0,
-      "nisa": 10038695.13,
+      "cash": 84788721.87,
+      "investment": 16083989.85,
+      "nisa": 53000464.69,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 16083989.85
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 53000464.69
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2063,
     "age": 75,
-    "income": 0,
-    "totalExpense": 2352000,
-    "savings": 20979345,
+    "income": 2640000,
+    "totalExpense": 3600000,
+    "savings": 83828721.87,
+    "totalInvestment": 0,
+    "cashFlow": -960000,
     "nisa": {
-      "principal": 4270000,
-      "balance": 10302339.29
+      "principal": 18000000,
+      "balance": 53741874.07
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 16260348.9
     },
-    "totalAssets": 31281684.24,
+    "totalAssets": 153830944.89,
     "assetAllocation": {
-      "cash": 20979345,
-      "investment": 0,
-      "nisa": 10302339.29,
+      "cash": 83828721.87,
+      "investment": 16260348.9,
+      "nisa": 53741874.07,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 16260348.9
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 53741874.07
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2064,
     "age": 76,
-    "income": 0,
-    "totalExpense": 2352000,
-    "savings": 18627345,
+    "income": 2640000,
+    "totalExpense": 3600000,
+    "savings": 82868721.87,
+    "totalInvestment": 0,
+    "cashFlow": -960000,
     "nisa": {
-      "principal": 4270000,
-      "balance": 10650903.22
+      "principal": 18000000,
+      "balance": 51556504.28
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 16749529.66
     },
-    "totalAssets": 29278248.18,
+    "totalAssets": 151174755.91,
     "assetAllocation": {
-      "cash": 18627345,
-      "investment": 0,
-      "nisa": 10650903.22,
+      "cash": 82868721.87,
+      "investment": 16749529.66,
+      "nisa": 51556504.28,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 16749529.66
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 51556504.28
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2065,
     "age": 77,
-    "income": 0,
-    "totalExpense": 2832000,
-    "savings": 15795345,
+    "income": 2640000,
+    "totalExpense": 7580000,
+    "savings": 77928721.87,
+    "totalInvestment": 0,
+    "cashFlow": -4940000,
     "nisa": {
-      "principal": 4270000,
-      "balance": 11139930.01
+      "principal": 18000000,
+      "balance": 51326879.94
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 17027539.89
     },
-    "totalAssets": 26935274.98,
+    "totalAssets": 146283141.68,
     "assetAllocation": {
-      "cash": 15795345,
-      "investment": 0,
-      "nisa": 11139930.01,
+      "cash": 77928721.87,
+      "investment": 17027539.89,
+      "nisa": 51326879.94,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 17027539.89
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 51326879.94
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2066,
     "age": 78,
-    "income": 0,
-    "totalExpense": 2352000,
-    "savings": 13443345,
+    "income": 2640000,
+    "totalExpense": 3600000,
+    "savings": 76968721.87,
+    "totalInvestment": 0,
+    "cashFlow": -960000,
     "nisa": {
-      "principal": 4270000,
-      "balance": 11523896.38
+      "principal": 18000000,
+      "balance": 53958755.07
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 17697332.77
     },
-    "totalAssets": 24967241.36,
+    "totalAssets": 148624809.73,
     "assetAllocation": {
-      "cash": 13443345,
-      "investment": 0,
-      "nisa": 11523896.38,
+      "cash": 76968721.87,
+      "investment": 17697332.77,
+      "nisa": 53958755.07,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 17697332.77
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 53958755.07
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2067,
     "age": 79,
-    "income": 0,
-    "totalExpense": 2372000,
-    "savings": 11071345,
+    "income": 2640000,
+    "totalExpense": 3620000,
+    "savings": 75988721.87,
+    "totalInvestment": 0,
+    "cashFlow": -980000,
     "nisa": {
-      "principal": 4270000,
-      "balance": 11797241.86
+      "principal": 18000000,
+      "balance": 54025280.67
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 17944372.25
     },
-    "totalAssets": 22868586.83,
+    "totalAssets": 147958374.8,
     "assetAllocation": {
-      "cash": 11071345,
-      "investment": 0,
-      "nisa": 11797241.86,
+      "cash": 75988721.87,
+      "investment": 17944372.25,
+      "nisa": 54025280.67,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 17944372.25
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 54025280.67
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2068,
     "age": 80,
-    "income": 0,
-    "totalExpense": 2352000,
-    "savings": 8719345,
+    "income": 2640000,
+    "totalExpense": 3600000,
+    "savings": 75028721.87,
+    "totalInvestment": 0,
+    "cashFlow": -960000,
     "nisa": {
-      "principal": 4270000,
-      "balance": 12093287.37
+      "principal": 18000000,
+      "balance": 54769362.22
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 18732638.56
     },
-    "totalAssets": 20812632.33,
+    "totalAssets": 148530722.65,
     "assetAllocation": {
-      "cash": 8719345,
-      "investment": 0,
-      "nisa": 12093287.37,
+      "cash": 75028721.87,
+      "investment": 18732638.56,
+      "nisa": 54769362.22,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 18732638.56
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 54769362.22
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2069,
     "age": 81,
-    "income": 0,
-    "totalExpense": 2352000,
-    "savings": 6367345,
+    "income": 2640000,
+    "totalExpense": 3600000,
+    "savings": 74068721.87,
+    "totalInvestment": 0,
+    "cashFlow": -960000,
     "nisa": {
-      "principal": 4270000,
-      "balance": 12526276.89
+      "principal": 18000000,
+      "balance": 53190624.7
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 19284945.53
     },
-    "totalAssets": 18893621.84,
+    "totalAssets": 146544292.06,
     "assetAllocation": {
-      "cash": 6367345,
-      "investment": 0,
-      "nisa": 12526276.89,
+      "cash": 74068721.87,
+      "investment": 19284945.53,
+      "nisa": 53190624.7,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 19284945.53
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 53190624.7
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2070,
     "age": 82,
-    "income": 0,
-    "totalExpense": 2352000,
-    "savings": 4015345,
+    "income": 2640000,
+    "totalExpense": 3600000,
+    "savings": 73108721.87,
+    "totalInvestment": 0,
+    "cashFlow": -960000,
     "nisa": {
-      "principal": 4270000,
-      "balance": 12917507.49
+      "principal": 18000000,
+      "balance": 54503397.14
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 20181797.73
     },
-    "totalAssets": 16932852.45,
+    "totalAssets": 147793916.77,
     "assetAllocation": {
-      "cash": 4015345,
-      "investment": 0,
-      "nisa": 12917507.49,
+      "cash": 73108721.87,
+      "investment": 20181797.73,
+      "nisa": 54503397.14,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 20181797.73
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 54503397.14
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2071,
     "age": 83,
-    "income": 0,
-    "totalExpense": 2352000,
-    "savings": 3000000,
+    "income": 2640000,
+    "totalExpense": 3600000,
+    "savings": 72148721.87,
+    "totalInvestment": 0,
+    "cashFlow": -960000,
     "nisa": {
-      "principal": 3776812.1,
-      "balance": 12175935.93
+      "principal": 18000000,
+      "balance": 54665764.09
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 20544756.86
     },
-    "totalAssets": 15175935.93,
+    "totalAssets": 147359242.83,
     "assetAllocation": {
-      "cash": 3000000,
-      "investment": 0,
-      "nisa": 12175935.93,
+      "cash": 72148721.87,
+      "investment": 20544756.86,
+      "nisa": 54665764.09,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 20544756.86
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 54665764.09
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2072,
     "age": 84,
-    "income": 0,
-    "totalExpense": 2352000,
-    "savings": 3000000,
+    "income": 2640000,
+    "totalExpense": 3600000,
+    "savings": 71188721.87,
+    "totalInvestment": 0,
+    "cashFlow": -960000,
     "nisa": {
-      "principal": 3430479.16,
-      "balance": 11634666.06
+      "principal": 18000000,
+      "balance": 54313401.71
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 20677402.34
     },
-    "totalAssets": 14634666.06,
+    "totalAssets": 146179525.91,
     "assetAllocation": {
-      "cash": 3000000,
-      "investment": 0,
-      "nisa": 11634666.06,
+      "cash": 71188721.87,
+      "investment": 20677402.34,
+      "nisa": 54313401.71,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 20677402.34
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 54313401.71
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2073,
     "age": 85,
-    "income": 0,
-    "totalExpense": 2522000,
-    "savings": 3000000,
+    "income": 2640000,
+    "totalExpense": 3770000,
+    "savings": 70058721.87,
+    "totalInvestment": 0,
+    "cashFlow": -1130000,
     "nisa": {
-      "principal": 3397900.48,
-      "balance": 11825657.04
+      "principal": 18000000,
+      "balance": 57606792.14
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 20954789
     },
-    "totalAssets": 14825657.04,
+    "totalAssets": 148620302.99,
     "assetAllocation": {
-      "cash": 3000000,
-      "investment": 0,
-      "nisa": 11825657.04,
+      "cash": 70058721.87,
+      "investment": 20954789,
+      "nisa": 57606792.14,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 20954789
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 57606792.14
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2074,
     "age": 86,
-    "income": 0,
-    "totalExpense": 2352000,
-    "savings": 3000000,
+    "income": 2640000,
+    "totalExpense": 3600000,
+    "savings": 69098721.87,
+    "totalInvestment": 0,
+    "cashFlow": -960000,
     "nisa": {
-      "principal": 3489568.05,
-      "balance": 12397483.78
+      "principal": 18000000,
+      "balance": 60069630.03
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 21773287.89
     },
-    "totalAssets": 15397483.78,
+    "totalAssets": 150941639.79,
     "assetAllocation": {
-      "cash": 3000000,
-      "investment": 0,
-      "nisa": 12397483.78,
+      "cash": 69098721.87,
+      "investment": 21773287.89,
+      "nisa": 60069630.03,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 21773287.89
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 60069630.03
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2075,
     "age": 87,
-    "income": 0,
-    "totalExpense": 2682000,
-    "savings": 3000000,
+    "income": 2640000,
+    "totalExpense": 7430000,
+    "savings": 64308721.87,
+    "totalInvestment": 0,
+    "cashFlow": -4790000,
     "nisa": {
-      "principal": 3403499.56,
-      "balance": 12043297.34
+      "principal": 18000000,
+      "balance": 59500590.07
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 22059614.27
     },
-    "totalAssets": 15043297.34,
+    "totalAssets": 145868926.26,
     "assetAllocation": {
-      "cash": 3000000,
-      "investment": 0,
-      "nisa": 12043297.34,
+      "cash": 64308721.87,
+      "investment": 22059614.27,
+      "nisa": 59500590.07,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 22059614.27
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 59500590.07
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2076,
     "age": 88,
-    "income": 0,
-    "totalExpense": 2352000,
-    "savings": 3000000,
+    "income": 2640000,
+    "totalExpense": 3600000,
+    "savings": 63348721.87,
+    "totalInvestment": 0,
+    "cashFlow": -960000,
     "nisa": {
-      "principal": 3548280.63,
-      "balance": 12787990.68
+      "principal": 18000000,
+      "balance": 61383079.24
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 23492017.1
     },
-    "totalAssets": 15787990.68,
+    "totalAssets": 148223818.27,
     "assetAllocation": {
-      "cash": 3000000,
-      "investment": 0,
-      "nisa": 12787990.68,
+      "cash": 63348721.87,
+      "investment": 23492017.1,
+      "nisa": 61383079.24,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 23492017.1
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 61383079.24
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2077,
     "age": 89,
-    "income": 0,
-    "totalExpense": 2352000,
-    "savings": 3000000,
+    "income": 2640000,
+    "totalExpense": 3600000,
+    "savings": 62388721.87,
+    "totalInvestment": 0,
+    "cashFlow": -960000,
     "nisa": {
-      "principal": 3585687.71,
-      "balance": 13365452.27
+      "principal": 18000000,
+      "balance": 60982890.77
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 23793536.39
     },
-    "totalAssets": 16365452.27,
+    "totalAssets": 147165149.07,
     "assetAllocation": {
-      "cash": 3000000,
-      "investment": 0,
-      "nisa": 13365452.27,
+      "cash": 62388721.87,
+      "investment": 23793536.39,
+      "nisa": 60982890.77,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 23793536.39
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 60982890.77
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   },
   {
     "year": 2078,
     "age": 90,
-    "income": 0,
-    "totalExpense": 2352000,
-    "savings": 3000000,
+    "income": 2640000,
+    "totalExpense": 3600000,
+    "savings": 61428721.87,
+    "totalInvestment": 0,
+    "cashFlow": -960000,
     "nisa": {
-      "principal": 3617902.22,
-      "balance": 13981594.16
+      "principal": 18000000,
+      "balance": 64819940.98
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 24895859.95
     },
-    "totalAssets": 16981594.16,
+    "totalAssets": 151144522.88,
     "assetAllocation": {
-      "cash": 3000000,
-      "investment": 0,
-      "nisa": 13981594.16,
+      "cash": 61428721.87,
+      "investment": 24895859.95,
+      "nisa": 64819940.98,
       "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 24895859.95
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 64819940.98
+      },
+      "bonds-2": {
+        "principal": 0,
+        "balance": 0
+      },
+      "crypto-3": {
+        "principal": 0,
+        "balance": 0
+      },
+      "other-4": {
+        "principal": 0,
+        "balance": 0
+      },
+      "ideco-5": {
+        "principal": 0,
+        "balance": 0
+      }
     }
   }
 ]
