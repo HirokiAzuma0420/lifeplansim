@@ -1570,9 +1570,9 @@ export default function FormPage() {
                       onChange={() => setFormData((prev: typeof formData) => ({
                         ...prev,
                         houseRenovationPlans:
-                          prev.houseRenovationPlans.length > 0
-                            ? prev.houseRenovationPlans
-                            : [{ age: 0, cost: 150, cycleYears: 10 }],
+                          prev.houseRenovationPlans.length > 0 ?
+                          prev.houseRenovationPlans :
+                          [{ age: undefined as unknown as number, cost: 150, cycleYears: 10 }],
                       }))}
                     />
                     <span className="ml-2">はい</span>
@@ -1600,7 +1600,7 @@ export default function FormPage() {
                       <div>
                         <label className="block text-gray-700 text-sm font-bold mb-2">実施予定年齢</label>
                         <input
-                          type="number"
+                          type="number" 
                           value={plan?.age ?? ''}
                           onChange={(e) => handleRenovationPlanChange(0, 'age', e.target.value)}
                           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
