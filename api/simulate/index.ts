@@ -512,20 +512,32 @@ function runSimulation(params: InputParams): YearlyData[] {
       let carRecurring = 0;
       let carOneOff = 0;
       if (carCurrentLoanMonthsRemaining > 0) {
-        const monthsThisYear = Math.min(12, carCurrentLoanMonthsRemaining);
-        carRecurring += n(params.car.currentLoan?.monthlyPaymentJPY) * Math.min(monthsThisYear, firstYearRemainingMonths);
+        const monthsThisYear = (i === 0) ? Math.min(firstYearRemainingMonths, carCurrentLoanMonthsRemaining) : Math.min(12, carCurrentLoanMonthsRemaining);
+        carRecurring += n(params.car.currentLoan?.monthlyPaymentJPY) * monthsThisYear;
         carCurrentLoanMonthsRemaining -= monthsThisYear;
       }
       if (n(params.car.priceJPY) > 0 && n(params.car.firstAfterYears) >= 0 && n(params.car.frequencyYears) > 0) {
         const base = params.initialAge + n(params.car.firstAfterYears);
         if (currentAge >= base) {
             const yearsSinceFirst = currentAge - base;
-            if (yearsSinceFirst % n(params.car.frequencyYears) === 0) {
-                if (params.car.loan.use) {
-                    // This logic is complex, assuming loan payments start in the year of purchase
-                } else {
-                    carOneOff += n(params.car.priceJPY);
+            const cycle = n(params.car.frequencyYears);
+            if (cycle > 0 && yearsSinceFirst % cycle === 0) {
+              if (params.car.loan.use) {
+                // ローン支払いロジック
+                const loanYears = n(params.car.loan.years);
+                if (loanYears > 0) {
+                  let annualRate = 0.025; // デフォルト
+                  if (params.car.loan.type === '銀行ローン') annualRate = 0.015;
+                  else if (params.car.loan.type === 'ディーラーローン') annualRate = 0.045;
+
+                  const annualPayment = calculateLoanPayment(n(params.car.priceJPY), annualRate, loanYears);
+                  // この年の購入からローン返済が開始される
+                  carRecurring += annualPayment * yearFraction;
                 }
+              } else {
+                // 一括購入
+                carOneOff += n(params.car.priceJPY);
+              }
             }
         }
       }
