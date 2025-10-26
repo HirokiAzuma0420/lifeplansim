@@ -122,7 +122,7 @@ const createDefaultFormData = () => ({
   socializingCost: '',
   hobbyEntertainmentCost: '',
   otherVariableCost: '0',
-  carPurchasePlan: 'no',
+  carPurchasePlan: '',
   carFirstReplacementAfterYears: '',
   carPrice: '',
   carReplacementFrequency: '',
@@ -1321,21 +1321,6 @@ export default function FormPage() {
               <img src="/form/Q4-car.png"></img>
             </div>
             <h2 className="text-2xl font-bold text-center mb-4">車に関する質問</h2>
-            <div className="mb-6">
-              <label className="block text-gray-700 text-sm font-bold mb-2">今後、車を購入/買い替えする予定はありますか？</label>
-              <div className="mt-2 flex flex-wrap gap-4">
-                <label className="inline-flex items-center gap-2">
-                  <input type="radio" className="custom-radio" name="carPurchasePlan" value="yes" checked={formData.carPurchasePlan === 'yes'} onChange={handleRadioChange} />
-                  <span>はい</span>
-                </label>
-                <label className="inline-flex items-center gap-2">
-                  <input type="radio" className="custom-radio" name="carPurchasePlan" value="no" checked={formData.carPurchasePlan !== 'yes'} onChange={handleRadioChange} />
-                  <span>いいえ</span>
-                </label>
-              </div>
-            </div>
-
-            <div className={`accordion-content ${formData.carPurchasePlan === 'yes' ? 'open' : ''}`}>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">現在ローン返済中ですか？</label>
               <div className="mt-2 flex flex-wrap gap-4">
@@ -1361,6 +1346,22 @@ export default function FormPage() {
                 </div>
               </div>
             </div>
+
+            <div className="mb-6">
+              <label className="block text-gray-700 text-sm font-bold mb-2">今後、車を購入/買い替えする予定はありますか？</label>
+              <div className="mt-2 flex flex-wrap gap-4">
+                <label className="inline-flex items-center gap-2">
+                  <input type="radio" className="custom-radio" name="carPurchasePlan" value="yes" checked={formData.carPurchasePlan === 'yes'} onChange={handleRadioChange} />
+                  <span>はい</span>
+                </label>
+                <label className="inline-flex items-center gap-2">
+                  <input type="radio" className="custom-radio" name="carPurchasePlan" value="no" checked={formData.carPurchasePlan === 'no'} onChange={handleRadioChange} />
+                  <span>いいえ</span>
+                </label>
+              </div>
+            </div>
+
+            <div className={`accordion-content ${formData.carPurchasePlan === 'yes' ? 'open' : ''}`}>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carFirstReplacementAfterYears">
                 初回買い替えは今から何年後？[年]
@@ -1972,33 +1973,37 @@ export default function FormPage() {
             </div>
             <h2 className="text-2xl font-bold text-center mb-4">老後に関する質問</h2>
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="retirementAge">
-                退職予定年齢は？[歳]
-              </label>
-              <input type="number" id="retirementAge" name="retirementAge" value={formData.retirementAge} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" defaultValue={65} />
-            </div>
-            <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="postRetirementLivingCost">
                 老後の生活費（月額）[万円]
               </label>
               <input type="number" id="postRetirementLivingCost" name="postRetirementLivingCost" value={formData.postRetirementLivingCost} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" defaultValue={25} />
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="pensionStartAge">
-                年金の想定受給開始年齢は？[歳]
-              </label>
-              <input type="number" id="pensionStartAge" name="pensionStartAge" value={formData.pensionStartAge} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" defaultValue={65} />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="pensionAmount">
-                年金受給額（月額）[万円]
-              </label>
-              <input type="number" id="pensionAmount" name="pensionAmount" value={formData.pensionAmount} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" defaultValue={15} />
+
+            <div className="mt-8 border-t pt-6">
+              <h3 className="text-xl font-semibold text-center mb-4">本人の老後設定</h3>
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="retirementAge">
+                  退職予定年齢は？[歳]
+                </label>
+                <input type="number" id="retirementAge" name="retirementAge" value={formData.retirementAge} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" defaultValue={65} />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="pensionStartAge">
+                  年金の想定受給開始年齢は？[歳]
+                </label>
+                <input type="number" id="pensionStartAge" name="pensionStartAge" value={formData.pensionStartAge} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" defaultValue={65} />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="pensionAmount">
+                  年金受給額（月額）[万円]
+                </label>
+                <input type="number" id="pensionAmount" name="pensionAmount" value={formData.pensionAmount} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" defaultValue={15} />
+              </div>
             </div>
 
             {formData.familyComposition === '既婚' && (
               <div className="mt-8 border-t pt-6">
-                <h3 className="text-xl font-semibold text-center mb-4 text-pink-500">配偶者の老後設定</h3>
+                <h3 className="text-xl font-semibold text-center mb-4">配偶者の老後設定</h3>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="spouseRetirementAge">
                     配偶者の退職予定年齢は？[歳]
