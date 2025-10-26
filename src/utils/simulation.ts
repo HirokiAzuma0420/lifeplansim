@@ -10,6 +10,9 @@ export type EnrichedYearlyAsset = {
   p90?: number;
   現金: number;
   年間支出: number;
+  年間収入: number;
+  年間投資額: number;
+  年間収支: number;
   NISA: number;
   iDeCo: number;
   課税口座: number;
@@ -89,6 +92,9 @@ export const buildDashboardDataset = (
       p90: percentileData?.p90[i],
       総資産: sanitize(entry.totalAssets),
       投資元本: totalPrincipal,
+      年間収入: sanitize(entry.income),
+      年間投資額: sanitize(entry.totalInvestment),
+      年間収支: sanitize(entry.cashFlow),
       年間支出: sanitize(entry.totalExpense),
       現金: sanitize(entry.savings),
       NISA: sanitize(entry.nisa.balance),

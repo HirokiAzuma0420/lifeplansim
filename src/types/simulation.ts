@@ -17,6 +17,8 @@ export interface YearlyData {
   age: number;
   income: number;
   totalExpense: number;
+  totalInvestment: number;
+  cashFlow: number;
   savings: number;
   nisa: AccountBucket;
   ideco: AccountBucket;

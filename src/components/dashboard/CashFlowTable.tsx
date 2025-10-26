@@ -32,22 +32,15 @@ export default function CashFlowTable({ enrichedData }: CashFlowTableProps) {
             </tr>
           </thead>
           <tbody className="text-gray-700">
-            {enrichedData.map((d, index) => {
-              const prevSavings = index > 0 ? enrichedData[index - 1].現金 : 0;
-              const cashFlow = d.現金 - prevSavings;
-              const investment = d.投資元本 - (index > 0 ? enrichedData[index - 1].投資元本 : 0);
-              // 収入と支出は直接データがないため、キャッシュフローと投資額から逆算
-              // この計算は概算であり、APIから直接データを受け取る方が正確
-              const income = cashFlow + investment + d.年間支出;
-
+            {enrichedData.map((d) => {
               return (
                 <tr key={d.year} className="border-b border-gray-200 hover:bg-gray-50">
                   <td className="px-4 py-2 font-medium">{d.year}年 ({d.age}歳)</td>
-                  <td className="px-4 py-2 text-right">{formatCurrency(income)}</td>
+                  <td className="px-4 py-2 text-right">{formatCurrency(d.年間収入)}</td>
                   <td className="px-4 py-2 text-right">{formatCurrency(d.年間支出)}</td>
-                  <td className="px-4 py-2 text-right">{formatCurrency(investment)}</td>
-                  <td className={`px-4 py-2 text-right font-semibold ${cashFlow >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
-                    {cashFlow >= 0 ? '+' : ''}{formatCurrency(cashFlow)}
+                  <td className="px-4 py-2 text-right">{formatCurrency(d.年間投資額)}</td>
+                  <td className={`px-4 py-2 text-right font-semibold ${d.年間収支 >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
+                    {d.年間収支 >= 0 ? '+' : ''}{formatCurrency(d.年間収支)}
                   </td>
                   <td className="px-4 py-2 text-right">{formatCurrency(d.現金)}</td>
                 </tr>

@@ -129,6 +129,8 @@ interface YearlyData {
   age: number;
   income: number;
   totalExpense: number;
+  totalInvestment: number;
+  cashFlow: number;
   savings: number;
   nisa: AccountBucket;
   ideco: AccountBucket;
@@ -682,6 +684,8 @@ function runSimulation(params: InputParams): YearlyData[] {
       income: Math.round(annualIncome),
       totalExpense: Math.round(totalExpense),
       savings: Math.round(savings),
+      totalInvestment: Math.round(totalInvestmentOutflow),
+      cashFlow: Math.round(cashFlow),
       nisa: { principal: Math.round(nisa.principal), balance: Math.round(nisa.balance) },
       ideco: { principal: Math.round(ideco.principal), balance: Math.round(ideco.balance) },
       taxable: { principal: Math.round(taxable.principal), balance: Math.round(taxable.balance) },
