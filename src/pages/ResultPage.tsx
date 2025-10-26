@@ -101,13 +101,23 @@ export default function ResultPage() {
   const inputParams = state?.inputParams as (SimulationInputParams & { products?: InvestmentProduct[] }) | undefined;
 
   const percentileData = state?.percentileData;
-  const dataset = useMemo(() => buildDashboardDataset(yearlyData, percentileData), [yearlyData, percentileData]);
+  const dataset = useMemo(() => buildDashboardDataset(yearlyData, inputParams, percentileData), [yearlyData, inputParams, percentileData]);
   // 商品別内訳（API拡張に対応：存在時のみ表示）
   const latestProducts = useMemo<Record<string, number>>(() => {
-    if (!Array.isArray(yearlyData) || yearlyData.length === 0) return {};
+    if (!Array.isArray(yearlyData) || yearlyData.length === 0 || !inputParams?.products) return {};
     const last = yearlyData[yearlyData.length - 1];
-    return last?.products ?? {};
-  }, [yearlyData]);
+    if (!last?.products) return {};
+
+    const productBalances: Record<string, number> = {};
+    inputParams.products.forEach((p, index) => {
+      const productId = `${p.key}-${index}`;
+      if (last.products[productId]) {
+        const name = `${p.key} (${p.account})`;
+        productBalances[name] = (productBalances[name] || 0) + last.products[productId].balance;
+      }
+    });
+    return productBalances;
+  }, [yearlyData, inputParams]);
 
   const handleSaveOutput = useCallback(() => {
     if (!yearlyData.length || typeof window === 'undefined') {
@@ -290,7 +300,7 @@ export default function ResultPage() {
             />
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-              <InvestmentPrincipalChart enrichedData={dataset.enrichedData} />
+              <InvestmentPrincipalChart enrichedData={dataset.enrichedData} COLORS={COLORS} />
               <AssetPieChart pieData={dataset.pieData} />
             </div>
 

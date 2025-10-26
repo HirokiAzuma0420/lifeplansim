@@ -1,10 +1,22 @@
+﻿import { useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 interface InvestmentPrincipalChartProps {
-  enrichedData: { year: number; NISA元本?: number; iDeCo元本?: number; [key: string]: any }[];
+  enrichedData: { year: number; [key: string]: any }[];
+  COLORS: Record<string, string>;
 }
 
-export default function InvestmentPrincipalChart({ enrichedData }: InvestmentPrincipalChartProps) {
+export default function InvestmentPrincipalChart({ enrichedData, COLORS }: InvestmentPrincipalChartProps) {
+  const principalKeys = useMemo(() => {
+    if (enrichedData.length === 0) return [];
+    return Object.keys(enrichedData[0]).filter(key => key.endsWith('元本'));
+  }, [enrichedData]);
+
+  const nameMapping: Record<string, string> = {
+    'NISA元本': 'NISA',
+    'iDeCo元本': 'iDeCo',
+  };
+
   return (
     <div className="bg-white rounded-xl shadow p-4">
       <h3 className="text-lg font-semibold mb-2">積立元本推移（〜2050年）</h3>
@@ -20,8 +32,14 @@ export default function InvestmentPrincipalChart({ enrichedData }: InvestmentPri
           />
           <Tooltip formatter={(v: number) => `${(v / 10000).toLocaleString()}万円`} />
           <Legend />
-          <Line type="monotone" dataKey="NISA元本" name="NISA" stroke="#6366F1" strokeWidth={3} dot={false} />
-          <Line type="monotone" dataKey="iDeCo元本" name="iDeCo" stroke="#06B6D4" strokeWidth={3} dot={false} />
+          {principalKeys.map((key, index) => {
+            const name = nameMapping[key] || key.replace('元本', '').trim();
+            const colorKey = name.split(' ')[0]; // '株式 (課税)' -> '株式'
+            const color = COLORS[colorKey as keyof typeof COLORS] || Object.values(COLORS)[index % Object.keys(COLORS).length];
+            return (
+              <Line key={key} type="monotone" dataKey={key} name={name} stroke={color} strokeWidth={3} dot={false} />
+            );
+          })}
         </LineChart>
       </ResponsiveContainer>
     </div>

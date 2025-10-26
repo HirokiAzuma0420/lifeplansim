@@ -140,7 +140,7 @@ interface YearlyData {
     nisa: number;
     ideco: number;
   };
-  products?: Record<string, number>;
+  products: Record<string, AccountBucket>;
 }
 
 // ユーティリティ関数
@@ -303,6 +303,19 @@ function runMonteCarloSimulation(params: InputParams, numberOfSimulations: numbe
     averagedYearData.assetAllocation.investment = assetAllocationSum.investment / numberOfSimulations;
     averagedYearData.assetAllocation.nisa = assetAllocationSum.nisa / numberOfSimulations;
     averagedYearData.assetAllocation.ideco = assetAllocationSum.ideco / numberOfSimulations;
+
+    // 商品別残高(products)も平均化
+    const productKeys = Object.keys(firstSimulation[i].products);
+    const averagedProducts: Record<string, AccountBucket> = {};
+    for (const productId of productKeys) {
+      const principalSum = allSimulations.reduce((acc, sim) => acc + n(sim[i].products[productId]?.principal), 0);
+      const balanceSum = allSimulations.reduce((acc, sim) => acc + n(sim[i].products[productId]?.balance), 0);
+      averagedProducts[productId] = {
+        principal: principalSum / numberOfSimulations,
+        balance: balanceSum / numberOfSimulations,
+      };
+    }
+    averagedYearData.products = averagedProducts;
 
     averageYearlyData.push(averagedYearData);
   }
@@ -654,6 +667,15 @@ function runSimulation(params: InputParams): YearlyData[] {
 
     // --- 5. 年間データの記録 ---
     const totalAssets = savings + nisa.balance + ideco.balance + taxable.balance;
+    const productsForYear: Record<string, AccountBucket> = {};
+    productList.forEach((p, index) => {
+      const productId = `${p.key}-${index}`;
+      productsForYear[productId] = {
+        principal: Math.round(productBalances[productId].principal),
+        balance: Math.round(productBalances[productId].balance),
+      };
+    });
+
     yearlyData.push({
       year,
       age: currentAge,
@@ -670,7 +692,7 @@ function runSimulation(params: InputParams): YearlyData[] {
         nisa: Math.round(nisa.balance),
         ideco: Math.round(ideco.balance),
       },
-      // products: productBalances, // TODO: 商品別残高も更新する
+      products: productsForYear,
     });
   }
 

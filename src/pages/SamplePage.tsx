@@ -133,7 +133,7 @@ export default function SamplePage() {
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <InvestmentPrincipalChart enrichedData={enrichedData} />
+          <InvestmentPrincipalChart enrichedData={enrichedData} COLORS={COLORS} />
           <AssetPieChart pieData={pieData} />
         </div>
 

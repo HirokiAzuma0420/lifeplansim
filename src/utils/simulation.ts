@@ -1,4 +1,4 @@
-﻿import type { PercentileData, YearlyData, AccountBucket } from '../types/simulation';
+﻿﻿import type { PercentileData, YearlyData, AccountBucket, SimulationInputParams, InvestmentProduct } from '../types/simulation';
 
 // グラフ描画用のデータ形式
 export type EnrichedYearlyAsset = {
@@ -13,6 +13,8 @@ export type EnrichedYearlyAsset = {
   NISA: number;
   iDeCo: number;
   課税口座: number;
+  // 動的に追加されるプロパティを許容
+  [key: string]: any;
 };
 
 // ツールチップ表示用の詳細データ形式
@@ -36,7 +38,10 @@ const sanitize = (value: number | undefined | null): number => {
   return Math.round(value as number);
 };
 
-export const buildDashboardDataset = (yearlyData: YearlyData[], percentileData?: PercentileData): DashboardDataset => {
+export const buildDashboardDataset = (
+  yearlyData: YearlyData[],
+  inputParams: SimulationInputParams | undefined,
+  percentileData?: PercentileData): DashboardDataset => {
   if (!Array.isArray(yearlyData) || yearlyData.length === 0) {
     return {
       enrichedData: [],
@@ -47,12 +52,31 @@ export const buildDashboardDataset = (yearlyData: YearlyData[], percentileData?:
     };
   }
 
+  const productList = inputParams?.products ?? [];
+
   const enrichedData: EnrichedYearlyAsset[] = yearlyData.map((entry, i) => {
     const nisaPrincipal = sanitize(entry.nisa.principal);
     const idecoPrincipal = sanitize(entry.ideco.principal);
     const taxablePrincipal = sanitize(entry.taxable.principal);
     const totalPrincipal = nisaPrincipal + idecoPrincipal + taxablePrincipal;
-    return {
+
+    const productPrincipals: Record<string, number> = {};
+    if (entry.products && productList.length > 0) {
+      productList.forEach((p: InvestmentProduct, index: number) => {
+        const productId = `${p.key}-${index}`;
+        const productData = entry.products[productId];
+        if (productData) {
+          // iDeCoとNISAは専用のキーで集計済みなので、ここでは課税口座のみを対象とする
+          if (p.account === '課税') {
+            const name = `${p.key} (${p.account})元本`;
+            productPrincipals[name] = (productPrincipals[name] || 0) + productData.principal;
+          }
+        }
+      });
+    }
+
+
+    const result: EnrichedYearlyAsset = {
       age: entry.age,
       year: entry.year,
       p10: percentileData?.p10[i],
@@ -66,7 +90,10 @@ export const buildDashboardDataset = (yearlyData: YearlyData[], percentileData?:
       課税口座: sanitize(entry.taxable.balance),
       NISA元本: nisaPrincipal,
       iDeCo元本: idecoPrincipal,
+      ...productPrincipals,
     };
+
+    return result;
   });
 
   const detailedAssetData: DetailedAssetData[] = yearlyData.map(entry => ({

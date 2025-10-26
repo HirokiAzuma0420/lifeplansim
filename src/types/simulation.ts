@@ -1,4 +1,13 @@
-﻿export interface AccountBucket {
+﻿export type InvestmentProduct = {
+  key: 'stocks' | 'trust' | 'bonds' | 'crypto' | 'other' | 'ideco';
+  account: '課税' | '非課税' | 'iDeCo';
+  currentJPY: number;
+  recurringJPY: number; // 年間つみたて額（円/年）
+  spotJPY: number;      // 年間スポット（円/年）
+  expectedReturn: number; // 小数（例: 0.05）
+};
+
+export interface AccountBucket {
   principal: number;
   balance: number;
 }
@@ -20,7 +29,7 @@ export interface YearlyData {
     ideco: number;
   };
   // API拡張: 商品別の年末残高（存在時のみ）
-  products?: Record<string, number>;
+  products: Record<string, AccountBucket>;
 }
 
 export interface PercentileData {
@@ -43,6 +52,7 @@ export interface SimulationInputParams {
   yearlySpotJPY: number;
   expectedReturn: number;
   emergencyFundJPY: number;
+  products?: InvestmentProduct[];
 }
 
 export interface SimulationNavigationState {
