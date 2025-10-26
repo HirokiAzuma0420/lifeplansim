@@ -336,13 +336,24 @@ function runSimulation(params: InputParams): YearlyData[] {
   // ストレステスト用のリターン系列を事前に生成
   const stressTestEnabled = params.stressTest?.enabled ?? false;
   const simulationYears = params.endAge - params.initialAge + 1;
-  const VOLATILITY = 0.15; // 固定のボラティリティ
+
+  // 商品別のボラティリティを定義 (年率標準偏差)
+  // 出典や仮定はコメントとして残すことが望ましい
+  const VOLATILITY_MAP: Record<InvestmentProduct['key'], number> = {
+    stocks: 0.20,      // 全世界株式やS&P500などを参考に20%
+    trust: 0.18,       // 株式中心の投資信託を想定し、株式よりやや低い18%
+    bonds: 0.05,       // 先進国債券などを参考に5%
+    crypto: 0.80,      // ビットコインなどを参考に80%
+    ideco: 0.18,       // iDeCoの中身は投資信託と仮定し18%
+    other: 0.10,       // その他資産は中間的な10%と仮定
+  };
 
   const productReturnSeries = new Map<string, number[]>();
   if (params.interestScenario === 'ランダム変動' || stressTestEnabled) {
     productList.forEach((p, index) => {
       const productId = `${p.key}-${index}`;
-      const series = generateReturnSeries(n(p.expectedReturn), VOLATILITY, simulationYears);
+      const volatility = VOLATILITY_MAP[p.key] ?? 0.15; // マップにないキーの場合はデフォルト15%
+      const series = generateReturnSeries(n(p.expectedReturn), volatility, simulationYears);
       productReturnSeries.set(productId, series);
     });
   }
