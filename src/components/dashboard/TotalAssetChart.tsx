@@ -13,7 +13,7 @@ interface TotalAssetChartProps {
   yAxisMax: number;
 }
 
-// Rechartsから渡されるカスタムラベルのpropsの型
+// Rechartsから渡されるカスタムラベルのprops型
 interface LabelProps {
   x: number;
   y: number;
