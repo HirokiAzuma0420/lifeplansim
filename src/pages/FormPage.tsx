@@ -122,6 +122,7 @@ const createDefaultFormData = () => ({
   socializingCost: '',
   hobbyEntertainmentCost: '',
   otherVariableCost: '0',
+  carPurchasePlan: 'no',
   carFirstReplacementAfterYears: '',
   carPrice: '',
   carReplacementFrequency: '',
@@ -132,6 +133,7 @@ const createDefaultFormData = () => ({
   carCurrentLoanInPayment: 'no',
   carCurrentLoanMonthly: '',
   carCurrentLoanRemainingMonths: '',
+  housePurchaseIntent: '',
   housePurchasePlan: null as { age: number, price: number, downPayment: number, loanYears: number, interestRate: number } | null,
   houseRenovationPlans: [] as { age: number, cost: number, cycleYears?: number }[],
   housePurchaseAge: '',
@@ -199,12 +201,12 @@ const createDefaultFormData = () => ({
   emergencyFund: '300',
   stressTestSeed: '', // 追加
   appliances: [
-    { name: '冷蔵庫', cycle: 10, cost: 15, firstReplacementAfterYears: 0 },
-    { name: '洗濯機', cycle: 8, cost: 12, firstReplacementAfterYears: 0 },
-    { name: 'エアコン', cycle: 10, cost: 10, firstReplacementAfterYears: 0 },
-    { name: 'テレビ', cycle: 10, cost: 8, firstReplacementAfterYears: 0 },
-    { name: '電子レンジ', cycle: 8, cost: 3, firstReplacementAfterYears: 0 },
-    { name: '掃除機', cycle: 6, cost: 2, firstReplacementAfterYears: 0 },
+    { name: '冷蔵庫', cycle: 10, cost: 15, firstReplacementAfterYears: '' as number | '' },
+    { name: '洗濯機', cycle: 8, cost: 12, firstReplacementAfterYears: '' as number | '' },
+    { name: 'エアコン', cycle: 10, cost: 10, firstReplacementAfterYears: '' as number | '' },
+    { name: 'テレビ', cycle: 10, cost: 8, firstReplacementAfterYears: '' as number | '' },
+    { name: '電子レンジ', cycle: 8, cost: 3, firstReplacementAfterYears: '' as number | '' },
+    { name: '掃除機', cycle: 6, cost: 2, firstReplacementAfterYears: '' as number | '' },
   ],
 });
 
@@ -627,7 +629,7 @@ export default function FormPage() {
   const handleApplianceChange = (index: number, field: string, value: string) => {
     setFormData(prev => {
       const newAppliances = [...prev.appliances];
-      const isNumberField = field === 'cycle' || field === 'cost' || field === 'firstReplacementAfterYears';
+      const isNumberField = field === 'cycle' || field === 'cost';
       newAppliances[index] = {
         ...newAppliances[index],
         [field]: isNumberField ? Number(value) : value,
@@ -637,7 +639,7 @@ export default function FormPage() {
   };
 
   const addAppliance = () => {
-    setFormData(prev => ({ ...prev, appliances: [...prev.appliances, { name: '', cycle: 0, cost: 0, firstReplacementAfterYears: 0 }] }));
+    setFormData(prev => ({ ...prev, appliances: [...prev.appliances, { name: '', cycle: 0, cost: 0, firstReplacementAfterYears: '' }] }));
   };
 
   const handleRemoveAppliance = (index: number) => {
@@ -1319,6 +1321,21 @@ export default function FormPage() {
               <img src="/form/Q4-car.png"></img>
             </div>
             <h2 className="text-2xl font-bold text-center mb-4">車に関する質問</h2>
+            <div className="mb-6">
+              <label className="block text-gray-700 text-sm font-bold mb-2">今後、車を購入/買い替えする予定はありますか？</label>
+              <div className="mt-2 flex flex-wrap gap-4">
+                <label className="inline-flex items-center gap-2">
+                  <input type="radio" className="custom-radio" name="carPurchasePlan" value="yes" checked={formData.carPurchasePlan === 'yes'} onChange={handleRadioChange} />
+                  <span>はい</span>
+                </label>
+                <label className="inline-flex items-center gap-2">
+                  <input type="radio" className="custom-radio" name="carPurchasePlan" value="no" checked={formData.carPurchasePlan !== 'yes'} onChange={handleRadioChange} />
+                  <span>いいえ</span>
+                </label>
+              </div>
+            </div>
+
+            <div className={`accordion-content ${formData.carPurchasePlan === 'yes' ? 'open' : ''}`}>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">現在ローン返済中ですか？</label>
               <div className="mt-2 flex flex-wrap gap-4">
@@ -1391,8 +1408,7 @@ export default function FormPage() {
                 </label>
               </div>
             </div>
-            {formData.carLoanUsage === 'はい' && (
-              <>
+            <div className={`accordion-content ${formData.carLoanUsage === 'はい' ? 'open' : ''}`}>
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carLoanYears">
                   ローン年数は？
@@ -1439,8 +1455,8 @@ export default function FormPage() {
                 </label>
               </div>
             </div>
-            </>
-            )}
+            </div>
+            </div>
           </div>
         );
       case 'ライフイベント - 家':
@@ -1501,22 +1517,23 @@ export default function FormPage() {
                     <input
                       type="radio"
                       className="custom-radio"
-                      name="housePurchasePlanToggle"
+                    name="housePurchaseIntent"
                       value="yes"
-                      checked={formData.housePurchasePlan !== null}
+                    checked={formData.housePurchaseIntent === 'yes'}
                       onChange={() => {
-                        if (formData.housePurchasePlan === null) {
-                          setFormData({
-                            ...formData,
-                            housePurchasePlan: { age: 0, price: 0, downPayment: 0, loanYears: 0, interestRate: 0 },
-                          });
-                        }
+                      setFormData(prev => ({
+                        ...prev,
+                        housePurchaseIntent: 'yes',
+                        housePurchasePlan: prev.housePurchasePlan === null 
+                          ? { age: 0, price: 0, downPayment: 0, loanYears: 0, interestRate: 0 } 
+                          : prev.housePurchasePlan
+                      }));
                       }}
                     />
                     <span className="ml-2">はい</span>
                   </label>
                   <label className="inline-flex items-center">
-                    <input type="radio" className="custom-radio" name="housePurchasePlanToggle" value="no" checked={formData.housePurchasePlan === null} onChange={() => setFormData({...formData, housePurchasePlan: null})} />
+                  <input type="radio" className="custom-radio" name="housePurchaseIntent" value="no" checked={formData.housePurchaseIntent === 'no'} onChange={() => setFormData(prev => ({...prev, housePurchaseIntent: 'no', housePurchasePlan: null}))} />
                     <span className="ml-2">いいえ</span>
                   </label>
                 </div>
