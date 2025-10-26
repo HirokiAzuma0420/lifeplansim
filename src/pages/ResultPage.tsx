@@ -195,7 +195,7 @@ export default function ResultPage() {
     {
       label: '初年度の総資産',
       value: formatCurrency(firstYearTotal),
-      note: `開始年: ${dataset.firstYear?.year ?? '-'}年`,
+      note: `開始年: ${dataset.firstYear?.year ?? '-'}年 ${new Date().getMonth() + 1}月`,
     },
     {
       label: '最終年の総資産',
