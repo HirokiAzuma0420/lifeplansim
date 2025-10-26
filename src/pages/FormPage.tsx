@@ -228,6 +228,7 @@ export default function FormPage() {
   const [isCompleted, setIsCompleted] = useState(false);
   const [result, setResult] = useState<object | string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [totalNetAnnualIncome, setTotalNetAnnualIncome] = useState(0);
 
   const [formData, setFormData] = useState<FormDataState>(() => initialStateFromLocation || createDefaultFormData());
@@ -254,6 +255,158 @@ export default function FormPage() {
       setIsCompleted(false);
     }
   }, [initialStateFromLocation]);
+
+  const validateSection = (sectionIndex: number): boolean => {
+    const newErrors: {[key: string]: string} = {};
+    const currentSection = effectiveSections[sectionIndex];
+    const n = (v: unknown) => Number(v) || 0;
+
+    switch (currentSection) {
+      case '家族構成':
+        if (!formData.familyComposition) {
+          newErrors.familyComposition = '家族構成を選択してください。';
+        }
+        break;
+      case '現在の収入':
+        if (!formData.personAge) {
+          newErrors.personAge = '年齢を入力してください。';
+        } else if (n(formData.personAge) < 18 || n(formData.personAge) >= 100) {
+          newErrors.personAge = '18歳から99歳の間で入力してください。';
+        }
+        if (!formData.mainIncome) {
+          newErrors.mainIncome = '本業の年間収入を入力してください。';
+        } else if (n(formData.mainIncome) < 0) {
+          newErrors.mainIncome = '0以上の数値を入力してください。';
+        }
+
+        if (formData.familyComposition === '既婚') {
+          if (!formData.spouseAge) {
+            newErrors.spouseAge = '配偶者の年齢を入力してください。';
+          } else if (n(formData.spouseAge) < 18 || n(formData.spouseAge) >= 100) {
+            newErrors.spouseAge = '18歳から99歳の間で入力してください。';
+          }
+          if (!formData.spouseMainIncome) {
+            newErrors.spouseMainIncome = '配偶者の本業年間収入を入力してください。';
+          } else if (Number(formData.spouseMainIncome) < 0) {
+            newErrors.spouseMainIncome = '0以上の数値を入力してください。';
+          }
+        }
+        break;
+      case '現在の支出':
+        if (!formData.expenseMethod) {
+          newErrors.expenseMethod = '支出の入力方法を選択してください。';
+        } else if (formData.expenseMethod === '簡単') {
+          if (!formData.livingCostSimple) newErrors.livingCostSimple = '生活費を入力してください。';
+          else if (n(formData.livingCostSimple) < 0) newErrors.livingCostSimple = '0以上の数値を入力してください。';
+        } else {
+          if (!formData.utilitiesCost) newErrors.utilitiesCost = '水道・光熱費を入力してください。';
+          if (!formData.communicationCost) newErrors.communicationCost = '通信費を入力してください。';
+          if (!formData.insuranceCost) newErrors.insuranceCost = '保険を入力してください。';
+          if (!formData.educationCost) newErrors.educationCost = '教養・教育費を入力してください。';
+          if (!formData.foodCost) newErrors.foodCost = '食費を入力してください。';
+          if (!formData.dailyNecessitiesCost) newErrors.dailyNecessitiesCost = '日用品を入力してください。';
+          if (!formData.transportationCost) newErrors.transportationCost = '交通費を入力してください。';
+          if (!formData.clothingBeautyCost) newErrors.clothingBeautyCost = '衣類・美容費を入力してください。';
+          if (!formData.socializingCost) newErrors.socializingCost = '交際費を入力してください。';
+          if (!formData.hobbyEntertainmentCost) newErrors.hobbyEntertainmentCost = '趣味・娯楽費を入力してください。';
+        }
+        break;
+      case 'ライフイベント - 車':
+        if (!formData.carCurrentLoanInPayment) newErrors.carCurrentLoanInPayment = '現在のローン状況を選択してください。';
+        if (formData.carCurrentLoanInPayment === 'yes') {
+            if (!formData.carCurrentLoanMonthly) newErrors.carCurrentLoanMonthly = '月々の返済額を入力してください。';
+            if (!formData.carCurrentLoanRemainingMonths) newErrors.carCurrentLoanRemainingMonths = '残り支払い回数を入力してください。';
+        }
+        if (!formData.carPurchasePlan) newErrors.carPurchasePlan = '車の購入/買い替え予定を選択してください。';
+        if (formData.carPurchasePlan === 'yes') {
+          if (!formData.carFirstReplacementAfterYears) newErrors.carFirstReplacementAfterYears = '初回買い替え年数を入力してください。';
+          if (!formData.carPrice) newErrors.carPrice = '価格帯を入力してください。';
+          if (!formData.carReplacementFrequency) newErrors.carReplacementFrequency = '乗り換え頻度を入力してください。';
+          if (!formData.carLoanUsage) newErrors.carLoanUsage = 'ローンの利用を選択してください。';
+          if (formData.carLoanUsage === 'はい') {
+            if (!formData.carLoanYears) newErrors.carLoanYears = 'ローン年数を選択してください。';
+            if (!formData.carLoanType) newErrors.carLoanType = 'ローンの種類を選択してください。';
+          }
+        }
+        break;
+      case 'ライフイベント - 家':
+        if (!formData.housingType) newErrors.housingType = '現在の住まいを選択してください。';
+        if (formData.housingType === '賃貸') {
+          if (!formData.currentRentLoanPayment) newErrors.currentRentLoanPayment = '家賃を入力してください。';
+          if (!formData.housePurchaseIntent) newErrors.housePurchaseIntent = '将来の住宅購入予定を選択してください。';
+          if (formData.housePurchaseIntent === 'yes' && formData.housePurchasePlan) {
+            if (!formData.housePurchasePlan.age) newErrors['housePurchasePlan.age'] = '購入予定年齢を入力してください。';
+            if (!formData.housePurchasePlan.price) newErrors['housePurchasePlan.price'] = '予定価格を入力してください。';
+            if (formData.housePurchasePlan.downPayment === undefined) newErrors['housePurchasePlan.downPayment'] = '頭金を入力してください。';
+            if (!formData.housePurchasePlan.loanYears) newErrors['housePurchasePlan.loanYears'] = 'ローン年数を入力してください。';
+            if (!formData.housePurchasePlan.interestRate) newErrors['housePurchasePlan.interestRate'] = '想定金利を入力してください。';
+          }
+        }
+        if (formData.housingType === '持ち家（ローン中）') {
+            if (!formData.loanMonthlyPayment) newErrors.loanMonthlyPayment = '月額返済額を入力してください。';
+            if (!formData.loanRemainingYears) newErrors.loanRemainingYears = '残存年数を入力してください。';
+        }
+        break;
+      case 'ライフイベント - 結婚':
+        if (!formData.planToMarry) newErrors.planToMarry = '結婚の予定を選択してください。';
+        if (formData.planToMarry === 'する') {
+          if (!formData.marriageAge) newErrors.marriageAge = '結婚予定年齢を入力してください。';
+          else if (n(formData.marriageAge) < n(formData.personAge)) newErrors.marriageAge = '現在年齢以上の年齢を入力してください。';
+        }
+        break;
+      case 'ライフイベント - 子供':
+        if (!formData.hasChildren) newErrors.hasChildren = '子供の有無を選択してください。';
+        if (formData.hasChildren === 'はい') {
+          if (!formData.numberOfChildren) newErrors.numberOfChildren = '子供の人数を入力してください。';
+          if (!formData.firstBornAge) newErrors.firstBornAge = '最初の子が生まれる予定年齢を入力してください。';
+          if (!formData.educationPattern) newErrors.educationPattern = '教育費パターンを選択してください。';
+        }
+        break;
+      case 'ライフイベント - 親の介護':
+        if (!formData.parentCareAssumption) newErrors.parentCareAssumption = '介護の想定を選択してください。';
+        if (formData.parentCareAssumption === 'はい') {
+          if (!formData.parentCurrentAge) newErrors.parentCurrentAge = '親の現在の年齢を入力してください。';
+          if (!formData.parentCareStartAge) newErrors.parentCareStartAge = '介護開始年齢を入力してください。';
+          if (!formData.parentCareMonthlyCost) newErrors.parentCareMonthlyCost = '月額費用を入力してください。';
+          if (!formData.parentCareYears) newErrors.parentCareYears = '介護期間を入力してください。';
+        }
+        break;
+      case 'ライフイベント - 老後':
+        if (!formData.postRetirementLivingCost) newErrors.postRetirementLivingCost = '老後の生活費を入力してください。';
+        if (!formData.retirementAge) newErrors.retirementAge = '退職予定年齢を入力してください。';
+        if (!formData.pensionStartAge) newErrors.pensionStartAge = '年金受給開始年齢を入力してください。';
+        if (!formData.pensionAmount) newErrors.pensionAmount = '年金受給額を入力してください。';
+        if (formData.familyComposition === '既婚') {
+          if (!formData.spouseRetirementAge) newErrors.spouseRetirementAge = '配偶者の退職予定年齢を入力してください。';
+          if (!formData.spousePensionStartAge) newErrors.spousePensionStartAge = '配偶者の年金受給開始年齢を入力してください。';
+          if (!formData.spousePensionAmount) newErrors.spousePensionAmount = '配偶者の年金受給額を入力してください。';
+        }
+        break;
+      case '貯蓄':
+        if (!formData.currentSavings) newErrors.currentSavings = '現在の預貯金総額を入力してください。';
+        if (!formData.monthlySavings) newErrors.monthlySavings = '毎月の貯蓄額を入力してください。';
+        break;
+      case '投資':
+        // 投資セクションは任意入力が多いため、必須バリデーションは一旦見送り。
+        // 必要であれば、入力されている場合の数値チェックなどを追加します。
+        break;
+      case 'シミュレーション設定':
+        if (!formData.simulationPeriodAge) newErrors.simulationPeriodAge = 'シミュレーション対象期間を入力してください。';
+        else if (n(formData.simulationPeriodAge) <= n(formData.personAge)) newErrors.simulationPeriodAge = '現在年齢より大きい年齢を入力してください。';
+        if (!formData.interestRateScenario) newErrors.interestRateScenario = '利回りシナリオを選択してください。';
+        if (!formData.emergencyFund) newErrors.emergencyFund = '生活防衛資金を入力してください。';
+        break;
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const goToNextSection = () => {
+    if (validateSection(currentSectionIndex) && currentSectionIndex < effectiveSections.length - 1) {
+      setCurrentSectionIndex(currentSectionIndex + 1);
+    }
+  };
 
 
 
@@ -691,12 +844,6 @@ export default function FormPage() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const goToNextSection = () => {
-    if (currentSectionIndex < effectiveSections.length - 1) {
-      setCurrentSectionIndex(currentSectionIndex + 1);
-    }
-  };
-
   const totalExpenses = useMemo(() => {
     if (formData.expenseMethod !== '詳細') return 0;
     const fixed = [      
@@ -1001,7 +1148,7 @@ export default function FormPage() {
             <h2 className="text-2xl font-bold text-center mb-4">家族構成に関する質問</h2>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                現在の家族構成は？
+                現在の家族構成は？<span className="text-red-500">*</span>
               </label>
               <div className="mt-2">
                 <label className="inline-flex items-center mr-4">
@@ -1029,6 +1176,7 @@ export default function FormPage() {
                   <span className="ml-2">既婚</span>
                 </label>
               </div>
+              {errors.familyComposition && <p className="text-red-500 text-xs italic mt-2">{errors.familyComposition}</p>}
             </div>
           </div>
         );
@@ -1042,18 +1190,19 @@ export default function FormPage() {
             <h2 className="text-2xl font-bold text-center mb-4">現在の収入に関する質問</h2>
             
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="personAge">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="personAge"> 
                 本人の現在年齢[歳]
               </label>
-              <input
+              <input 
                 type="number"
                 id="personAge"
                 name="personAge"
                 value={formData.personAge || ''}
                 onChange={handleInputChange}
-                className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.personAge ? 'border-red-500' : ''}`}
                 required
-              />
+              /> 
+              {errors.personAge && <p className="text-red-500 text-xs italic mt-1">{errors.personAge}</p>}
             </div>
 
             <div className="mb-4 flex items-end space-x-4">
@@ -1067,9 +1216,10 @@ export default function FormPage() {
                   name="mainIncome"
                   value={formData.mainIncome}
                   onChange={handleInputChange}
-                  className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.mainIncome ? 'border-red-500' : ''}`}
                   required
                 />
+                {errors.mainIncome && <p className="text-red-500 text-xs italic mt-1">{errors.mainIncome}</p>}
               </div>
               <div className="w-24">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="annualRaiseRate">
@@ -1111,9 +1261,10 @@ export default function FormPage() {
                   name="spouseAge"
                   value={formData.spouseAge || ''}
                   onChange={handleInputChange}
-                  className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.spouseAge ? 'border-red-500' : ''}`}
                   required
                 />
+                {errors.spouseAge && <p className="text-red-500 text-xs italic mt-1">{errors.spouseAge}</p>}
               </div>
             )}
 
@@ -1128,9 +1279,10 @@ export default function FormPage() {
                     name="spouseMainIncome"
                     value={formData.spouseMainIncome}
                     onChange={handleInputChange}
-                    className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.spouseMainIncome ? 'border-red-500' : ''}`}
                     required
                   />
+                  {errors.spouseMainIncome && <p className="text-red-500 text-xs italic mt-1">{errors.spouseMainIncome}</p>}
                 </div>
                 <div className="w-24">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="spouseAnnualRaiseRate">
@@ -1201,6 +1353,7 @@ export default function FormPage() {
                   <span className="ml-2">詳細</span>
                 </label>
               </div>
+              {errors.expenseMethod && <p className="text-red-500 text-xs italic mt-2">{errors.expenseMethod}</p>}
             </div>
 
             <div className={`mb-4 accordion-content ${formData.expenseMethod === '簡単' ? 'open' : ''}`}>
@@ -1217,9 +1370,10 @@ export default function FormPage() {
                   name="livingCostSimple"
                   value={formData.livingCostSimple}
                   onChange={handleInputChange}
-                  className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.livingCostSimple ? 'border-red-500' : ''}`}
                   required
                 />
+                {errors.livingCostSimple && <p className="text-red-500 text-xs italic mt-1">{errors.livingCostSimple}</p>}
               </div>
               </div>
 
@@ -1232,31 +1386,36 @@ export default function FormPage() {
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="utilitiesCost">
                     水道・光熱費[円]
                   </label>
-                  <input type="number" id="utilitiesCost" name="utilitiesCost" value={formData.utilitiesCost} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+                  <input type="number" id="utilitiesCost" name="utilitiesCost" value={formData.utilitiesCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.utilitiesCost ? 'border-red-500' : ''}`} required />
+                  {errors.utilitiesCost && <p className="text-red-500 text-xs italic mt-1">{errors.utilitiesCost}</p>}
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="communicationCost">
                     通信費[円]
                   </label>
-                  <input type="number" id="communicationCost" name="communicationCost" value={formData.communicationCost} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+                  <input type="number" id="communicationCost" name="communicationCost" value={formData.communicationCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.communicationCost ? 'border-red-500' : ''}`} required />
+                  {errors.communicationCost && <p className="text-red-500 text-xs italic mt-1">{errors.communicationCost}</p>}
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="insuranceCost">
                     保険[円]
                   </label>
-                  <input type="number" id="insuranceCost" name="insuranceCost" value={formData.insuranceCost} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+                  <input type="number" id="insuranceCost" name="insuranceCost" value={formData.insuranceCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.insuranceCost ? 'border-red-500' : ''}`} required />
+                  {errors.insuranceCost && <p className="text-red-500 text-xs italic mt-1">{errors.insuranceCost}</p>}
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="educationCost">
                     教養・教育[円]
                   </label>
-                  <input type="number" id="educationCost" name="educationCost" value={formData.educationCost} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+                  <input type="number" id="educationCost" name="educationCost" value={formData.educationCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.educationCost ? 'border-red-500' : ''}`} required />
+                  {errors.educationCost && <p className="text-red-500 text-xs italic mt-1">{errors.educationCost}</p>}
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="otherFixedCost">
                     その他[円]
                   </label>
-                  <input type="number" id="otherFixedCost" name="otherFixedCost" value={formData.otherFixedCost} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" defaultValue={0} />
+                  <input type="number" id="otherFixedCost" name="otherFixedCost" value={formData.otherFixedCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.otherFixedCost ? 'border-red-500' : ''}`} defaultValue={0} />
+                  {errors.otherFixedCost && <p className="text-red-500 text-xs italic mt-1">{errors.otherFixedCost}</p>}
                 </div>
 
                 <h3 className="text-lg font-semibold mb-2">変動費</h3>
@@ -1264,43 +1423,50 @@ export default function FormPage() {
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="foodCost">
                     食費[円]
                   </label>
-                  <input type="number" id="foodCost" name="foodCost" value={formData.foodCost} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+                  <input type="number" id="foodCost" name="foodCost" value={formData.foodCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.foodCost ? 'border-red-500' : ''}`} required />
+                  {errors.foodCost && <p className="text-red-500 text-xs italic mt-1">{errors.foodCost}</p>}
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="dailyNecessitiesCost">
                     日用品[円]
                   </label>
-                  <input type="number" id="dailyNecessitiesCost" name="dailyNecessitiesCost" value={formData.dailyNecessitiesCost} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+                  <input type="number" id="dailyNecessitiesCost" name="dailyNecessitiesCost" value={formData.dailyNecessitiesCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.dailyNecessitiesCost ? 'border-red-500' : ''}`} required />
+                  {errors.dailyNecessitiesCost && <p className="text-red-500 text-xs italic mt-1">{errors.dailyNecessitiesCost}</p>}
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="transportationCost">
                     交通費[円]
                   </label>
-                  <input type="number" id="transportationCost" name="transportationCost" value={formData.transportationCost} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+                  <input type="number" id="transportationCost" name="transportationCost" value={formData.transportationCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.transportationCost ? 'border-red-500' : ''}`} required />
+                  {errors.transportationCost && <p className="text-red-500 text-xs italic mt-1">{errors.transportationCost}</p>}
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="clothingBeautyCost">
                     衣類・美容[円]
                   </label>
-                  <input type="number" id="clothingBeautyCost" name="clothingBeautyCost" value={formData.clothingBeautyCost} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+                  <input type="number" id="clothingBeautyCost" name="clothingBeautyCost" value={formData.clothingBeautyCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.clothingBeautyCost ? 'border-red-500' : ''}`} required />
+                  {errors.clothingBeautyCost && <p className="text-red-500 text-xs italic mt-1">{errors.clothingBeautyCost}</p>}
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="socializingCost">
                     交際費[円]
                   </label>
-                  <input type="number" id="socializingCost" name="socializingCost" value={formData.socializingCost} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+                  <input type="number" id="socializingCost" name="socializingCost" value={formData.socializingCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.socializingCost ? 'border-red-500' : ''}`} required />
+                  {errors.socializingCost && <p className="text-red-500 text-xs italic mt-1">{errors.socializingCost}</p>}
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="hobbyEntertainmentCost">
                     趣味・娯楽[円]
                   </label>
-                  <input type="number" id="hobbyEntertainmentCost" name="hobbyEntertainmentCost" value={formData.hobbyEntertainmentCost} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+                  <input type="number" id="hobbyEntertainmentCost" name="hobbyEntertainmentCost" value={formData.hobbyEntertainmentCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.hobbyEntertainmentCost ? 'border-red-500' : ''}`} required />
+                  {errors.hobbyEntertainmentCost && <p className="text-red-500 text-xs italic mt-1">{errors.hobbyEntertainmentCost}</p>}
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="otherVariableCost">
                     その他[円]
                   </label>
-                  <input type="number" id="otherVariableCost" name="otherVariableCost" value={formData.otherVariableCost} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" defaultValue={0} />
+                  <input type="number" id="otherVariableCost" name="otherVariableCost" value={formData.otherVariableCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.otherVariableCost ? 'border-red-500' : ''}`} defaultValue={0} />
+                  {errors.otherVariableCost && <p className="text-red-500 text-xs italic mt-1">{errors.otherVariableCost}</p>}
                 </div>
               </div>
           </div>
@@ -1324,16 +1490,19 @@ export default function FormPage() {
                   <input type="radio" className="custom-radio" name="carCurrentLoanInPayment" value="no" checked={formData.carCurrentLoanInPayment === 'no'} onChange={handleRadioChange} />
                   <span>いいえ</span>
                 </label>
+                {errors.carCurrentLoanInPayment && <p className="text-red-500 text-xs italic mt-2">{errors.carCurrentLoanInPayment}</p>}
               </div>
               <div className={`overflow-hidden transition-all duration-300 ease-in-out ${formData.carCurrentLoanInPayment === 'yes' ? 'max-h-64 opacity-100 mt-4' : 'max-h-0 opacity-0'}`}>
                 <div className="mt-4 grid gap-4 md:grid-cols-2">
                   <div>
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carCurrentLoanMonthly">月々の返済額（円/月）</label>
-                    <input type="number" id="carCurrentLoanMonthly" name="carCurrentLoanMonthly" value={formData.carCurrentLoanMonthly} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                    <input type="number" id="carCurrentLoanMonthly" name="carCurrentLoanMonthly" value={formData.carCurrentLoanMonthly} onChange={handleInputChange} className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${errors.carCurrentLoanMonthly ? 'border-red-500' : ''}`} />
+                    {errors.carCurrentLoanMonthly && <p className="text-red-500 text-xs italic mt-1">{errors.carCurrentLoanMonthly}</p>}
                   </div>
                   <div>
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carCurrentLoanRemainingMonths">残り支払い回数（ヶ月）</label>
-                    <input type="number" id="carCurrentLoanRemainingMonths" name="carCurrentLoanRemainingMonths" value={formData.carCurrentLoanRemainingMonths} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                    <input type="number" id="carCurrentLoanRemainingMonths" name="carCurrentLoanRemainingMonths" value={formData.carCurrentLoanRemainingMonths} onChange={handleInputChange} className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${errors.carCurrentLoanRemainingMonths ? 'border-red-500' : ''}`} />
+                    {errors.carCurrentLoanRemainingMonths && <p className="text-red-500 text-xs italic mt-1">{errors.carCurrentLoanRemainingMonths}</p>}
                   </div>
                 </div>
               </div>
@@ -1350,6 +1519,7 @@ export default function FormPage() {
                   <input type="radio" className="custom-radio" name="carPurchasePlan" value="no" checked={formData.carPurchasePlan === 'no'} onChange={handleRadioChange} />
                   <span>いいえ</span>
                 </label>
+                {errors.carPurchasePlan && <p className="text-red-500 text-xs italic mt-2">{errors.carPurchasePlan}</p>}
               </div>
             </div>
 
@@ -1358,19 +1528,22 @@ export default function FormPage() {
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carFirstReplacementAfterYears">
                 初回買い替えは今から何年後？[年]
               </label>
-              <input type="number" id="carFirstReplacementAfterYears" name="carFirstReplacementAfterYears" value={formData.carFirstReplacementAfterYears} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+              <input type="number" id="carFirstReplacementAfterYears" name="carFirstReplacementAfterYears" value={formData.carFirstReplacementAfterYears} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.carFirstReplacementAfterYears ? 'border-red-500' : ''}`} />
+              {errors.carFirstReplacementAfterYears && <p className="text-red-500 text-xs italic mt-1">{errors.carFirstReplacementAfterYears}</p>}
             </div>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carPrice">
                 今後買い替える車の価格帯は？[万円]
               </label>
-              <input type="number" id="carPrice" name="carPrice" value={formData.carPrice} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+              <input type="number" id="carPrice" name="carPrice" value={formData.carPrice} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.carPrice ? 'border-red-500' : ''}`} required />
+              {errors.carPrice && <p className="text-red-500 text-xs italic mt-1">{errors.carPrice}</p>}
             </div>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carReplacementFrequency">
                 車を乗り換える頻度は？[年]
               </label>
-              <input type="number" id="carReplacementFrequency" name="carReplacementFrequency" value={formData.carReplacementFrequency} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+              <input type="number" id="carReplacementFrequency" name="carReplacementFrequency" value={formData.carReplacementFrequency} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.carReplacementFrequency ? 'border-red-500' : ''}`} required />
+              {errors.carReplacementFrequency && <p className="text-red-500 text-xs italic mt-1">{errors.carReplacementFrequency}</p>}
             </div>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -1400,6 +1573,7 @@ export default function FormPage() {
                   <span className="ml-2">いいえ</span>
                 </label>
               </div>
+              {errors.carLoanUsage && <p className="text-red-500 text-xs italic mt-2">{errors.carLoanUsage}</p>}
             </div>
             <div className={`accordion-content ${formData.carLoanUsage === 'はい' ? 'open' : ''}`}>
               <div className="mb-4">
@@ -1411,13 +1585,14 @@ export default function FormPage() {
                   name="carLoanYears"
                   value={formData.carLoanYears}
                   onChange={handleInputChange}
-                  className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.carLoanYears ? 'border-red-500' : ''}`}
                 >
                   <option value="">選択してください</option>
                   <option value="3">3年</option>
                   <option value="5">5年</option>
                   <option value="7">7年</option>
                 </select>
+                {errors.carLoanYears && <p className="text-red-500 text-xs italic mt-1">{errors.carLoanYears}</p>}
               </div>
               <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -1447,6 +1622,7 @@ export default function FormPage() {
                   <span className="ml-2">ディーラーローン</span>
                 </label>
               </div>
+              {errors.carLoanType && <p className="text-red-500 text-xs italic mt-2">{errors.carLoanType}</p>}
             </div>
             </div>
             </div>
@@ -1477,12 +1653,14 @@ export default function FormPage() {
                   <input type="radio" className="custom-radio" name="housingType" value="持ち家（完済）" checked={formData.housingType === '持ち家（完済）'} onChange={handleRadioChange} required />
                   <span className="ml-2">持ち家（ローン完済）</span>
                 </label>
+                {errors.housingType && <p className="text-red-500 text-xs italic mt-2">{errors.housingType}</p>}
               </div>
 
               <div className={`overflow-hidden transition-all duration-300 ease-in-out ${formData.housingType === '賃貸' ? 'max-h-24 opacity-100 mt-3' : 'max-h-0 opacity-0'}`}>
                 <div className="mt-3">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="currentRentLoanPayment">家賃（円/月）</label>
-                  <input type="number" id="currentRentLoanPayment" name="currentRentLoanPayment" value={formData.currentRentLoanPayment} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                  <input type="number" id="currentRentLoanPayment" name="currentRentLoanPayment" value={formData.currentRentLoanPayment} onChange={handleInputChange} className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${errors.currentRentLoanPayment ? 'border-red-500' : ''}`} />
+                  {errors.currentRentLoanPayment && <p className="text-red-500 text-xs italic mt-1">{errors.currentRentLoanPayment}</p>}
                 </div>
               </div>
 
@@ -1490,11 +1668,13 @@ export default function FormPage() {
                 <div className="mt-3 space-y-4">
                   <div>
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="loanMonthlyPayment">月額返済（円/月）</label>
-                    <input type="number" id="loanMonthlyPayment" name="loanMonthlyPayment" value={formData.loanMonthlyPayment} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                    <input type="number" id="loanMonthlyPayment" name="loanMonthlyPayment" value={formData.loanMonthlyPayment} onChange={handleInputChange} className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${errors.loanMonthlyPayment ? 'border-red-500' : ''}`} />
+                    {errors.loanMonthlyPayment && <p className="text-red-500 text-xs italic mt-1">{errors.loanMonthlyPayment}</p>}
                   </div>
                   <div>
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="loanRemainingYears">残存年数（年）</label>
-                    <input type="number" id="loanRemainingYears" name="loanRemainingYears" value={formData.loanRemainingYears} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                    <input type="number" id="loanRemainingYears" name="loanRemainingYears" value={formData.loanRemainingYears} onChange={handleInputChange} className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${errors.loanRemainingYears ? 'border-red-500' : ''}`} />
+                    {errors.loanRemainingYears && <p className="text-red-500 text-xs italic mt-1">{errors.loanRemainingYears}</p>}
                   </div>
                 </div>
               </div>
@@ -1530,28 +1710,34 @@ export default function FormPage() {
                     <span className="ml-2">いいえ</span>
                   </label>
                 </div>
+                {errors.housePurchaseIntent && <p className="text-red-500 text-xs italic mt-2">{errors.housePurchaseIntent}</p>}
 
                 {formData.housePurchasePlan && (
                   <div className="mt-4 space-y-4">
                     <div>
                       <label className="block text-gray-700 text-sm font-bold mb-2">購入予定年齢</label>
-                      <input type="number" name="housePurchasePlan.age" value={formData.housePurchasePlan.age || ''} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                      <input type="number" name="housePurchasePlan.age" value={formData.housePurchasePlan.age || ''} onChange={handleInputChange} className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.age'] ? 'border-red-500' : ''}`} />
+                      {errors['housePurchasePlan.age'] && <p className="text-red-500 text-xs italic mt-1">{errors['housePurchasePlan.age']}</p>}
                     </div>
                     <div>
                       <label className="block text-gray-700 text-sm font-bold mb-2">予定価格[万円]</label>
-                      <input type="number" name="housePurchasePlan.price" value={formData.housePurchasePlan.price || ''} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                      <input type="number" name="housePurchasePlan.price" value={formData.housePurchasePlan.price || ''} onChange={handleInputChange} className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.price'] ? 'border-red-500' : ''}`} />
+                      {errors['housePurchasePlan.price'] && <p className="text-red-500 text-xs italic mt-1">{errors['housePurchasePlan.price']}</p>}
                     </div>
                     <div>
                       <label className="block text-gray-700 text-sm font-bold mb-2">頭金[万円]</label>
-                      <input type="number" name="housePurchasePlan.downPayment" value={formData.housePurchasePlan.downPayment || ''} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                      <input type="number" name="housePurchasePlan.downPayment" value={formData.housePurchasePlan.downPayment || ''} onChange={handleInputChange} className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.downPayment'] ? 'border-red-500' : ''}`} />
+                      {errors['housePurchasePlan.downPayment'] && <p className="text-red-500 text-xs italic mt-1">{errors['housePurchasePlan.downPayment']}</p>}
                     </div>
                     <div>
                       <label className="block text-gray-700 text-sm font-bold mb-2">ローン年数</label>
-                      <input type="number" name="housePurchasePlan.loanYears" value={formData.housePurchasePlan.loanYears || ''} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                      <input type="number" name="housePurchasePlan.loanYears" value={formData.housePurchasePlan.loanYears || ''} onChange={handleInputChange} className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.loanYears'] ? 'border-red-500' : ''}`} />
+                      {errors['housePurchasePlan.loanYears'] && <p className="text-red-500 text-xs italic mt-1">{errors['housePurchasePlan.loanYears']}</p>}
                     </div>
                     <div>
                       <label className="block text-gray-700 text-sm font-bold mb-2">想定金利（%）</label>
-                      <input type="number" name="housePurchasePlan.interestRate" value={formData.housePurchasePlan.interestRate || ''} onChange={handleInputChange} step="0.1" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                      <input type="number" name="housePurchasePlan.interestRate" value={formData.housePurchasePlan.interestRate || ''} onChange={handleInputChange} step="0.1" className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.interestRate'] ? 'border-red-500' : ''}`} />
+                      {errors['housePurchasePlan.interestRate'] && <p className="text-red-500 text-xs italic mt-1">{errors['housePurchasePlan.interestRate']}</p>}
                     </div>
                   </div>
                 )}
@@ -1671,13 +1857,15 @@ export default function FormPage() {
                   <span className="ml-2">しない</span>
                 </label>
               </div>
+              {errors.planToMarry && <p className="text-red-500 text-xs italic mt-2">{errors.planToMarry}</p>}
             </div>
             <div className={`accordion-content ${formData.planToMarry === 'する' ? 'open' : ''}`}>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="marriageAge">
                     結婚予定年齢は？[歳]
                   </label>
-                  <input type="number" id="marriageAge" name="marriageAge" value={formData.marriageAge} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+                  <input type="number" id="marriageAge" name="marriageAge" value={formData.marriageAge} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.marriageAge ? 'border-red-500' : ''}`} required />
+                  {errors.marriageAge && <p className="text-red-500 text-xs italic mt-1">{errors.marriageAge}</p>}
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="engagementCost">
@@ -1744,30 +1932,33 @@ export default function FormPage() {
                   <span className="ml-2">いいえ</span>
                 </label>
               </div>
+              {errors.hasChildren && <p className="text-red-500 text-xs italic mt-2">{errors.hasChildren}</p>}
             </div>
             <div className={`accordion-content ${formData.hasChildren === 'はい' ? 'open' : ''}`}>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="numberOfChildren">
                     子供の人数は？[人]
                   </label>
-                  <input type="number" id="numberOfChildren" name="numberOfChildren" value={formData.numberOfChildren} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+                  <input type="number" id="numberOfChildren" name="numberOfChildren" value={formData.numberOfChildren} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.numberOfChildren ? 'border-red-500' : ''}`} required />
+                  {errors.numberOfChildren && <p className="text-red-500 text-xs italic mt-1">{errors.numberOfChildren}</p>}
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="firstBornAge">
                     最初の子が生まれる予定年齢は？[歳]
                   </label>
-                  <input type="number" id="firstBornAge" name="firstBornAge" value={formData.firstBornAge} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+                  <input type="number" id="firstBornAge" name="firstBornAge" value={formData.firstBornAge} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.firstBornAge ? 'border-red-500' : ''}`} required />
+                  {errors.firstBornAge && <p className="text-red-500 text-xs italic mt-1">{errors.firstBornAge}</p>}
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="educationPattern">
                     教育費の想定パターンは？
                   </label>
-                  <select
+                  <select 
                     id="educationPattern"
                     name="educationPattern"
                     value={formData.educationPattern}
                     onChange={handleInputChange}
-                    className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.educationPattern ? 'border-red-500' : ''}`}
                     required
                   >
                     <option value="">選択してください</option>
@@ -1775,6 +1966,7 @@ export default function FormPage() {
                     <option value="公私混合">公私混合（〜1,600万円/人）</option>
                     <option value="私立中心">私立中心（〜2,000万円/人）</option>
                   </select>
+                  {errors.educationPattern && <p className="text-red-500 text-xs italic mt-1">{errors.educationPattern}</p>}
                 </div>
               </div>
           </div>
@@ -1889,13 +2081,15 @@ export default function FormPage() {
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="parentCurrentAge">
                 親の現在の年齢[歳]
               </label>
-              <input type="number" id="parentCurrentAge" name="parentCurrentAge" value={formData.parentCurrentAge} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+              <input type="number" id="parentCurrentAge" name="parentCurrentAge" value={formData.parentCurrentAge} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.parentCurrentAge ? 'border-red-500' : ''}`} />
+              {errors.parentCurrentAge && <p className="text-red-500 text-xs italic mt-1">{errors.parentCurrentAge}</p>}
             </div>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="parentCareStartAge">
                 親の要介護開始年齢[歳]
               </label>
-              <input type="number" id="parentCareStartAge" name="parentCareStartAge" value={formData.parentCareStartAge} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+              <input type="number" id="parentCareStartAge" name="parentCareStartAge" value={formData.parentCareStartAge} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.parentCareStartAge ? 'border-red-500' : ''}`} />
+              {errors.parentCareStartAge && <p className="text-red-500 text-xs italic mt-1">{errors.parentCareStartAge}</p>}
             </div>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -1939,19 +2133,22 @@ export default function FormPage() {
                   <span className="ml-2">まだ分からない</span>
                 </label>
               </div>
+              {errors.parentCareAssumption && <p className="text-red-500 text-xs italic mt-2">{errors.parentCareAssumption}</p>}
             </div>
             <div className={`accordion-content ${formData.parentCareAssumption === 'はい' ? 'open' : ''}`}>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="parentCareMonthlyCost">
                     介護費用の想定（月額）[万円]
                   </label>
-                  <input type="number" id="parentCareMonthlyCost" name="parentCareMonthlyCost" value={formData.parentCareMonthlyCost} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" defaultValue={10} />
+                  <input type="number" id="parentCareMonthlyCost" name="parentCareMonthlyCost" value={formData.parentCareMonthlyCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.parentCareMonthlyCost ? 'border-red-500' : ''}`} defaultValue={10} />
+                  {errors.parentCareMonthlyCost && <p className="text-red-500 text-xs italic mt-1">{errors.parentCareMonthlyCost}</p>}
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="parentCareYears">
                     介護期間の想定[年]
                   </label>
-                  <input type="number" id="parentCareYears" name="parentCareYears" value={formData.parentCareYears} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" defaultValue={5} />
+                  <input type="number" id="parentCareYears" name="parentCareYears" value={formData.parentCareYears} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.parentCareYears ? 'border-red-500' : ''}`} defaultValue={5} />
+                  {errors.parentCareYears && <p className="text-red-500 text-xs italic mt-1">{errors.parentCareYears}</p>}
                 </div>
               </div>
           </div>
@@ -1968,7 +2165,8 @@ export default function FormPage() {
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="postRetirementLivingCost">
                 老後の生活費（月額）[万円]
               </label>
-              <input type="number" id="postRetirementLivingCost" name="postRetirementLivingCost" value={formData.postRetirementLivingCost} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" defaultValue={25} />
+              <input type="number" id="postRetirementLivingCost" name="postRetirementLivingCost" value={formData.postRetirementLivingCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.postRetirementLivingCost ? 'border-red-500' : ''}`} defaultValue={25} />
+              {errors.postRetirementLivingCost && <p className="text-red-500 text-xs italic mt-1">{errors.postRetirementLivingCost}</p>}
             </div>
 
             <div className="mt-8 border-t pt-6">
@@ -1977,19 +2175,22 @@ export default function FormPage() {
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="retirementAge">
                   退職予定年齢は？[歳]
                 </label>
-                <input type="number" id="retirementAge" name="retirementAge" value={formData.retirementAge} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" defaultValue={65} />
+                <input type="number" id="retirementAge" name="retirementAge" value={formData.retirementAge} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.retirementAge ? 'border-red-500' : ''}`} defaultValue={65} />
+                {errors.retirementAge && <p className="text-red-500 text-xs italic mt-1">{errors.retirementAge}</p>}
               </div>
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="pensionStartAge">
                   年金の想定受給開始年齢は？[歳]
                 </label>
-                <input type="number" id="pensionStartAge" name="pensionStartAge" value={formData.pensionStartAge} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" defaultValue={65} />
+                <input type="number" id="pensionStartAge" name="pensionStartAge" value={formData.pensionStartAge} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.pensionStartAge ? 'border-red-500' : ''}`} defaultValue={65} />
+                {errors.pensionStartAge && <p className="text-red-500 text-xs italic mt-1">{errors.pensionStartAge}</p>}
               </div>
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="pensionAmount">
                   年金受給額（月額）[万円]
                 </label>
-                <input type="number" id="pensionAmount" name="pensionAmount" value={formData.pensionAmount} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" defaultValue={15} />
+                <input type="number" id="pensionAmount" name="pensionAmount" value={formData.pensionAmount} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.pensionAmount ? 'border-red-500' : ''}`} defaultValue={15} />
+                {errors.pensionAmount && <p className="text-red-500 text-xs italic mt-1">{errors.pensionAmount}</p>}
               </div>
             </div>
 
@@ -2006,9 +2207,10 @@ export default function FormPage() {
                     name="spouseRetirementAge"
                     value={formData.spouseRetirementAge}
                     onChange={handleInputChange}
-                    className="shadow border rounded w-full py-2 px-3 text-gray-700"
+                    className={`shadow border rounded w-full py-2 px-3 text-gray-700 ${errors.spouseRetirementAge ? 'border-red-500' : ''}`}
                     defaultValue={65}
                   />
+                  {errors.spouseRetirementAge && <p className="text-red-500 text-xs italic mt-1">{errors.spouseRetirementAge}</p>}
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="spousePensionStartAge">
@@ -2020,13 +2222,15 @@ export default function FormPage() {
                     name="spousePensionStartAge"
                     value={formData.spousePensionStartAge}
                     onChange={handleInputChange}
-                    className="shadow border rounded w-full py-2 px-3 text-gray-700"
+                    className={`shadow border rounded w-full py-2 px-3 text-gray-700 ${errors.spousePensionStartAge ? 'border-red-500' : ''}`}
                     defaultValue={65}
                   />
+                  {errors.spousePensionStartAge && <p className="text-red-500 text-xs italic mt-1">{errors.spousePensionStartAge}</p>}
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="spousePensionAmount">配偶者の年金受給額（月額）[万円]</label>
-                  <input type="number" id="spousePensionAmount" name="spousePensionAmount" value={formData.spousePensionAmount} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700" defaultValue={10} />
+                  <input type="number" id="spousePensionAmount" name="spousePensionAmount" value={formData.spousePensionAmount} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 ${errors.spousePensionAmount ? 'border-red-500' : ''}`} defaultValue={10} />
+                  {errors.spousePensionAmount && <p className="text-red-500 text-xs italic mt-1">{errors.spousePensionAmount}</p>}
                 </div>
               </div>
             )}
@@ -2045,13 +2249,15 @@ export default function FormPage() {
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="currentSavings">
                 現在の預貯金総額は？[万円]
               </label>
-              <input type="number" id="currentSavings" name="currentSavings" value={formData.currentSavings} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+              <input type="number" id="currentSavings" name="currentSavings" value={formData.currentSavings} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.currentSavings ? 'border-red-500' : ''}`} required />
+              {errors.currentSavings && <p className="text-red-500 text-xs italic mt-1">{errors.currentSavings}</p>}
             </div>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="monthlySavings">
                 毎月の貯蓄額は？[円]
               </label>
-              <input type="number" id="monthlySavings" name="monthlySavings" value={formData.monthlySavings} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
+              <input type="number" id="monthlySavings" name="monthlySavings" value={formData.monthlySavings} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.monthlySavings ? 'border-red-500' : ''}`} required />
+              {errors.monthlySavings && <p className="text-red-500 text-xs italic mt-1">{errors.monthlySavings}</p>}
             </div>
           </div>
         );
@@ -2149,7 +2355,8 @@ export default function FormPage() {
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="simulationPeriodAge">
                 シミュレーションの対象期間（現在から何歳まで）[歳]
               </label>
-              <input type="number" id="simulationPeriodAge" name="simulationPeriodAge" value={formData.simulationPeriodAge} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" defaultValue={90} />
+              <input type="number" id="simulationPeriodAge" name="simulationPeriodAge" value={formData.simulationPeriodAge} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.simulationPeriodAge ? 'border-red-500' : ''}`} defaultValue={90} />
+              {errors.simulationPeriodAge && <p className="text-red-500 text-xs italic mt-1">{errors.simulationPeriodAge}</p>}
             </div>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -2181,12 +2388,14 @@ export default function FormPage() {
                   <span className="ml-2">ランダム変動（ストレステストあり）</span>
                 </label>
               </div>
+              {errors.interestRateScenario && <p className="text-red-500 text-xs italic mt-2">{errors.interestRateScenario}</p>}
             </div>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="emergencyFund">
                 生活防衛資金（常に確保したい現金額）[万円]
               </label>
-              <input type="number" id="emergencyFund" name="emergencyFund" value={formData.emergencyFund} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" defaultValue={300} />
+              <input type="number" id="emergencyFund" name="emergencyFund" value={formData.emergencyFund} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.emergencyFund ? 'border-red-500' : ''}`} defaultValue={300} />
+              {errors.emergencyFund && <p className="text-red-500 text-xs italic mt-1">{errors.emergencyFund}</p>}
             </div>
           </div>
         );
