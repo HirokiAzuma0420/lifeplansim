@@ -209,10 +209,7 @@ export default function FormPage() {
   const locationState = location.state as FormLocationState | null;
   const initialStateFromLocation = locationState?.rawFormData;
   const initialSectionIndex = locationState?.sectionIndex ?? 0;
-
-  const [currentSectionIndex, setCurrentSectionIndex] = useState(initialSectionIndex);
   const [showBackModal, setShowBackModal] = useState(false);
-  const [visitedSections, setVisitedSections] = useState<Set<number>>(() => new Set(initialStateFromLocation ? sections.map((_, i) => i) : [0]));
   const [annualRaiseRate, setAnnualRaiseRate] = useState(1.5);
   const [spouseAnnualRaiseRate, setSpouseAnnualRaiseRate] = useState(1.5);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -221,6 +218,22 @@ export default function FormPage() {
   const [totalNetAnnualIncome, setTotalNetAnnualIncome] = useState(0);
 
   const [formData, setFormData] = useState<FormDataState>(() => initialStateFromLocation || createDefaultFormData());
+
+  const effectiveSections = useMemo(() => {
+    return sections.filter((section) => {
+      if (section === 'ライフイベント - 結婚' && formData.familyComposition === '既婚') return false;
+      return true;
+    });
+  }, [formData.familyComposition]);
+
+  const [currentSectionIndex, setCurrentSectionIndex] = useState(() => {
+    // ResultPageから渡された元のインデックスを、フィルタリング後のインデックスに変換する
+    const originalSectionName = sections[initialSectionIndex];
+    const effectiveIndex = effectiveSections.indexOf(originalSectionName);
+    return effectiveIndex !== -1 ? effectiveIndex : 0;
+  });
+
+  const [visitedSections, setVisitedSections] = useState<Set<number>>(() => new Set(initialStateFromLocation ? sections.map((_, i) => i) : [0]));
 
   // This effect ensures that if we return to the form, we don't show the completion screen
   useEffect(() => {
@@ -568,13 +581,6 @@ export default function FormPage() {
     }
     setLoading(false);
   };
-
-  const effectiveSections = useMemo(() => {
-    return sections.filter((section) => {
-      if (section === 'ライフイベント - 結婚' && formData.familyComposition === '既婚') return false;
-      return true;
-    });
-  }, [formData.familyComposition]);
 
   type ApplianceReplacement = {
     name: string;
