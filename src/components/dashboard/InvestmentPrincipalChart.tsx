@@ -1,7 +1,7 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 interface InvestmentPrincipalChartProps {
-  enrichedData: { year: number; NISA?: number; iDeCo?: number; [key: string]: any }[];
+  enrichedData: { year: number; NISA元本?: number; iDeCo元本?: number; [key: string]: any }[];
 }
 
 export default function InvestmentPrincipalChart({ enrichedData }: InvestmentPrincipalChartProps) {
@@ -20,8 +20,8 @@ export default function InvestmentPrincipalChart({ enrichedData }: InvestmentPri
           />
           <Tooltip formatter={(v: number) => `${(v / 10000).toLocaleString()}万円`} />
           <Legend />
-          <Line type="monotone" dataKey="NISA" stroke="#6366F1" strokeWidth={3} dot={false} />
-          <Line type="monotone" dataKey="iDeCo" stroke="#06B6D4" strokeWidth={3} dot={false} />
+          <Line type="monotone" dataKey="NISA元本" name="NISA" stroke="#6366F1" strokeWidth={3} dot={false} />
+          <Line type="monotone" dataKey="iDeCo元本" name="iDeCo" stroke="#06B6D4" strokeWidth={3} dot={false} />
         </LineChart>
       </ResponsiveContainer>
     </div>
