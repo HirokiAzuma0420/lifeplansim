@@ -165,10 +165,9 @@ export default function TotalAssetChart({ enrichedData, detailedAssetData, rankI
 
   return (
     <div className="bg-white rounded-xl shadow p-3 mb-6 relative">
-      <h3 className="text-lg font-semibold mb-2">総資産推移</h3>
       {/* ランク表示カード */}
-      <div className="w-full flex justify-start pl-[15%]">
-        <div className="bg-white relative">
+      <div className="w-full flex flex-col items-center md:flex-row md:justify-start md:pl-[15%]">
+        <div className="bg-white relative w-full">
           <div className="flex flex-col md:flex-row items-center md:justify-start w-full p-0 bg-white space-y-4 md:space-y-0 md:space-x-5">
             {/* ランクとコメント (モバイル: order-2, PC: order-1) */}
             <div className="flex items-center space-x-3 order-2 md:order-1">
@@ -194,7 +193,11 @@ export default function TotalAssetChart({ enrichedData, detailedAssetData, rankI
       </div>
       {/* グラフ本体 */}
       <ResponsiveContainer width="100%" height={400}>
-        <AreaChart data={dataWithDiff} stackOffset="none" margin={{ top: 80, right: 30, left: 70, bottom: 5 }}>
+        <AreaChart
+          data={dataWithDiff}
+          stackOffset="none"
+          margin={{ top: 10, right: 30, left: window.innerWidth < 768 ? 10 : 70, bottom: 5 }}
+        >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="year" interval="preserveStartEnd" />
           <YAxis // domain を削除し、Rechartsの自動計算に任せる

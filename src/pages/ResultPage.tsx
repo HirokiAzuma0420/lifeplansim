@@ -7,6 +7,7 @@ import InvestmentPrincipalChart from '../components/dashboard/InvestmentPrincipa
 import AssetPieChart from '../components/dashboard/AssetPieChart';
 import AssetTable from '../components/dashboard/AssetTable';
 import CashFlowTable from '../components/dashboard/CashFlowTable.tsx';
+import AccordionCard from '../components/dashboard/AccordionCard.tsx';
 import { getAssetGrade } from '../assets/getAssetGrade';
 import { buildDashboardDataset } from '../utils/simulation';
 import type { SimulationInputParams, SimulationNavigationState } from '../types/simulation';
@@ -231,7 +232,7 @@ export default function ResultPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 py-10">
-      <div className="max-w-7xl mx-auto px-4 lg:px-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
         <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">シミュレーション結果</h1>
@@ -284,38 +285,47 @@ export default function ResultPage() {
           </div>
 
           <div className="lg:col-span-3 space-y-6">
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-              <IncomePositionChart age={currentAge} income={selfGrossIncome} />
-              <SavingsPositionChart age={currentAge} income={selfGrossIncome} savings={savingsForChart} />
-            </div>
+            {/* モバイルではアコーディオンになるカード群 */}
+            <AccordionCard title="総資産推移">
+              <TotalAssetChart
+                enrichedData={dataset.enrichedData}
+                detailedAssetData={dataset.detailedAssetData}
+                rankInfo={rankInfo}
+                COLORS={COLORS}
+                age={currentAge}
+                retireAge={retireAge}
+                yAxisMax={peakAssetValue}
+              />
+            </AccordionCard>
 
-            <TotalAssetChart
-              enrichedData={dataset.enrichedData}
-              detailedAssetData={dataset.detailedAssetData}
-              rankInfo={rankInfo}
-              COLORS={COLORS}
-              age={currentAge}
-              retireAge={retireAge}
-              yAxisMax={peakAssetValue}
-            />
+            <AccordionCard title="収入・貯蓄の同世代比較">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                <IncomePositionChart age={currentAge} income={selfGrossIncome} />
+                <SavingsPositionChart age={currentAge} income={selfGrossIncome} savings={savingsForChart} />
+              </div>
+            </AccordionCard>
 
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-              <InvestmentPrincipalChart enrichedData={dataset.enrichedData} COLORS={COLORS} age={currentAge} retireAge={retireAge} />
-              <AssetPieChart pieData={dataset.pieData} />
-            </div>
+            <AccordionCard title="投資の状況">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                <InvestmentPrincipalChart enrichedData={dataset.enrichedData} COLORS={COLORS} age={currentAge} retireAge={retireAge} />
+                <AssetPieChart pieData={dataset.pieData} />
+              </div>
+            </AccordionCard>
 
-            <AssetTable enrichedData={dataset.enrichedData} />
+            <AccordionCard title="資産詳細テーブル">
+              <AssetTable enrichedData={dataset.enrichedData} />
+            </AccordionCard>
 
-            <div className="bg-white rounded-xl shadow p-4">
-              <h3 className="text-lg font-semibold mb-2">年間収支詳細</h3>
-              <p className="text-sm text-gray-600 mb-4">初期資産額（現金預金）: {formatCurrency(inputParams.currentSavingsJPY)}</p>
+            <AccordionCard title="年間収支詳細">
+              <p className="text-sm text-gray-600 mb-4">
+                初期資産額（現金預金）: {formatCurrency(inputParams.currentSavingsJPY)}
+              </p>
               <CashFlowTable enrichedData={dataset.enrichedData} />
-            </div>
+            </AccordionCard>
 
 
             {Object.keys(latestProducts).length > 0 && (
-              <div className="bg-white rounded-xl shadow p-4">
-                <h3 className="text-lg font-semibold mb-2">商品別内訳（最新年）</h3>
+              <AccordionCard title="商品別内訳（最新年）">
                 <div className="overflow-x-auto">
                   <table className="min-w-full table-auto text-sm">
                     <thead>
@@ -334,7 +344,7 @@ export default function ResultPage() {
                     </tbody>
                   </table>
                 </div>
-              </div>
+              </AccordionCard>
             )}
           </div>
         </div>
