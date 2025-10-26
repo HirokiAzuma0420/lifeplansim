@@ -4,9 +4,11 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 interface InvestmentPrincipalChartProps {
   enrichedData: { year: number; [key: string]: any }[];
   COLORS: Record<string, string>;
+  age: number;
+  retireAge: number;
 }
 
-export default function InvestmentPrincipalChart({ enrichedData, COLORS }: InvestmentPrincipalChartProps) {
+export default function InvestmentPrincipalChart({ enrichedData, COLORS, age, retireAge }: InvestmentPrincipalChartProps) {
   const principalKeys = useMemo(() => {
     if (enrichedData.length === 0) return [];
     // '投資元本' を除外
@@ -23,12 +25,14 @@ export default function InvestmentPrincipalChart({ enrichedData, COLORS }: Inves
     'other (課税)元本': 'その他 (課税)',
   };
 
+  const retirementYear = (enrichedData[0]?.year ?? new Date().getFullYear()) + (retireAge - age);
+
   return (
     <div className="bg-white rounded-xl shadow p-4">
-      <h3 className="text-lg font-semibold mb-2">積立元本推移（〜2050年）</h3>
+      <h3 className="text-lg font-semibold mb-2">積立元本推移（〜{retirementYear}年）</h3>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart 
-          data={enrichedData.filter((d) => d.year <= 2050)}
+          data={enrichedData.filter((d) => d.year <= retirementYear)}
           margin={{ top: 20, right: 20, left: 50, bottom: 5 }}
         >
           <CartesianGrid strokeDasharray="3 3" />

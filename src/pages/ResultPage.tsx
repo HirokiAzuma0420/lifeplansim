@@ -300,7 +300,7 @@ export default function ResultPage() {
             />
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-              <InvestmentPrincipalChart enrichedData={dataset.enrichedData} COLORS={COLORS} />
+              <InvestmentPrincipalChart enrichedData={dataset.enrichedData} COLORS={COLORS} age={currentAge} retireAge={retireAge} />
               <AssetPieChart pieData={dataset.pieData} />
             </div>
 
