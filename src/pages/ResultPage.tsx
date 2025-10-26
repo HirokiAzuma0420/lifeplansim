@@ -1,4 +1,4 @@
-﻿﻿import { useMemo, useCallback, useState } from 'react';
+﻿import { useMemo, useCallback, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import IncomePositionChart from '../components/dashboard/IncomePositionChart';
 import SavingsPositionChart from '../components/dashboard/SavingsPositionChart';
@@ -344,11 +344,20 @@ export default function ResultPage() {
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
             <h2 className="text-lg font-semibold mb-4">どのセクションに戻りますか？</h2>
             <ul className="space-y-2 max-h-64 overflow-y-auto">
-              {sections.map((section, i) => (
-                <li key={i}>
+              {sections
+                .map((section, index) => ({ section, originalIndex: index }))
+                .filter(
+                  item =>
+                    !(
+                      item.section === 'ライフイベント - 結婚' &&
+                      rawFormData?.familyComposition === '既婚'
+                    )
+                )
+                .map(({ section, originalIndex }) => (
+                <li key={originalIndex}>
                   <button
                     onClick={() => {
-                      navigate('/form', { state: { rawFormData: rawFormData, sectionIndex: i } });
+                      navigate('/form', { state: { rawFormData: rawFormData, sectionIndex: originalIndex } });
                       setShowSectionModal(false);
                     }}
                     className="w-full text-left px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded"
