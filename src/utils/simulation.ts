@@ -60,6 +60,12 @@ export const buildDashboardDataset = (
     const taxablePrincipal = sanitize(entry.taxable.principal);
     const totalPrincipal = nisaPrincipal + idecoPrincipal + taxablePrincipal;
 
+    const prevEntry = i > 0 ? yearlyData[i - 1] : null;
+    const prevNisaPrincipal = prevEntry ? sanitize(prevEntry.nisa.principal) : 0;
+    const prevIdecoPrincipal = prevEntry ? sanitize(prevEntry.ideco.principal) : 0;
+    const nisaContribution = nisaPrincipal - prevNisaPrincipal;
+    const idecoContribution = idecoPrincipal - prevIdecoPrincipal;
+
     const productPrincipals: Record<string, number> = {};
     if (entry.products && productList.length > 0) {
       productList.forEach((p: InvestmentProduct, index: number) => {
@@ -90,6 +96,8 @@ export const buildDashboardDataset = (
       課税口座: sanitize(entry.taxable.balance),
       NISA元本: nisaPrincipal,
       iDeCo元本: idecoPrincipal,
+      NISA積立: nisaContribution,
+      iDeCo積立: idecoContribution,
       ...productPrincipals,
     };
 
