@@ -229,25 +229,44 @@ function generateReturnSeries(
 ): number[] {
   if (years <= 0) return [];
 
-  // 1. 目標とする算術平均を定義
+  // 1. 目標とする算術平均を定義 (幾何平均からの変換は行わず、入力値をそのまま目標算術平均とする)
   const targetArithmeticMean = averageReturn; // 幾何平均からの変換は行わず、入力値をそのまま目標算術平均とします
 
   // 2. ひとまずランダムなリターン系列を生成
   const returns: number[] = [];
   for (let i = 0; i < years; i++) {
-    // 平均0の乱数を生成し、後でシフトする方が数値的に安定することがあるが、ここでは直接生成する
     const yearReturn = generateNormalRandom(targetArithmeticMean, volatility);
     returns.push(yearReturn);
   }
 
-  // 3. 生成された系列の実績の算術平均を計算
-  const actualMean = returns.reduce((sum, val) => sum + val, 0) / years;
+  // 3. 暴落イベントをランダムに挿入
+  const crashYears = new Set<number>();
+  // 最初の暴落は3-5年後に設定
+  let nextCrashYear = Math.floor(Math.random() * 3) + 3;
+  while (nextCrashYear < years) {
+    crashYears.add(nextCrashYear);
+    // 次の暴落は8-10年後に設定
+    nextCrashYear += Math.floor(Math.random() * 3) + 8;
+  }
 
-  // 4. 目標平均と実績平均の差分を計算
-  const correction = targetArithmeticMean - actualMean;
+  crashYears.forEach(yearIndex => {
+    // -30% から -60% の下落をランダムに生成
+    const crashMagnitude = -(Math.random() * 0.3 + 0.3);
+    returns[yearIndex] = crashMagnitude;
+  });
 
-  // 5. 各リターン値に差分を加えて補正する
-  const correctedReturns = returns.map(r => r + correction);
+  // 4. 暴落を含む系列全体の平均が目標値になるように補正
+  const nonCrashYearIndices = returns.map((_, i) => i).filter(i => !crashYears.has(i));
+  const sumOfCrashReturns = Array.from(crashYears).reduce((sum, i) => sum + returns[i], 0);
+  const sumOfNonCrashReturns = nonCrashYearIndices.reduce((sum, i) => sum + returns[i], 0);
+
+  const currentTotalSum = sumOfCrashReturns + sumOfNonCrashReturns;
+  const targetTotalSum = targetArithmeticMean * years;
+  const correction = (targetTotalSum - currentTotalSum) / nonCrashYearIndices.length;
+
+  const correctedReturns = returns.map((r, i) => {
+    return nonCrashYearIndices.includes(i) ? r + correction : r;
+  });
 
   return correctedReturns;
 }
