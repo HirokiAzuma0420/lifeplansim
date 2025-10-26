@@ -130,7 +130,7 @@ const createDefaultFormData = () => ({
   carLoanYears: '',
   carLoanType: '',
   housingType: '' as '賃貸' | '持ち家（ローン中）' | '持ち家（完済）',
-  carCurrentLoanInPayment: 'no',
+  carCurrentLoanInPayment: '',
   carCurrentLoanMonthly: '',
   carCurrentLoanRemainingMonths: '',
   housePurchaseIntent: '',
@@ -1321,7 +1321,7 @@ export default function FormPage() {
                   <span>はい</span>
                 </label>
                 <label className="inline-flex items-center gap-2">
-                  <input type="radio" className="custom-radio" name="carCurrentLoanInPayment" value="no" checked={formData.carCurrentLoanInPayment !== 'yes'} onChange={handleRadioChange} />
+                  <input type="radio" className="custom-radio" name="carCurrentLoanInPayment" value="no" checked={formData.carCurrentLoanInPayment === 'no'} onChange={handleRadioChange} />
                   <span>いいえ</span>
                 </label>
               </div>
