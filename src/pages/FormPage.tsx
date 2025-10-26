@@ -699,11 +699,9 @@ export default function FormPage() {
 
   const totalExpenses = useMemo(() => {
     if (formData.expenseMethod !== '詳細') return 0;
-    const fixed = [
-      formData.housingCost,
+    const fixed = [      
       formData.utilitiesCost,
       formData.communicationCost,
-      formData.carCost,
       formData.insuranceCost,
       formData.educationCost,
       formData.otherFixedCost,
@@ -1223,19 +1221,10 @@ export default function FormPage() {
               </div>
 
             <div id="detailed-expense" className={`accordion-content ${formData.expenseMethod === '詳細' ? 'open' : ''}`}>
+                <p className="text-sm text-gray-600 bg-blue-50 p-3 rounded-md mb-4">
+                  ※住居費と自動車関連費は、後のセクションで詳細を入力します。
+                </p>
                 <h3 className="text-lg font-semibold mb-2">固定費</h3>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="housingCost">
-                住居費[万円]
-              </label>
-              <input type="number" id="housingCost" name="housingCost" value={formData.housingCost} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carCost">
-                自動車（ローン含む）[万円]
-              </label>
-              <input type="number" id="carCost" name="carCost" value={formData.carCost} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
-            </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="utilitiesCost">
                     水道・光熱費[円]
