@@ -572,20 +572,25 @@ function runSimulation(params: InputParams): YearlyData[] {
           housingExpense += n(params.housing.rentMonthlyJPY) * 12 * yearFraction;
         }
       }
-      if (params.housing.type === '持ち家（ローン中）' && params.housing.currentLoan) {
-        if (i < n(params.housing.currentLoan.remainingYears)) {
-          housingExpense += n(params.housing.currentLoan.monthlyPaymentJPY) * 12 * yearFraction;
+
+      // 既存ローンの返済
+      if (params.housing.type === '持ち家（ローン中）' && params.housing.currentLoan && currentAge < params.initialAge + n(params.housing.currentLoan.remainingYears)) {
+        housingExpense += n(params.housing.currentLoan.monthlyPaymentJPY) * 12 * yearFraction;
+      }
+
+      // 将来の住宅購入計画
+      if (params.housing.purchasePlan && currentAge >= n(params.housing.purchasePlan.age)) {
+        // 購入年に頭金を支出に追加
+        if (currentAge === n(params.housing.purchasePlan.age)) {
+            housingExpense += n(params.housing.purchasePlan.downPaymentJPY);
+        }
+        // ローン返済期間中、年間返済額を支出に追加
+        if (currentAge < n(params.housing.purchasePlan.age) + n(params.housing.purchasePlan.years)) {
+            const loanPrincipal = n(params.housing.purchasePlan.priceJPY) - n(params.housing.purchasePlan.downPaymentJPY);
+            housingExpense += calculateLoanPayment(loanPrincipal, n(params.housing.purchasePlan.rate), n(params.housing.purchasePlan.years)) * yearFraction;
         }
       }
-      if (params.housing.purchasePlan && currentAge >= n(params.housing.purchasePlan.age)) {
-          if (currentAge === n(params.housing.purchasePlan.age)) {
-              housingExpense += n(params.housing.purchasePlan.downPaymentJPY);
-          }
-          if (currentAge < n(params.housing.purchasePlan.age) + n(params.housing.purchasePlan.years)) {
-              const loanPrincipal = n(params.housing.purchasePlan.priceJPY) - n(params.housing.purchasePlan.downPaymentJPY);
-              housingExpense += calculateLoanPayment(loanPrincipal, n(params.housing.purchasePlan.rate), n(params.housing.purchasePlan.years)) * yearFraction;
-          }
-      }
+
       if (params.housing.renovations) {
           for (const renovation of params.housing.renovations) {
               if (currentAge >= n(renovation.age)) {
