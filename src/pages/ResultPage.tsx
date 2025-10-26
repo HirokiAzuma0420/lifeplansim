@@ -1,4 +1,4 @@
-﻿import { useMemo, useCallback, useState } from 'react';
+﻿import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import IncomePositionChart from '../components/dashboard/IncomePositionChart';
 import SavingsPositionChart from '../components/dashboard/SavingsPositionChart';
@@ -11,6 +11,7 @@ import AccordionCard from '../components/dashboard/AccordionCard.tsx';
 import { getAssetGrade } from '../assets/getAssetGrade';
 import { buildDashboardDataset } from '../utils/simulation';
 import type { SimulationInputParams, SimulationNavigationState } from '../types/simulation';
+import { useOrientation } from '../hooks/useOrientation';
 
 // InvestmentProduct 型を ResultPage.tsx にも定義
 type InvestmentProduct = {
@@ -93,6 +94,17 @@ export default function ResultPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const orientation = useOrientation();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile(); // 初期チェック
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const isMobileLandscape = isMobile && orientation === 'landscape';
   const state = location.state as SimulationNavigationState | undefined;
   const [showSectionModal, setShowSectionModal] = useState(false);
   const rawYearlyData = state?.yearlyData;
@@ -214,7 +226,13 @@ export default function ResultPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 py-10">
-      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+      <div
+        className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 transition-transform duration-300 ease-in-out"
+        style={{
+          transform: isMobileLandscape ? 'scale(0.85)' : 'none',
+          transformOrigin: 'top center',
+        }}
+      >
         <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">シミュレーション結果</h1>
