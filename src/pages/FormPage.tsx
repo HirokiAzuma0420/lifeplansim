@@ -1506,7 +1506,21 @@ export default function FormPage() {
                 <label className="block text-gray-700 text-sm font-bold mb-2">将来的に家を購入する予定はありますか？</label>
                 <div className="mt-2">
                   <label className="inline-flex items-center mr-4">
-                    <input type="radio" className="custom-radio" name="housePurchasePlanToggle" value="yes" onChange={() => setFormData({...formData, housePurchasePlan: { age: 0, price: 0, downPayment: 0, loanYears: 0, interestRate: 0 }})} />
+                    <input
+                      type="radio"
+                      className="custom-radio"
+                      name="housePurchasePlanToggle"
+                      value="yes"
+                      checked={formData.housePurchasePlan !== null}
+                      onChange={() => {
+                        if (formData.housePurchasePlan === null) {
+                          setFormData({
+                            ...formData,
+                            housePurchasePlan: { age: 0, price: 0, downPayment: 0, loanYears: 0, interestRate: 0 },
+                          });
+                        }
+                      }}
+                    />
                     <span className="ml-2">はい</span>
                   </label>
                   <label className="inline-flex items-center">
@@ -1519,23 +1533,23 @@ export default function FormPage() {
                   <div className="mt-4 space-y-4">
                     <div>
                       <label className="block text-gray-700 text-sm font-bold mb-2">購入予定年齢</label>
-                      <input type="number" name="housePurchasePlan.age" onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                      <input type="number" name="housePurchasePlan.age" value={formData.housePurchasePlan.age || ''} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
                     </div>
                     <div>
                       <label className="block text-gray-700 text-sm font-bold mb-2">予定価格[万円]</label>
-                      <input type="number" name="housePurchasePlan.price" onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                      <input type="number" name="housePurchasePlan.price" value={formData.housePurchasePlan.price || ''} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
                     </div>
                     <div>
                       <label className="block text-gray-700 text-sm font-bold mb-2">頭金[万円]</label>
-                      <input type="number" name="housePurchasePlan.downPayment" onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                      <input type="number" name="housePurchasePlan.downPayment" value={formData.housePurchasePlan.downPayment || ''} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
                     </div>
                     <div>
                       <label className="block text-gray-700 text-sm font-bold mb-2">ローン年数</label>
-                      <input type="number" name="housePurchasePlan.loanYears" onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                      <input type="number" name="housePurchasePlan.loanYears" value={formData.housePurchasePlan.loanYears || ''} onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
                     </div>
                     <div>
                       <label className="block text-gray-700 text-sm font-bold mb-2">想定金利（%）</label>
-                      <input type="number" name="housePurchasePlan.interestRate" onChange={handleInputChange} step="0.1" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
+                      <input type="number" name="housePurchasePlan.interestRate" value={formData.housePurchasePlan.interestRate || ''} onChange={handleInputChange} step="0.1" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
                     </div>
                   </div>
                 )}
