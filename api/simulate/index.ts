@@ -438,7 +438,6 @@ function runSimulation(params: InputParams): YearlyData[] {
   // --- ループ開始 --- (runSimulation 内に移動)
   // --- ループ開始 ---
   for (let i = 0; currentAge <= params.endAge; i++, currentAge++) {
-    const spouseCurrentAge = params.spouseInitialAge ? params.spouseInitialAge + i : undefined;
     const year = baseYear + i;
 
     // 初年度は残り月数で按分、2年目以降は1年分として計算
@@ -447,22 +446,19 @@ function runSimulation(params: InputParams): YearlyData[] {
     // --- 1. 収入計算 ---
     let selfGrossIncome = 0;
     let spouseGrossIncome = 0;
-    // 本人収入
-    if (currentAge < n(params.retirementAge)) {
-      selfGrossIncome = (n(params.mainJobIncomeGross) * Math.pow(1 + n(params.incomeGrowthRate), i) + n(params.sideJobIncomeGross));
-    }
-    // 配偶者収入
-    if (spouseCurrentAge && spouseCurrentAge < n(params.spouseRetirementAge)) {
-      spouseGrossIncome = ((n(params.spouseMainJobIncomeGross) ?? 0) * Math.pow(1 + (n(params.spouseIncomeGrowthRate) ?? 0), i) + (n(params.spouseSideJobIncomeGross) ?? 0)) * yearFraction;
+    const spouseCurrentAge = params.spouseInitialAge ? params.initialAge + i + (params.spouseInitialAge - params.initialAge) : undefined;
+
+    if (currentAge < params.retirementAge) {
+        selfGrossIncome = (n(params.mainJobIncomeGross) * Math.pow(1 + n(params.incomeGrowthRate), i) + n(params.sideJobIncomeGross));
     }
 
-    // 年金収入を計算
-    let pensionAnnual = 0;
-    if (currentAge >= n(params.pensionStartAge)) {
-      pensionAnnual += n(params.pensionMonthly10kJPY) * 10000 * 12;
+    if (spouseCurrentAge && spouseCurrentAge < n(params.spouseRetirementAge)) {
+        spouseGrossIncome = ((n(params.spouseMainJobIncomeGross) ?? 0) * Math.pow(1 + (n(params.spouseIncomeGrowthRate) ?? 0), i) + (n(params.spouseSideJobIncomeGross) ?? 0));
     }
+
+    let pensionAnnual = currentAge >= params.pensionStartAge ? n(params.pensionMonthly10kJPY) * 10000 * 12 : 0;
     if (spouseCurrentAge && spouseCurrentAge >= n(params.spousePensionStartAge)) {
-      pensionAnnual += n(params.spousePensionMonthly10kJPY) * 10000 * 12;
+        pensionAnnual += n(params.spousePensionMonthly10kJPY) * 10000 * 12;
     }
 
     let idecoDeductionThisYear = 0;
@@ -472,8 +468,8 @@ function runSimulation(params: InputParams): YearlyData[] {
       });
     }
     // 退職後は年金収入を、退職前は給与収入を手取り計算して年間収入とする
-    const annualSalaryIncome = computeNetAnnual(selfGrossIncome - idecoDeductionThisYear) + computeNetAnnual(spouseGrossIncome);
-    const annualIncome = annualSalaryIncome + pensionAnnual;
+    const annualIncome = (computeNetAnnual(selfGrossIncome - idecoDeductionThisYear) + computeNetAnnual(spouseGrossIncome)) * yearFraction + pensionAnnual;
+
 
     // iDeCoの現金化 (60-75歳)
     // 支出や投資の拠出より先に処理することで、現金化の年に意図せず拠出されるのを防ぐ
