@@ -164,6 +164,9 @@ const createDefaultFormData = () => ({
   parentCareYears: '5',
   retirementAge: '65',
   postRetirementLivingCost: '25',
+  spouseRetirementAge: '65',
+  spousePensionStartAge: '65',
+  spousePensionAmount: '10',
   pensionStartAge: '65',
   pensionAmount: '15',
   currentSavings: '',
@@ -425,6 +428,9 @@ export default function FormPage() {
         retirementAge: n(formData.retirementAge),
         pensionStartAge: n(formData.pensionStartAge),
 
+        spouseRetirementAge: formData.familyComposition === '既婚' ? n(formData.spouseRetirementAge) : undefined,
+        spousePensionStartAge: formData.familyComposition === '既婚' ? n(formData.spousePensionStartAge) : undefined,
+
         mainJobIncomeGross: mainJobIncomeGross,
         sideJobIncomeGross: sideJobIncomeGross,
         spouseMainJobIncomeGross: spouseMainJobIncomeGross,
@@ -508,6 +514,7 @@ export default function FormPage() {
 
         postRetirementLiving10kJPY: n(formData.postRetirementLivingCost),
         pensionMonthly10kJPY: n(formData.pensionAmount),
+        spousePensionMonthly10kJPY: formData.familyComposition === '既婚' ? n(formData.spousePensionAmount) : undefined,
 
         currentSavingsJPY: n(formData.currentSavings) * 10000,
         monthlySavingsJPY: n(formData.monthlySavings),
@@ -1965,6 +1972,44 @@ export default function FormPage() {
               </label>
               <input type="number" id="pensionAmount" name="pensionAmount" value={formData.pensionAmount} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" defaultValue={15} />
             </div>
+
+            {formData.familyComposition === '既婚' && (
+              <div className="mt-8 border-t pt-6">
+                <h3 className="text-xl font-semibold text-center mb-4 text-pink-500">配偶者の老後設定</h3>
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="spouseRetirementAge">
+                    配偶者の退職予定年齢は？[歳]
+                  </label>
+                  <input
+                    type="number"
+                    id="spouseRetirementAge"
+                    name="spouseRetirementAge"
+                    value={formData.spouseRetirementAge}
+                    onChange={handleInputChange}
+                    className="shadow border rounded w-full py-2 px-3 text-gray-700"
+                    defaultValue={65}
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="spousePensionStartAge">
+                    配偶者の年金受給開始年齢は？[歳]
+                  </label>
+                  <input
+                    type="number"
+                    id="spousePensionStartAge"
+                    name="spousePensionStartAge"
+                    value={formData.spousePensionStartAge}
+                    onChange={handleInputChange}
+                    className="shadow border rounded w-full py-2 px-3 text-gray-700"
+                    defaultValue={65}
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="spousePensionAmount">配偶者の年金受給額（月額）[万円]</label>
+                  <input type="number" id="spousePensionAmount" name="spousePensionAmount" value={formData.spousePensionAmount} onChange={handleInputChange} className="shadow border rounded w-full py-2 px-3 text-gray-700" defaultValue={10} />
+                </div>
+              </div>
+            )}
           </div>
         );
       case '貯蓄':
