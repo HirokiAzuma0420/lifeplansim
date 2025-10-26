@@ -198,6 +198,14 @@ const createDefaultFormData = () => ({
   interestRateScenario: '', // 楽観orストレス
   emergencyFund: '300',
   stressTestSeed: '', // 追加
+  appliances: [
+    { name: '冷蔵庫', cycle: 10, cost: 15, firstReplacementAfterYears: 0 },
+    { name: '洗濯機', cycle: 8, cost: 12, firstReplacementAfterYears: 0 },
+    { name: 'エアコン', cycle: 10, cost: 10, firstReplacementAfterYears: 0 },
+    { name: 'テレビ', cycle: 10, cost: 8, firstReplacementAfterYears: 0 },
+    { name: '電子レンジ', cycle: 8, cost: 3, firstReplacementAfterYears: 0 },
+    { name: '掃除機', cycle: 6, cost: 2, firstReplacementAfterYears: 0 },
+  ],
 });
 
 type FormDataState = ReturnType<typeof createDefaultFormData>;
@@ -471,9 +479,9 @@ export default function FormPage() {
             rate: n(formData.housingLoanInterestRateType === '指定' ? formData.housingLoanInterestRate : 1.5) / 100,
           } : undefined,
           renovations: formData.houseRenovationPlans.map(p => ({
-            age: n(p.age),
-            costJPY: n(p.cost) * 10000,
-            cycleYears: p.cycleYears ? n(p.cycleYears) : undefined,
+            age: n((p as RenovationPlan).age),
+            costJPY: n((p as RenovationPlan).cost) * 10000,
+            cycleYears: (p as RenovationPlan).cycleYears ? n((p as RenovationPlan).cycleYears) : undefined,
           })),
         },
 
@@ -491,8 +499,8 @@ export default function FormPage() {
           educationPattern: formData.educationPattern as '公立中心' | '公私混合' | '私立中心',
         } : undefined,
 
-        appliances: applianceReplacements
-          .filter(a =>
+        appliances: formData.appliances
+          .filter((a) =>
             String(a?.name ?? '').trim().length > 0 &&
             Number(a?.cost) > 0 &&
             Number(a?.cycle) > 0
@@ -589,42 +597,6 @@ export default function FormPage() {
     setLoading(false);
   };
 
-  type ApplianceReplacement = {
-    name: string;
-    cycle: number;
-    cost: number;
-    firstReplacementAfterYears: number;
-  };
-
-  const [applianceReplacements, setApplianceReplacements] = useState<ApplianceReplacement[]>([
-    { name: '冷蔵庫', cycle: 10, cost: 15, firstReplacementAfterYears: 0 },
-    { name: '洗濯機', cycle: 8, cost: 12, firstReplacementAfterYears: 0 },
-    { name: 'エアコン', cycle: 10, cost: 10, firstReplacementAfterYears: 0 },
-    { name: 'テレビ', cycle: 10, cost: 8, firstReplacementAfterYears: 0 },
-    { name: '電子レンジ', cycle: 8, cost: 3, firstReplacementAfterYears: 0 },
-    { name: '掃除機', cycle: 6, cost: 2, firstReplacementAfterYears: 0 },
-  ]);
-
-  const handleApplianceChange = (index: number, field: string, value: string) => {
-    setApplianceReplacements(prev => {
-      const newAppliances = [...prev];
-      const isNumberField = field === 'cycle' || field === 'cost' || field === 'firstReplacementAfterYears';
-      newAppliances[index] = {
-        ...newAppliances[index],
-        [field]: isNumberField ? Number(value) : value,
-      };
-      return newAppliances;
-    });
-  };
-
-  const addAppliance = () => {
-    setApplianceReplacements([...applianceReplacements, { name: '', cycle: 0, cost: 0, firstReplacementAfterYears: 0 }]);
-  };
-
-  const handleRemoveAppliance = (index: number) => {
-    setApplianceReplacements(prev => prev.filter((_, i) => i !== index));
-  };
-
   type RenovationPlan = { age: number; cost: number; cycleYears?: number };
 
 
@@ -652,12 +624,31 @@ export default function FormPage() {
     });
   };
 
+  const handleApplianceChange = (index: number, field: string, value: string) => {
+    setFormData(prev => {
+      const newAppliances = [...prev.appliances];
+      const isNumberField = field === 'cycle' || field === 'cost' || field === 'firstReplacementAfterYears';
+      newAppliances[index] = {
+        ...newAppliances[index],
+        [field]: isNumberField ? Number(value) : value,
+      };
+      return { ...prev, appliances: newAppliances };
+    });
+  };
+
+  const addAppliance = () => {
+    setFormData(prev => ({ ...prev, appliances: [...prev.appliances, { name: '', cycle: 0, cost: 0, firstReplacementAfterYears: 0 }] }));
+  };
+
+  const handleRemoveAppliance = (index: number) => {
+    setFormData(prev => ({ ...prev, appliances: prev.appliances.filter((_, i) => i !== index) }));
+  };
 
   const displayTotalApplianceCost = useMemo(() => {
-    return applianceReplacements
+    return formData.appliances
       .map((item) => Number(item.cost) || 0)
       .reduce((sum, cost) => sum + cost, 0)
-  }, [applianceReplacements]);
+  }, [formData.appliances]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -1797,7 +1788,7 @@ export default function FormPage() {
                   <col className="w-[40px]" />
                 </colgroup>
                 <thead>
-                  <tr className="text-xs text-gray-600">
+                  <tr className="text-xs text-gray-600 text-left">
                     <th className="text-left px-1">家電名</th>
                     <th className="text-left px-1">買い替えサイクル（年）</th>
                     <th className="text-left px-1">初回買い替え（年後）</th>
@@ -1806,7 +1797,7 @@ export default function FormPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {applianceReplacements.map((appliance, index) => (
+                  {formData.appliances.map((appliance, index) => (
                     <tr key={index} className="align-middle">
                       <td className="px-1">
                         <input
@@ -2225,7 +2216,7 @@ export default function FormPage() {
           <h2 className="text-2xl font-bold mb-4">入力完了</h2>
           <p className="mb-6">ありがとうございました。入力内容を確認してください。</p>
           <pre className="text-left bg-gray-100 p-4 rounded-md overflow-x-auto" style={{maxHeight: '400px'}}>
-            {JSON.stringify({ ...formData, appliances: applianceReplacements }, null, 2)}
+            {JSON.stringify(formData, null, 2)}
           </pre>
           <button
             type="button"
