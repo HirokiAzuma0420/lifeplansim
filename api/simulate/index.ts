@@ -710,11 +710,15 @@ function runSimulation(params: InputParams): YearlyData[] {
         // この口座内の商品の合計残高と元本を計算
         let totalBalanceInAccount = 0;
         let totalPrincipalInAccount = 0;
-        productsInAccount.forEach((p, index) => {
-          const productId = `${p.key}-${index}`;
-          if (productBalances[productId]) {
-            totalBalanceInAccount += productBalances[productId].balance;
-            totalPrincipalInAccount += productBalances[productId].principal;
+        productsInAccount.forEach((p) => {
+          // `productList`のインデックスではなく、`productBalances`のキー全体をチェックする
+          const productKeys = Object.keys(productBalances).filter(key => key.startsWith(`${p.key}-`));
+          for (const productId of productKeys) {
+            const productInBalance = productList.find((prod, idx) => `${prod.key}-${idx}` === productId);
+            if (productInBalance && productInBalance.account === accountType) {
+              totalBalanceInAccount += productBalances[productId].balance;
+              totalPrincipalInAccount += productBalances[productId].principal;
+            }
           }
         });
 
