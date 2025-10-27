@@ -712,11 +712,12 @@ function runSimulation(params: InputParams): YearlyData[] {
         const actualWithdrawal = Math.min(taxable.balance, grossWithdrawal);
         const netProceeds = actualWithdrawal * (1 - gainsRatio * SPECIFIC_ACCOUNT_TAX_RATE);
 
-        const principalToWithdraw = actualWithdrawal * (1 - gainsRatio);
+        // 売却額のうち、元本に相当する部分だけを計算
+        const principalToWithdraw = actualWithdrawal * (taxable.principal / taxable.balance);
 
         savings += netProceeds;
         taxable.balance -= actualWithdrawal;
-        taxable.principal -= principalToWithdraw;
+        taxable.principal = Math.max(0, taxable.principal - principalToWithdraw); // 元本を正しく減算
         shortfall -= netProceeds;
       }
 

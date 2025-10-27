@@ -1,13 +1,13 @@
 {
-  "familyComposition": "既婚",
-  "personAge": "37",
-  "spouseAge": "46",
-  "mainIncome": "420",
-  "spouseMainIncome": "250",
+  "familyComposition": "独身",
+  "personAge": "35",
+  "spouseAge": "",
+  "mainIncome": "350",
+  "spouseMainIncome": "0",
   "sideJobIncome": "0",
   "spouseSideJobIncome": "0",
   "expenseMethod": "簡単",
-  "livingCostSimple": "300000",
+  "livingCostSimple": "180000",
   "housingCost": "",
   "utilitiesCost": "",
   "communicationCost": "",
@@ -22,16 +22,18 @@
   "socializingCost": "",
   "hobbyEntertainmentCost": "",
   "otherVariableCost": "0",
-  "carFirstReplacementAfterYears": "10",
-  "carPrice": "350",
-  "carReplacementFrequency": "10",
-  "carLoanUsage": "はい",
-  "carLoanYears": "5",
-  "carLoanType": "ディーラーローン",
+  "carPurchasePlan": "no",
+  "carFirstReplacementAfterYears": "",
+  "carPrice": "",
+  "carReplacementFrequency": "",
+  "carLoanUsage": "",
+  "carLoanYears": "",
+  "carLoanType": "",
   "housingType": "賃貸",
-  "carCurrentLoanInPayment": "yes",
-  "carCurrentLoanMonthly": "29600",
-  "carCurrentLoanRemainingMonths": "48",
+  "carCurrentLoanInPayment": "no",
+  "carCurrentLoanMonthly": "",
+  "carCurrentLoanRemainingMonths": "",
+  "housePurchaseIntent": "no",
   "housePurchasePlan": null,
   "houseRenovationPlans": [],
   "housePurchaseAge": "",
@@ -45,34 +47,42 @@
   "loanMonthlyPayment": "",
   "loanRemainingYears": "",
   "loanInterestRate": "",
-  "planToMarry": "",
+  "planToMarry": "しない",
   "marriageAge": "",
   "engagementCost": "200",
   "weddingCost": "330",
   "honeymoonCost": "35",
   "newHomeMovingCost": "50",
-  "hasChildren": "はい",
-  "numberOfChildren": "1",
-  "firstBornAge": "38",
-  "educationPattern": "公私混合",
-  "currentRentLoanPayment": "100000",
+  "hasChildren": "いいえ",
+  "numberOfChildren": "",
+  "firstBornAge": "",
+  "educationPattern": "",
+  "currentRentLoanPayment": "45000",
   "otherLargeExpenses": "",
-  "parentCurrentAge": "75",
-  "parentCareStartAge": "85",
   "parentCareAssumption": "はい",
-  "parentCareMonthlyCost": "10",
-  "parentCareYears": "5",
+  "parentCarePlans": [
+    {
+      "id": 1761527754533,
+      "parentCurrentAge": 70,
+      "parentCareStartAge": 80,
+      "monthly10kJPY": 10,
+      "years": 5
+    }
+  ],
   "retirementAge": "65",
-  "postRetirementLivingCost": "30",
+  "postRetirementLivingCost": "20",
+  "spouseRetirementAge": "65",
+  "spousePensionStartAge": "65",
+  "spousePensionAmount": "10",
   "pensionStartAge": "65",
-  "pensionAmount": "15",
-  "currentSavings": "500",
-  "monthlySavings": "",
+  "pensionAmount": "13",
+  "currentSavings": "300",
+  "monthlySavings": "20000",
   "hasInvestment": "",
   "investmentStocksCurrent": "",
   "investmentTrustCurrent": "100",
   "investmentBondsCurrent": "",
-  "investmentIdecoCurrent": "",
+  "investmentIdecoCurrent": "10",
   "investmentCryptoCurrent": "",
   "investmentOtherCurrent": "",
   "investmentStocksAccountType": "taxable",
@@ -80,9 +90,9 @@
   "investmentOtherAccountType": "taxable",
   "monthlyInvestmentAmounts": {
     "investmentStocksMonthly": "0",
-    "investmentTrustMonthly": "10000",
+    "investmentTrustMonthly": "20000",
     "investmentBondsMonthly": "0",
-    "investmentIdecoMonthly": "0",
+    "investmentIdecoMonthly": "5000",
     "investmentCryptoMonthly": "0",
     "investmentOtherMonthly": "0"
   },
@@ -107,37 +117,37 @@
       "name": "冷蔵庫",
       "cycle": 10,
       "cost": 15,
-      "firstReplacementAfterYears": 0
+      "firstReplacementAfterYears": "5"
     },
     {
       "name": "洗濯機",
       "cycle": 8,
       "cost": 12,
-      "firstReplacementAfterYears": 0
+      "firstReplacementAfterYears": "5"
     },
     {
       "name": "エアコン",
       "cycle": 10,
       "cost": 10,
-      "firstReplacementAfterYears": 0
+      "firstReplacementAfterYears": "5"
     },
     {
       "name": "テレビ",
       "cycle": 10,
       "cost": 8,
-      "firstReplacementAfterYears": 0
+      "firstReplacementAfterYears": "5"
     },
     {
       "name": "電子レンジ",
       "cycle": 8,
       "cost": 3,
-      "firstReplacementAfterYears": 0
+      "firstReplacementAfterYears": "5"
     },
     {
       "name": "掃除機",
       "cycle": 6,
       "cost": 2,
-      "firstReplacementAfterYears": 0
+      "firstReplacementAfterYears": "5"
     }
   ]
 }
