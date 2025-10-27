@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Line } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import type { TooltipProps } from 'recharts';
 import type { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
 import type { DetailedAssetData, EnrichedYearlyAsset } from '../../utils/simulation';
@@ -7,7 +7,7 @@ import { useOrientation } from '../../hooks/useOrientation';
 import RotatePrompt from './RotatePrompt';
 
 interface TotalAssetChartProps {
-  enrichedData: { year: number; 総資産: number; [key: string]: number }[];
+  enrichedData: EnrichedYearlyAsset[];
   detailedAssetData: DetailedAssetData[];
   rankInfo: { rank: string; color: string; commenttitle: string; comment: string; image: string };
   COLORS: { [key: string]: string };
@@ -71,7 +71,7 @@ const CustomTooltip = ({ active, payload, label, detailedAssetData }: TooltipPro
   return null;
 };
 
-export default function TotalAssetChart({ enrichedData, detailedAssetData, rankInfo, COLORS, age, retireAge, yAxisMax }: TotalAssetChartProps & { enrichedData: EnrichedYearlyAsset[] }) {
+export default function TotalAssetChart({ enrichedData, detailedAssetData, rankInfo, COLORS, age, retireAge, yAxisMax }: TotalAssetChartProps) {
   const orientation = useOrientation();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [showRotatePrompt, setShowRotatePrompt] = useState(isMobile && orientation === 'portrait');
@@ -182,102 +182,36 @@ export default function TotalAssetChart({ enrichedData, detailedAssetData, rankI
       {isMobile && orientation === 'portrait' && showRotatePrompt && (
         <RotatePrompt onClose={() => setShowRotatePrompt(false)} />
       )}
-      {/* ランク表示カード */}
-      <div className="w-full flex flex-col items-center md:flex-row md:justify-start md:pl-[15%]">
-        <div className="bg-white relative w-full">
-          <div className="flex flex-col md:flex-row items-center md:justify-start w-full p-0 bg-white space-y-4 md:space-y-0 md:space-x-5">
-            {/* ランクとコメント (モバイル: order-2, PC: order-1) */}
-            <div className="flex items-center space-x-3 order-2 md:order-1">
-              <div className="font-mono text-9xl font-extrabold" style={{ color: rankInfo.color }}>
-                {rankInfo.rank}
-              </div>
-              {/* コメント */}
-              <div className="font-bold text-base text-gray-700">{rankInfo.commenttitle}<br/>
-              <span className="font-normal text-sm text-gray-700">{rankInfo.comment}</span>
-              </div>
-            </div>
-
-            {/* イラスト (モバイル: order-1, PC: order-2) */}
-            <div className="w-60 h-60 order-1 md:order-2 md:ml-auto">
-              <img
-                src={rankInfo.image}
-                alt="ランクイラスト"
-                className="object-contain w-full h-full"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* グラフ本体 */}
+      <h3 className="text-lg font-semibold mb-2">総資産推移</h3>
       <ResponsiveContainer width="100%" height={400}>
         <AreaChart
           data={dataWithDiff}
-          stackOffset="none"
-          margin={{ top: 10, right: 30, left: window.innerWidth < 768 ? 10 : 70, bottom: 5 }}
+          margin={{
+            top: 20,
+            right: 30,
+            left: 50,
+            bottom: 5,
+          }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="year" interval="preserveStartEnd" />
-          <YAxis // domain を削除し、Rechartsの自動計算に任せる
-            type="number"
-            tickFormatter={(v) => `${Math.round(v / 10000)}万円`} // 単位を万円に
-            allowDecimals={false} // 小数点を非表示に
-            domain={[0, yAxisMax > 0 ? yAxisMax * 1.1 : 1000000]}
-          />
+          <XAxis dataKey="year" />
+          <YAxis tickFormatter={(value) => `${Math.round(Number(value) / 10000)}万円`} domain={[0, yAxisMax]} />
           <Tooltip content={<CustomTooltip detailedAssetData={detailedAssetData} />} />
-          <Legend wrapperStyle={{ position: 'relative', top: -15 }} />
-          {enrichedData[0]?.p10 != null && (
+          <Legend />
+          {assetKeys.map((key) => (
             <Area
+              key={key}
               type="monotone"
-              dataKey="p10"
-              stackId="range"
-              stroke="none"
-              fill="#8884d8"
-              fillOpacity={0.2}
-              name="楽観/悲観ケース"
-              hide // 凡例には表示しない
-            />
-          )}
-          {enrichedData[0]?.p10 != null && (
-            <Area
-              type="monotone"
-              dataKey="p90_diff"
-              stackId="range"
-              stroke="none"
-              fill="#8884d8"
-              fillOpacity={0.2}
-              name="p90_diff"
-              hide // 凡例には表示しない
-            />
-          )}
-          {assetKeys.map((assetKey, index) => (
-            <Area
-              key={assetKey}
-              type="monotone"
-              dataKey={assetKey}
+              dataKey={key}
               stackId="1"
-              stroke={COLORS[assetKey] || '#8884d8'}
-              fill={COLORS[assetKey] || '#8884d8'}
-              label={index === assetKeys.length - 1 ? CustomizedLabel : undefined}
+              stroke={COLORS[key] || '#8884d8'}
+              fill={COLORS[key] || '#8884d8'}
             />
           ))}
-          <Line
-            type="monotone"
-            dataKey="総資産"
-            stroke="#8884d8"
-            strokeWidth={2}
-            dot={false}
-            name="平均ケース"
-          />
           {retirementYear >= enrichedData[0].year && retirementYear <= enrichedData[enrichedData.length - 1].year && (
-            <ReferenceLine x={retirementYear} stroke="red" strokeDasharray="3 3" label={{
-              value: '退職',
-              position: 'bottom',
-              fill: 'gray',
-              fontSize: window.innerWidth < 768 ? 13 : 14,
-              fontWeight: 'normal',
-              dy: window.innerWidth < 768 ? 20 : 30,
-            }} />
+            <ReferenceLine x={retirementYear} stroke="red" strokeDasharray="3 3" label={{ value: '退職', position: 'bottom', fill: 'gray', fontSize: isMobile ? 13 : 14, fontWeight: 'normal', dy: isMobile ? 20 : 30 }} />
           )}
+          <Area type="monotone" dataKey="総資産" stroke="#ff7300" fill="transparent" strokeWidth={2} label={CustomizedLabel} dot={false} activeDot={false} />
         </AreaChart>
       </ResponsiveContainer>
     </div>

@@ -10,7 +10,7 @@ import CashFlowTable from '../components/dashboard/CashFlowTable.tsx';
 import AccordionCard from '../components/dashboard/AccordionCard.tsx';
 import { getAssetGrade } from '../assets/getAssetGrade';
 import { buildDashboardDataset } from '../utils/simulation';
-import type { SimulationInputParams, SimulationNavigationState } from '../types/simulation';
+import type { SimulationInputParams, SimulationNavigationState, YearlyData } from '../types/simulation';
 import { useOrientation } from '../hooks/useOrientation';
 
 // InvestmentProduct 型を ResultPage.tsx にも定義
@@ -95,7 +95,7 @@ export default function ResultPage() {
   const location = useLocation();
 
   const orientation = useOrientation();
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -107,8 +107,8 @@ export default function ResultPage() {
   const isMobileLandscape = isMobile && orientation === 'landscape';
   const state = location.state as SimulationNavigationState | undefined;
   const [showSectionModal, setShowSectionModal] = useState(false);
-  const rawYearlyData = state?.yearlyData;
-  const rawFormData = state?.rawFormData as Record<string, any> | undefined;
+  const rawYearlyData = state?.yearlyData as YearlyData[] | undefined;
+  const rawFormData = state?.rawFormData as Record<string, unknown> | undefined;
   // SimulationInputParams に products を追加
   const yearlyData = useMemo(() => rawYearlyData ?? [], [rawYearlyData]);
   const inputParams = state?.inputParams as (SimulationInputParams & { products?: InvestmentProduct[] }) | undefined;
@@ -158,7 +158,7 @@ export default function ResultPage() {
   const retireAge = inputParams.retirementAge || currentAge;
 
   // 表示用の総資産（グラフの積み上げと一致）を計算するヘルパー
-  const calculateDisplayTotal = (entry?: { [key: string]: number }): number => {
+  const calculateDisplayTotal = (entry?: { [key: string]: number | undefined }): number => {
     if (!entry) return 0;
     // buildDashboardDatasetで作成された明確なキーを直接合計する
     return (entry['現金'] || 0) + (entry['NISA'] || 0) + (entry['iDeCo'] || 0) + (entry['課税口座'] || 0);
