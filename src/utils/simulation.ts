@@ -1,23 +1,21 @@
 ﻿import type { PercentileData, YearlyData, AccountBucket, SimulationInputParams, InvestmentProduct } from '../types/simulation';
 
 // グラフ描画用のデータ形式
-export type EnrichedYearlyAsset = {
+export interface EnrichedYearlyAsset {
   age: number;
   year: number;
   総資産: number;
   投資元本: number;
-  p10?: number;
-  p90?: number;
   現金: number;
   年間支出: number;
   年間収入: number;
   年間投資額: number;
   年間収支: number;
   NISA: number;
+  iDeCo: number;
   課税口座: number;
-  // 動的に追加されるプロパティを許容
   [key: string]: number | undefined;
-};
+}
 
 // ツールチップ表示用の詳細データ形式
 export type DetailedAssetData = {
@@ -36,8 +34,9 @@ export interface DashboardDataset {
 }
 
 const sanitize = (value: number | undefined | null): number => {
-  if (!Number.isFinite(value ?? NaN)) return 0;
-  return Math.round(value as number);
+  const num = Number(value);
+  if (!Number.isFinite(num)) return 0;
+  return Math.round(num);
 };
 
 export const buildDashboardDataset = (
@@ -87,8 +86,8 @@ export const buildDashboardDataset = (
     const result: EnrichedYearlyAsset = {
       age: entry.age,
       year: entry.year,
-      p10: percentileData?.p10[i],
-      p90: percentileData?.p90[i],
+      p10: sanitize(percentileData?.p10[i]),
+      p90: sanitize(percentileData?.p90[i]),
       総資産: sanitize(entry.totalAssets),
       投資元本: totalPrincipal,
       年間収入: sanitize(entry.income),

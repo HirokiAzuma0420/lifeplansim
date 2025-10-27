@@ -24,12 +24,21 @@ export default function SamplePage() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [editFields, setEditFields] = useState<Record<string, boolean>>({});
-  const enrichedData = data.map((d) => ({
+  const enrichedData: EnrichedYearlyAsset[] = data.map((d) => ({
+    age: 0, // 必須プロパティをデフォルト値で補完
+    年間支出: 0,
+    年間収入: 0,
+    年間投資額: 0,
+    年間収支: 0,
     ...d,
-    総資産: d.現金 + d.NISA + d.iDeCo,
-    投資元本: (d.NISA累積 || 0) + (d.iDeCo累積 || 0), // 暫定対応
-    課税口座: 0, // 暫定対応
-  })) as EnrichedYearlyAsset[];
+    総資産: (d.現金 || 0) + (d.NISA || 0) + (d.iDeCo || 0),
+    投資元本: (d.NISA累積 || 0) + (d.iDeCo累積 || 0),
+    課税口座: 0,
+    NISA: d.NISA || 0,
+    iDeCo: d.iDeCo || 0,
+    NISA元本: d.NISA累積 || 0,
+    iDeCo元本: d.iDeCo累積 || 0,
+  }));
 
   const latest = enrichedData[enrichedData.length - 1];
 
@@ -51,9 +60,9 @@ export default function SamplePage() {
   const currentTotalAsset = parseFloat(formData.totalAsset) || latest.総資産;
 
   const pieData = [
-    { name: '現金', value: latest.現金 },
-    { name: 'NISA', value: latest.NISA },
-    { name: 'iDeCo', value: latest.iDeCo },
+    { name: '現金', value: latest.現金 || 0 },
+    { name: 'NISA', value: latest.NISA || 0 },
+    { name: 'iDeCo', value: latest.iDeCo || 0 },
   ];
 
   const handleSave = (key: string) => {
