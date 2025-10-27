@@ -371,134 +371,99 @@ function isInputParamsBody(x: unknown): x is { inputParams: InputParams } {
 function runSimulation(params: InputParams): YearlyData[] {
 
   // --- シミュレーション準備 ---
-  // yearlyData, currentAge などの変数を runSimulation 関数内に移動
   const yearlyData: YearlyData[] = [];
   let currentAge = params.initialAge;
-
   const now = new Date();
   const baseYear = now.getFullYear();
   const startMonth = now.getMonth(); // 0-indexed (0-11)
   const firstYearRemainingMonths = 12 - startMonth;
-  const productList: InvestmentProduct[] = Array.isArray(params.products) ? params.products : []; // productList は runSimulation 内で利用
-
-  // ストレステスト用のリターン系列を事前に生成
-  const stressTestEnabled = params.stressTest?.enabled ?? false;
+  const productList: InvestmentProduct[] = Array.isArray(params.products) ? params.products : [];
   const simulationYears = params.endAge - params.initialAge + 1;
 
-  // 商品別のボラティリティを定義 (年率標準偏差)
-  // 出典や仮定はコメントとして残すことが望ましい
-  const VOLATILITY_MAP: Record<InvestmentProduct['key'], number> = {
-    stocks: 0.20,      // 全世界株式やS&P500などを参考に20%
-    trust: 0.18,       // 株式中心の投資信託を想定し、株式よりやや低い18%
-    bonds: 0.05,       // 先進国債券などを参考に5%
-    crypto: 0.80,      // ビットコインなどを参考に80%
-    ideco: 0.18,       // iDeCoの中身は投資信託と仮定し18%
-    other: 0.10,       // その他資産は中間的な10%と仮定
-  };
-
-  const productReturnSeries = new Map<string, number[]>();
-  if (params.interestScenario === 'ランダム変動' || stressTestEnabled) {
-    productList.forEach((p, index) => {
-      const productId = `${p.key}-${index}`;
-      const volatility = VOLATILITY_MAP[p.key] ?? 0.15; // マップにないキーの場合はデフォルト15%
-      const series = generateReturnSeries(n(p.expectedReturn), volatility, simulationYears);
-      productReturnSeries.set(productId, series);
-    });
-  }
-
-
-  // --- 資産の初期化 --- (runSimulation 内に移動)
-  // --- 資産の初期化 ---
+  // --- 資産とリターンの初期化 ---
   let savings = n(params.currentSavingsJPY);
-  const nisa: AccountBucket = { principal: 0, balance: 0 };
-  const ideco: AccountBucket = { principal: 0, balance: 0 };
-  const taxable: AccountBucket = { principal: 0, balance: 0 };
-
-  // 商品別の残高を管理する新しいデータ構造
   const productBalances: Record<string, AccountBucket> = {};
-
-  // 現在の資産を各バケットに振り分け
   productList.forEach((p, index) => {
-    const productId = `${p.key}-${index}`; // 商品を一位に識別するID
+    const productId = `${p.key}-${index}`;
     const current = n(p.currentJPY);
-
-    // 新しいデータ構造を初期化
     productBalances[productId] = { principal: current, balance: current };
   });
 
-  // NISAの累計投資額を初期化。初期元本を累計に含める。
   let cumulativeNisaContribution = productList
     .filter(p => p.account === '非課税')
     .reduce((sum, p) => sum + n(p.currentJPY), 0);
 
   const idecoCashOutAge = Math.min(params.retirementAge, 75);
 
-  // ループ外で状態を保持する変数
-  // (runSimulation 内に移動)
+  // --- リターン系列の事前生成 ---
+  const stressTestEnabled = params.stressTest?.enabled ?? false;
+  const VOLATILITY_MAP: Record<InvestmentProduct['key'], number> = {
+    stocks: 0.20, trust: 0.18, bonds: 0.05, crypto: 0.80, ideco: 0.18, other: 0.10,
+  };
+  const productReturnSeries = new Map<string, number[]>();
+  if (params.interestScenario === 'ランダム変動' || stressTestEnabled) {
+    productList.forEach((p, index) => {
+      const productId = `${p.key}-${index}`;
+      const volatility = VOLATILITY_MAP[p.key] ?? 0.15;
+      const series = generateReturnSeries(n(p.expectedReturn), volatility, simulationYears);
+      productReturnSeries.set(productId, series);
+    });
+  }
+
+  // --- ループで変化する状態変数 ---
   let carCurrentLoanMonthsRemaining = Math.max(0, n(params.car?.currentLoan?.remainingMonths));
   const appliancesOnly = Array.isArray(params.appliances) ? params.appliances.filter(a => a && String(a.name ?? '').trim().length > 0 && Number(a.cost10kJPY) > 0 && Number(a.cycleYears) > 0) : [];
 
-  // --- ループ開始 --- (runSimulation 内に移動)
-  // --- ループ開始 ---
+  // --- シミュレーションループ ---
   for (let i = 0; currentAge <= params.endAge; i++, currentAge++) {
     const year = baseYear + i;
-
-    // 初年度は残り月数で按分、2年目以降は1年分として計算
     const yearFraction = (i === 0) ? firstYearRemainingMonths / 12 : 1;
-
-    // --- 1. 収入計算 ---
-    let selfGrossIncome = 0;
-    let spouseGrossIncome = 0;
     const spouseCurrentAge = params.spouseInitialAge ? params.initialAge + i + (params.spouseInitialAge - params.initialAge) : undefined;
 
+    // --- 0. iDeCo現金化 (イベント) ---
+    // 収支計算の前に処理し、その年の現金を増やしておく
+    if (currentAge === idecoCashOutAge) {
+      let idecoTotalBalance = 0;
+      productList.forEach((p, index) => {
+        if (p.account === 'iDeCo') {
+          const productId = `${p.key}-${index}`;
+          idecoTotalBalance += productBalances[productId]?.balance ?? 0;
+          productBalances[productId] = { principal: 0, balance: 0 };
+        }
+      });
+      savings += idecoTotalBalance;
+    }
+
+    // --- 1. 収支計算 (Cash Flow) ---
+    // 1a. 収入
+    let selfGrossIncome = 0;
     if (currentAge < params.retirementAge) {
-        selfGrossIncome = (n(params.mainJobIncomeGross) * Math.pow(1 + n(params.incomeGrowthRate), i) + n(params.sideJobIncomeGross));
+      selfGrossIncome = (n(params.mainJobIncomeGross) * Math.pow(1 + n(params.incomeGrowthRate), i) + n(params.sideJobIncomeGross));
     }
-
+    let spouseGrossIncome = 0;
     if (spouseCurrentAge && spouseCurrentAge < n(params.spouseRetirementAge)) {
-        spouseGrossIncome = ((n(params.spouseMainJobIncomeGross) ?? 0) * Math.pow(1 + (n(params.spouseIncomeGrowthRate) ?? 0), i) + (n(params.spouseSideJobIncomeGross) ?? 0));
+      spouseGrossIncome = ((n(params.spouseMainJobIncomeGross) ?? 0) * Math.pow(1 + (n(params.spouseIncomeGrowthRate) ?? 0), i) + (n(params.spouseSideJobIncomeGross) ?? 0));
     }
-
     let pensionAnnual = currentAge >= params.pensionStartAge ? n(params.pensionMonthly10kJPY) * 10000 * 12 : 0;
     if (spouseCurrentAge && spouseCurrentAge >= n(params.spousePensionStartAge)) {
-        pensionAnnual += n(params.spousePensionMonthly10kJPY) * 10000 * 12;
+      pensionAnnual += n(params.spousePensionMonthly10kJPY) * 10000 * 12;
     }
-
     let idecoDeductionThisYear = 0;
     if (currentAge < idecoCashOutAge) {
       productList.filter(p => p.account === 'iDeCo').forEach(p => {
         idecoDeductionThisYear += (n(p.recurringJPY) + n(p.spotJPY)) * yearFraction;
       });
     }
-    // 退職後は年金収入を、退職前は給与収入を手取り計算して年間収入とする
     const annualIncome = (computeNetAnnual(selfGrossIncome - idecoDeductionThisYear) + computeNetAnnual(spouseGrossIncome)) * yearFraction + pensionAnnual;
 
-
-    // iDeCoの現金化 (60-75歳)
-    // 支出や投資の拠出より先に処理することで、現金化の年に意図せず拠出されるのを防ぐ
-    if (currentAge === idecoCashOutAge) {
-      savings += ideco.balance;
-      ideco.principal = 0;
-      ideco.balance = 0;
-      // iDeCo関連の商品別残高もすべてリセットする
-      productList.forEach((p, index) => {
-        if (p.account === 'iDeCo') {
-          const productId = `${p.key}-${index}`;
-          productBalances[productId] = { principal: 0, balance: 0 };
-        }
-      });
-    }
-
-    // --- 2. 支出計算 ---
+    // 1b. 支出
     let livingExpense = 0;
     let retirementExpense = 0;
     if (currentAge >= params.retirementAge) {
-      // 老後の支出は、年金との差額ではなく、生活費そのものを計上する
       retirementExpense = n(params.postRetirementLiving10kJPY) * 10000 * 12 * yearFraction;
     } else {
       livingExpense = (params.expenseMode === 'simple' ? n(params.livingCostSimpleAnnual) : (n(params.detailedFixedAnnual) + n(params.detailedVariableAnnual))) * yearFraction;
     }
-
     let childExpense = 0;
     if (params.children) {
       for (let c = 0; c < n(params.children.count); c++) {
@@ -515,7 +480,6 @@ function runSimulation(params: InputParams): YearlyData[] {
         }
       }
     }
-
     let careExpense = 0;
     if (Array.isArray(params.cares)) {
       params.cares.forEach(plan => {
@@ -525,13 +489,11 @@ function runSimulation(params: InputParams): YearlyData[] {
           careExpense += n(plan.monthly10kJPY) * 10000 * 12 * yearFraction;
         }
       });
-    } 
-
+    }
     let marriageExpense = 0;
     if (params.marriage && currentAge === n(params.marriage.age)) {
       marriageExpense = (n(params.marriage.engagementJPY) + n(params.marriage.weddingJPY) + n(params.marriage.honeymoonJPY) + n(params.marriage.movingJPY)) * yearFraction;
     }
-
     let applianceExpense = 0;
     for (const a of appliancesOnly) {
       const firstAge = params.initialAge + n(a.firstAfterYears);
@@ -543,7 +505,6 @@ function runSimulation(params: InputParams): YearlyData[] {
         }
       }
     }
-
     let carExpense = 0;
     if (params.car) {
       let carRecurring = 0;
@@ -556,31 +517,26 @@ function runSimulation(params: InputParams): YearlyData[] {
       if (n(params.car.priceJPY) > 0 && n(params.car.firstAfterYears) >= 0 && n(params.car.frequencyYears) > 0) {
         const base = params.initialAge + n(params.car.firstAfterYears);
         if (currentAge >= base) {
-            const yearsSinceFirst = currentAge - base;
-            const cycle = n(params.car.frequencyYears);
-            if (cycle > 0 && yearsSinceFirst % cycle === 0) {
-              if (params.car.loan.use) {
-                // ローン支払いロジック
-                const loanYears = n(params.car.loan.years);
-                if (loanYears > 0) {
-                  let annualRate = 0.025; // デフォルト
-                  if (params.car.loan.type === '銀行ローン') annualRate = 0.015;
-                  else if (params.car.loan.type === 'ディーラーローン') annualRate = 0.045;
-
-                  const annualPayment = calculateLoanPayment(n(params.car.priceJPY), annualRate, loanYears);
-                  // この年の購入からローン返済が開始される
-                  carRecurring += annualPayment * yearFraction;
-                }
-              } else {
-                // 一括購入
-                carOneOff += n(params.car.priceJPY);
+          const yearsSinceFirst = currentAge - base;
+          const cycle = n(params.car.frequencyYears);
+          if (cycle > 0 && yearsSinceFirst % cycle === 0) {
+            if (params.car.loan.use) {
+              const loanYears = n(params.car.loan.years);
+              if (loanYears > 0) {
+                let annualRate = 0.025;
+                if (params.car.loan.type === '銀行ローン') annualRate = 0.015;
+                else if (params.car.loan.type === 'ディーラーローン') annualRate = 0.045;
+                const annualPayment = calculateLoanPayment(n(params.car.priceJPY), annualRate, loanYears);
+                carRecurring += annualPayment * yearFraction;
               }
+            } else {
+              carOneOff += n(params.car.priceJPY);
             }
+          }
         }
       }
       carExpense = carRecurring + carOneOff;
     }
-
     let housingExpense = 0;
     if (params.housing) {
       if (params.housing.type === '賃貸' && params.housing.rentMonthlyJPY) {
@@ -590,93 +546,161 @@ function runSimulation(params: InputParams): YearlyData[] {
           housingExpense += n(params.housing.rentMonthlyJPY) * 12 * yearFraction;
         }
       }
-
-      // 既存ローンの返済
       if (params.housing.type === '持ち家（ローン中）' && params.housing.currentLoan && currentAge < params.initialAge + n(params.housing.currentLoan.remainingYears)) {
         housingExpense += n(params.housing.currentLoan.monthlyPaymentJPY) * 12 * yearFraction;
       }
-
-      // 将来の住宅購入計画
       if (params.housing.purchasePlan && currentAge >= n(params.housing.purchasePlan.age)) {
-        // 購入年に頭金を支出に追加
         if (currentAge === n(params.housing.purchasePlan.age)) {
-            housingExpense += n(params.housing.purchasePlan.downPaymentJPY);
+          housingExpense += n(params.housing.purchasePlan.downPaymentJPY);
         }
-        // ローン返済期間中、年間返済額を支出に追加
         if (currentAge < n(params.housing.purchasePlan.age) + n(params.housing.purchasePlan.years)) {
-            const loanPrincipal = n(params.housing.purchasePlan.priceJPY) - n(params.housing.purchasePlan.downPaymentJPY);
-            housingExpense += calculateLoanPayment(loanPrincipal, n(params.housing.purchasePlan.rate), n(params.housing.purchasePlan.years)) * yearFraction;
+          const loanPrincipal = n(params.housing.purchasePlan.priceJPY) - n(params.housing.purchasePlan.downPaymentJPY);
+          housingExpense += calculateLoanPayment(loanPrincipal, n(params.housing.purchasePlan.rate), n(params.housing.purchasePlan.years)) * yearFraction;
         }
       }
-
       if (params.housing.renovations) {
-          for (const renovation of params.housing.renovations) {
-              if (currentAge >= n(renovation.age)) {
-                  const diff = currentAge - n(renovation.age);
-                  if (diff === 0 || (n(renovation.cycleYears) > 0 && diff % n(renovation.cycleYears) === 0)) {
-                      housingExpense += n(renovation.costJPY);
-                  }
-              }
+        for (const renovation of params.housing.renovations) {
+          if (currentAge >= n(renovation.age)) {
+            const diff = currentAge - n(renovation.age);
+            if (diff === 0 || (n(renovation.cycleYears) > 0 && diff % n(renovation.cycleYears) === 0)) {
+              housingExpense += n(renovation.costJPY);
+            }
           }
+        }
+      }
+    }
+    const totalExpense = livingExpense + retirementExpense + childExpense + careExpense + marriageExpense + applianceExpense + carExpense + housingExpense;
+
+    // 1c. 現金残高の更新
+    const cashFlow = annualIncome - totalExpense;
+    savings += cashFlow;
+
+    // --- 2. 資産の取り崩し (赤字補填) ---
+    // 生活防衛資金を下回った場合に、投資資産を売却して現金を補填する
+    if (savings < n(params.emergencyFundJPY)) {
+      let shortfall = n(params.emergencyFundJPY) - savings;
+      const withdrawalOrder: ('課税' | '非課税')[] = ['課税', '非課税'];
+
+      for (const accountType of withdrawalOrder) {
+        if (shortfall <= 0) break;
+
+        const productsInAccount = productList.filter(p => p.account === accountType);
+        if (productsInAccount.length === 0) continue;
+
+        let totalBalanceInAccount = 0;
+        productsInAccount.forEach((p, index) => {
+          const productId = `${p.key}-${index}`;
+          totalBalanceInAccount += productBalances[productId]?.balance ?? 0;
+        });
+
+        if (totalBalanceInAccount <= 0) continue;
+
+        const totalWithdrawalAmount = Math.min(totalBalanceInAccount, shortfall); // ここでは税金を考慮せず、必要額をそのまま引き出す
+        let netProceeds = totalWithdrawalAmount;
+
+        // 課税口座の場合、売却益に課税
+        if (accountType === '課税') {
+            let totalPrincipalInAccount = 0;
+            productsInAccount.forEach((p, index) => {
+                const productId = `${p.key}-${index}`;
+                totalPrincipalInAccount += productBalances[productId]?.principal ?? 0;
+            });
+            const gains = Math.max(0, totalBalanceInAccount - totalPrincipalInAccount);
+            const gainsRatio = totalBalanceInAccount > 0 ? gains / totalBalanceInAccount : 0;
+            const taxOnWithdrawal = totalWithdrawalAmount * gainsRatio * SPECIFIC_ACCOUNT_TAX_RATE;
+            netProceeds = totalWithdrawalAmount - taxOnWithdrawal;
+        }
+
+        // 各商品から按分して取り崩す
+        productsInAccount.forEach((p, index) => {
+          const productId = `${p.key}-${index}`;
+          const productBucket = productBalances[productId];
+          if (!productBucket || totalBalanceInAccount <= 0 || productBucket.balance <= 0) return;
+
+          const proportion = productBucket.balance / totalBalanceInAccount;
+          const withdrawalAmount = totalWithdrawalAmount * proportion;
+          const principalRatio = productBucket.balance > 0 ? productBucket.principal / productBucket.balance : 1;
+          
+          productBucket.principal -= withdrawalAmount * principalRatio;
+          productBucket.balance -= withdrawalAmount;
+        });
+
+        savings += netProceeds;
+        shortfall -= netProceeds;
       }
     }
 
-    const totalExpense = livingExpense + retirementExpense + childExpense + careExpense + marriageExpense + applianceExpense + carExpense + housingExpense;
-
-    // --- 3. 投資の計算 (拠出と成長) ---
+    // --- 3. 投資の実行 (黒字の場合) ---
     let totalInvestmentOutflow = 0;
     const canInvest = currentAge < params.retirementAge;
-    let remainingNisaAllowance = Math.max(0, NISA_CONTRIBUTION_CAP - cumulativeNisaContribution);
+    if (canInvest) {
+      // 投資原資 = (現金残高 - 生活防衛資金)の余剰分
+      const investableAmount = Math.max(0, savings - n(params.emergencyFundJPY));
+      let investedThisYear = 0;
+      let remainingNisaAllowance = Math.max(0, NISA_CONTRIBUTION_CAP - cumulativeNisaContribution);
 
-    productList.forEach((p, index) => {
-      if (!canInvest) return;
+      for (const p of productList) {
+        if (investedThisYear >= investableAmount) break;
 
-      const productId = `${p.key}-${index}`;
-      const recur = n(p.recurringJPY);
-      const spot = n(p.spotJPY);
-      const contribution = (recur + spot) * yearFraction;
+        const productId = `${p.key}-${productList.indexOf(p)}`;
+        const contribution = (n(p.recurringJPY) + n(p.spotJPY)) * yearFraction;
+        const actualContribution = Math.min(contribution, investableAmount - investedThisYear);
 
-      if (p.account === '非課税') {
-        const allowed = Math.min(contribution, remainingNisaAllowance);
-        productBalances[productId].principal += allowed;
-        productBalances[productId].balance += allowed;
-        cumulativeNisaContribution += allowed;
-        totalInvestmentOutflow += allowed;
-        remainingNisaAllowance -= allowed;
-      } else if (p.account === 'iDeCo' && currentAge < idecoCashOutAge) {
-        productBalances[productId].principal += contribution;
-        productBalances[productId].balance += contribution;
-        totalInvestmentOutflow += contribution;
-      } else if (p.account === '課税') {
-        productBalances[productId].principal += contribution;
-        productBalances[productId].balance += contribution;
-        totalInvestmentOutflow += contribution;
+        if (actualContribution <= 0) continue;
+
+        let investmentApplied = 0;
+        if (p.account === '非課税' && remainingNisaAllowance > 0) {
+          const nisaAllowed = Math.min(actualContribution, remainingNisaAllowance);
+          productBalances[productId].principal += nisaAllowed;
+          productBalances[productId].balance += nisaAllowed;
+          cumulativeNisaContribution += nisaAllowed;
+          remainingNisaAllowance -= nisaAllowed;
+          investmentApplied = nisaAllowed;
+        } else if (p.account === '課税') {
+          productBalances[productId].principal += actualContribution;
+          productBalances[productId].balance += actualContribution;
+          investmentApplied = actualContribution;
+        } else if (p.account === 'iDeCo' && currentAge < idecoCashOutAge) {
+          productBalances[productId].principal += actualContribution;
+          productBalances[productId].balance += actualContribution;
+          investmentApplied = actualContribution;
+        }
+        investedThisYear += investmentApplied;
       }
-    });
+      savings -= investedThisYear;
+      totalInvestmentOutflow = investedThisYear;
+    }
 
-    // 資産の成長（商品ごと）
+    // --- 4. 資産の成長 (利回り反映) ---
     productList.forEach((p, index) => {
       const productId = `${p.key}-${index}`;
       const productBucket = productBalances[productId];
       if (productBucket.balance <= 0) return;
 
       let yearlyReturn = 0;
-      if (stressTestEnabled) {
-        yearlyReturn = productReturnSeries.get(productId)![i];
-      } else if (params.interestScenario === '固定利回り') {
+      if (params.interestScenario === 'ランダム変動' || stressTestEnabled) {
+        yearlyReturn = productReturnSeries.get(productId)?.[i] ?? n(p.expectedReturn);
+      } else { // 固定利回り
         yearlyReturn = n(p.expectedReturn);
       }
-      
       productBucket.balance *= ((1 + yearlyReturn) ** yearFraction);
     });
 
-    // 商品別残高を口座別残高に集計
-    nisa.principal = 0; nisa.balance = 0;
-    ideco.principal = 0; ideco.balance = 0;
-    taxable.principal = 0; taxable.balance = 0;
+    // --- 5. 年間データの集計と記録 ---
+    const nisa = { principal: 0, balance: 0 };
+    const ideco = { principal: 0, balance: 0 };
+    const taxable = { principal: 0, balance: 0 };
+    const productsForYear: Record<string, AccountBucket> = {};
+
     productList.forEach((p, index) => {
       const productId = `${p.key}-${index}`;
       const productBucket = productBalances[productId];
+      const roundedBucket = {
+        principal: Math.round(productBucket.principal),
+        balance: Math.round(productBucket.balance),
+      };
+      productsForYear[productId] = roundedBucket;
+
       if (p.account === '非課税') {
         nisa.principal += productBucket.principal;
         nisa.balance += productBucket.balance;
@@ -689,87 +713,7 @@ function runSimulation(params: InputParams): YearlyData[] {
       }
     });
 
-    // --- 4. キャッシュフローと資産の変動 ---
-    // 年間キャッシュフロー = 手取り収入 - 総支出 - 投資拠出
-    const cashFlow = annualIncome - totalExpense - totalInvestmentOutflow;
-    savings += cashFlow;
-
-    // 生活防衛資金の補填ロジック (初年度の按分は不要)
-    if (savings < n(params.emergencyFundJPY)) {
-      let shortfall = n(params.emergencyFundJPY) - savings;
-
-      // 取り崩し優先順位: 課税口座 -> NISA口座
-      const withdrawalOrder: ('課税' | '非課税')[] = ['課税', '非課税'];
-
-      for (const accountType of withdrawalOrder) {
-        if (shortfall <= 0) break;
-
-        const productsInAccount = productList.filter(p => p.account === accountType);
-        if (productsInAccount.length === 0) continue;
-
-        // この口座内の商品の合計残高と元本を計算
-        let totalBalanceInAccount = 0;
-        let totalPrincipalInAccount = 0;
-        productsInAccount.forEach((p, index) => {
-          const productId = `${p.key}-${index}`;
-          const productBucket = productBalances[productId];
-          if (productBucket) {
-            totalBalanceInAccount += productBucket.balance;
-            totalPrincipalInAccount += productBucket.principal;
-          }
-        });
-
-        if (totalBalanceInAccount <= 0) continue;
-
-        const gains = Math.max(0, totalBalanceInAccount - totalPrincipalInAccount);
-        const gainsRatio = totalBalanceInAccount > 0 ? gains / totalBalanceInAccount : 0;
-
-        let grossWithdrawal = shortfall;
-        if (accountType === '課税' && gainsRatio > 0) {
-          const taxRate = SPECIFIC_ACCOUNT_TAX_RATE;
-          // ゼロ除算を避ける
-          if (1 - gainsRatio * taxRate > 0) {
-            grossWithdrawal = shortfall / (1 - gainsRatio * taxRate);
-          } else {
-            // 税引き後の手取りが0以下になる極端なケースでは、全額引き出す
-            grossWithdrawal = totalBalanceInAccount;
-          }
-        }
-
-        const totalWithdrawalAmount = Math.min(totalBalanceInAccount, grossWithdrawal);
-        const netProceeds = (accountType === '課税' && gainsRatio > 0)
-          ? totalWithdrawalAmount * (1 - gainsRatio * SPECIFIC_ACCOUNT_TAX_RATE)
-          : totalWithdrawalAmount;
-
-        // 各商品から按分して取り崩す
-        productsInAccount.forEach((p, index) => {
-          const productId = `${p.key}-${index}`;
-          const productBucket = productBalances[productId];
-          if (!productBucket || totalBalanceInAccount <= 0 || productBucket.balance <= 0) return;
-
-          const proportion = productBucket.balance / totalBalanceInAccount;
-          const withdrawalAmount = totalWithdrawalAmount * proportion;
-
-          const principalRatio = productBucket.balance > 0 ? productBucket.principal / productBucket.balance : 0;
-          productBucket.principal -= withdrawalAmount * principalRatio;
-          productBucket.balance -= withdrawalAmount;
-        });
-
-        savings += netProceeds;
-        shortfall -= netProceeds;
-      }
-    }
-
-    // --- 5. 年間データの記録 ---
     const totalAssets = savings + nisa.balance + ideco.balance + taxable.balance;
-    const productsForYear: Record<string, AccountBucket> = {};
-    productList.forEach((p, index) => {
-      const productId = `${p.key}-${index}`;
-      productsForYear[productId] = {
-        principal: Math.round(productBalances[productId].principal),
-        balance: Math.round(productBalances[productId].balance),
-      };
-    });
 
     yearlyData.push({
       year,
