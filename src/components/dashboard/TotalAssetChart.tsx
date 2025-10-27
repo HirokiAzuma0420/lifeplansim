@@ -162,7 +162,6 @@ export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, r
       {isMobile && orientation === 'portrait' && showRotatePrompt && (
         <RotatePrompt onClose={() => setShowRotatePrompt(false)} />
       )}
-      <h3 className="text-lg font-semibold mb-2">総資産推移</h3>
       <ResponsiveContainer width="100%" height={400}>
         <AreaChart
           data={dataWithDiff}
