@@ -588,8 +588,9 @@ function runSimulation(params: InputParams): YearlyData[] {
         if (productsInAccount.length === 0) continue;
 
         let totalBalanceInAccount = 0;
-        productsInAccount.forEach((p, index) => {
-          const productId = `${p.key}-${index}`;
+        productsInAccount.forEach(p => {
+          const originalIndex = productList.indexOf(p);
+          const productId = `${p.key}-${originalIndex}`;
           totalBalanceInAccount += productBalances[productId]?.balance ?? 0;
         });
 
@@ -601,8 +602,9 @@ function runSimulation(params: InputParams): YearlyData[] {
         // 課税口座の場合、売却益に課税
         if (accountType === '課税') {
             let totalPrincipalInAccount = 0;
-            productsInAccount.forEach((p, index) => {
-                const productId = `${p.key}-${index}`;
+            productsInAccount.forEach(p => {
+                const originalIndex = productList.indexOf(p);
+                const productId = `${p.key}-${originalIndex}`;
                 totalPrincipalInAccount += productBalances[productId]?.principal ?? 0;
             });
             const gains = Math.max(0, totalBalanceInAccount - totalPrincipalInAccount);
@@ -612,8 +614,9 @@ function runSimulation(params: InputParams): YearlyData[] {
         }
 
         // 各商品から按分して取り崩す
-        productsInAccount.forEach((p, index) => {
-          const productId = `${p.key}-${index}`;
+        productsInAccount.forEach(p => {
+          const originalIndex = productList.indexOf(p);
+          const productId = `${p.key}-${originalIndex}`;
           const productBucket = productBalances[productId];
           if (!productBucket || totalBalanceInAccount <= 0 || productBucket.balance <= 0) return;
 
