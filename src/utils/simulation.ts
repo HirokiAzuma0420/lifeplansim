@@ -1,4 +1,4 @@
-﻿import type { PercentileData, YearlyData, AccountBucket, SimulationInputParams, InvestmentProduct } from '../types/simulation';
+﻿import type { PercentileData, YearlyData, AccountBucket, SimulationInputParams } from '../types/simulation';
 
 // グラフ描画用のデータ形式
 export interface EnrichedYearlyAsset {
@@ -41,7 +41,7 @@ const sanitize = (value: number | undefined | null): number => {
 
 export const buildDashboardDataset = (
   yearlyData: YearlyData[],
-  inputParams: SimulationInputParams | undefined,
+  _inputParams: SimulationInputParams | undefined,
   percentileData?: PercentileData): DashboardDataset => {
   if (!Array.isArray(yearlyData) || yearlyData.length === 0) {
     return {
@@ -52,8 +52,6 @@ export const buildDashboardDataset = (
       firstYear: undefined,
     };
   }
-
-  const productList = inputParams?.products ?? [];
 
   const enrichedData: EnrichedYearlyAsset[] = yearlyData.map((entry, i) => {
     const nisaPrincipal = sanitize(entry.nisa.principal);
@@ -66,19 +64,6 @@ export const buildDashboardDataset = (
     const prevIdecoPrincipal = prevEntry ? sanitize(prevEntry.ideco.principal) : 0;
     const nisaContribution = nisaPrincipal - prevNisaPrincipal;
     const idecoContribution = idecoPrincipal - prevIdecoPrincipal;
-
-    const productPrincipals: Record<string, number> = {};
-    if (entry.products && productList.length > 0) {
-      productList.forEach((p: InvestmentProduct, index: number) => {
-        const productId = `${p.key}-${index}`
-        const productData = entry.products[productId]
-        if (!productData) return
-
-        const name = p.key === 'trust' ? '投資信託' : p.key === 'stocks' ? '株式' : p.key
-        productPrincipals[`${name}元本`] = sanitize(productData.principal)
-        productPrincipals[name] = sanitize(productData.balance)
-      });
-    }
 
 
     const result: EnrichedYearlyAsset = {
@@ -98,9 +83,9 @@ export const buildDashboardDataset = (
       課税口座: sanitize(entry.taxable.balance),
       NISA元本: nisaPrincipal,
       iDeCo元本: idecoPrincipal,
+      課税口座元本: taxablePrincipal,
       NISA積立: nisaContribution,
       iDeCo積立: idecoContribution,
-      ...productPrincipals,
     };
 
     return result;
