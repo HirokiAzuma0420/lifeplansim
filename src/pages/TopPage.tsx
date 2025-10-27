@@ -33,6 +33,8 @@ export default function TopPage() {
     slidesToScroll: 1,
     afterChange: (index: number) => setCurrentSlide(index),
     arrows: false, // 矢印を非表示にする
+    autoplay: true,
+    autoplaySpeed: 2500,
     dotsClass: 'slick-dots custom-dots', // カスタムクラスを適用
   };
 
@@ -68,13 +70,6 @@ export default function TopPage() {
         <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-10 h-16 flex items-center justify-center">
           {slides[currentSlide].caption}
         </h1>
-
-        {/* 入力欄 */}
-        <input
-          type="text"
-          placeholder="プラン名を入力"
-          className="w-full mb-4 rounded-full border border-gray-300 px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
-        />
 
         {/* ボタン群 */}
         <div className="flex w-full gap-3">
