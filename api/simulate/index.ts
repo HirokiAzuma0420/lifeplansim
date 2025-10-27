@@ -694,13 +694,13 @@ function runSimulation(params: InputParams): YearlyData[] {
     const cashFlow = annualIncome - totalExpense - totalInvestmentOutflow;
     savings += cashFlow;
 
-    // 生活防衛資金の補填ロジック
+    // 生活防衛資金の補填ロジック (初年度の按分は不要)
     if (savings < n(params.emergencyFundJPY)) {
       let shortfall = n(params.emergencyFundJPY) - savings;
 
       // 1. 課税口座から引き出し
       if (shortfall > 0 && taxable.balance > 0) {
-        const gains = taxable.balance - taxable.principal;
+        const gains = Math.max(0, taxable.balance - taxable.principal);
         const gainsRatio = gains > 0 ? gains / taxable.balance : 0;
         
         let grossWithdrawal = shortfall;
@@ -712,18 +712,21 @@ function runSimulation(params: InputParams): YearlyData[] {
         const actualWithdrawal = Math.min(taxable.balance, grossWithdrawal);
         const netProceeds = actualWithdrawal * (1 - gainsRatio * SPECIFIC_ACCOUNT_TAX_RATE);
 
+        const principalToWithdraw = actualWithdrawal * (1 - gainsRatio);
+
         savings += netProceeds;
         taxable.balance -= actualWithdrawal;
-        taxable.principal -= actualWithdrawal * (1 - gainsRatio);
+        taxable.principal -= principalToWithdraw;
         shortfall -= netProceeds;
       }
 
       // 2. NISA口座から引き出し
       if (shortfall > 0 && nisa.balance > 0) {
+        const nisaBalanceBeforeWithdrawal = nisa.balance;
         const withdrawal = Math.min(nisa.balance, shortfall);
         savings += withdrawal;
-        const principalRatio = nisa.balance > 0 ? nisa.principal / nisa.balance : 0;
         nisa.balance -= withdrawal;
+        const principalRatio = nisaBalanceBeforeWithdrawal > 0 ? nisa.principal / nisaBalanceBeforeWithdrawal : 0;
         nisa.principal -= withdrawal * principalRatio;
         shortfall -= withdrawal;
       }
