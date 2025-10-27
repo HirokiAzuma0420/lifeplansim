@@ -215,7 +215,7 @@ const createDefaultFormData = () => ({
   ],
 });
 
-type FormDataState = ReturnType<typeof createDefaultFormData>;
+export type FormDataState = ReturnType<typeof createDefaultFormData>;
 type FormLocationState = { rawFormData?: FormDataState; sectionIndex?: number };
 
 
