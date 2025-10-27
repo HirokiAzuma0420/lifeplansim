@@ -14,6 +14,7 @@ export default function AssetTable({ enrichedData }: AssetTableProps) {
               <th className="px-2 py-1">現金</th>
               <th className="px-2 py-1">NISA</th>
               <th className="px-2 py-1">iDeCo</th>
+              <th className="px-2 py-1">課税口座</th>
               <th className="px-2 py-1">総資産</th>
               <th className="px-2 py-1">NISA積立</th>
               <th className="px-2 py-1">iDeCo積立</th>
@@ -26,6 +27,7 @@ export default function AssetTable({ enrichedData }: AssetTableProps) {
                 <td className="px-2 py-1">{(d.現金 ?? 0).toLocaleString()}</td>
                 <td className="px-2 py-1">{(d.NISA ?? 0).toLocaleString()}</td>
                 <td className="px-2 py-1">{(d.iDeCo ?? 0).toLocaleString()}</td>
+                <td className="px-2 py-1">{(d.課税口座 ?? 0).toLocaleString()}</td>
                 <td className="px-2 py-1 font-semibold">{(d.総資産 ?? 0).toLocaleString()}</td>
                 <td className="px-2 py-1">{d['NISA積立']?.toLocaleString() ?? '-'}</td>
                 <td className="px-2 py-1">{d['iDeCo積立']?.toLocaleString() ?? '-'}</td>
