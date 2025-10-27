@@ -698,38 +698,50 @@ function runSimulation(params: InputParams): YearlyData[] {
     if (savings < n(params.emergencyFundJPY)) {
       let shortfall = n(params.emergencyFundJPY) - savings;
 
-      // 1. 課税口座から引き出し
-      if (shortfall > 0 && taxable.balance > 0) {
-        const gains = Math.max(0, taxable.balance - taxable.principal);
-        const gainsRatio = gains > 0 ? gains / taxable.balance : 0;
-        
+      // 取り崩し優先順位: 課税口座 -> NISA口座
+      const accountsToWithdrawFrom: ('課税' | '非課税')[] = ['課税', '非課税'];
+
+      for (const accountType of accountsToWithdrawFrom) {
+        if (shortfall <= 0) break;
+
+        const productsInAccount = productList.filter(p => p.account === accountType);
+        if (productsInAccount.length === 0) continue;
+
+        // 口座内の商品の合計残高と元本を計算
+        let totalBalanceInAccount = 0;
+        let totalPrincipalInAccount = 0;
+        productsInAccount.forEach((p, index) => {
+          const productId = `${p.key}-${index}`;
+          totalBalanceInAccount += productBalances[productId].balance;
+          totalPrincipalInAccount += productBalances[productId].principal;
+        });
+
+        if (totalBalanceInAccount <= 0) continue;
+
+        const gains = Math.max(0, totalBalanceInAccount - totalPrincipalInAccount);
+        const gainsRatio = gains > 0 ? gains / totalBalanceInAccount : 0;
+
         let grossWithdrawal = shortfall;
-        if (gainsRatio > 0) {
-          // 税金を考慮して、手取りがshortfallになるようにグロス額を計算
+        if (accountType === '課税' && gainsRatio > 0) {
           grossWithdrawal = shortfall / (1 - gainsRatio * SPECIFIC_ACCOUNT_TAX_RATE);
         }
 
-        const actualWithdrawal = Math.min(taxable.balance, grossWithdrawal);
-        const netProceeds = actualWithdrawal * (1 - gainsRatio * SPECIFIC_ACCOUNT_TAX_RATE);
+        const totalWithdrawalAmount = Math.min(totalBalanceInAccount, grossWithdrawal);
+        const netProceeds = accountType === '課税' ? totalWithdrawalAmount * (1 - gainsRatio * SPECIFIC_ACCOUNT_TAX_RATE) : totalWithdrawalAmount;
 
-        // 売却額のうち、元本に相当する部分だけを計算
-        const principalToWithdraw = actualWithdrawal * (taxable.principal / taxable.balance);
+        // 各商品から按分して取り崩す
+        productsInAccount.forEach((p, index) => {
+          const productId = `${p.key}-${index}`;
+          const productBucket = productBalances[productId];
+          const proportion = productBucket.balance / totalBalanceInAccount;
+          const withdrawalAmount = totalWithdrawalAmount * proportion;
+
+          productBucket.principal -= withdrawalAmount * (productBucket.principal / productBucket.balance);
+          productBucket.balance -= withdrawalAmount;
+        });
 
         savings += netProceeds;
-        taxable.balance -= actualWithdrawal;
-        taxable.principal = Math.max(0, taxable.principal - principalToWithdraw); // 元本を正しく減算
         shortfall -= netProceeds;
-      }
-
-      // 2. NISA口座から引き出し
-      if (shortfall > 0 && nisa.balance > 0) {
-        const nisaBalanceBeforeWithdrawal = nisa.balance;
-        const withdrawal = Math.min(nisa.balance, shortfall);
-        savings += withdrawal;
-        nisa.balance -= withdrawal;
-        const principalRatio = nisaBalanceBeforeWithdrawal > 0 ? nisa.principal / nisaBalanceBeforeWithdrawal : 0;
-        nisa.principal -= withdrawal * principalRatio;
-        shortfall -= withdrawal;
       }
     }
 
