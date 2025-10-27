@@ -206,12 +206,12 @@ export default function TotalAssetChart({ enrichedData, detailedAssetData, rankI
               stackId="1"
               stroke={COLORS[key] || '#8884d8'}
               fill={COLORS[key] || '#8884d8'}
+              label={key === assetKeys[assetKeys.length - 1] ? CustomizedLabel : undefined}
             />
           ))}
           {retirementYear >= enrichedData[0].year && retirementYear <= enrichedData[enrichedData.length - 1].year && (
             <ReferenceLine x={retirementYear} stroke="red" strokeDasharray="3 3" label={{ value: '退職', position: 'bottom', fill: 'gray', fontSize: isMobile ? 13 : 14, fontWeight: 'normal', dy: isMobile ? 20 : 30 }} />
           )}
-          <Area type="monotone" dataKey="総資産" stroke="#ff7300" fill="transparent" strokeWidth={2} label={CustomizedLabel} dot={false} activeDot={false} />
         </AreaChart>
       </ResponsiveContainer>
     </div>
