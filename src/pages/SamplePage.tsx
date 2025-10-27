@@ -133,7 +133,6 @@ export default function SamplePage() {
 
         <TotalAssetChart
           enrichedData={enrichedData}
-          detailedAssetData={[]}
           rankInfo={rankInfo}
           COLORS={COLORS}
           age={parseInt(formData.age)}

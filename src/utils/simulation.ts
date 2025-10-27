@@ -70,15 +70,13 @@ export const buildDashboardDataset = (
     const productPrincipals: Record<string, number> = {};
     if (entry.products && productList.length > 0) {
       productList.forEach((p: InvestmentProduct, index: number) => {
-        const productId = `${p.key}-${index}`;
-        const productData = entry.products[productId];
-        if (productData) {
-          // iDeCoとNISAは専用のキーで集計済みなので、ここでは課税口座のみを対象とする
-          if (p.account === '課税') {
-            const name = `${p.key} (${p.account})元本`;
-            productPrincipals[name] = (productPrincipals[name] || 0) + productData.principal;
-          }
-        }
+        const productId = `${p.key}-${index}`
+        const productData = entry.products[productId]
+        if (!productData) return
+
+        const name = p.key === 'trust' ? '投資信託' : p.key === 'stocks' ? '株式' : p.key
+        productPrincipals[`${name}元本`] = sanitize(productData.principal)
+        productPrincipals[name] = sanitize(productData.balance)
       });
     }
 

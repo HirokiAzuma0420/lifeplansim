@@ -290,7 +290,6 @@ export default function ResultPage() {
               <div className="bg-white rounded-xl shadow p-3 mb-6 relative">
                 <TotalAssetChart
                   enrichedData={dataset.enrichedData}
-                  detailedAssetData={dataset.detailedAssetData}
                   rankInfo={rankInfo}
                   COLORS={COLORS}
                   age={currentAge}

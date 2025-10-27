@@ -2,13 +2,12 @@ import { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import type { TooltipProps } from 'recharts';
 import type { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
-import type { DetailedAssetData, EnrichedYearlyAsset } from '../../utils/simulation';
+import type { EnrichedYearlyAsset } from '../../utils/simulation';
 import { useOrientation } from '../../hooks/useOrientation';
 import RotatePrompt from './RotatePrompt';
 
 interface TotalAssetChartProps {
   enrichedData: EnrichedYearlyAsset[];
-  detailedAssetData: DetailedAssetData[];
   rankInfo: { rank: string; color: string; commenttitle: string; comment: string; image: string };
   COLORS: { [key: string]: string };
   age: number;
@@ -23,32 +22,30 @@ interface LabelProps {
   index: number;
 }
 
-const CustomTooltip = ({ active, payload, label, detailedAssetData }: TooltipProps<ValueType, NameType> & { detailedAssetData: DetailedAssetData[] }) => {
+const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameType>) => {
   if (active && payload && payload.length) {
-    const year = Number(label);
-    const yearDetails = detailedAssetData.find(d => d.year === year);
-
+    const data = payload[0].payload as EnrichedYearlyAsset;
+    
     const total = payload.reduce((sum, entry) => sum + (typeof entry.value === 'number' ? entry.value : 0), 0);
 
     return (
       <div className="bg-white p-3 border rounded-lg text-sm shadow-lg">
         <p className="font-bold text-base mb-2">{`${label}年`}</p>
         {payload.map((entry) => {
-          const name = entry.name as keyof typeof yearDetails;
-          if (!yearDetails || typeof name !== 'string' || !(name in yearDetails) || name === '現金') {
-            // 現金など、詳細データがない項目
+          const name = String(entry.name);
+          const principalKey = `${name}元本` as keyof EnrichedYearlyAsset;
+          const principal = data[principalKey] as number | undefined;
+          const balance = typeof entry.value === 'number' ? entry.value : 0;
+
+          if (principal === undefined || name === '現金') {
             return (
               <div key={entry.name} className="mb-1">
                 <p style={{ color: entry.color }} className="font-semibold">
-                  {entry.name}: ¥{typeof entry.value === 'number' ? entry.value.toLocaleString() : '―'}
+                  {entry.name}: ¥{balance.toLocaleString()}
                 </p>
               </div>
             );
           }
-
-          const details = yearDetails[name as keyof Omit<DetailedAssetData, 'year'>];
-          const balance = typeof entry.value === 'number' ? entry.value : 0;
-          const principal = details.principal;
           const gain = balance - principal;
 
           return (
@@ -71,7 +68,7 @@ const CustomTooltip = ({ active, payload, label, detailedAssetData }: TooltipPro
   return null;
 };
 
-export default function TotalAssetChart({ enrichedData, detailedAssetData, rankInfo, COLORS, age, retireAge, yAxisMax }: TotalAssetChartProps) {
+export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, retireAge, yAxisMax }: TotalAssetChartProps) {
   const orientation = useOrientation();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [showRotatePrompt, setShowRotatePrompt] = useState(isMobile && orientation === 'portrait');
@@ -196,7 +193,7 @@ export default function TotalAssetChart({ enrichedData, detailedAssetData, rankI
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="year" />
           <YAxis tickFormatter={(value) => `${Math.round(Number(value) / 10000)}万円`} domain={[0, yAxisMax]} />
-          <Tooltip content={<CustomTooltip detailedAssetData={detailedAssetData} />} />
+          <Tooltip content={<CustomTooltip />} />
           <Legend />
           {assetKeys.map((key) => (
             <Area
