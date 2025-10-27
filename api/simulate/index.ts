@@ -733,12 +733,13 @@ function runSimulation(params: InputParams): YearlyData[] {
         productsInAccount.forEach((p, index) => {
           const productId = `${p.key}-${index}`;
           const productBucket = productBalances[productId];
-          if (totalBalanceInAccount === 0 || productBucket.balance === 0) return;
+          if (totalBalanceInAccount <= 0 || productBucket.balance <= 0) return;
 
           const proportion = productBucket.balance / totalBalanceInAccount;
           const withdrawalAmount = totalWithdrawalAmount * proportion;
 
-          productBucket.principal -= withdrawalAmount * (productBucket.principal / productBucket.balance);
+          const principalToWithdraw = withdrawalAmount * (productBucket.principal / productBucket.balance);
+          productBucket.principal -= principalToWithdraw;
           productBucket.balance -= withdrawalAmount;
         });
 
