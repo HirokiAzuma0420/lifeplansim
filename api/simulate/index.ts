@@ -699,47 +699,58 @@ function runSimulation(params: InputParams): YearlyData[] {
       let shortfall = n(params.emergencyFundJPY) - savings;
 
       // 取り崩し優先順位: 課税口座 -> NISA口座
-      const accountsToWithdrawFrom: ('課税' | '非課税')[] = ['課税', '非課税'];
+      const withdrawalOrder: ('課税' | '非課税')[] = ['課税', '非課税'];
 
-      for (const accountType of accountsToWithdrawFrom) {
+      for (const accountType of withdrawalOrder) {
         if (shortfall <= 0) break;
 
         const productsInAccount = productList.filter(p => p.account === accountType);
         if (productsInAccount.length === 0) continue;
 
-        // 口座内の商品の合計残高と元本を計算
+        // この口座内の商品の合計残高と元本を計算
         let totalBalanceInAccount = 0;
         let totalPrincipalInAccount = 0;
         productsInAccount.forEach((p, index) => {
           const productId = `${p.key}-${index}`;
-          totalBalanceInAccount += productBalances[productId].balance;
-          totalPrincipalInAccount += productBalances[productId].principal;
+          if (productBalances[productId]) {
+            totalBalanceInAccount += productBalances[productId].balance;
+            totalPrincipalInAccount += productBalances[productId].principal;
+          }
         });
 
         if (totalBalanceInAccount <= 0) continue;
 
         const gains = Math.max(0, totalBalanceInAccount - totalPrincipalInAccount);
-        const gainsRatio = gains > 0 ? gains / totalBalanceInAccount : 0;
+        const gainsRatio = totalBalanceInAccount > 0 ? gains / totalBalanceInAccount : 0;
 
         let grossWithdrawal = shortfall;
         if (accountType === '課税' && gainsRatio > 0) {
-          grossWithdrawal = shortfall / (1 - gainsRatio * SPECIFIC_ACCOUNT_TAX_RATE);
+          const taxRate = SPECIFIC_ACCOUNT_TAX_RATE;
+          // ゼロ除算を避ける
+          if (1 - gainsRatio * taxRate > 0) {
+            grossWithdrawal = shortfall / (1 - gainsRatio * taxRate);
+          } else {
+            // 税引き後の手取りが0以下になる極端なケースでは、全額引き出す
+            grossWithdrawal = totalBalanceInAccount;
+          }
         }
 
         const totalWithdrawalAmount = Math.min(totalBalanceInAccount, grossWithdrawal);
-        const netProceeds = accountType === '課税' ? totalWithdrawalAmount * (1 - gainsRatio * SPECIFIC_ACCOUNT_TAX_RATE) : totalWithdrawalAmount;
+        const netProceeds = (accountType === '課税' && gainsRatio > 0)
+          ? totalWithdrawalAmount * (1 - gainsRatio * SPECIFIC_ACCOUNT_TAX_RATE)
+          : totalWithdrawalAmount;
 
         // 各商品から按分して取り崩す
         productsInAccount.forEach((p, index) => {
           const productId = `${p.key}-${index}`;
           const productBucket = productBalances[productId];
-          if (totalBalanceInAccount <= 0 || productBucket.balance <= 0) return;
+          if (!productBucket || totalBalanceInAccount <= 0 || productBucket.balance <= 0) return;
 
           const proportion = productBucket.balance / totalBalanceInAccount;
           const withdrawalAmount = totalWithdrawalAmount * proportion;
 
-          const principalToWithdraw = withdrawalAmount * (productBucket.principal / productBucket.balance);
-          productBucket.principal -= principalToWithdraw;
+          const principalRatio = productBucket.balance > 0 ? productBucket.principal / productBucket.balance : 0;
+          productBucket.principal -= withdrawalAmount * principalRatio;
           productBucket.balance -= withdrawalAmount;
         });
 
