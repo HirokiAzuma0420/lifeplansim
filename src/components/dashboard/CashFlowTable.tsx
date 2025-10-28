@@ -22,10 +22,10 @@ export default function CashFlowTable({ enrichedData }: CashFlowTableProps) {
         <thead className="bg-gray-100 text-gray-600 sticky top-0 z-10">
           <tr>
             <th className="px-4 py-2">年</th>
-            <th className="px-4 py-2 text-right">年間収入</th>
-            <th className="px-4 py-2 text-right">年間支出</th>
-            <th className="px-4 py-2 text-right">年間投資額</th>
-            <th className="px-4 py-2 text-right">年間収支</th>
+            <th className="px-4 py-2 text-right">①年間収入</th>
+            <th className="px-4 py-2 text-right">②年間支出</th>
+            <th className="px-4 py-2 text-right">③年間投資額</th>
+            <th className="px-4 py-2 text-right">年間収支(①‐(②+③))</th>
             <th className="px-4 py-2 text-right">現金預金残高</th>
             <th className="px-4 py-2 text-right">金融商品残高</th>
           </tr>
