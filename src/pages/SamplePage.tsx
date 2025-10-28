@@ -222,7 +222,7 @@ export default function SamplePage() {
   const growthAmount = latestTotal - firstYearTotal || 0;
   const peakAssetValue = Math.max(0, ...dataset.enrichedData.map(entry => calculateDisplayTotal(entry))); // 収入と利回りの計算を移動
 
-  const selfGrossIncome = ((inputParams.mainJobIncomeGross ?? 0) + (inputParams.sideJobIncomeGross ?? 0)) * 10000;
+  const selfGrossIncome = ((inputParams as unknown as FormDataState).mainIncome ? Number((inputParams as unknown as FormDataState).mainIncome) * 10000 : 0) + ((inputParams as unknown as FormDataState).sideJobIncome ? Number((inputParams as unknown as FormDataState).sideJobIncome) * 10000 : 0);
   const savingsForChart = dataset.firstYear?.totalAssets ?? 0; // 収入と利回りの計算を移動
   const rankInfo = getAssetGrade(latestTotal); // 収入と利回りの計算を移動
 
