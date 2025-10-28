@@ -296,7 +296,7 @@ export default function SamplePage() {
             <AccordionCard title="収入・貯蓄の同世代比較">
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                 <IncomePositionChart age={currentAge} income={selfGrossIncome} />
-                <SavingsPositionChart age={currentAge} income={totalGrossIncome} savings={savingsForChart} />
+                <SavingsPositionChart age={currentAge} income={5260000} savings={savingsForChart} />
               </div>
             </AccordionCard>
 
