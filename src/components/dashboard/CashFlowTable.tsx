@@ -25,7 +25,7 @@ export default function CashFlowTable({ enrichedData }: CashFlowTableProps) {
             <th className="px-4 py-2 text-right">①年間収入</th>
             <th className="px-4 py-2 text-right">②年間支出</th>
             <th className="px-4 py-2 text-right">③年間投資額</th>
-            <th className="px-4 py-2 text-right">年間収支(①‐②-③))</th>
+            <th className="px-4 py-2 text-right">年間収支(①‐②-③)</th>
             <th className="px-4 py-2 text-right">現金預金残高</th>
             <th className="px-4 py-2 text-right">金融商品残高</th>
           </tr>
@@ -38,7 +38,7 @@ export default function CashFlowTable({ enrichedData }: CashFlowTableProps) {
               <td className="px-4 py-2 text-right">{formatCurrency(d.年間支出)}</td>
               <td className="px-4 py-2 text-right">{formatCurrency(d.年間投資額)}</td>
               <td className={`px-4 py-2 text-right font-semibold ${d.年間収支 >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
-                {d.年間収支 >= 0 ? '+' : ''}{formatCurrency(d.年間収支)}
+                {d.年間収支 >= 0 ? `¥ +${Math.round(d.年間収支).toLocaleString()}` : formatCurrency(d.年間収支)}
               </td>
               <td className="px-4 py-2 text-right">{formatCurrency(d.現金)}</td>
               <td className="px-4 py-2 text-right">{formatCurrency((d.NISA || 0) + (d.iDeCo || 0) + (d.課税口座 || 0))}</td>
