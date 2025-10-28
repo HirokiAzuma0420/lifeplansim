@@ -29,41 +29,6 @@ const COLORS = {
 const formatCurrency = (value: number): string => `¥${Math.round(value).toLocaleString()}`;
 const formatPercent = (value: number): string => `${(value * 100).toFixed(1)}%`;
 
-function computeNetAnnual(grossAnnualIncome: number): number {
-  const n = (v: unknown): number => {
-    const num = Number(v);
-    return isFinite(num) ? num : 0;
-  };
-
-  const income = n(grossAnnualIncome);
-
-  let salaryIncomeDeduction: number;
-  if (income <= 1625000) { salaryIncomeDeduction = 550000; }
-  else if (income <= 1800000) { salaryIncomeDeduction = income * 0.4 - 100000; }
-  else if (income <= 3600000) { salaryIncomeDeduction = income * 0.3 + 80000; }
-  else if (income <= 6600000) { salaryIncomeDeduction = income * 0.2 + 440000; }
-  else if (income <= 8500000) { salaryIncomeDeduction = income * 0.1 + 1100000; }
-  else { salaryIncomeDeduction = 1950000; }
-
-  const socialInsurancePremium = income * 0.15;
-  const basicDeduction = 480000;
-  const taxableIncome = Math.max(0, income - salaryIncomeDeduction - socialInsurancePremium - basicDeduction);
-
-  let incomeTax: number;
-  if (taxableIncome <= 1950000) { incomeTax = taxableIncome * 0.05; }
-  else if (taxableIncome <= 3300000) { incomeTax = taxableIncome * 0.1 - 97500; }
-  else if (taxableIncome <= 6950000) { incomeTax = taxableIncome * 0.2 - 427500; }
-  else if (taxableIncome <= 9000000) { incomeTax = taxableIncome * 0.23 - 636000; }
-  else if (taxableIncome <= 18000000) { incomeTax = taxableIncome * 0.33 - 1536000; }
-  else if (taxableIncome <= 40000000) { incomeTax = taxableIncome * 0.4 - 2796000; }
-  else { incomeTax = taxableIncome * 0.45 - 4796000; }
-
-  const residentTax = taxableIncome * 0.1 + 5000;
-  const netAnnualIncome = income - socialInsurancePremium - incomeTax - residentTax;
-
-  return Math.max(0, netAnnualIncome);
-}
-
 export default function SamplePage() {
   const navigate = useNavigate();
   const orientation = useOrientation();
@@ -260,20 +225,15 @@ export default function SamplePage() {
   const selfGrossIncome = (inputParams.mainJobIncomeGross ?? 0) + (inputParams.sideJobIncomeGross ?? 0);
   const spouseGrossIncome = (inputParams.spouseMainJobIncomeGross ?? 0) + (inputParams.spouseSideJobIncomeGross ?? 0);
   const totalGrossIncome = selfGrossIncome + spouseGrossIncome;
-  const totalNetAnnualIncome = computeNetAnnual(selfGrossIncome) + computeNetAnnual(spouseGrossIncome);
 
   const savingsForChart = dataset.firstYear?.totalAssets ?? 0; // 収入と利回りの計算を移動
   const rankInfo = getAssetGrade(latestTotal); // 収入と利回りの計算を移動
-  const totalAnnualInvestment = (inputParams.products?.reduce((sum: number, p: InvestmentProduct) => sum + (p.recurringJPY ?? 0) + (p.spotJPY ?? 0), 0) ?? 0); // 収入と利回りの計算を移動
-  const weightedAverageReturn = totalAnnualInvestment > 0
-    ? (inputParams.products?.reduce((sum: number, p: InvestmentProduct) => sum + ((p.recurringJPY ?? 0) + (p.spotJPY ?? 0)) * (p.expectedReturn ?? 0), 0) ?? 0) / totalAnnualInvestment
-    : 0;
 
   const summaryCards = [
     { label: '初年度の総資産', value: formatCurrency(firstYearTotal), note: `開始年: ${dataset.firstYear?.year ?? '-'}年` },
     { label: '最終年の総資産', value: formatCurrency(latestTotal), note: `終了年: ${dataset.latestYear?.year ?? '-'}年` },
     { label: '総資産の増減', value: `${growthAmount >= 0 ? '+' : '-'}${formatCurrency(Math.abs(growthAmount))}`, note: growthAmount >= 0 ? '資産は増加傾向です' : '資産が目減りしています' },
-    { label: '期待利回り', value: formatPercent(weightedAverageReturn), note: `年間投資額: ${formatCurrency(totalAnnualInvestment)}` },
+    { label: '期待利回り', value: formatPercent(0.0507), note: `年間投資額: ${formatCurrency(420000)}` },
     { label: 'ピーク資産額', value: formatCurrency(peakAssetValue), note: 'シミュレーション期間中の最大値' },
     { label: '生活防衛費', value: formatCurrency(n(sampleInput.emergencyFund) * 10000), note: '不足時に現金化して補填します' }, // 正しい値を参照
   ];
@@ -321,7 +281,7 @@ export default function SamplePage() {
               <ul className="space-y-1 text-sm text-gray-700">
                 <li>現在年齢: {currentAge} 歳</li>
                 <li>退職予定: {retireAge} 歳</li>
-                <li>年間収入(世帯／手取り): {formatCurrency(totalNetAnnualIncome)}</li>
+                <li>年間収入(世帯／手取り): {formatCurrency(4182500)}</li>
                 <li>初期資産額: {formatCurrency(savingsForChart)}</li>
               </ul>
             </div>
