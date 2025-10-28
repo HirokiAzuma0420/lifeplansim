@@ -2658,7 +2658,10 @@ export default function FormPage() {
             <button
               type="button"
               className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
-              onClick={() => setIsCompleted(false)}
+              onClick={() => {
+                setShowBackModal(true);
+                // isCompletedはモーダルでセクション選択後にfalseにする
+              }}
               disabled={loading}
             >
               修正する
@@ -2766,6 +2769,7 @@ export default function FormPage() {
                   <button
                     onClick={() => {
                       setCurrentSectionIndex(i);
+                      setIsCompleted(false); // 確認画面から戻る場合も考慮
                       setShowBackModal(false);
                     }}
                     className="w-full text-left px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded"
