@@ -2646,9 +2646,9 @@ export default function FormPage() {
   if (isCompleted) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl text-center">
-          <h2 className="text-2xl font-bold mb-4">入力完了</h2>
-          <p className="mb-6 text-gray-600">シミュレーションを実行する前に、以下の設定内容をご確認ください。</p>
+        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl">
+          <h2 className="text-2xl font-bold mb-4 text-center">入力内容の確認</h2>
+          <p className="mb-6 text-gray-600 text-center">シミュレーションを実行する前に、以下の設定内容をご確認ください。</p>
           
           <div className="max-h-[60vh] overflow-y-auto px-4">
             {renderConfirmationView()}
