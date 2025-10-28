@@ -223,8 +223,6 @@ export default function SamplePage() {
   const peakAssetValue = Math.max(0, ...dataset.enrichedData.map(entry => calculateDisplayTotal(entry))); // 収入と利回りの計算を移動
 
   const selfGrossIncome = (inputParams.mainJobIncomeGross ?? 0) + (inputParams.sideJobIncomeGross ?? 0);
-  const spouseGrossIncome = (inputParams.spouseMainJobIncomeGross ?? 0) + (inputParams.spouseSideJobIncomeGross ?? 0);
-  const totalGrossIncome = selfGrossIncome + spouseGrossIncome;
   const savingsForChart = dataset.firstYear?.totalAssets ?? 0; // 収入と利回りの計算を移動
   const rankInfo = getAssetGrade(latestTotal); // 収入と利回りの計算を移動
 
