@@ -168,8 +168,8 @@ export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, r
           margin={{
             top: 20,
             right: 30,
-            left: 50,
-            bottom: 5,
+            left: 20,
+            bottom: 40,
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
