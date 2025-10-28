@@ -240,6 +240,11 @@ export default function SamplePage() {
     );
   }
 
+  const n = (v: unknown): number => {
+    const num = Number(v);
+    return isFinite(num) ? num : 0;
+  };
+
   const currentAge = inputParams.initialAge || dataset.firstYear?.age || 0;
   const retireAge = inputParams.retirementAge || currentAge;
 
@@ -247,23 +252,19 @@ export default function SamplePage() {
     if (!entry) return 0;
     return (entry['現金'] || 0) + (entry['NISA'] || 0) + (entry['iDeCo'] || 0) + (entry['課税口座'] || 0);
   };
-
   const firstYearTotal = calculateDisplayTotal(dataset.enrichedData[0]) || 0;
   const latestTotal = calculateDisplayTotal(dataset.enrichedData[dataset.enrichedData.length - 1]) || 0;
   const growthAmount = latestTotal - firstYearTotal || 0;
   const peakAssetValue = Math.max(0, ...dataset.enrichedData.map(entry => calculateDisplayTotal(entry)));
 
   const selfGrossIncome = (inputParams.mainJobIncomeGross ?? 0) + (inputParams.sideJobIncomeGross ?? 0);
-  const selfNetAnnualIncome = computeNetAnnual(selfGrossIncome);
-
   const spouseGrossIncome = (inputParams.spouseMainJobIncomeGross ?? 0) + (inputParams.spouseSideJobIncomeGross ?? 0);
   const totalGrossIncome = selfGrossIncome + spouseGrossIncome;
-  const totalNetAnnualIncome = selfNetAnnualIncome + computeNetAnnual(spouseGrossIncome);
+  const totalNetAnnualIncome = computeNetAnnual(selfGrossIncome) + computeNetAnnual(spouseGrossIncome);
 
   const savingsForChart = dataset.firstYear?.totalAssets ?? 0;
   const rankInfo = getAssetGrade(latestTotal);
-
-  const totalAnnualInvestment = inputParams.products?.reduce((sum: number, p: InvestmentProduct) => sum + (p.recurringJPY ?? 0) + (p.spotJPY ?? 0), 0) ?? 0;
+  const totalAnnualInvestment = (inputParams.products?.reduce((sum: number, p: InvestmentProduct) => sum + (p.recurringJPY ?? 0) + (p.spotJPY ?? 0), 0) ?? 0);
   const weightedAverageReturn = totalAnnualInvestment > 0
     ? (inputParams.products?.reduce((sum: number, p: InvestmentProduct) => sum + ((p.recurringJPY ?? 0) + (p.spotJPY ?? 0)) * (p.expectedReturn ?? 0), 0) ?? 0) / totalAnnualInvestment
     : 0;
@@ -274,7 +275,7 @@ export default function SamplePage() {
     { label: '総資産の増減', value: `${growthAmount >= 0 ? '+' : '-'}${formatCurrency(Math.abs(growthAmount))}`, note: growthAmount >= 0 ? '資産は増加傾向です' : '資産が目減りしています' },
     { label: '期待利回り', value: formatPercent(weightedAverageReturn), note: `年間投資額: ${formatCurrency(totalAnnualInvestment)}` },
     { label: 'ピーク資産額', value: formatCurrency(peakAssetValue), note: 'シミュレーション期間中の最大値' },
-    { label: '生活防衛費', value: formatCurrency(inputParams.emergencyFundJPY), note: '不足時に現金化して補填します' },
+    { label: '生活防衛費', value: formatCurrency(n(sampleInput.emergencyFund) * 10000), note: '不足時に現金化して補填します' },
   ];
 
   return (
