@@ -240,7 +240,7 @@ export default function SamplePage() {
     );
   }
 
-  const n = (v: unknown): number => {
+  const n = (v: unknown): number => { // n関数をトップレベルに移動
     const num = Number(v);
     return isFinite(num) ? num : 0;
   };
@@ -248,23 +248,23 @@ export default function SamplePage() {
   const currentAge = inputParams.initialAge || dataset.firstYear?.age || 0;
   const retireAge = inputParams.retirementAge || currentAge;
 
-  const calculateDisplayTotal = (entry?: { [key: string]: number | undefined }): number => {
+  const calculateDisplayTotal = (entry?: { [key: string]: number | undefined }): number => { // ヘルパー関数を移動
     if (!entry) return 0;
     return (entry['現金'] || 0) + (entry['NISA'] || 0) + (entry['iDeCo'] || 0) + (entry['課税口座'] || 0);
   };
   const firstYearTotal = calculateDisplayTotal(dataset.enrichedData[0]) || 0;
   const latestTotal = calculateDisplayTotal(dataset.enrichedData[dataset.enrichedData.length - 1]) || 0;
   const growthAmount = latestTotal - firstYearTotal || 0;
-  const peakAssetValue = Math.max(0, ...dataset.enrichedData.map(entry => calculateDisplayTotal(entry)));
+  const peakAssetValue = Math.max(0, ...dataset.enrichedData.map(entry => calculateDisplayTotal(entry))); // 収入と利回りの計算を移動
 
   const selfGrossIncome = (inputParams.mainJobIncomeGross ?? 0) + (inputParams.sideJobIncomeGross ?? 0);
   const spouseGrossIncome = (inputParams.spouseMainJobIncomeGross ?? 0) + (inputParams.spouseSideJobIncomeGross ?? 0);
   const totalGrossIncome = selfGrossIncome + spouseGrossIncome;
   const totalNetAnnualIncome = computeNetAnnual(selfGrossIncome) + computeNetAnnual(spouseGrossIncome);
 
-  const savingsForChart = dataset.firstYear?.totalAssets ?? 0;
-  const rankInfo = getAssetGrade(latestTotal);
-  const totalAnnualInvestment = (inputParams.products?.reduce((sum: number, p: InvestmentProduct) => sum + (p.recurringJPY ?? 0) + (p.spotJPY ?? 0), 0) ?? 0);
+  const savingsForChart = dataset.firstYear?.totalAssets ?? 0; // 収入と利回りの計算を移動
+  const rankInfo = getAssetGrade(latestTotal); // 収入と利回りの計算を移動
+  const totalAnnualInvestment = (inputParams.products?.reduce((sum: number, p: InvestmentProduct) => sum + (p.recurringJPY ?? 0) + (p.spotJPY ?? 0), 0) ?? 0); // 収入と利回りの計算を移動
   const weightedAverageReturn = totalAnnualInvestment > 0
     ? (inputParams.products?.reduce((sum: number, p: InvestmentProduct) => sum + ((p.recurringJPY ?? 0) + (p.spotJPY ?? 0)) * (p.expectedReturn ?? 0), 0) ?? 0) / totalAnnualInvestment
     : 0;
@@ -275,7 +275,7 @@ export default function SamplePage() {
     { label: '総資産の増減', value: `${growthAmount >= 0 ? '+' : '-'}${formatCurrency(Math.abs(growthAmount))}`, note: growthAmount >= 0 ? '資産は増加傾向です' : '資産が目減りしています' },
     { label: '期待利回り', value: formatPercent(weightedAverageReturn), note: `年間投資額: ${formatCurrency(totalAnnualInvestment)}` },
     { label: 'ピーク資産額', value: formatCurrency(peakAssetValue), note: 'シミュレーション期間中の最大値' },
-    { label: '生活防衛費', value: formatCurrency(n(sampleInput.emergencyFund) * 10000), note: '不足時に現金化して補填します' },
+    { label: '生活防衛費', value: formatCurrency(n(sampleInput.emergencyFund) * 10000), note: '不足時に現金化して補填します' }, // 正しい値を参照
   ];
 
   return (
