@@ -1,4 +1,4 @@
-﻿﻿import React, { useState, useMemo, useEffect} from 'react';
+﻿﻿﻿﻿import React, { useState, useMemo, useEffect} from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { YearlyData, SimulationInputParams, CarePlan } from '../types/simulation';
 
@@ -203,6 +203,7 @@ const createDefaultFormData = () => ({
   investmentOtherRate: '0.5',
   simulationPeriodAge: '90',
   interestRateScenario: '', // 楽観orストレス
+  fixedInterestRate: '5.0', // 固定利回り用のフィールドを追加
   emergencyFund: '300',
   stressTestSeed: '', // 追加
   appliances: [
@@ -716,6 +717,7 @@ export default function FormPage() {
         },
 
         interestScenario: formData.interestRateScenario as '固定利回り' | 'ランダム変動',
+        fixedInterestRate: formData.interestRateScenario === '固定利回り' ? n(formData.fixedInterestRate) / 100 : undefined,
         emergencyFundJPY: n(formData.emergencyFund) * 10000,
       };
 

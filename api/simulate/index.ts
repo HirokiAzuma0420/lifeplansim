@@ -1,4 +1,4 @@
-﻿
+﻿﻿
 // Local minimal types to avoid '@vercel/node' runtime/type dependency
 type VercelRequest = { method?: string; body?: unknown; query?: Record<string, unknown> };
 type VercelResponse = { status: (code: number) => { json: (data: unknown) => void } };
@@ -122,6 +122,7 @@ interface InputParams {
   };
 
   interestScenario: '固定利回り' | 'ランダム変動';
+  fixedInterestRate?: number;
   emergencyFundJPY: number;
 }
 
@@ -377,7 +378,14 @@ function runSimulation(params: InputParams): YearlyData[] {
   const baseYear = now.getFullYear();
   const startMonth = now.getMonth(); // 0-indexed (0-11)
   const firstYearRemainingMonths = 12 - startMonth;
-  const productList: InvestmentProduct[] = Array.isArray(params.products) ? params.products : [];
+  let productList: InvestmentProduct[] = Array.isArray(params.products) ? params.products : [];
+
+  if (params.interestScenario === '固定利回り' && params.fixedInterestRate != null) {
+    productList = productList.map(p => ({
+      ...p,
+      expectedReturn: params.fixedInterestRate as number,
+    }));
+  }
   const simulationYears = params.endAge - params.initialAge + 1;
 
   // --- 資産とリターンの初期化 ---
