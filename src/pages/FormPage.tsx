@@ -2577,7 +2577,7 @@ export default function FormPage() {
         <ConfirmationSection title="基本支出">
           <ConfirmationItem label="支出モード" value={formData.expenseMethod} />
           {formData.expenseMethod === '簡単' ? (
-            <ConfirmationItem label="年間生活費" value={formatManYen(n(formData.livingCostSimple) * 12)} />
+            <ConfirmationItem label="年間生活費" value={formatYen(n(formData.livingCostSimple) * 12)} />
           ) : (
             <ConfirmationItem label="月間生活費（詳細合計）" value={formatYen(totalExpenses)} />
           )}
