@@ -1,4 +1,4 @@
-﻿import type { PercentileData, YearlyData, AccountBucket, SimulationInputParams } from '../types/simulation';
+﻿﻿import type { PercentileData, YearlyData, AccountBucket, SimulationInputParams } from '../types/simulation';
 
 // グラフ描画用のデータ形式
 export interface EnrichedYearlyAsset {
@@ -73,7 +73,7 @@ export const buildDashboardDataset = (
       p90: sanitize(percentileData?.p90[i]),
       総資産: sanitize(entry.totalAssets),
       投資元本: totalPrincipal,
-      年間収入: sanitize(entry.income),
+      年間収入: sanitize(entry.income), // 収入と利回りの計算を移動
       年間投資額: sanitize(entry.totalInvestment),
       年間収支: sanitize(entry.cashFlow),
       年間支出: sanitize(entry.totalExpense),
