@@ -3,6 +3,7 @@ import TopPage from './pages/TopPage';
 import FormPage from './pages/FormPage';
 import SamplePage from './pages/SamplePage';
 import ResultPage from './pages/ResultPage';
+import SimulationSpecPage from './pages/SimulationSpecPage';
 import './index.css';
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         <Route path="/form" element={<FormPage />} />
         <Route path="/sample" element={<SamplePage />} />
         <Route path="/result" element={<ResultPage />} />
+        <Route path="/introduce" element={<SimulationSpecPage />} />
       </Routes>
     </BrowserRouter>
   );

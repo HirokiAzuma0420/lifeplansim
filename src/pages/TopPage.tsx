@@ -86,6 +86,12 @@ export default function TopPage() {
             サンプルを見る
           </button>
         </div>
+        <button
+          className="text-sm text-gray-500 hover:text-blue-600 mt-8 underline"
+          onClick={() => navigate('/introduce')}
+        >
+          シミュレーションの仕組みについて
+        </button>
       </div>
     </div>
   );
