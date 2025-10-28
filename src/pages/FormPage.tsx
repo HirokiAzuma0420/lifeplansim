@@ -2688,6 +2688,37 @@ export default function FormPage() {
   }
 
   return (
+    <>
+      {showBackModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+            <h2 className="text-lg font-semibold mb-4">どこに戻りますか？</h2>
+            <ul className="space-y-2 max-h-64 overflow-y-auto">
+            {Array.from(visitedSections).sort((a, b) => a - b).map(i => (
+                <li key={i}>
+                  <button
+                    onClick={() => {
+                      setCurrentSectionIndex(i);
+                      setIsCompleted(false); // 確認画面から戻る場合も考慮
+                      setShowBackModal(false);
+                    }}
+                    className="w-full text-left px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded"
+                  >
+                    {effectiveSections[i]}
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <button
+              onClick={() => setShowBackModal(false)}
+              className="mt-4 px-4 py-2 text-sm text-gray-600 hover:text-gray-900 underline"
+            >
+              キャンセル
+            </button>
+          </div>
+        </div>
+      )}
+
     <div className="flex justify-center w-full min-h-screen bg-gray-100">
       <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg md:max-w-5xl overflow-visible relative">
         {/* Floating Header */}
@@ -2757,37 +2788,8 @@ export default function FormPage() {
           </div>
           
         </div>
-        
       </div>
-      {showBackModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
-            <h2 className="text-lg font-semibold mb-4">どこに戻りますか？</h2>
-            <ul className="space-y-2 max-h-64 overflow-y-auto">
-            {Array.from(visitedSections).sort((a, b) => a - b).map(i => (
-                <li key={i}>
-                  <button
-                    onClick={() => {
-                      setCurrentSectionIndex(i);
-                      setIsCompleted(false); // 確認画面から戻る場合も考慮
-                      setShowBackModal(false);
-                    }}
-                    className="w-full text-left px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded"
-                  >
-                    {effectiveSections[i]}
-                  </button>
-                </li>
-              ))}
-            </ul>
-            <button
-              onClick={() => setShowBackModal(false)}
-              className="mt-4 px-4 py-2 text-sm text-gray-600 hover:text-gray-900 underline"
-            >
-              キャンセル
-            </button>
-          </div>
-        </div>
-      )}
     </div>
+    </>
   );
 }
