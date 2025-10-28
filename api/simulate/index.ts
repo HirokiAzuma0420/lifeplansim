@@ -1,4 +1,4 @@
-﻿﻿
+﻿﻿﻿﻿
 // Local minimal types to avoid '@vercel/node' runtime/type dependency
 type VercelRequest = { method?: string; body?: unknown; query?: Record<string, unknown> };
 type VercelResponse = { status: (code: number) => { json: (data: unknown) => void } };
@@ -379,13 +379,6 @@ function runSimulation(params: InputParams): YearlyData[] {
   const startMonth = now.getMonth(); // 0-indexed (0-11)
   const firstYearRemainingMonths = 12 - startMonth;
   let productList: InvestmentProduct[] = Array.isArray(params.products) ? params.products : [];
-
-  if (params.interestScenario === '固定利回り' && params.fixedInterestRate != null) {
-    productList = productList.map(p => ({
-      ...p,
-      expectedReturn: params.fixedInterestRate as number,
-    }));
-  }
   const simulationYears = params.endAge - params.initialAge + 1;
 
   // --- 資産とリターンの初期化 ---
@@ -409,7 +402,13 @@ function runSimulation(params: InputParams): YearlyData[] {
     stocks: 0.20, trust: 0.18, bonds: 0.05, crypto: 0.80, ideco: 0.18, other: 0.10,
   };
   const productReturnSeries = new Map<string, number[]>();
-  if (params.interestScenario === 'ランダム変動' || stressTestEnabled) {
+  if (params.interestScenario === '固定利回り' && params.fixedInterestRate != null) {
+    // 固定利回りの場合、全商品の期待リターンを上書き
+    productList = productList.map(p => ({
+      ...p,
+      expectedReturn: params.fixedInterestRate as number,
+    }));
+  } else if (params.interestScenario === 'ランダム変動' || stressTestEnabled) {
     productList.forEach((p, index) => {
       const productId = `${p.key}-${index}`;
       const volatility = VOLATILITY_MAP[p.key] ?? 0.15;
@@ -690,7 +689,7 @@ function runSimulation(params: InputParams): YearlyData[] {
 
       let yearlyReturn = 0;
       if (params.interestScenario === 'ランダム変動' || stressTestEnabled) {
-        yearlyReturn = productReturnSeries.get(productId)?.[i] ?? n(p.expectedReturn);
+        yearlyReturn = productReturnSeries.get(productId)?.[i] ?? n(p.expectedReturn); // ランダム変動
       } else { // 固定利回り
         yearlyReturn = n(p.expectedReturn);
       }
@@ -777,6 +776,14 @@ export default async function(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ message: 'invalid body: expected { inputParams }' });
   }
   const params = rawBody.inputParams;
-  const averageYearlyData = runMonteCarloSimulation(params, 100);
-  res.status(200).json({ yearlyData: averageYearlyData });
+
+  let resultData: YearlyData[];
+
+  if (params.interestScenario === '固定利回り') {
+    resultData = runSimulation(params);
+  } else {
+    resultData = runMonteCarloSimulation(params, 100);
+  }
+
+  res.status(200).json({ yearlyData: resultData });
 }

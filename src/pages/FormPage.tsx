@@ -202,7 +202,7 @@ const createDefaultFormData = () => ({
   investmentCryptoRate: '8.0',
   investmentOtherRate: '0.5',
   simulationPeriodAge: '90',
-  interestRateScenario: '', // 楽観orストレス
+  interestRateScenario: 'ランダム変動', // 楽観orストレス
   fixedInterestRate: '5.0', // 固定利回り用のフィールドを追加
   emergencyFund: '300',
   stressTestSeed: '', // 追加
@@ -716,7 +716,7 @@ export default function FormPage() {
           seed: n(formData.stressTestSeed), // 新しく追加するformDataのプロパティ
         },
 
-        interestScenario: formData.interestRateScenario as '固定利回り' | 'ランダム変動',
+        interestScenario: formData.interestRateScenario as '固定利回り' | 'ランダム変動', // 追加
         fixedInterestRate: formData.interestRateScenario === '固定利回り' ? n(formData.fixedInterestRate) / 100 : undefined,
         emergencyFundJPY: n(formData.emergencyFund) * 10000,
       };
@@ -2452,6 +2452,25 @@ export default function FormPage() {
                 </label>
               </div>
               {errors.interestRateScenario && <p className="text-red-500 text-xs italic mt-2">{errors.interestRateScenario}</p>}
+              <div className={`accordion-content ${formData.interestRateScenario === '固定利回り' ? 'open' : ''}`}>
+                <div className="mt-4 p-4 border border-blue-200 bg-blue-50 rounded-md">
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="fixedInterestRate">
+                    固定利率（%）
+                  </label>
+                  <input
+                    type="number"
+                    id="fixedInterestRate"
+                    name="fixedInterestRate"
+                    value={formData.fixedInterestRate}
+                    onChange={handleInputChange}
+                    step="0.1"
+                    className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                  <p className="text-xs text-gray-600 mt-2">
+                    この設定を有効にすると投資セクションの個別利率は無視されます。
+                  </p>
+                </div>
+              </div>
             </div>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="emergencyFund">
