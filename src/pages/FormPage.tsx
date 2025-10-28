@@ -2643,50 +2643,6 @@ export default function FormPage() {
     );
   };
 
-  if (isCompleted) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl">
-          <h2 className="text-2xl font-bold mb-4 text-center">入力内容の確認</h2>
-          <p className="mb-6 text-gray-600 text-center">シミュレーションを実行する前に、以下の設定内容をご確認ください。</p>
-          
-          <div className="max-h-[60vh] overflow-y-auto px-4">
-            {renderConfirmationView()}
-          </div>
-
-          <div className="mt-8 flex justify-center space-x-4">
-            <button
-              type="button"
-              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
-              onClick={() => {
-                setShowBackModal(true);
-                // isCompletedはモーダルでセクション選択後にfalseにする
-              }}
-              disabled={loading}
-            >
-              修正する
-            </button>
-            <button
-              type="button"
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
-              onClick={handleSimulate}
-              disabled={loading}
-            >
-              {loading ? '実行中...' : 'この内容でシミュレーションを実行'}
-            </button>
-          </div>
-
-          {result && (
-            <div className="mt-4 p-4 bg-gray-50 rounded">
-              <h3 className="font-semibold mb-2">シミュレーション結果</h3>
-              <pre className="text-xs text-left text-red-600">{JSON.stringify(result, null, 2)}</pre>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <>
       {showBackModal && (
@@ -2751,41 +2707,79 @@ export default function FormPage() {
         {renderFloatingBox(
           totalMarriageCost,
           currentSectionIndex === effectiveSections.indexOf('ライフイベント - 結婚') && totalMarriageCost > 0,
-          "結婚費用総額"
+          "結婚費用総額",
         )}
         </div>
         <div className="relative flex">
-          <div className="flex-1 flex flex-col max-w-[800px] w-full px-4">
-            <div className="w-full p-4">
-              {renderSection()}
-              <div className="flex justify-center space-x-4 mt-6">
-                {visitedSections.size > 1 && currentSectionIndex > 0 && (
-                  <button
-                    onClick={() => setShowBackModal(true)}
-                    className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  >
-                    戻る
-                  </button>
-                )}
-                {currentSectionIndex < effectiveSections.length - 1 ? (
-                  <button
-                    onClick={goToNextSection}
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  >
-                    次へ
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => setIsCompleted(true)}
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-gray-400"
-                    disabled={Object.keys(errors).length > 0}
-                  >
-                    完了
-                  </button>
-                )}
+          {isCompleted ? (
+            <div className="w-full p-8">
+              <h2 className="text-2xl font-bold mb-4 text-center">入力内容の確認</h2>
+              <p className="mb-6 text-gray-600 text-center">シミュレーションを実行する前に、以下の設定内容をご確認ください。</p>
+              <div className="max-h-[60vh] overflow-y-auto px-4">
+                {renderConfirmationView()}
+              </div>
+              <div className="mt-8 flex justify-center space-x-4">
+                <button
+                  type="button"
+                  className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
+                  onClick={() => setShowBackModal(true)}
+                  disabled={loading}
+                >
+                  修正する
+                </button>
+                <button
+                  type="button"
+                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
+                  onClick={handleSimulate}
+                  disabled={loading}
+                >
+                  {loading ? '実行中...' : 'この内容でシミュレーションを実行'}
+                </button>
+              </div>
+              {result && (
+                <div className="mt-4 p-4 bg-gray-50 rounded">
+                  <h3 className="font-semibold mb-2">シミュレーション結果</h3>
+                  <pre className="text-xs text-left text-red-600">{JSON.stringify(result, null, 2)}</pre>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex-1 flex flex-col max-w-[800px] w-full px-4">
+              <div className="w-full p-4">
+                {renderSection()}
+                <div className="flex justify-center space-x-4 mt-6">
+                  {visitedSections.size > 1 && currentSectionIndex > 0 && (
+                    <button
+                      onClick={() => setShowBackModal(true)}
+                      className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    >
+                      戻る
+                    </button>
+                  )}
+                  {currentSectionIndex < effectiveSections.length - 1 ? (
+                    <button
+                      onClick={goToNextSection}
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    >
+                      次へ
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        if (validateSection(currentSectionIndex)) {
+                          setIsCompleted(true);
+                        }
+                      }}
+                      className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-gray-400"
+                      disabled={Object.keys(errors).length > 0}
+                    >
+                      完了
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          )}
           
         </div>
       </div>
