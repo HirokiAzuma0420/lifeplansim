@@ -169,14 +169,14 @@ export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, r
             top: 20,
             right: 30,
             left: 20,
-            bottom: 40,
+            bottom: 30,
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="year" />
           <YAxis tickFormatter={(value) => `${Math.round(Number(value) / 10000)}万円`} domain={[0, yAxisMax]} />
           <Tooltip content={<CustomTooltip />} />
-          <Legend />
+          <Legend wrapperStyle={{ bottom: 5 }} />
           {assetKeys.map((key) => (
             <Area
               key={key}
