@@ -2664,8 +2664,8 @@ export default function FormPage() {
             label="基本生活費"
             value={formatYen(
               formData.expenseMethod === '簡単'
-                ? n(formData.livingCostSimple) * 12
-                : totalExpenses
+                ? n(formData.livingCostSimple)
+                : totalExpenses // totalExpenses is already monthly
             )}
           />
           {n(formData.currentRentLoanPayment) > 0 && formData.housingType === '賃貸' && (
@@ -2687,7 +2687,7 @@ export default function FormPage() {
             <ConfirmationItem
               label="消費支出 合計"
               value={formatYen(
-                (formData.expenseMethod === '簡単' ? n(formData.livingCostSimple) * 12 : totalExpenses) +
+                (formData.expenseMethod === '簡単' ? n(formData.livingCostSimple) : totalExpenses) +
                 (formData.housingType === '賃貸' ? n(formData.currentRentLoanPayment) : 0) +
                 (formData.housingType === '持ち家（ローン中）' ? n(formData.loanMonthlyPayment) : 0) +
                 (formData.carCurrentLoanInPayment === 'yes' ? n(formData.carCurrentLoanMonthly) : 0) +
