@@ -2658,48 +2658,50 @@ export default function FormPage() {
           )}
         </ConfirmationSection>
 
-        <ConfirmationSection title="月々の支出内訳（概算）">
-          <p className="text-xs text-gray-500 mb-2">シミュレーション開始後の、月々にかかる費用の目安です。</p>
+        <ConfirmationSection title="月々の消費支出（概算）">
+          <p className="text-xs text-gray-500 mb-2">シミュレーション開始後の、月々にかかる消費の目安です。</p>
           <ConfirmationItem
             label="基本生活費"
             value={formatYen(
               formData.expenseMethod === '簡単'
-                ? n(formData.livingCostSimple)
+                ? n(formData.livingCostSimple) * 12
                 : totalExpenses
             )}
           />
           {n(formData.currentRentLoanPayment) > 0 && formData.housingType === '賃貸' && (
-            <ConfirmationItem label="住居費（賃貸）" value={formatYen(formData.currentRentLoanPayment)} />
+            <ConfirmationItem label="住居費（賃貸）" value={formatYen(n(formData.currentRentLoanPayment))} />
           )}
           {n(formData.loanMonthlyPayment) > 0 && formData.housingType === '持ち家（ローン中）' && (
-            <ConfirmationItem label="住居費（ローン返済）" value={formatYen(formData.loanMonthlyPayment)} />
+            <ConfirmationItem label="住居費（ローン返済）" value={formatYen(n(formData.loanMonthlyPayment))} />
           )}
           {n(formData.carCurrentLoanMonthly) > 0 && formData.carCurrentLoanInPayment === 'yes' && (
-            <ConfirmationItem label="車両費（ローン返済）" value={formatYen(formData.carCurrentLoanMonthly)} />
+            <ConfirmationItem label="車両費（ローン返済）" value={formatYen(n(formData.carCurrentLoanMonthly))} />
           )}
           {formData.hasChildren === 'はい' && (
             <ConfirmationItem
               label="教育費（月額換算）"
-              value={`${formatYen(calculateChildCostRange().min)} 〜 ${formatYen(
-                calculateChildCostRange().max
-              )}`}
+              value={`${formatYen(calculateChildCostRange().min)} 〜 ${formatYen(calculateChildCostRange().max)}`}
             />
           )}
-          <ConfirmationItem label="積立貯金" value={formatYen(formData.monthlySavings)} />
-          <ConfirmationItem label="積立投資" value={formatYen(totalInvestment.monthly)} />
           <div className="mt-2 pt-2 border-t">
             <ConfirmationItem
-              label="月次支出 合計"
+              label="消費支出 合計"
               value={formatYen(
-                (formData.expenseMethod === '簡単' ? n(formData.livingCostSimple) : totalExpenses) +
+                (formData.expenseMethod === '簡単' ? n(formData.livingCostSimple) * 12 : totalExpenses) +
                 (formData.housingType === '賃貸' ? n(formData.currentRentLoanPayment) : 0) +
                 (formData.housingType === '持ち家（ローン中）' ? n(formData.loanMonthlyPayment) : 0) +
                 (formData.carCurrentLoanInPayment === 'yes' ? n(formData.carCurrentLoanMonthly) : 0) +
-                (formData.hasChildren === 'はい' ? calculateChildCostRange().min : 0) + // 合計には最小値を加算
-                n(formData.monthlySavings) + 
-                totalInvestment.monthly
+                (formData.hasChildren === 'はい' ? calculateChildCostRange().min : 0)
               )}
             />
+          </div>
+        </ConfirmationSection>
+
+        <ConfirmationSection title="月々の貯蓄・投資（概算）">
+          <ConfirmationItem label="積立貯金" value={formatYen(n(formData.monthlySavings))} />
+          <ConfirmationItem label="積立投資" value={formatYen(totalInvestment.monthly)} />
+          <div className="mt-2 pt-2 border-t">
+            <ConfirmationItem label="貯蓄・投資 合計" value={formatYen(n(formData.monthlySavings) + totalInvestment.monthly)} />
           </div>
         </ConfirmationSection>
 
