@@ -77,13 +77,13 @@ import type { InvestmentFormValues, InvestmentMonthlyAmounts } from "../types/in
 const formatYen = (value: number | string | undefined) => {
   const num = Number(value);
   if (value === undefined || isNaN(num)) return '未設定';
-  return `${num.toLocaleString()} 円`;
+  return `${Math.round(num).toLocaleString()} 円`;
 };
 
 const formatManYen = (value: number | string | undefined) => {
   const num = Number(value);
   if (value === undefined || isNaN(num)) return '未設定';
-  return `${(num * 10000).toLocaleString()} 円`;
+  return `${Math.round(num * 10000).toLocaleString()} 円`;
 };
 
 const formatPercent = (value: number | string | undefined) => {
@@ -107,6 +107,31 @@ const ConfirmationItem: React.FC<{ label: string, value: React.ReactNode }> = ({
     <span className="font-semibold text-right">{value}</span>
   </div>
 );
+
+// --- 教育費用の年齢別重み付けテーブル（バックエンドと同期） ---
+const EDUCATION_COST_TABLE = {
+  '公立中心': { // 総額約1,000万円
+    '0-6': 22,   // 22万円/年
+    '7-12': 33,  // 33万円/年
+    '13-15': 44, // 44万円/年
+    '16-18': 55, // 55万円/年
+    '19-22': 88, // 88万円/年
+  },
+  '公私混合': { // 総額約1,600万円
+    '0-6': 35,
+    '7-12': 53,
+    '13-15': 70,
+    '16-18': 88,
+    '19-22': 141,
+  },
+  '私立中心': { // 総額約2,000万円
+    '0-6': 44,
+    '7-12': 66,
+    '13-15': 88,
+    '16-18': 110,
+    '19-22': 176,
+  },
+};
 
 const sections = [
   '家族構成',
@@ -2553,19 +2578,25 @@ export default function FormPage() {
   const renderConfirmationView = () => {
     const n = (v: unknown) => Number(v) || 0;
 
-    const calculateMonthlyChildCost = () => {
-      if (formData.hasChildren !== 'はい') return 0;
+    const calculateChildCostRange = () => {
+      if (formData.hasChildren !== 'はい') return { min: 0, max: 0 };
 
       const numberOfChildren = n(formData.numberOfChildren);
-      if (numberOfChildren === 0) return 0;
+      if (numberOfChildren === 0) return { min: 0, max: 0 };
 
-      let totalCostPerChild = 0;
-      if (formData.educationPattern === '公立中心') totalCostPerChild = 10000000;
-      else if (formData.educationPattern === '公私混合') totalCostPerChild = 16000000;
-      else if (formData.educationPattern === '私立中心') totalCostPerChild = 20000000;
+      const pattern = formData.educationPattern as keyof typeof EDUCATION_COST_TABLE;
+      if (!EDUCATION_COST_TABLE[pattern]) return { min: 0, max: 0 };
 
-      const annualCost = (totalCostPerChild / 22) * numberOfChildren;
-      return annualCost / 12;
+      const costTable = EDUCATION_COST_TABLE[pattern];
+      const annualCostsInManYen = Object.values(costTable);
+
+      const minAnnualCostPerChild = Math.min(...annualCostsInManYen) * 10000;
+      const maxAnnualCostPerChild = Math.max(...annualCostsInManYen) * 10000;
+
+      return {
+        min: (minAnnualCostPerChild / 12) * numberOfChildren,
+        max: (maxAnnualCostPerChild / 12) * numberOfChildren,
+      };
     };
     return (
       <>
@@ -2647,7 +2678,12 @@ export default function FormPage() {
             <ConfirmationItem label="車両費（ローン返済）" value={formatYen(formData.carCurrentLoanMonthly)} />
           )}
           {formData.hasChildren === 'はい' && (
-            <ConfirmationItem label="教育費（月額換算）" value={formatYen(calculateMonthlyChildCost())} />
+            <ConfirmationItem
+              label="教育費（月額換算）"
+              value={`${formatYen(calculateChildCostRange().min)} 〜 ${formatYen(
+                calculateChildCostRange().max
+              )}`}
+            />
           )}
           <ConfirmationItem label="積立貯金" value={formatYen(formData.monthlySavings)} />
           <ConfirmationItem label="積立投資" value={formatYen(totalInvestment.monthly)} />
@@ -2659,7 +2695,7 @@ export default function FormPage() {
                 (formData.housingType === '賃貸' ? n(formData.currentRentLoanPayment) : 0) +
                 (formData.housingType === '持ち家（ローン中）' ? n(formData.loanMonthlyPayment) : 0) +
                 (formData.carCurrentLoanInPayment === 'yes' ? n(formData.carCurrentLoanMonthly) : 0) +
-                (formData.hasChildren === 'はい' ? calculateMonthlyChildCost() : 0) +
+                (formData.hasChildren === 'はい' ? calculateChildCostRange().min : 0) + // 合計には最小値を加算
                 n(formData.monthlySavings) + 
                 totalInvestment.monthly
               )}

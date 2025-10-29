@@ -1,5 +1,4 @@
-﻿﻿﻿﻿
-// Local minimal types to avoid '@vercel/node' runtime/type dependency
+﻿﻿// Local minimal types to avoid '@vercel/node' runtime/type dependency
 type VercelRequest = { method?: string; body?: unknown; query?: Record<string, unknown> };
 type VercelResponse = { status: (code: number) => { json: (data: unknown) => void } };
 
@@ -369,6 +368,45 @@ function isInputParamsBody(x: unknown): x is { inputParams: InputParams } {
   return 'initialAge' in m && 'endAge' in m && 'retirementAge' in m;
 }
 
+// --- 教育費用の年齢別重み付けテーブル ---
+const EDUCATION_COST_TABLE = {
+  '公立中心': { // 総額約1,000万円
+    '0-6': 22,   // 22万円/年
+    '7-12': 33,  // 33万円/年
+    '13-15': 44, // 44万円/年
+    '16-18': 55, // 55万円/年
+    '19-22': 88, // 88万円/年
+  },
+  '公私混合': { // 総額約1,600万円
+    '0-6': 35,
+    '7-12': 53,
+    '13-15': 70,
+    '16-18': 88,
+    '19-22': 141,
+  },
+  '私立中心': { // 総額約2,000万円
+    '0-6': 44,
+    '7-12': 66,
+    '13-15': 88,
+    '16-18': 110,
+    '19-22': 176,
+  },
+};
+
+function getAnnualChildCost(age: number, pattern: '公立中心' | '公私混合' | '私立中心'): number {
+  const costTable = EDUCATION_COST_TABLE[pattern];
+  let costInManYen = 0;
+
+  if (age >= 0 && age <= 6) costInManYen = costTable['0-6'];
+  else if (age >= 7 && age <= 12) costInManYen = costTable['7-12'];
+  else if (age >= 13 && age <= 15) costInManYen = costTable['13-15'];
+  else if (age >= 16 && age <= 18) costInManYen = costTable['16-18'];
+  else if (age >= 19 && age <= 22) costInManYen = costTable['19-22'];
+
+  return costInManYen * 10000; // 円に変換して返す
+}
+
+
 function runSimulation(params: InputParams): YearlyData[] {
 
   // --- シミュレーション準備 ---
@@ -473,17 +511,14 @@ function runSimulation(params: InputParams): YearlyData[] {
     }
     let childExpense = 0;
     if (params.children) {
-      for (let c = 0; c < n(params.children.count); c++) {
-        const childBirthAge = n(params.children.firstBornAge) + c * 3;
-        const childAge = currentAge - childBirthAge;
-        if (childAge >= 0 && childAge <= 21) {
-          let educationCost = 0;
-          switch (params.children.educationPattern) {
-            case '公立中心': educationCost = 10000000 / 22; break;
-            case '公私混合': educationCost = 16000000 / 22; break;
-            case '私立中心': educationCost = 20000000 / 22; break;
+      const { count, firstBornAge, educationPattern } = params.children;
+      if (educationPattern === '公立中心' || educationPattern === '公私混合' || educationPattern === '私立中心') {
+        for (let j = 0; j < n(count); j++) {
+          const childBirthYearInSim = n(firstBornAge) - params.initialAge + j * 3;
+          const childAge = i - childBirthYearInSim;
+          if (childAge >= 0 && childAge <= 22) {
+            childExpense += getAnnualChildCost(childAge, educationPattern) * yearFraction;
           }
-          childExpense += educationCost * yearFraction;
         }
       }
     }
