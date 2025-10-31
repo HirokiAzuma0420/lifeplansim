@@ -430,10 +430,7 @@ export default function FormPage() {
           if (formData.spouseIncomePattern === 'カスタム' && !formData.spouseCustomIncome) {
             newErrors.spouseCustomIncome = '配偶者のカスタム年収を入力してください。';
           }
-          if (!formData.livingCostAfterMarriage) {
-            newErrors.livingCostAfterMarriage = '結婚後の生活費を入力してください。';
-          }
-          if (!formData.housingCostAfterMarriage) {
+          if (formData.housingType !== '持ち家（ローン中）' && !formData.housingCostAfterMarriage) {
             newErrors.housingCostAfterMarriage = '結婚後の住居費を入力してください。';
           }
         }
