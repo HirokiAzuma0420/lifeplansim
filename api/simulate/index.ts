@@ -434,12 +434,12 @@ function runSimulation(params: InputParams): YearlyData[] {
     productBalances[productId] = { principal: current, balance: current };
   });
 
-  let cumulativeNisaContribution = productList
-    .filter(p => p.account === '非課税')
-    .reduce((sum, p) => sum + n(p.currentJPY), 0);
-
-  const idecoCashOutAge = Math.min(params.retirementAge, 75);
-
+      let cumulativeNisaContribution = productList
+        .filter(p => p.account === '非課税')
+        .reduce((sum, p) => sum + n(p.currentJPY), 0);
+      let nisaRecycleAmountForNextYear = 0; // NISA枠復活対応：翌年に復活する売却元本額
+  
+      const idecoCashOutAge = Math.min(params.retirementAge, 75);
   // --- リターン系列の事前生成 ---
   const stressTestEnabled = params.stressTest?.enabled ?? false;
   const VOLATILITY_MAP: Record<InvestmentProduct['key'], number> = {
@@ -473,6 +473,9 @@ function runSimulation(params: InputParams): YearlyData[] {
 
 
   for (let i = 0; currentAge <= params.endAge; i++, currentAge++) {
+    cumulativeNisaContribution -= nisaRecycleAmountForNextYear; // NISA枠復活
+    nisaRecycleAmountForNextYear = 0; // 今年のリサイクル額計算のためにリセット
+
     const year = baseYear + i;
     const yearFraction = (i === 0) ? firstYearRemainingMonths / 12 : 1;
     const spouseCurrentAge = params.spouseInitialAge ? params.initialAge + i + (params.spouseInitialAge - params.initialAge) : undefined;
@@ -700,9 +703,15 @@ function runSimulation(params: InputParams): YearlyData[] {
           const proportion = productBucket.balance / totalBalanceInAccount;
           const withdrawalAmount = totalWithdrawalAmount * proportion;
           const principalRatio = productBucket.balance > 0 ? productBucket.principal / productBucket.balance : 1;
-          
-          productBucket.principal -= withdrawalAmount * principalRatio;
+          const principalWithdrawn = withdrawalAmount * principalRatio;
+
+          productBucket.principal -= principalWithdrawn;
           productBucket.balance -= withdrawalAmount;
+
+          // NISA枠復活：売却した元本を記録
+          if (accountType === '非課税') {
+            nisaRecycleAmountForNextYear += principalWithdrawn;
+          }
         });
 
         savings += netProceeds;
@@ -714,10 +723,13 @@ function runSimulation(params: InputParams): YearlyData[] {
     let totalInvestmentOutflow = 0;
     const canInvest = currentAge < params.retirementAge;
     if (canInvest) { // 退職するまでは投資を継続
-      // 投資原資 = (現金残高 - 生活防衛資金)の余剰分
       const investableAmount = Math.max(0, savings - n(params.emergencyFundJPY));
       let investedThisYear = 0;
       let remainingNisaAllowance = Math.max(0, NISA_CONTRIBUTION_CAP - cumulativeNisaContribution);
+      
+      // NISA年間投資上限の準備
+      const NISA_ANNUAL_CAP = 3_600_000;
+      let nisaInvestedThisYear = 0;
 
       for (const p of productList) {
         if (investedThisYear >= investableAmount) break;
@@ -730,12 +742,16 @@ function runSimulation(params: InputParams): YearlyData[] {
 
         let investmentApplied = 0;
         if (p.account === '非課税' && remainingNisaAllowance > 0) {
-          const nisaAllowed = Math.min(actualContribution, remainingNisaAllowance);
+          const remainingAnnualCap = Math.max(0, NISA_ANNUAL_CAP - nisaInvestedThisYear);
+          const nisaAllowed = Math.min(actualContribution, remainingNisaAllowance, remainingAnnualCap);
+          
           productBalances[productId].principal += nisaAllowed;
           productBalances[productId].balance += nisaAllowed;
           cumulativeNisaContribution += nisaAllowed;
           remainingNisaAllowance -= nisaAllowed;
+          nisaInvestedThisYear += nisaAllowed; // 年間投資額を更新
           investmentApplied = nisaAllowed;
+
         } else if (p.account === '課税') { // NISA枠がない、または課税口座指定の場合
           productBalances[productId].principal += actualContribution;
           productBalances[productId].balance += actualContribution;
