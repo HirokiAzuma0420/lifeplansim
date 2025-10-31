@@ -1,5 +1,5 @@
 ﻿﻿import React, { useState, useMemo, useEffect} from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, } from 'react-router-dom';
 import type { YearlyData, SimulationInputParams, CarePlan } from '../types/simulation';
 
 function computeNetAnnual(grossAnnualIncome: number): number {
@@ -216,6 +216,13 @@ const createDefaultFormData = () => ({
   loanRemainingYears: '',
   loanInterestRate: '',
   planToMarry: '', // 結婚予定or予定なし
+  spouseAgeAtMarriage: '',
+  spouseIncomePattern: '',
+  spouseCustomIncome: '',
+  livingCostAfterMarriage: '',
+  isLivingCostEdited: false,
+  housingCostAfterMarriage: '',
+  isHousingCostEdited: false,
   marriageAge: '',
   engagementCost: '200',
   weddingCost: '330',
@@ -418,6 +425,17 @@ export default function FormPage() {
         if (formData.planToMarry === 'する') {
           if (!formData.marriageAge) newErrors.marriageAge = '結婚予定年齢を入力してください。';
           else if (n(formData.marriageAge) < n(formData.personAge)) newErrors.marriageAge = '現在年齢以上の年齢を入力してください。';
+          if (!formData.spouseAgeAtMarriage) newErrors.spouseAgeAtMarriage = '配偶者の年齢を入力してください。';
+          if (!formData.spouseIncomePattern) newErrors.spouseIncomePattern = '配偶者の収入パターンを選択してください。';
+          if (formData.spouseIncomePattern === 'カスタム' && !formData.spouseCustomIncome) {
+            newErrors.spouseCustomIncome = '配偶者のカスタム年収を入力してください。';
+          }
+          if (!formData.livingCostAfterMarriage) {
+            newErrors.livingCostAfterMarriage = '結婚後の生活費を入力してください。';
+          }
+          if (!formData.housingCostAfterMarriage) {
+            newErrors.housingCostAfterMarriage = '結婚後の住居費を入力してください。';
+          }
         }
         break;
       case 'ライフイベント - 子供':
@@ -444,7 +462,7 @@ export default function FormPage() {
         if (!formData.retirementAge) newErrors.retirementAge = '退職予定年齢を入力してください。';
         if (!formData.pensionStartAge) newErrors.pensionStartAge = '年金受給開始年齢を入力してください。';
         if (!formData.pensionAmount) newErrors.pensionAmount = '年金受給額を入力してください。';
-        if (formData.familyComposition === '既婚') {
+        if (formData.familyComposition === '既婚' || formData.planToMarry === 'する') {
           if (!formData.spouseRetirementAge) newErrors.spouseRetirementAge = '配偶者の退職予定年齢を入力してください。';
           if (!formData.spousePensionStartAge) newErrors.spousePensionStartAge = '配偶者の年金受給開始年齢を入力してください。';
           if (!formData.spousePensionAmount) newErrors.spousePensionAmount = '配偶者の年金受給額を入力してください。';
@@ -489,8 +507,22 @@ export default function FormPage() {
     try {
       const mainJobIncomeGross = n(formData.mainIncome) * 10000;
       const sideJobIncomeGross = n(formData.sideJobIncome) * 10000;
-      const spouseMainJobIncomeGross = (formData.familyComposition === '既婚' ? n(formData.spouseMainIncome) : 0) * 10000;
-      const spouseSideJobIncomeGross = (formData.familyComposition === '既婚' ? n(formData.spouseSideJobIncome) : 0) * 10000;
+      let spouseMainJobIncomeGross = (formData.familyComposition === '既婚' ? n(formData.spouseMainIncome) : 0) * 10000;
+      let spouseSideJobIncomeGross = (formData.familyComposition === '既婚' ? n(formData.spouseSideJobIncome) : 0) * 10000;
+
+      // 結婚予定がある場合、配偶者収入をシミュレーションパラメータ用に設定
+      let spouseIncomeForSim = 0;
+      if (formData.planToMarry === 'する') {
+        if (formData.spouseIncomePattern === 'パート') {
+          spouseIncomeForSim = 1060000;
+        } else if (formData.spouseIncomePattern === '正社員') {
+          spouseIncomeForSim = 3000000;
+        } else if (formData.spouseIncomePattern === 'カスタム') {
+          spouseIncomeForSim = n(formData.spouseCustomIncome) * 10000;
+        }
+        // 既婚ユーザーの入力と競合しないように、ここでは mainJobIncomeGross に加算
+        spouseMainJobIncomeGross = spouseIncomeForSim;
+      }
 
       // Detailed expenses: convert monthly inputs (yen per month, car in 10k yen) into annual totals.
       const monthlyFixedExpense =
@@ -659,8 +691,8 @@ export default function FormPage() {
         retirementAge: n(formData.retirementAge),
         pensionStartAge: n(formData.pensionStartAge),
 
-        spouseRetirementAge: formData.familyComposition === '既婚' ? n(formData.spouseRetirementAge) : undefined,
-        spousePensionStartAge: formData.familyComposition === '既婚' ? n(formData.spousePensionStartAge) : undefined,
+        spouseRetirementAge: (formData.familyComposition === '既婚' || formData.planToMarry === 'する') ? n(formData.spouseRetirementAge) : undefined,
+        spousePensionStartAge: (formData.familyComposition === '既婚' || formData.planToMarry === 'する') ? n(formData.spousePensionStartAge) : undefined,
 
         mainJobIncomeGross: mainJobIncomeGross,
         sideJobIncomeGross: sideJobIncomeGross,
@@ -714,6 +746,13 @@ export default function FormPage() {
           weddingJPY: n(formData.weddingCost) * 10000,
           honeymoonJPY: n(formData.honeymoonCost) * 10000,
           movingJPY: n(formData.newHomeMovingCost) * 10000,
+          // 結婚後の情報を追加
+          spouse: {
+            ageAtMarriage: n(formData.spouseAgeAtMarriage),
+            incomeGross: spouseIncomeForSim,
+          },
+          newLivingCostAnnual: n(formData.livingCostAfterMarriage) * 12,
+          newHousingCostAnnual: n(formData.housingCostAfterMarriage) * 12,
         } : undefined,
 
         children: formData.hasChildren === 'はい' ? {
@@ -745,7 +784,7 @@ export default function FormPage() {
 
         postRetirementLiving10kJPY: n(formData.postRetirementLivingCost),
         pensionMonthly10kJPY: n(formData.pensionAmount),
-        spousePensionMonthly10kJPY: formData.familyComposition === '既婚' ? n(formData.spousePensionAmount) : undefined,
+        spousePensionMonthly10kJPY: (formData.familyComposition === '既婚' || formData.planToMarry === 'する') ? n(formData.spousePensionAmount) : undefined,
 
         currentSavingsJPY: n(formData.currentSavings) * 10000,
         monthlySavingsJPY: n(formData.monthlySavings),
@@ -932,6 +971,13 @@ export default function FormPage() {
         }
       }));
     } else {
+      // is...Edited フラグを更新
+      if (name === 'livingCostAfterMarriage') {
+        setFormData(prev => ({ ...prev, isLivingCostEdited: true }));
+      }
+      if (name === 'housingCostAfterMarriage') {
+        setFormData(prev => ({ ...prev, isHousingCostEdited: true }));
+      }
       setFormData({ ...formData, [name]: value });
     }
   };
@@ -1124,6 +1170,36 @@ export default function FormPage() {
     formData.housingType
   ]);
 
+  // 結婚後の生活費・住居費の自動計算
+  useEffect(() => {
+    if (formData.planToMarry !== 'する' || formData.isLivingCostEdited) return;
+
+    const singleLivingCost = formData.expenseMethod === '簡単'
+      ? Number(formData.livingCostSimple) || 0
+      : totalExpenses;
+
+    if (singleLivingCost > 0) {
+      const recommendedCost = Math.round(singleLivingCost * 1.5);
+      setFormData(prev => ({
+        ...prev,
+        livingCostAfterMarriage: String(recommendedCost)
+      }));
+    }
+  }, [formData.livingCostSimple, totalExpenses, formData.expenseMethod, formData.planToMarry, formData.isLivingCostEdited]);
+
+  useEffect(() => {
+    if (formData.planToMarry !== 'する' || formData.isHousingCostEdited) return;
+
+    const singleHousingCost = Number(formData.currentRentLoanPayment) || 0;
+
+    if (singleHousingCost > 0) {
+      const recommendedCost = Math.round(singleHousingCost * 1.3);
+      setFormData(prev => ({
+        ...prev,
+        housingCostAfterMarriage: String(recommendedCost)
+      }));
+    }
+  }, [formData.currentRentLoanPayment, formData.planToMarry, formData.isHousingCostEdited]);
   
 
   useEffect(() => {
@@ -1963,6 +2039,61 @@ export default function FormPage() {
                   {errors.marriageAge && <p className="text-red-500 text-xs italic mt-1">{errors.marriageAge}</p>}
                 </div>
                 <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="spouseAgeAtMarriage">
+                    結婚時点での配偶者の年齢は？[歳]
+                  </label>
+                  <input type="number" id="spouseAgeAtMarriage" name="spouseAgeAtMarriage" value={formData.spouseAgeAtMarriage} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 ${errors.spouseAgeAtMarriage ? 'border-red-500' : ''}`} />
+                  {errors.spouseAgeAtMarriage && <p className="text-red-500 text-xs italic mt-1">{errors.spouseAgeAtMarriage}</p>}
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2">配偶者の収入は？</label>
+                  <div className="mt-2 flex flex-wrap gap-4">
+                    <label className="inline-flex items-center"><input type="radio" className="custom-radio" name="spouseIncomePattern" value="パート" checked={formData.spouseIncomePattern === 'パート'} onChange={handleRadioChange} /><span className="ml-2">パート (106万円)</span></label>
+                    <label className="inline-flex items-center"><input type="radio" className="custom-radio" name="spouseIncomePattern" value="正社員" checked={formData.spouseIncomePattern === '正社員'} onChange={handleRadioChange} /><span className="ml-2">正社員 (300万円)</span></label>
+                    <label className="inline-flex items-center"><input type="radio" className="custom-radio" name="spouseIncomePattern" value="カスタム" checked={formData.spouseIncomePattern === 'カスタム'} onChange={handleRadioChange} /><span className="ml-2">カスタム入力</span></label>
+                  </div>
+                  {errors.spouseIncomePattern && <p className="text-red-500 text-xs italic mt-2">{errors.spouseIncomePattern}</p>}
+                </div>
+                {formData.spouseIncomePattern === 'カスタム' && (
+                  <div className="mb-4 pl-4 border-l-4 border-blue-300">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="spouseCustomIncome">
+                      配偶者の年収[万円]
+                    </label>
+                    <input type="number" id="spouseCustomIncome" name="spouseCustomIncome" value={formData.spouseCustomIncome} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 ${errors.spouseCustomIncome ? 'border-red-500' : ''}`} />
+                    {errors.spouseCustomIncome && <p className="text-red-500 text-xs italic mt-1">{errors.spouseCustomIncome}</p>}
+                  </div>
+                )}
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="livingCostAfterMarriage">
+                    結婚後の生活費（月額）[円]
+                  </label>
+                  <input
+                    type="number"
+                    id="livingCostAfterMarriage"
+                    name="livingCostAfterMarriage"
+                    value={formData.livingCostAfterMarriage}
+                    onChange={handleInputChange}
+                    className={`shadow border rounded w-full py-2 px-3 text-gray-700 ${errors.livingCostAfterMarriage ? 'border-red-500' : ''}`}
+                  />
+                  {errors.livingCostAfterMarriage && <p className="text-red-500 text-xs italic mt-1">{errors.livingCostAfterMarriage}</p>}
+                  <p className="text-xs text-gray-500 mt-1">独身時の生活費の1.5倍が自動入力されます。自由に編集可能です。</p>
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="housingCostAfterMarriage">
+                    結婚後の住居費（月額）[円]
+                  </label>
+                  <input
+                    type="number"
+                    id="housingCostAfterMarriage"
+                    name="housingCostAfterMarriage"
+                    value={formData.housingCostAfterMarriage}
+                    onChange={handleInputChange}
+                    className={`shadow border rounded w-full py-2 px-3 text-gray-700 ${errors.housingCostAfterMarriage ? 'border-red-500' : ''}`}
+                  />
+                  {errors.housingCostAfterMarriage && <p className="text-red-500 text-xs italic mt-1">{errors.housingCostAfterMarriage}</p>}
+                  <p className="text-xs text-gray-500 mt-1">独身時の住居費の1.3倍が自動入力されます。自由に編集可能です。</p>
+                </div>
+                <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="engagementCost">
                     婚約関連費用（指輪・結納金など）[万円]
                   </label>
@@ -2317,7 +2448,7 @@ export default function FormPage() {
               </div>
             </div>
 
-            {formData.familyComposition === '既婚' && (
+            {(formData.familyComposition === '既婚' || formData.planToMarry === 'する') && (
               <div className="mt-8 border-t pt-6">
                 <h3 className="text-xl font-semibold text-center mb-4">配偶者の老後設定</h3>
                 <div className="mb-4">
@@ -2642,6 +2773,23 @@ export default function FormPage() {
           <ConfirmationItem label="住居タイプ" value={formData.housingType} />
           {formData.housingType === '賃貸' && <ConfirmationItem label="現在の家賃（月額）" value={formatYen(formData.currentRentLoanPayment)} />}
           {formData.housingType === '持ち家（ローン中）' && <ConfirmationItem label="現在のローン返済（月額）" value={`${formatYen(formData.loanMonthlyPayment)} (残り${formData.loanRemainingYears}年)`} />}
+          {formData.planToMarry === 'する' && (
+            <>
+              <h4 className="font-semibold mt-4">結婚</h4>
+              <ConfirmationItem label="結婚予定年齢" value={`${formData.marriageAge} 歳`} />
+              <ConfirmationItem label="結婚時の配偶者の年齢" value={`${formData.spouseAgeAtMarriage} 歳`} />
+              <ConfirmationItem
+                label="配偶者の収入"
+                value={
+                  formData.spouseIncomePattern === 'パート' ? 'パート (106万円)' :
+                  formData.spouseIncomePattern === '正社員' ? '正社員 (300万円)' :
+                  `カスタム (${formatManYen(formData.spouseCustomIncome)})`
+                }
+              />
+              <ConfirmationItem label="結婚後の生活費（月額）" value={formatYen(formData.livingCostAfterMarriage)} />
+              <ConfirmationItem label="結婚後の住居費（月額）" value={formatYen(formData.housingCostAfterMarriage)} />
+            </>
+          )}
           {formData.housePurchasePlan && (
             <>
               <ConfirmationItem label="購入予定年齢" value={`${formData.housePurchasePlan.age} 歳`} />
@@ -2709,8 +2857,15 @@ export default function FormPage() {
           <ConfirmationItem label="あなたの退職年齢" value={`${formData.retirementAge} 歳`} />
           <ConfirmationItem label="あなたの年金受給開始年齢" value={`${formData.pensionStartAge} 歳`} />
           <ConfirmationItem label="退職後の生活費（月額）" value={formatManYen(formData.postRetirementLivingCost)} />
-          <ConfirmationItem label="あなたの公的年金受給額（月額）" value={formatManYen(formData.pensionAmount)} />
+          <ConfirmationItem label="あなたの公的年金受給額（月額）" value={formatManYen(formData.pensionAmount)} />          
           {formData.familyComposition === '既婚' && (
+            <>
+              <ConfirmationItem label="配偶者の退職年齢" value={`${formData.spouseRetirementAge} 歳`} />
+              <ConfirmationItem label="配偶者の年金受給開始年齢" value={`${formData.spousePensionStartAge} 歳`} />
+              <ConfirmationItem label="配偶者の公的年金受給額（月額）" value={formatManYen(formData.spousePensionAmount)} />
+            </>
+          )}
+          {formData.familyComposition === '独身' && formData.planToMarry === 'する' && (
             <>
               <ConfirmationItem label="配偶者の退職年齢" value={`${formData.spouseRetirementAge} 歳`} />
               <ConfirmationItem label="配偶者の年金受給開始年齢" value={`${formData.spousePensionStartAge} 歳`} />

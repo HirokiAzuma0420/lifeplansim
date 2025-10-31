@@ -89,6 +89,12 @@ interface InputParams {
     weddingJPY: number;
     honeymoonJPY: number;
     movingJPY: number;
+    spouse: {
+      ageAtMarriage: number;
+      incomeGross: number;
+    };
+    newLivingCostAnnual: number;
+    newHousingCostAnnual: number;
   };
 
   children?: {
@@ -460,6 +466,10 @@ function runSimulation(params: InputParams): YearlyData[] {
   const appliancesOnly = Array.isArray(params.appliances) ? params.appliances.filter(a => a && String(a.name ?? '').trim().length > 0 && Number(a.cost10kJPY) > 0 && Number(a.cycleYears) > 0) : [];
 
   // --- シミュレーションループ ---
+  // ループ内で変更される状態変数
+  let currentLivingExpense = params.expenseMode === 'simple' ? n(params.livingCostSimpleAnnual) : (n(params.detailedFixedAnnual) + n(params.detailedVariableAnnual));
+  let currentHousingExpense = params.housing?.type === '賃貸' ? (n(params.housing.rentMonthlyJPY) * 12) : 0;
+
   for (let i = 0; currentAge <= params.endAge; i++, currentAge++) {
     const year = baseYear + i;
     const yearFraction = (i === 0) ? firstYearRemainingMonths / 12 : 1;
@@ -479,18 +489,30 @@ function runSimulation(params: InputParams): YearlyData[] {
       savings += idecoTotalBalance;
     }
 
+    // --- 結婚イベント ---
+    if (params.marriage && currentAge === n(params.marriage.age)) {
+      // 配偶者情報を更新
+      params.spouseInitialAge = params.marriage.spouse.ageAtMarriage;
+      params.spouseMainJobIncomeGross = params.marriage.spouse.incomeGross;
+      // 生活費・住居費を更新
+      currentLivingExpense = params.marriage.newLivingCostAnnual;
+      currentHousingExpense = params.marriage.newHousingCostAnnual;
+    }
+
     // --- 1. 収支計算 (Cash Flow) ---
     // 1a. 収入
     let selfGrossIncome = 0;
     if (currentAge < params.retirementAge) {
       selfGrossIncome = (n(params.mainJobIncomeGross) * Math.pow(1 + n(params.incomeGrowthRate), i) + n(params.sideJobIncomeGross));
     }
+
     let spouseGrossIncome = 0;
-    if (spouseCurrentAge && spouseCurrentAge < n(params.spouseRetirementAge)) {
+    // 結婚後は spouseCurrentAge が定義される
+    if (spouseCurrentAge !== undefined && spouseCurrentAge < n(params.spouseRetirementAge)) {
       spouseGrossIncome = ((n(params.spouseMainJobIncomeGross) ?? 0) * Math.pow(1 + (n(params.spouseIncomeGrowthRate) ?? 0), i) + (n(params.spouseSideJobIncomeGross) ?? 0));
     }
     let pensionAnnual = currentAge >= params.pensionStartAge ? n(params.pensionMonthly10kJPY) * 10000 * 12 : 0;
-    if (spouseCurrentAge && spouseCurrentAge >= n(params.spousePensionStartAge)) {
+    if (spouseCurrentAge !== undefined && spouseCurrentAge >= n(params.spousePensionStartAge)) {
       pensionAnnual += n(params.spousePensionMonthly10kJPY) * 10000 * 12;
     }
     let idecoDeductionThisYear = 0;
@@ -507,7 +529,7 @@ function runSimulation(params: InputParams): YearlyData[] {
     if (currentAge >= params.retirementAge) {
       retirementExpense = n(params.postRetirementLiving10kJPY) * 10000 * 12 * yearFraction;
     } else {
-      livingExpense = (params.expenseMode === 'simple' ? n(params.livingCostSimpleAnnual) : (n(params.detailedFixedAnnual) + n(params.detailedVariableAnnual))) * yearFraction;
+      livingExpense = currentLivingExpense * yearFraction;
     }
     let childExpense = 0;
     if (params.children) {
@@ -581,11 +603,11 @@ function runSimulation(params: InputParams): YearlyData[] {
     }
     let housingExpense = 0;
     if (params.housing) {
-      if (params.housing.type === '賃貸' && params.housing.rentMonthlyJPY) {
+      if (params.housing.type === '賃貸' && currentHousingExpense > 0) {
         const willBuyHouse = !!params.housing.purchasePlan;
         const purchaseAge = params.housing.purchasePlan?.age ?? Infinity;
         if (!willBuyHouse || currentAge < purchaseAge) {
-          housingExpense += n(params.housing.rentMonthlyJPY) * 12 * yearFraction;
+          housingExpense += currentHousingExpense * yearFraction;
         }
       }
       if (params.housing.type === '持ち家（ローン中）' && params.housing.currentLoan && currentAge < params.initialAge + n(params.housing.currentLoan.remainingYears)) {
@@ -678,7 +700,7 @@ function runSimulation(params: InputParams): YearlyData[] {
     // --- 3. 投資の実行 (黒字の場合) ---
     let totalInvestmentOutflow = 0;
     const canInvest = currentAge < params.retirementAge;
-    if (canInvest) {
+    if (canInvest) { // 退職するまでは投資を継続
       // 投資原資 = (現金残高 - 生活防衛資金)の余剰分
       const investableAmount = Math.max(0, savings - n(params.emergencyFundJPY));
       let investedThisYear = 0;
@@ -701,11 +723,11 @@ function runSimulation(params: InputParams): YearlyData[] {
           cumulativeNisaContribution += nisaAllowed;
           remainingNisaAllowance -= nisaAllowed;
           investmentApplied = nisaAllowed;
-        } else if (p.account === '課税') {
+        } else if (p.account === '課税') { // NISA枠がない、または課税口座指定の場合
           productBalances[productId].principal += actualContribution;
           productBalances[productId].balance += actualContribution;
           investmentApplied = actualContribution;
-        } else if (p.account === 'iDeCo' && currentAge < idecoCashOutAge) {
+        } else if (p.account === 'iDeCo' && currentAge < 60) { // iDeCoは60歳まで
           productBalances[productId].principal += actualContribution;
           productBalances[productId].balance += actualContribution;
           investmentApplied = actualContribution;

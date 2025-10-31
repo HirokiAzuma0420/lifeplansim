@@ -15,7 +15,7 @@
 
 1.  **基礎収入の計算**: 
     - 本人の収入: `mainJobIncomeGross` と `sideJobIncomeGross` を合計し、*修正ポイント*`mainJobIncomeGross`については、`incomeGrowthRate` に基づいて毎年の昇給を反映します。
-    - 配偶者の収入: `spouseMainJobIncomeGross` と `spouseSideJobIncomeGross` を合計し、*修正ポイント* `spouseMainJobIncomeGross`については `spouseIncomeGrowthRate` に基づいて毎年の昇給を反映します。
+    - 配偶者の収入: `spouseMainJobIncomeGross` と `spouseSideJobIncomeGross` を合計し、`spouseMainJobIncomeGross`については `spouseIncomeGrowthRate` に基づいて毎年の昇給を反映します。
 2.  **退職の反映**: `currentAge` が `retirementAge` に達すると、本人および配偶者の収入は0になります。
 3.  **手取り額への変換**: `computeNetAnnual` 関数により、税金や社会保険料を差し引いた手取り年収が計算されます。
     - iDeCoの拠出額 (`idecoDeductionThisYear`) は所得控除として扱われます。
@@ -34,7 +34,7 @@
 ### 3.2. 老後生活費 (`retirementExpense`)
 
 - `currentAge` が `retirementAge` 以上の場合に計算されます。
-- `postRetirementLiving10kJPY` (老後の月間生活費) から `pensionMonthly10kJPY` (月間年金受給額) を差し引いた不足分(*確認ポイント* 月間不足*12をして年間不足額としている？)が、年間の支出として計上されます。
+- `postRetirementLiving10kJPY` (老後の月間生活費) から `pensionMonthly10kJPY` (月間年金受給額) を差し引いた**月間不足額を12倍し、年間の支出として計上**されます。
 - 年金は `pensionStartAge` から受給が開始されると見なされます。
 
 ### 3.3. ライフイベント関連費用
@@ -56,13 +56,14 @@
 
 - **自動車費 (`carExpense`)**: 
     - **現在のローン**: `car.currentLoan` が存在する場合、`remainingMonths` が0になる(*確認ポイント* remainingMonthは月数だが年変換されている？)まで毎年の返済額が `carRecurring` に加算されます。
+    - **現在のローン**: `car.currentLoan` が存在する場合、`remainingMonths` が0になるまで、**その年に支払うべき月数分（最大12ヶ月）**の返済額が `carRecurring` に加算されます。
     - **将来の買い替え**: `firstAfterYears` と `frequencyYears` に基づいて買い替え年を特定します。
         - ローンを利用しない場合 (`car.loan.use` が `false`): 買い替え年に `car.priceJPY` が一括支出 (`carOneOff`) として計上されます。
         - ローンを利用する場合: 買い替え年からローン期間 (`car.loan.years`) が終了するまで、`calculateLoanPayment` 関数で計算された年間返済額が `carRecurring` に加算されます。
 
 - **住居費 (`housingExpense`)**: 
     - **現在のローン**: `housing.currentLoan` が存在する場合、`remainingYears` が終了するまで毎年の返済額が計上されます。
-    - **賃貸**: `housing.type` が `賃貸` で、かつ住宅購入期間やローン返済期間と重複しない場合、`rentMonthlyJPY` に基づく(*確認ポイント* Formpage.tsxでは月家賃を入力するが年額返還されている？)年間家賃が計上されます。
+    - **賃貸**: `housing.type` が `賃貸` で、かつ住宅購入期間やローン返済期間と重複しない場合、`rentMonthlyJPY` (月額家賃) **を12倍した年間家賃**が計上されます。
     - **将来の購入**: `housing.purchasePlan` があり、`currentAge` が購入年齢に達すると、初年度に頭金 (`downPaymentJPY`) が、以降ローン期間終了まで年間返済額が計上されます。
     - **リフォーム**: `housing.renovations` に基づき、指定された年にリフォーム費用 (`costJPY`) が計上されます。
 
@@ -78,11 +79,11 @@
     - `currentAge` が `retirementAge` 未満の場合に拠出が行われます。
     - **商品別モード (`useProducts` が `true`)**: `products` 配列の各商品について、`recurringJPY` (積立) と `spotJPY` (スポット) を拠出します。
         - **NISA**: 年間上限 (`NISA_RECURRING_ANNUAL_CAP`, `NISA_SPOT_ANNUAL_CAP`) と生涯上限 (`NISA_CONTRIBUTION_CAP`) を超えない範囲で拠出されます。
-        - **iDeCo**: 拠出額は所得控除の対象となります。(*確認ポイント* iDeCoの拠出は60歳までとなっている？)
+        - **iDeCo**: 拠出額は所得控除の対象となります。**iDeCoの拠出は、退職年齢ではなく、原則として60歳に達するまで**とします。
     - **口座別モード (`useProducts` が `false`)**: `investmentTaxation` の情報に基づき、NISA口座と課税口座にそれぞれ拠出します。
 
 3.  **資産残高の更新**: 
-    - `(前年末残高 * (1 + 今年のリターン)) + 今年の拠出額` の式で、各投資資産 (NISA, iDeCo, 課税口座) (*修正ポイント* このまとめ方ではなくProductごとに年末残高を計算する) の年末残高を計算します。
+    - `(前年末残高 * (1 + 今年のリターン)) + 今年の拠出額` の式で、**`products` 配列の各商品ごと**に年末残高を計算します。これにより、NISA、iDeCo、課税口座といった口座種別に関わらず、商品単位での残高が追跡されます。
 
 ### 4.2. 現金貯蓄の計算 (`savings`)
 
