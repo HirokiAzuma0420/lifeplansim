@@ -740,6 +740,7 @@ export default function FormPage() {
             ageAtMarriage: n(formData.spouseAgeAtMarriage),
             incomeGross: spouseIncomeForSim,
           },
+          //結婚後の生活費は月ｘ12する
           newLivingCostAnnual: n(formData.livingCostAfterMarriage) * 12,
           newHousingCostAnnual: n(formData.housingCostAfterMarriage) * 12,
         } : undefined,
