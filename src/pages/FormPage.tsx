@@ -2079,19 +2079,24 @@ export default function FormPage() {
                   <p className="text-xs text-gray-500 mt-1">独身時の生活費の1.5倍が自動入力されます。自由に編集可能です。</p>
                 </div>
                 <div className="mb-4">
-                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="housingCostAfterMarriage">
+                  <label className={`block text-sm font-bold mb-2 ${formData.housingType === '持ち家（ローン中）' ? 'text-gray-400' : 'text-gray-700'}`} htmlFor="housingCostAfterMarriage">
                     結婚後の住居費（月額）[円]
                   </label>
                   <input
                     type="number"
                     id="housingCostAfterMarriage"
                     name="housingCostAfterMarriage"
-                    value={formData.housingCostAfterMarriage}
+                    value={formData.housingType === '持ち家（ローン中）' ? '' : formData.housingCostAfterMarriage}
                     onChange={handleInputChange}
-                    className={`shadow border rounded w-full py-2 px-3 text-gray-700 ${errors.housingCostAfterMarriage ? 'border-red-500' : ''}`}
+                    className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.housingCostAfterMarriage ? 'border-red-500' : ''} ${formData.housingType === '持ち家（ローン中）' ? 'bg-gray-200 cursor-not-allowed' : ''}`}
+                    disabled={formData.housingType === '持ち家（ローン中）'}
                   />
                   {errors.housingCostAfterMarriage && <p className="text-red-500 text-xs italic mt-1">{errors.housingCostAfterMarriage}</p>}
-                  <p className="text-xs text-gray-500 mt-1">独身時の住居費の1.3倍が自動入力されます。自由に編集可能です。</p>
+                  {formData.housingType === '持ち家（ローン中）' ? (
+                    <p className="text-xs text-gray-500 mt-1">※現在「持ち家（ローン中）」のため、結婚後も住宅ローンの返済が継続されます。</p>
+                  ) : (
+                    <p className="text-xs text-gray-500 mt-1">独身時の住居費の1.3倍が自動入力されます。自由に編集可能です。</p>
+                  )}
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="engagementCost">
