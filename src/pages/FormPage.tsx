@@ -298,6 +298,29 @@ export default function FormPage() {
     }
   }, [initialStateFromLocation]);
 
+  const totalExpenses = useMemo(() => {
+    if (formData.expenseMethod !== '詳細') return 0;
+    const fixed = [
+      formData.utilitiesCost,
+      formData.communicationCost,
+      formData.insuranceCost,
+      formData.educationCost,
+      formData.otherFixedCost,
+    ].reduce((sum, val) => sum + (Number(val) || 0), 0);
+
+    const variable = [
+      formData.foodCost,
+      formData.dailyNecessitiesCost,
+      formData.transportationCost,
+      formData.clothingBeautyCost,
+      formData.socializingCost,
+      formData.hobbyEntertainmentCost,
+      formData.otherVariableCost,
+    ].reduce((sum, val) => sum + (Number(val) || 0), 0);
+
+    return fixed + variable;
+  }, [formData]);
+
   const validateSection = (sectionIndex: number): boolean => {
     const newErrors: {[key: string]: string} = {};
     const currentSection = effectiveSections[sectionIndex];
@@ -953,29 +976,6 @@ export default function FormPage() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const totalExpenses = useMemo(() => {
-    if (formData.expenseMethod !== '詳細') return 0;
-    const fixed = [      
-      formData.utilitiesCost,
-      formData.communicationCost,
-      formData.insuranceCost,
-      formData.educationCost,
-      formData.otherFixedCost,
-    ].reduce((sum, val) => sum + (Number(val) || 0), 0);
-
-    const variable = [
-      formData.foodCost,
-      formData.dailyNecessitiesCost,
-      formData.transportationCost,
-      formData.clothingBeautyCost,
-      formData.socializingCost,
-      formData.hobbyEntertainmentCost,
-      formData.otherVariableCost,
-    ].reduce((sum, val) => sum + (Number(val) || 0), 0);
-
-    return fixed + variable;
-  }, [formData]);
-
   const totalIncome = useMemo(() => {
     return (
       (Number(formData.mainIncome) || 0) +
@@ -1142,7 +1142,7 @@ export default function FormPage() {
 
     const singleLivingCost = formData.expenseMethod === '簡単'
       ? Number(formData.livingCostSimple) || 0
-      : totalExpenses;
+      : totalExpenses / 10000; // totalExpensesは円/月なので万円/月に変換
 
     if (singleLivingCost > 0) {
       const recommendedCost = Math.round(singleLivingCost * 1.5);
@@ -1151,7 +1151,7 @@ export default function FormPage() {
         livingCostAfterMarriage: String(recommendedCost)
       }));
     }
-  }, [formData.livingCostSimple, totalExpenses, formData.expenseMethod, formData.planToMarry, formData.isLivingCostEdited]);
+  }, [formData.livingCostSimple, formData.expenseMethod, formData.planToMarry, formData.isLivingCostEdited, totalExpenses]);
 
   useEffect(() => {
     if (formData.planToMarry !== 'する' || formData.isHousingCostEdited) return;
@@ -2740,6 +2740,40 @@ const renderConfirmationView = () => {
       });
     }
 
+    // 介護イベント
+    if (formData.parentCareAssumption === 'はい') {
+      formData.parentCarePlans.forEach(plan => {
+        // 介護開始が本人の何歳の時かを計算
+        const startAge = n(formData.personAge) + (n(plan.parentCareStartAge) - n(plan.parentCurrentAge));
+        const endAge = startAge + n(plan.years);
+        const annualCost = n(plan.monthly10kJPY) * 10000 * 12;
+
+        events.push({
+          age: startAge,
+          title: '👨‍👩‍👧‍👦 親の介護開始',
+          details: [
+            { label: '年間介護費用', value: `+ ${formatYen(annualCost)} /年 (〜${endAge}歳)` },
+          ],
+        });
+      });
+    }
+
+    // リフォームイベント
+    if (formData.houseRenovationPlans.length > 0) {
+      formData.houseRenovationPlans.forEach((plan, index) => {
+        if (n(plan.age) > 0) {
+          events.push({
+            age: n(plan.age),
+            title: `🛠️ リフォーム実施 (${index + 1}回目)`,
+            details: [
+              { label: '費用', value: formatManYen(plan.cost) },
+              { label: '繰り返し', value: plan.cycleYears ? `${plan.cycleYears}年ごと` : '1回のみ' },
+            ]
+          });
+        }
+      });
+    }
+
     // イベントを年齢でソート（退職イベントの前に一度ソートが必要）
     events.sort((a, b) => a.age - b.age);
 
@@ -2812,19 +2846,27 @@ const renderConfirmationView = () => {
       });
     }
 
-    // 現在の支出（年間）
-    const annualLivingCost = formData.expenseMethod === '簡単'
-      ? n(formData.livingCostSimple) * 12
-      : totalExpenses * 12;
-    const annualHousingCost = formData.housingType === '賃貸'
-      ? n(formData.currentRentLoanPayment) * 12
-      : formData.housingType === '持ち家（ローン中）'
-      ? n(formData.loanMonthlyPayment) * 12
-      : 0;
-    const annualCarCost = formData.carCurrentLoanInPayment === 'yes'
-      ? n(formData.carCurrentLoanMonthly) * 12
-      : 0;
-    const totalAnnualExpense = annualLivingCost + annualHousingCost + annualCarCost;
+    // --- サマリー表示用の「現在の」年間支出を計算 ---
+    let summaryAnnualExpense = 0;
+    if (formData.expenseMethod === '簡単') {
+      // 簡単入力の場合、生活費は「万円/月」なので円/年に変換
+      summaryAnnualExpense += n(formData.livingCostSimple) * 10000 * 12;
+    } else {
+      // 詳細入力の場合、totalExpensesは「円/月」の合計なので年額に変換
+      summaryAnnualExpense += totalExpenses * 12;
+    }
+    // 現在の住居費（円/月）を年額に変換して加算
+    if (formData.housingType === '賃貸') {
+      summaryAnnualExpense += n(formData.currentRentLoanPayment) * 12;
+    } else if (formData.housingType === '持ち家（ローン中）') {
+      summaryAnnualExpense += n(formData.loanMonthlyPayment) * 12;
+    }
+    // 現在の車のローン（円/月）を年額に変換して加算
+    if (formData.carCurrentLoanInPayment === 'yes') {
+      summaryAnnualExpense += n(formData.carCurrentLoanMonthly) * 12;
+    }
+    // 毎月の貯蓄額は支出に含めない（キャッシュフローで考慮されるため）
+    // const totalAnnualExpense = summaryAnnualExpense; // 変数名が冗長なので直接使う
 
     return (
       <div className="flex flex-col md:flex-row gap-8">
@@ -2837,12 +2879,12 @@ const renderConfirmationView = () => {
           </ConfirmationSection>
           <ConfirmationSection title="💰 現在の収支（年間）">            
             <ConfirmationItem label="世帯の手取り年収" value={formatYen(summaryTotalNetAnnualIncome)} />
-            <ConfirmationItem label="世帯の年間支出" value={formatYen(totalAnnualExpense)} />
+            <ConfirmationItem label="世帯の年間支出" value={formatYen(summaryAnnualExpense)} />
             <ConfirmationItem
               label="年間収支"
               value={
-                <span className={summaryTotalNetAnnualIncome - totalAnnualExpense >= 0 ? 'text-green-600' : 'text-red-600'}>
-                  {summaryTotalNetAnnualIncome - totalAnnualExpense >= 0 ? '+' : ''}{formatYen(summaryTotalNetAnnualIncome - totalAnnualExpense)}
+                <span className={summaryTotalNetAnnualIncome - summaryAnnualExpense >= 0 ? 'text-green-600' : 'text-red-600'}>
+                  {summaryTotalNetAnnualIncome - summaryAnnualExpense >= 0 ? '+' : ''}{formatYen(summaryTotalNetAnnualIncome - summaryAnnualExpense)}
                 </span>
               }
             />
