@@ -508,7 +508,7 @@ export default function FormPage() {
       const mainJobIncomeGross = n(formData.mainIncome) * 10000;
       const sideJobIncomeGross = n(formData.sideJobIncome) * 10000;
       let spouseMainJobIncomeGross = (formData.familyComposition === '既婚' ? n(formData.spouseMainIncome) : 0) * 10000;
-      let spouseSideJobIncomeGross = (formData.familyComposition === '既婚' ? n(formData.spouseSideJobIncome) : 0) * 10000;
+      const spouseSideJobIncomeGross = (formData.familyComposition === '既婚' ? n(formData.spouseSideJobIncome) : 0) * 10000;
 
       // 結婚予定がある場合、配偶者収入をシミュレーションパラメータ用に設定
       let spouseIncomeForSim = 0;
