@@ -86,12 +86,6 @@ const formatManYen = (value: number | string | undefined) => {
   return `${Math.round(num * 10000).toLocaleString()} 円`;
 };
 
-const formatPercent = (value: number | string | undefined) => {
-  const num = Number(value);
-  if (value === undefined || isNaN(num)) return '未設定';
-  return `${num.toFixed(2)} %`;
-};
-
 const ConfirmationSection: React.FC<{ title: string, children: React.ReactNode }> = ({ title, children }) => (
   <div className="mb-8 border border-gray-200 rounded-lg p-4 text-left">
     <h3 className="text-xl font-bold mb-4 border-b pb-2">{title}</h3>
@@ -107,31 +101,6 @@ const ConfirmationItem: React.FC<{ label: string, value: React.ReactNode }> = ({
     <span className="font-semibold text-right">{value}</span>
   </div>
 );
-
-// --- 教育費用の年齢別重み付けテーブル（バックエンドと同期） ---
-const EDUCATION_COST_TABLE = {
-  '公立中心': { // 総額約1,000万円
-    '0-6': 22,   // 22万円/年
-    '7-12': 33,  // 33万円/年
-    '13-15': 44, // 44万円/年
-    '16-18': 55, // 55万円/年
-    '19-22': 88, // 88万円/年
-  },
-  '公私混合': { // 総額約1,600万円
-    '0-6': 35,
-    '7-12': 53,
-    '13-15': 70,
-    '16-18': 88,
-    '19-22': 141,
-  },
-  '私立中心': { // 総額約2,000万円
-    '0-6': 44,
-    '7-12': 66,
-    '13-15': 88,
-    '16-18': 110,
-    '19-22': 176,
-  },
-};
 
 const sections = [
   '家族構成',
@@ -2708,188 +2677,193 @@ export default function FormPage() {
   );
 }
 
-  const renderConfirmationView = () => {
+const renderConfirmationView = () => {
     const n = (v: unknown) => Number(v) || 0;
 
-    const calculateChildCostRange = () => {
-      if (formData.hasChildren !== 'はい') return { min: 0, max: 0 };
+    // --- 右カラム（ライフプラン）のイベントを構築 ---
+    const events: { age: number, title: string, details: { label: string, value: React.ReactNode }[], incomeChange?: number }[] = [];
 
-      const numberOfChildren = n(formData.numberOfChildren);
-      if (numberOfChildren === 0) return { min: 0, max: 0 };
+    // 現在の収入
+    const selfNetIncome = computeNetAnnual(n(formData.mainIncome) * 10000 + n(formData.sideJobIncome) * 10000);
+    const spouseNetIncome = formData.familyComposition === '既婚' ? computeNetAnnual(n(formData.spouseMainIncome) * 10000 + n(formData.spouseSideJobIncome) * 10000) : 0;
+    let currentHouseholdNetIncome = selfNetIncome + spouseNetIncome;
 
-      const pattern = formData.educationPattern as keyof typeof EDUCATION_COST_TABLE;
-      if (!EDUCATION_COST_TABLE[pattern]) return { min: 0, max: 0 };
+    // 結婚イベント
+    if (formData.planToMarry === 'する') {
+      let spouseIncomeForSim = 0;
+      if (formData.spouseIncomePattern === 'パート') spouseIncomeForSim = 1060000;
+      else if (formData.spouseIncomePattern === '正社員') spouseIncomeForSim = 3000000;
+      else if (formData.spouseIncomePattern === 'カスタム') spouseIncomeForSim = n(formData.spouseCustomIncome) * 10000;
+      
+      const spouseNetIncomeAfterMarriage = computeNetAnnual(spouseIncomeForSim);
+      
+      events.push({
+        age: n(formData.marriageAge),
+        title: '💒 結婚',
+        details: [
+          { label: '結婚費用', value: formatYen(totalMarriageCost) },
+          { label: '配偶者の収入が加算', value: `+ ${formatYen(spouseNetIncomeAfterMarriage)} /年` },
+        ],
+        incomeChange: spouseNetIncomeAfterMarriage
+      });
+    }
 
-      const costTable = EDUCATION_COST_TABLE[pattern];
-      const annualCostsInManYen = Object.values(costTable);
+    // 子供イベント
+    if (formData.hasChildren === 'はい') {
+      for (let i = 0; i < n(formData.numberOfChildren); i++) {
+        events.push({
+          age: n(formData.firstBornAge) + i * 3,
+          title: `👶 ${i + 1}人目の子供誕生`,
+          details: [
+            { label: '教育費の発生', value: `〜${n(formData.firstBornAge) + i * 3 + 22}歳まで` }
+          ]
+        });
+      }
+    }
 
-      const minAnnualCostPerChild = Math.min(...annualCostsInManYen) * 10000;
-      const maxAnnualCostPerChild = Math.max(...annualCostsInManYen) * 10000;
+    // 住宅購入イベント
+    if (formData.housePurchasePlan) {
+      events.push({
+        age: n(formData.housePurchasePlan.age),
+        title: '🏠 住宅購入',
+        details: [
+          { label: '物件価格', value: formatManYen(formData.housePurchasePlan.price) },
+          { label: '頭金支払い', value: `- ${formatManYen(formData.housePurchasePlan.downPayment)}` },
+          { label: 'ローン返済開始', value: `〜${n(formData.housePurchasePlan.age) + n(formData.housePurchasePlan.loanYears)}歳まで` },
+        ]
+      });
+    }
 
-      return {
-        min: (minAnnualCostPerChild / 12) * numberOfChildren,
-        max: (maxAnnualCostPerChild / 12) * numberOfChildren,
-      };
-    };
+    // 退職イベント
+    const retirementAge = n(formData.retirementAge);
+    const spouseRetirementAge = n(formData.spouseRetirementAge);
+    const pensionNetIncome = n(formData.pensionAmount) * 10000 * 12;
+    const spousePensionNetIncome = (formData.familyComposition === '既婚' || formData.planToMarry === 'する') ? n(formData.spousePensionAmount) * 10000 * 12 : 0;
+
+    const retirementIncome = pensionNetIncome + spousePensionNetIncome;
+    
+    events.push({
+      age: Math.max(retirementAge, spouseRetirementAge),
+      title: '定年退職',
+      details: [
+        { label: '給与収入が停止', value: '' },
+        { label: '年金受給開始', value: `+ ${formatYen(retirementIncome)} /年` },
+      ],
+      incomeChange: retirementIncome - currentHouseholdNetIncome
+    });
+
+    // イベントを年齢でソート
+    events.sort((a, b) => a.age - b.age);
+
+    // 収入の変遷を計算
+    const incomeHistory: { ageRange: string; income: number }[] = [];
+    let lastAge = n(formData.personAge);
+
+    for (const event of events) {
+      if (event.age > lastAge) {
+        incomeHistory.push({
+          ageRange: `${lastAge}歳〜`,
+          income: currentHouseholdNetIncome
+        });
+      }
+      if (event.incomeChange !== undefined) {
+        currentHouseholdNetIncome += event.incomeChange;
+      }
+      lastAge = event.age;
+    }
+    // 最後の期間を追加
+    if (lastAge <= n(formData.simulationPeriodAge)) {
+      incomeHistory.push({
+        ageRange: `${lastAge}歳〜`,
+        income: currentHouseholdNetIncome
+      });
+    }
+
+    // 現在の支出（年間）
+    const annualLivingCost = formData.expenseMethod === '簡単'
+      ? n(formData.livingCostSimple) * 12
+      : totalExpenses * 12;
+    const annualHousingCost = formData.housingType === '賃貸'
+      ? n(formData.currentRentLoanPayment) * 12
+      : formData.housingType === '持ち家（ローン中）'
+      ? n(formData.loanMonthlyPayment) * 12
+      : 0;
+    const annualCarCost = formData.carCurrentLoanInPayment === 'yes'
+      ? n(formData.carCurrentLoanMonthly) * 12
+      : 0;
+    const totalAnnualExpense = annualLivingCost + annualHousingCost + annualCarCost;
+
     return (
-      <>
-        <ConfirmationSection title="基本情報">
-          <ConfirmationItem label="家族構成" value={formData.familyComposition} />
-          <ConfirmationItem label="あなたの現在の年齢" value={`${formData.personAge} 歳`} />
-          {formData.familyComposition === '既婚' && <ConfirmationItem label="配偶者の現在の年齢" value={`${formData.spouseAge} 歳`} />}
-          <ConfirmationItem label="シミュレーション終了年齢" value={`${formData.simulationPeriodAge} 歳`} />
-        </ConfirmationSection>
-
-        <ConfirmationSection title="世帯の収入">
-          <ConfirmationItem label="あなたの年収（額面）" value={formatManYen(formData.mainIncome)} />
-          <ConfirmationItem label="あなたの副業収入（額面）" value={formatManYen(formData.sideJobIncome)} />
-          <ConfirmationItem label="あなたの収入昇給率" value={formatPercent(annualRaiseRate)} />
-          {formData.familyComposition === '既婚' && (
-            <>
-              <ConfirmationItem label="配偶者の年収（額面）" value={formatManYen(formData.spouseMainIncome)} />
-              <ConfirmationItem label="配偶者の副業収入（額面）" value={formatManYen(formData.spouseSideJobIncome)} />
-              <ConfirmationItem label="配偶者の収入昇給率" value={formatPercent(spouseAnnualRaiseRate)} />
-            </>
-          )}
-        </ConfirmationSection>
-
-        <ConfirmationSection title="基本支出">
-          <ConfirmationItem label="支出モード" value={formData.expenseMethod} />
-          {formData.expenseMethod === '簡単' ? (
-            <ConfirmationItem label="年間生活費" value={formatYen(n(formData.livingCostSimple) * 12)} />
-          ) : (
-            <ConfirmationItem label="月間生活費（詳細合計）" value={formatYen(totalExpenses)} />
-          )}
-        </ConfirmationSection>
-
-        <ConfirmationSection title="ライフイベント">
-          {formData.carPurchasePlan === 'yes' && (
-            <>
-              <h4 className="font-semibold mt-4">車</h4>
-              <ConfirmationItem label="車両価格" value={formatManYen(formData.carPrice)} />
-              <ConfirmationItem label="最初の購入" value={`${formData.carFirstReplacementAfterYears} 年後`} />
-              <ConfirmationItem label="買い替え頻度" value={`${formData.carReplacementFrequency} 年ごと`} />
-            </>
-          )}
-          <h4 className="font-semibold mt-4">住居</h4>
-          <ConfirmationItem label="住居タイプ" value={formData.housingType} />
-          {formData.housingType === '賃貸' && <ConfirmationItem label="現在の家賃（月額）" value={formatYen(formData.currentRentLoanPayment)} />}
-          {formData.housingType === '持ち家（ローン中）' && <ConfirmationItem label="現在のローン返済（月額）" value={`${formatYen(formData.loanMonthlyPayment)} (残り${formData.loanRemainingYears}年)`} />}
-          {formData.planToMarry === 'する' && (
-            <>
-              <h4 className="font-semibold mt-4">結婚</h4>
-              <ConfirmationItem label="結婚予定年齢" value={`${formData.marriageAge} 歳`} />
-              <ConfirmationItem label="結婚時の配偶者の年齢" value={`${formData.spouseAgeAtMarriage} 歳`} />
-              <ConfirmationItem
-                label="配偶者の収入"
-                value={
-                  formData.spouseIncomePattern === 'パート' ? 'パート (106万円)' :
-                  formData.spouseIncomePattern === '正社員' ? '正社員 (300万円)' :
-                  `カスタム (${formatManYen(formData.spouseCustomIncome)})`
-                }
-              />
-              <ConfirmationItem label="結婚後の生活費（月額）" value={formatYen(formData.livingCostAfterMarriage)} />
-              <ConfirmationItem label="結婚後の住居費（月額）" value={formatYen(formData.housingCostAfterMarriage)} />
-            </>
-          )}
-          {formData.housePurchasePlan && (
-            <>
-              <ConfirmationItem label="購入予定年齢" value={`${formData.housePurchasePlan.age} 歳`} />
-              <ConfirmationItem label="物件価格" value={formatManYen(formData.housePurchasePlan.price)} />
-            </>
-          )}
-          {formData.hasChildren === 'はい' && (
-            <>
-              <h4 className="font-semibold mt-4">子供</h4>
-              <ConfirmationItem label="人数" value={`${formData.numberOfChildren} 人`} />
-              <ConfirmationItem label="第一子の誕生" value={`${formData.firstBornAge} 歳のとき`} />
-              <ConfirmationItem label="教育プラン" value={formData.educationPattern} />
-            </>
-          )}
-        </ConfirmationSection>
-
-        <ConfirmationSection title="月々の消費支出（概算）">
-          <p className="text-xs text-gray-500 mb-2">シミュレーション開始後の、月々にかかる消費の目安です。</p>
-          <ConfirmationItem
-            label="基本生活費"
-            value={formatYen(
-              formData.expenseMethod === '簡単'
-                ? n(formData.livingCostSimple)
-                : totalExpenses // totalExpenses is already monthly
-            )}
-          />
-          {n(formData.currentRentLoanPayment) > 0 && formData.housingType === '賃貸' && (
-            <ConfirmationItem label="住居費（賃貸）" value={formatYen(n(formData.currentRentLoanPayment))} />
-          )}
-          {n(formData.loanMonthlyPayment) > 0 && formData.housingType === '持ち家（ローン中）' && (
-            <ConfirmationItem label="住居費（ローン返済）" value={formatYen(n(formData.loanMonthlyPayment))} />
-          )}
-          {n(formData.carCurrentLoanMonthly) > 0 && formData.carCurrentLoanInPayment === 'yes' && (
-            <ConfirmationItem label="車両費（ローン返済）" value={formatYen(n(formData.carCurrentLoanMonthly))} />
-          )}
-          {formData.hasChildren === 'はい' && (
+      <div className="flex flex-col md:flex-row gap-8">
+        {/* Left Column */}
+        <div className="w-full md:w-1/3 space-y-6">
+          <ConfirmationSection title="👤 プロフィール">
+            <ConfirmationItem label="家族構成" value={formData.familyComposition} />
+            <ConfirmationItem label="あなたの年齢" value={`${formData.personAge} 歳`} />
+            {formData.familyComposition === '既婚' && <ConfirmationItem label="配偶者の年齢" value={`${formData.spouseAge} 歳`} />}
+          </ConfirmationSection>
+          <ConfirmationSection title="💰 現在の収支（年間）">
+            <ConfirmationItem label="あなたの収入（手取り）" value={formatYen(totalNetAnnualIncome)} />
+            <ConfirmationItem label="世帯の年間支出" value={formatYen(totalAnnualExpense)} />
             <ConfirmationItem
-              label="教育費（月額換算）"
-              value={`${formatYen(calculateChildCostRange().min)} 〜 ${formatYen(calculateChildCostRange().max)}`}
+              label="年間収支"
+              value={
+                <span className={totalNetAnnualIncome - totalAnnualExpense >= 0 ? 'text-green-600' : 'text-red-600'}>
+                  {totalNetAnnualIncome - totalAnnualExpense >= 0 ? '+' : ''}{formatYen(totalNetAnnualIncome - totalAnnualExpense)}
+                </span>
+              }
             />
-          )}
-          <div className="mt-2 pt-2 border-t">
-            <ConfirmationItem
-              label="消費支出 合計"
-              value={formatYen(
-                (formData.expenseMethod === '簡単' ? n(formData.livingCostSimple) : totalExpenses) +
-                (formData.housingType === '賃貸' ? n(formData.currentRentLoanPayment) : 0) +
-                (formData.housingType === '持ち家（ローン中）' ? n(formData.loanMonthlyPayment) : 0) +
-                (formData.carCurrentLoanInPayment === 'yes' ? n(formData.carCurrentLoanMonthly) : 0) +
-                (formData.hasChildren === 'はい' ? calculateChildCostRange().min : 0)
-              )}
-            />
-          </div>
-        </ConfirmationSection>
+          </ConfirmationSection>
+          <ConfirmationSection title="🏦 現在の資産">
+            <ConfirmationItem label="総資産" value={formatYen(n(formData.currentSavings) * 10000 + n(formData.investmentStocksCurrent) * 10000 + n(formData.investmentTrustCurrent) * 10000 + n(formData.investmentBondsCurrent) * 10000 + n(formData.investmentIdecoCurrent) * 10000 + n(formData.investmentCryptoCurrent) * 10000 + n(formData.investmentOtherCurrent) * 10000)} />
+            <ConfirmationItem label="預貯金" value={formatManYen(formData.currentSavings)} />
+            <ConfirmationItem label="投資評価額" value={formatManYen(n(formData.investmentStocksCurrent) + n(formData.investmentTrustCurrent) + n(formData.investmentBondsCurrent) + n(formData.investmentIdecoCurrent) + n(formData.investmentCryptoCurrent) + n(formData.investmentOtherCurrent))} />
+          </ConfirmationSection>
+        </div>
 
-        <ConfirmationSection title="月々の貯蓄・投資（概算）">
-          <ConfirmationItem label="積立貯金" value={formatYen(n(formData.monthlySavings))} />
-          <ConfirmationItem label="積立投資" value={formatYen(totalInvestment.monthly)} />
-          <div className="mt-2 pt-2 border-t">
-            <ConfirmationItem label="貯蓄・投資 合計" value={formatYen(n(formData.monthlySavings) + totalInvestment.monthly)} />
-          </div>
-        </ConfirmationSection>
-
-        <ConfirmationSection title="老後の計画">
-          <ConfirmationItem label="あなたの退職年齢" value={`${formData.retirementAge} 歳`} />
-          <ConfirmationItem label="あなたの年金受給開始年齢" value={`${formData.pensionStartAge} 歳`} />
-          <ConfirmationItem label="退職後の生活費（月額）" value={formatManYen(formData.postRetirementLivingCost)} />
-          <ConfirmationItem label="あなたの公的年金受給額（月額）" value={formatManYen(formData.pensionAmount)} />          
-          {formData.familyComposition === '既婚' && (
-            <>
-              <ConfirmationItem label="配偶者の退職年齢" value={`${formData.spouseRetirementAge} 歳`} />
-              <ConfirmationItem label="配偶者の年金受給開始年齢" value={`${formData.spousePensionStartAge} 歳`} />
-              <ConfirmationItem label="配偶者の公的年金受給額（月額）" value={formatManYen(formData.spousePensionAmount)} />
-            </>
-          )}
-          {formData.familyComposition === '独身' && formData.planToMarry === 'する' && (
-            <>
-              <ConfirmationItem label="配偶者の退職年齢" value={`${formData.spouseRetirementAge} 歳`} />
-              <ConfirmationItem label="配偶者の年金受給開始年齢" value={`${formData.spousePensionStartAge} 歳`} />
-              <ConfirmationItem label="配偶者の公的年金受給額（月額）" value={formatManYen(formData.spousePensionAmount)} />
-            </>
-          )}
-        </ConfirmationSection>
-
-        <ConfirmationSection title="資産と投資">
-          <ConfirmationItem label="現在の預貯金" value={formatManYen(formData.currentSavings)} />
-          <ConfirmationItem label="毎月の積立貯金額" value={formatYen(formData.monthlySavings)} />
-          <ConfirmationItem label="生活防衛資金" value={formatManYen(formData.emergencyFund)} />
-          <h4 className="font-semibold mt-4">投資</h4>
-          <ConfirmationItem label="現在の投資評価額合計" value={formatManYen(
-            n(formData.investmentStocksCurrent) + n(formData.investmentTrustCurrent) + n(formData.investmentBondsCurrent) +
-            n(formData.investmentIdecoCurrent) + n(formData.investmentCryptoCurrent) + n(formData.investmentOtherCurrent)
-          )} />
-          <ConfirmationItem label="毎月の積立投資額合計" value={formatYen(totalInvestment.monthly)} />
-          <ConfirmationItem label="利回りシナリオ" value={formData.interestRateScenario} />
-          {formData.interestRateScenario === '固定利回り' && <ConfirmationItem label="固定利回り" value={formatPercent(formData.fixedInterestRate)} />}
-        </ConfirmationSection>
-      </>
+        {/* Right Column */}
+        <div className="w-full md:w-2/3">
+          <ConfirmationSection title="🚀 将来のライフプランと収入の変化">
+            <div className="space-y-6">
+              <div>
+                <p className="font-semibold">{n(formData.personAge)}歳 (現在)</p>
+                <p className="text-sm text-gray-600 pl-4">世帯手取り年収: {formatYen(selfNetIncome + spouseNetIncome)}</p>
+              </div>
+              {events.map((event, index) => {
+                const incomeDiff = event.incomeChange;
+                return (
+                  <div key={index}>
+                    <hr className="my-4" />
+                    <p className="font-semibold">{event.age}歳</p>
+                    <div className="pl-4">
+                      <p className="font-bold">{event.title}</p>
+                      <ul className="list-disc list-inside text-sm text-gray-600">
+                        {event.details.map((detail, i) => (
+                          <li key={i}>{detail.label}: {detail.value}</li>
+                        ))}
+                      </ul>
+                      {incomeDiff !== undefined && (
+                        <p className="text-sm mt-1">
+                          世帯手取り年収:
+                          <span className={incomeDiff >= 0 ? 'text-green-600' : 'text-red-600'}>
+                            {' '}{formatYen(incomeHistory[index]?.income ?? 0)}
+                            {' '}({incomeDiff >= 0 ? '+' : ''}{formatYen(incomeDiff)})
+                          </span>
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+              <div>
+                <hr className="my-4" />
+                <p className="font-semibold">{n(formData.simulationPeriodAge)}歳</p>
+                <p className="pl-4 font-bold">シミュレーション終了</p>
+              </div>
+            </div>
+          </ConfirmationSection>
+        </div>
+      </div>
     );
   };
 
