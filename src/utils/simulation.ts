@@ -62,9 +62,14 @@ export const buildDashboardDataset = (
     const prevEntry = i > 0 ? yearlyData[i - 1] : null;
     const prevNisaPrincipal = prevEntry ? sanitize(prevEntry.nisa.principal) : 0;
     const prevIdecoPrincipal = prevEntry ? sanitize(prevEntry.ideco.principal) : 0;
+    const prevTaxablePrincipal = prevEntry ? sanitize(prevEntry.taxable.principal) : 0;
+
+    // 年間投資額を平均化された元本の差分から再計算する
+    const principalChange = (nisaPrincipal - prevNisaPrincipal) + (idecoPrincipal - prevIdecoPrincipal) + (taxablePrincipal - prevTaxablePrincipal);
+    const recalculatedInvestment = Math.max(0, principalChange);
+
     const nisaContribution = nisaPrincipal - prevNisaPrincipal;
     const idecoContribution = idecoPrincipal - prevIdecoPrincipal;
-
 
     const result: EnrichedYearlyAsset = {
       age: entry.age,
@@ -73,9 +78,9 @@ export const buildDashboardDataset = (
       p90: sanitize(percentileData?.p90[i]),
       総資産: sanitize(entry.totalAssets),
       投資元本: totalPrincipal,
-      年間収入: sanitize(entry.income), // 収入と利回りの計算を移動
-      年間投資額: sanitize(entry.totalInvestment),
-      年間収支: sanitize(entry.income - entry.totalExpense - entry.totalInvestment),
+      年間収入: sanitize(entry.income),
+      年間投資額: recalculatedInvestment, // 再計算した値を使用
+      年間収支: sanitize(entry.income - entry.totalExpense - recalculatedInvestment), // 再計算した値で収支も修正
       年間支出: sanitize(entry.totalExpense),
       現金: sanitize(entry.savings),
       NISA: sanitize(entry.nisa.balance),
