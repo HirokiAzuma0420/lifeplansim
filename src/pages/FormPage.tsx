@@ -2849,8 +2849,8 @@ const renderConfirmationView = () => {
     // --- サマリー表示用の「現在の」年間支出を計算 ---
     let summaryAnnualExpense = 0;
     if (formData.expenseMethod === '簡単') {
-      // 簡単入力の場合、生活費は「万円/月」なので円/年に変換
-      summaryAnnualExpense += n(formData.livingCostSimple) * 10000 * 12;
+      // 簡単入力の場合、生活費は「円/月」なので円/年に変換
+      summaryAnnualExpense += n(formData.livingCostSimple) * 12;
     } else {
       // 詳細入力の場合、totalExpensesは「円/月」の合計なので年額に変換
       summaryAnnualExpense += totalExpenses * 12;
