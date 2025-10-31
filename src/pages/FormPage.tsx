@@ -2684,9 +2684,15 @@ const renderConfirmationView = () => {
     const events: { age: number, title: string, details: { label: string, value: React.ReactNode }[], incomeChange?: number }[] = [];
 
     // 現在の収入
-    const selfNetIncome = computeNetAnnual(n(formData.mainIncome) * 10000 + n(formData.sideJobIncome) * 10000);
-    const spouseNetIncome = formData.familyComposition === '既婚' ? computeNetAnnual(n(formData.spouseMainIncome) * 10000 + n(formData.spouseSideJobIncome) * 10000) : 0;
-    let currentHouseholdNetIncome = selfNetIncome + spouseNetIncome;
+    const selfGrossIncome = n(formData.mainIncome) * 10000 + n(formData.sideJobIncome) * 10000;
+    const selfNetIncome = computeNetAnnual(selfGrossIncome);
+    
+    // サマリー表示用の「現在の」世帯手取り年収
+    const currentSpouseGrossIncome = formData.familyComposition === '既婚' ? (n(formData.spouseMainIncome) * 10000 + n(formData.spouseSideJobIncome) * 10000) : 0;
+    const summaryTotalNetAnnualIncome = selfNetIncome + computeNetAnnual(currentSpouseGrossIncome);
+
+    const spouseNetIncome = formData.familyComposition === '既婚' ? computeNetAnnual(currentSpouseGrossIncome) : 0;
+    const currentHouseholdNetIncome = selfNetIncome + spouseNetIncome;
 
     // 結婚イベント
     if (formData.planToMarry === 'する') {
@@ -2734,46 +2740,73 @@ const renderConfirmationView = () => {
       });
     }
 
+    // イベントを年齢でソート（退職イベントの前に一度ソートが必要）
+    events.sort((a, b) => a.age - b.age);
+
+    // 収入の変遷を計算（退職イベントの計算に必要）
+    const incomeHistory: { ageRange: string; income: number }[] = [];
+    let lastAgeForHistory = n(formData.personAge);
+    let timelineHouseholdNetIncomeForHistory = currentHouseholdNetIncome;
+
+    for (const event of events) {
+      if (event.age > lastAgeForHistory) {
+        incomeHistory.push({
+          ageRange: `${lastAgeForHistory}歳〜`,
+          income: timelineHouseholdNetIncomeForHistory
+        });
+      }
+      if (event.incomeChange !== undefined) {
+        timelineHouseholdNetIncomeForHistory += event.incomeChange;
+      }
+      lastAgeForHistory = event.age;
+    }
+
+
     // 退職イベント
     const retirementAge = n(formData.retirementAge);
     const spouseRetirementAge = n(formData.spouseRetirementAge);
     const pensionNetIncome = n(formData.pensionAmount) * 10000 * 12;
     const spousePensionNetIncome = (formData.familyComposition === '既婚' || formData.planToMarry === 'する') ? n(formData.spousePensionAmount) * 10000 * 12 : 0;
 
+    // 退職直前の給与収入を計算（結婚イベントによる変動を考慮）
+    const incomeBeforeRetirement = incomeHistory.length > 0 ? incomeHistory[incomeHistory.length - 1].income : currentHouseholdNetIncome;
     const retirementIncome = pensionNetIncome + spousePensionNetIncome;
     
     events.push({
       age: Math.max(retirementAge, spouseRetirementAge),
       title: '定年退職',
       details: [
-        { label: '給与収入が停止', value: '' },
+        // incomeBeforeRetirement を使って停止する収入額を表示（オプション）
+        { label: '給与収入が停止', value: `- ${formatYen(incomeBeforeRetirement)} /年` },
         { label: '年金受給開始', value: `+ ${formatYen(retirementIncome)} /年` },
       ],
-      incomeChange: retirementIncome - currentHouseholdNetIncome
+      incomeChange: retirementIncome - incomeBeforeRetirement
     });
 
     // イベントを年齢でソート
     events.sort((a, b) => a.age - b.age);
 
     // 収入の変遷を計算
-    const incomeHistory: { ageRange: string; income: number }[] = [];
+    const finalIncomeHistory: { ageRange: string; income: number }[] = [];
     let lastAge = n(formData.personAge);
 
+    // タイムライン用の収入履歴を再計算
+    let timelineHouseholdNetIncome = currentHouseholdNetIncome;
     for (const event of events) {
       if (event.age > lastAge) {
-        incomeHistory.push({
+        finalIncomeHistory.push({
           ageRange: `${lastAge}歳〜`,
-          income: currentHouseholdNetIncome
+          income: timelineHouseholdNetIncome
         });
       }
       if (event.incomeChange !== undefined) {
-        currentHouseholdNetIncome += event.incomeChange;
+        timelineHouseholdNetIncome += event.incomeChange;
       }
       lastAge = event.age;
     }
     // 最後の期間を追加
     if (lastAge <= n(formData.simulationPeriodAge)) {
-      incomeHistory.push({
+      finalIncomeHistory.push({
         ageRange: `${lastAge}歳〜`,
         income: currentHouseholdNetIncome
       });
@@ -2802,14 +2835,14 @@ const renderConfirmationView = () => {
             <ConfirmationItem label="あなたの年齢" value={`${formData.personAge} 歳`} />
             {formData.familyComposition === '既婚' && <ConfirmationItem label="配偶者の年齢" value={`${formData.spouseAge} 歳`} />}
           </ConfirmationSection>
-          <ConfirmationSection title="💰 現在の収支（年間）">
-            <ConfirmationItem label="あなたの収入（手取り）" value={formatYen(totalNetAnnualIncome)} />
+          <ConfirmationSection title="💰 現在の収支（年間）">            
+            <ConfirmationItem label="世帯の手取り年収" value={formatYen(summaryTotalNetAnnualIncome)} />
             <ConfirmationItem label="世帯の年間支出" value={formatYen(totalAnnualExpense)} />
             <ConfirmationItem
               label="年間収支"
               value={
-                <span className={totalNetAnnualIncome - totalAnnualExpense >= 0 ? 'text-green-600' : 'text-red-600'}>
-                  {totalNetAnnualIncome - totalAnnualExpense >= 0 ? '+' : ''}{formatYen(totalNetAnnualIncome - totalAnnualExpense)}
+                <span className={summaryTotalNetAnnualIncome - totalAnnualExpense >= 0 ? 'text-green-600' : 'text-red-600'}>
+                  {summaryTotalNetAnnualIncome - totalAnnualExpense >= 0 ? '+' : ''}{formatYen(summaryTotalNetAnnualIncome - totalAnnualExpense)}
                 </span>
               }
             />
@@ -2846,7 +2879,7 @@ const renderConfirmationView = () => {
                         <p className="text-sm mt-1">
                           世帯手取り年収:
                           <span className={incomeDiff >= 0 ? 'text-green-600' : 'text-red-600'}>
-                            {' '}{formatYen(incomeHistory[index]?.income ?? 0)}
+                            {' '}{formatYen((finalIncomeHistory[index - 1]?.income ?? currentHouseholdNetIncome) + incomeDiff)}
                             {' '}({incomeDiff >= 0 ? '+' : ''}{formatYen(incomeDiff)})
                           </span>
                         </p>
