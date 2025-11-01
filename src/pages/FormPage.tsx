@@ -2830,8 +2830,17 @@ const renderConfirmationView = () => {
       { label: '住居費', value: currentHousingMonthly },
       { label: '車のローン', value: currentCarLoanMonthly },
       { label: '介護費用', value: currentCareMonthly },
-      { label: '教育費(想定)', value: currentEducationMonthly },
+      { label: '教育費', value: currentEducationMonthly },
     ].filter(p => p.value > 0);
+
+    // 月額総支出を計算
+    const totalMonthlyExpense =
+      monthlyLivingExpense +
+      currentHousingMonthly +
+      currentCarLoanMonthly +
+      currentCareMonthly +
+      currentEducationMonthly;
+
 
     // サマリー表示用の「現在の」世帯手取り年収
     const currentSpouseGrossIncome = formData.familyComposition === '既婚' ? (n(formData.spouseMainIncome) * 10000 + n(formData.spouseSideJobIncome) * 10000) : 0;
@@ -3139,8 +3148,9 @@ const renderConfirmationView = () => {
                     </ul>
                   </li>
                   <li className="list-none pt-2 mt-2 border-t border-gray-200 font-semibold">支出</li>
-                  <li>月の生活費: {formatYen(monthlyLivingExpense)}</li>
+                  <li>月額総支出: {formatYen(totalMonthlyExpense)}</li>
                   <ul className="list-none pl-5">
+                    <li>└ 生活費: {formatYen(monthlyLivingExpense)}</li>
                     {currentPayments.map(p => (
                       <li key={p.label}>{p.label} (月額): {formatYen(p.value)}</li>
                     ))}
