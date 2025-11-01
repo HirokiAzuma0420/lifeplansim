@@ -252,6 +252,9 @@ const createDefaultFormData = () => ({
     { name: '電子レンジ', cycle: 8, cost: 3, firstReplacementAfterYears: '' as number | '' },
     { name: '掃除機', cycle: 6, cost: 2, firstReplacementAfterYears: '' as number | '' },
   ],
+  // 昇給率をformDataに統合
+  annualRaiseRate: '1.5',
+  spouseAnnualRaiseRate: '1.5',
 });
 
 export type FormDataState = ReturnType<typeof createDefaultFormData>;
@@ -267,11 +270,10 @@ export default function FormPage() {
   const initialStateFromLocation = locationState?.rawFormData;
   const initialSectionIndex = locationState?.sectionIndex ?? 0;
   const [showBackModal, setShowBackModal] = useState(false);
-  const [annualRaiseRate, setAnnualRaiseRate] = useState(1.5);
-  const [spouseAnnualRaiseRate, setSpouseAnnualRaiseRate] = useState(1.5);
   const [isCompleted, setIsCompleted] = useState(false);
   const [result, setResult] = useState<object | string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [totalNetAnnualIncome, setTotalNetAnnualIncome] = useState(0);
 
@@ -293,11 +295,8 @@ export default function FormPage() {
 
     const cachedData = localStorage.getItem(LIFE_PLAN_FORM_CACHE_KEY);
     if (cachedData) {
-      if (window.confirm('前回の入力値があります。引き継ぎますか？')) {
-        setFormData(JSON.parse(cachedData));
-      } else {
-        localStorage.removeItem(LIFE_PLAN_FORM_CACHE_KEY);
-      }
+      // window.confirmの代わりにモーダルを表示する
+      setShowRestoreModal(true);
     }
   }, [initialStateFromLocation]);
 
@@ -536,8 +535,8 @@ export default function FormPage() {
       let spouseMainJobIncomeGross = (formData.familyComposition === '既婚' ? n(formData.spouseMainIncome) : 0) * 10000;
       const spouseSideJobIncomeGross = (formData.familyComposition === '既婚' ? n(formData.spouseSideJobIncome) : 0) * 10000;
 
-      // 結婚予定がある場合、配偶者収入をシミュレーションパラメータ用に設定
-      let spouseIncomeForSim = 0;
+      // 結婚予定がある場合の配偶者収入
+      let spouseIncomeForSim = 0; // シミュレーションパラメータ用
       if (formData.planToMarry === 'する') {
         if (formData.spouseIncomePattern === 'パート') {
           spouseIncomeForSim = 1060000;
@@ -546,7 +545,7 @@ export default function FormPage() {
         } else if (formData.spouseIncomePattern === 'カスタム') {
           spouseIncomeForSim = n(formData.spouseCustomIncome) * 10000;
         }
-        // 既婚ユーザーの入力と競合しないように、ここでは mainJobIncomeGross に加算
+        // 既婚ユーザーの入力と競合しないように、spouseMainJobIncomeGross を上書き
         spouseMainJobIncomeGross = spouseIncomeForSim;
       }
 
@@ -724,8 +723,8 @@ export default function FormPage() {
         sideJobIncomeGross: sideJobIncomeGross,
         spouseMainJobIncomeGross: spouseMainJobIncomeGross,
         spouseSideJobIncomeGross: spouseSideJobIncomeGross,
-        incomeGrowthRate: n(annualRaiseRate) / 100,
-        spouseIncomeGrowthRate: formData.familyComposition === '既婚' ? n(spouseAnnualRaiseRate) / 100 : undefined,
+        incomeGrowthRate: n(formData.annualRaiseRate) / 100,
+        spouseIncomeGrowthRate: (formData.familyComposition === '既婚' || formData.planToMarry === 'する') ? n(formData.spouseAnnualRaiseRate) / 100 : undefined,
 
         expenseMode: formData.expenseMethod === '簡単' ? 'simple' : 'detailed',
         // 万円/月 → 円/年
@@ -1405,8 +1404,9 @@ export default function FormPage() {
                   id="annualRaiseRate"
                   step="0.1"
                   min="0"
-                  value={annualRaiseRate}
-                  onChange={(e) => setAnnualRaiseRate(parseFloat(e.target.value))}
+                  name="annualRaiseRate"
+                  value={formData.annualRaiseRate || ''}
+                  onChange={handleInputChange}
                   className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 />
               </div>
@@ -1468,8 +1468,9 @@ export default function FormPage() {
                     id="spouseAnnualRaiseRate"
                     step="0.1"
                     min="0"
-                    value={spouseAnnualRaiseRate}
-                    onChange={(e) => setSpouseAnnualRaiseRate(parseFloat(e.target.value))}
+                    name="spouseAnnualRaiseRate"
+                    value={formData.spouseAnnualRaiseRate || ''}
+                    onChange={handleInputChange}
                     className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   />
                 </div>
@@ -3042,6 +3043,39 @@ const renderConfirmationView = () => {
 
   return (
     <>
+      {showRestoreModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded-lg shadow-xl max-w-sm w-full text-center">
+            <h2 className="text-xl font-bold mb-4">入力の再開</h2>
+            <p className="text-gray-600 mb-6">前回の入力内容があります。引き継ぎますか？</p>
+            <div className="flex justify-center space-x-4">
+              <button
+                onClick={() => {
+                  localStorage.removeItem(LIFE_PLAN_FORM_CACHE_KEY);
+                  setShowRestoreModal(false);
+                  // 念のため初期化
+                  setFormData(createDefaultFormData());
+                }}
+                className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-semibold"
+              >
+                いいえ
+              </button>
+              <button
+                onClick={() => {
+                  const cachedData = localStorage.getItem(LIFE_PLAN_FORM_CACHE_KEY);
+                  if (cachedData) {
+                    setFormData(JSON.parse(cachedData));
+                  }
+                  setShowRestoreModal(false);
+                }}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold"
+              >
+                はい
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {showBackModal && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
