@@ -2817,28 +2817,50 @@ const renderConfirmationView = () => {
     // ユーザー本人の退職イベント
     events.push({
         age: retirementAge,
-        title: '👤 あなたの退職',
+        title: '👤 あなたの退職・年金受給',
         details: [
             { label: '給与収入が停止', value: `手取り年収が減少します` },
-            { label: '年金受給開始', value: `+ ${formatYen(pensionNetIncome)} /年` },
+            { label: '年金受給開始', value: `+ ${formatYen(pensionNetIncome)} /年 (開始年齢: ${formData.pensionStartAge}歳)` },
         ],
         incomeChange: pensionNetIncome - selfNetIncome // 概算の収入変動
     });
 
     // 配偶者の退職イベント
     if (formData.familyComposition === '既婚' || formData.planToMarry === 'する') {
-        const spouseRetirementAge = n(formData.spouseRetirementAge);
+        const personAge = n(formData.personAge);
+        const spouseCurrentAge = formData.familyComposition === '既婚' ? n(formData.spouseAge) : n(formData.spouseAgeAtMarriage);
+
+        const spouseRetirementTargetAge = n(formData.spouseRetirementAge);
+        const spousePensionStartTargetAge = n(formData.spousePensionStartAge);
         const spousePensionNetIncome = n(formData.spousePensionAmount) * 10000 * 12;
-        if (spouseNetIncome > 0 || spousePensionNetIncome > 0) {
-             events.push({
-                age: spouseRetirementAge,
-                title: 'パートナーの退職',
-                details: [
-                    ...(spouseNetIncome > 0 ? [{ label: '給与収入が停止', value: `手取り年収が減少します` }] : []),
-                    { label: '年金受給開始', value: `+ ${formatYen(spousePensionNetIncome)} /年` },
-                ],
-                incomeChange: spousePensionNetIncome - spouseNetIncome // 概算の収入変動
-            });
+
+        // 配偶者の退職が、本人の何歳の時に起こるか
+        const spouseRetirementAgeOnPersonTimeline = personAge + (spouseRetirementTargetAge - spouseCurrentAge);
+        // 配偶者の年金受給が、本人の何歳の時に起こるか
+        const spousePensionStartAgeOnPersonTimeline = personAge + (spousePensionStartTargetAge - spouseCurrentAge);
+
+        // 配偶者の収入がある場合、退職イベントを追加
+        if (spouseNetIncome > 0) {
+            events.push({
+               age: spouseRetirementAgeOnPersonTimeline,
+               title: 'パートナーの退職',
+               details: [
+                   { label: '給与収入が停止', value: `手取り年収が減少します` },
+               ],
+               incomeChange: -spouseNetIncome
+           });
+        }
+
+        // 配偶者の年金収入がある場合、年金受給開始イベントを追加
+        if (spousePensionNetIncome > 0) {
+            events.push({
+               age: spousePensionStartAgeOnPersonTimeline,
+               title: 'パートナーの年金受給開始',
+               details: [
+                   { label: '年金受給開始', value: `+ ${formatYen(spousePensionNetIncome)} /年` },
+               ],
+               incomeChange: spousePensionNetIncome
+           });
         }
     }
 
@@ -2940,7 +2962,7 @@ const renderConfirmationView = () => {
                       <ul className="list-disc list-inside text-sm text-gray-600">
                         {event.details.map((detail, i) => (
                           <li key={i}>{detail.label}: {detail.value}</li>
-                        ))}
+                        ))} 
                       </ul>
                       {incomeDiff !== undefined && (
                         <p className="text-sm mt-1">
