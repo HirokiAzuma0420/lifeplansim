@@ -64,9 +64,9 @@ export const buildDashboardDataset = (
     const prevIdecoPrincipal = prevEntry ? sanitize(prevEntry.ideco.principal) : 0;
     const prevTaxablePrincipal = prevEntry ? sanitize(prevEntry.taxable.principal) : 0;
 
-    // 年間投資額を平均化された元本の差分から再計算する
+    // 年間投資額を元本の差分から計算。ただし初年度はシミュレーションの値を正とする
     const principalChange = (nisaPrincipal - prevNisaPrincipal) + (idecoPrincipal - prevIdecoPrincipal) + (taxablePrincipal - prevTaxablePrincipal);
-    const recalculatedInvestment = Math.max(0, principalChange);
+    const investmentAmount = i === 0 ? sanitize(entry.totalInvestment) : Math.max(0, principalChange);
 
     const nisaContribution = nisaPrincipal - prevNisaPrincipal;
     const idecoContribution = idecoPrincipal - prevIdecoPrincipal;
@@ -79,8 +79,8 @@ export const buildDashboardDataset = (
       総資産: sanitize(entry.totalAssets),
       投資元本: totalPrincipal,
       年間収入: sanitize(entry.income),
-      年間投資額: recalculatedInvestment, // 再計算した値を使用
-      年間収支: sanitize(entry.income - entry.totalExpense - recalculatedInvestment), // 再計算した値で収支も修正
+      年間投資額: investmentAmount, // 修正後の値を使用
+      年間収支: sanitize(entry.income - entry.totalExpense - investmentAmount), // 修正後の値で収支も修正
       年間支出: sanitize(entry.totalExpense),
       現金: sanitize(entry.savings),
       NISA: sanitize(entry.nisa.balance),
