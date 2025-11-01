@@ -2804,13 +2804,20 @@ const renderConfirmationView = () => {
 
     // 子供イベント
     if (formData.hasChildren === 'はい') {
+      const educationCosts = {
+        '公立中心': 1000, // 万円
+        '公私混合': 1600,
+        '私立中心': 2000,
+      };
+      const educationCost = educationCosts[formData.educationPattern as keyof typeof educationCosts] || 0;
+
       for (let i = 0; i < n(formData.numberOfChildren); i++) {
         events.push({
           age: n(formData.firstBornAge) + i * 3,
           title: `👶 ${i + 1}人目の子供誕生`,
           details: [
             { label: '教育費の発生', value: `〜${n(formData.firstBornAge) + i * 3 + 22}歳まで` },
-            { label: '教育費パターン', value: formData.educationPattern }
+            { label: '教育費パターン', value: `${formData.educationPattern}（${educationCost.toLocaleString()}万円/人）` }
           ]
         });
       }
