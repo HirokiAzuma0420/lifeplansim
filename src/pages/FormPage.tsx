@@ -2827,8 +2827,8 @@ const renderConfirmationView = () => {
 
     // 表示する項目をフィルタリング
     const currentPayments = [
-      { label: '車のローン', value: currentCarLoanMonthly },
       { label: '住居費', value: currentHousingMonthly },
+      { label: '車のローン', value: currentCarLoanMonthly },
       { label: '介護費用', value: currentCareMonthly },
       { label: '教育費(想定)', value: currentEducationMonthly },
     ].filter(p => p.value > 0);
@@ -3132,12 +3132,18 @@ const renderConfirmationView = () => {
               <div>
                 <p className="font-semibold">{n(formData.personAge)}歳 (現在)</p>
                 <ul className="list-disc list-inside text-sm text-gray-600 pl-4">
-                  <li>額面の世帯年収: {formatYen(totalGrossAnnualIncome)}</li>
-                  <li>世帯手取り年収: {formatYen(selfNetIncome + spouseNetIncome)}</li>
-                  <li>月の生活費: {formatYen(monthlyLivingExpense)}</li>
-                  {currentPayments.map(p => (
-                    <li key={p.label}>{p.label} (月額): {formatYen(p.value)}</li>
-                  ))}
+                  <li>額面の世帯年収: {formatYen(totalGrossAnnualIncome)}
+                    <ul className="list-none pl-5">
+                      <li>└ 手取り年収: {formatYen(selfNetIncome + spouseNetIncome)}</li>
+                    </ul>
+                  </li>
+                  <li className="list-none pt-2 mt-2 border-t border-gray-200 font-semibold">支出</li>
+                  <li>月の総生活費: {formatYen(monthlyLivingExpense)}</li>
+                  <ul className="list-none pl-5">
+                    {currentPayments.map(p => (
+                      <li key={p.label}>└ {p.label} (月額): {formatYen(p.value)}</li>
+                    ))}
+                  </ul>
                 </ul>
               </div>
               {events.map((event, index) => {
