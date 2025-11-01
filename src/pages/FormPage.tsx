@@ -2830,7 +2830,7 @@ const renderConfirmationView = () => {
       { label: '住居費', value: currentHousingMonthly },
       { label: '車のローン', value: currentCarLoanMonthly },
       { label: '介護費用', value: currentCareMonthly },
-      { label: '教育費', value: currentEducationMonthly },
+      { label: '教育費(想定)', value: currentEducationMonthly },
     ].filter(p => p.value > 0);
 
     // 月額総支出を計算
@@ -3148,13 +3148,15 @@ const renderConfirmationView = () => {
                     </ul>
                   </li>
                   <li className="list-none pt-2 mt-2 border-t border-gray-200 font-semibold">支出</li>
-                  <li>月額総支出: {formatYen(totalMonthlyExpense)}</li>
-                  <ul className="list-none pl-5">
-                    <li>└ 生活費: {formatYen(monthlyLivingExpense)}</li>
-                    {currentPayments.map(p => (
-                      <li key={p.label}>{p.label} (月額): {formatYen(p.value)}</li>
-                    ))}
-                  </ul>
+                  <li>
+                    月額総支出: {formatYen(totalMonthlyExpense)}
+                    <ul className="list-none pl-5">
+                      <li>└ 生活費: {formatYen(monthlyLivingExpense)}</li>
+                      {currentPayments.map(p => (
+                        <li key={p.label}>└ {p.label}: {formatYen(p.value)}</li>
+                      ))}
+                    </ul>
+                  </li>
                 </ul>
               </div>
               {events.map((event, index) => {
