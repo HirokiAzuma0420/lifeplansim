@@ -307,12 +307,16 @@ export default function FormPage() {
 
   // formDataが変更されたらキャッシュに保存する
   useEffect(() => {
+    // フォームの準備が完了していない、または結果ページから戻ってきた場合は保存しない
+    if (!isReady || initialStateFromLocation) {
+      return;
+    }
     // 結果ページから戻ってきた直後は保存しない
     if (initialStateFromLocation) {
       return;
     }
     localStorage.setItem(LIFE_PLAN_FORM_CACHE_KEY, JSON.stringify(formData));
-  }, [formData, initialStateFromLocation]);
+  }, [formData, initialStateFromLocation, isReady]);
 
   const effectiveSections = useMemo(() => {
     return sections.filter((section) => {
