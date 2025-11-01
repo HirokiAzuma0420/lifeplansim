@@ -2812,24 +2812,35 @@ const renderConfirmationView = () => {
 
     // 退職イベント
     const retirementAge = n(formData.retirementAge);
-    const spouseRetirementAge = n(formData.spouseRetirementAge);
     const pensionNetIncome = n(formData.pensionAmount) * 10000 * 12;
-    const spousePensionNetIncome = (formData.familyComposition === '既婚' || formData.planToMarry === 'する') ? n(formData.spousePensionAmount) * 10000 * 12 : 0;
-
-    // 退職直前の給与収入を計算（結婚イベントによる変動を考慮）
-    const incomeBeforeRetirement = incomeHistory.length > 0 ? incomeHistory[incomeHistory.length - 1].income : currentHouseholdNetIncome;
-    const retirementIncome = pensionNetIncome + spousePensionNetIncome;
     
+    // ユーザー本人の退職イベント
     events.push({
-      age: Math.max(retirementAge, spouseRetirementAge),
-      title: '定年退職',
-      details: [
-        // incomeBeforeRetirement を使って停止する収入額を表示（オプション）
-        { label: '給与収入が停止', value: `- ${formatYen(incomeBeforeRetirement)} /年` },
-        { label: '年金受給開始', value: `+ ${formatYen(retirementIncome)} /年` },
-      ],
-      incomeChange: retirementIncome - incomeBeforeRetirement
+        age: retirementAge,
+        title: '👤 あなたの退職',
+        details: [
+            { label: '給与収入が停止', value: `手取り年収が減少します` },
+            { label: '年金受給開始', value: `+ ${formatYen(pensionNetIncome)} /年` },
+        ],
+        incomeChange: pensionNetIncome - selfNetIncome // 概算の収入変動
     });
+
+    // 配偶者の退職イベント
+    if (formData.familyComposition === '既婚' || formData.planToMarry === 'する') {
+        const spouseRetirementAge = n(formData.spouseRetirementAge);
+        const spousePensionNetIncome = n(formData.spousePensionAmount) * 10000 * 12;
+        if (spouseNetIncome > 0 || spousePensionNetIncome > 0) {
+             events.push({
+                age: spouseRetirementAge,
+                title: 'パートナーの退職',
+                details: [
+                    ...(spouseNetIncome > 0 ? [{ label: '給与収入が停止', value: `手取り年収が減少します` }] : []),
+                    { label: '年金受給開始', value: `+ ${formatYen(spousePensionNetIncome)} /年` },
+                ],
+                incomeChange: spousePensionNetIncome - spouseNetIncome // 概算の収入変動
+            });
+        }
+    }
 
     // イベントを年齢でソート
     events.sort((a, b) => a.age - b.age);
