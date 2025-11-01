@@ -2950,7 +2950,7 @@ const renderConfirmationView = () => {
     if (lastAge <= n(formData.simulationPeriodAge)) {
       finalIncomeHistory.push({
         ageRange: `${lastAge}歳〜`,
-        income: currentHouseholdNetIncome
+        income: timelineHouseholdNetIncome
       });
     }
 
