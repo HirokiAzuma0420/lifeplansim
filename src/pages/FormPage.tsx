@@ -2756,6 +2756,17 @@ const renderConfirmationView = () => {
     const selfGrossIncome = n(formData.mainIncome) * 10000 + n(formData.sideJobIncome) * 10000;
     const selfNetIncome = computeNetAnnual(selfGrossIncome);
     
+    // --- 確認画面用の追加計算 ---
+    // 額面の世帯年収
+    const currentSpouseGrossIncomeForSummary = formData.familyComposition === '既婚' ? (n(formData.spouseMainIncome) * 10000 + n(formData.spouseSideJobIncome) * 10000) : 0;
+    const totalGrossAnnualIncome = selfGrossIncome + currentSpouseGrossIncomeForSummary;
+
+    // 月の生活費
+    const monthlyLivingExpense = formData.expenseMethod === '簡単'
+      ? n(formData.livingCostSimple)
+      : totalExpenses; // totalExpenses は既に月額合計（円）として計算されている
+
+
     // サマリー表示用の「現在の」世帯手取り年収
     const currentSpouseGrossIncome = formData.familyComposition === '既婚' ? (n(formData.spouseMainIncome) * 10000 + n(formData.spouseSideJobIncome) * 10000) : 0;
     const summaryTotalNetAnnualIncome = selfNetIncome + computeNetAnnual(currentSpouseGrossIncome);
@@ -2798,7 +2809,8 @@ const renderConfirmationView = () => {
           age: n(formData.firstBornAge) + i * 3,
           title: `👶 ${i + 1}人目の子供誕生`,
           details: [
-            { label: '教育費の発生', value: `〜${n(formData.firstBornAge) + i * 3 + 22}歳まで` }
+            { label: '教育費の発生', value: `〜${n(formData.firstBornAge) + i * 3 + 22}歳まで` },
+            { label: '教育費パターン', value: formData.educationPattern }
           ]
         });
       }
@@ -3046,7 +3058,11 @@ const renderConfirmationView = () => {
             <div className="space-y-6">
               <div>
                 <p className="font-semibold">{n(formData.personAge)}歳 (現在)</p>
-                <p className="text-sm text-gray-600 pl-4">世帯手取り年収: {formatYen(selfNetIncome + spouseNetIncome)}</p>
+                <ul className="list-disc list-inside text-sm text-gray-600 pl-4">
+                  <li>世帯手取り年収: {formatYen(selfNetIncome + spouseNetIncome)}</li>
+                  <li>額面の世帯年収: {formatYen(totalGrossAnnualIncome)}</li>
+                  <li>月の生活費: {formatYen(monthlyLivingExpense)}</li>
+                </ul>
               </div>
               {events.map((event, index) => {
                 const incomeDiff = event.incomeChange;
