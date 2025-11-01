@@ -1017,14 +1017,16 @@ export default function FormPage() {
         }
       }));
     } else {
-      // is...Edited フラグを更新
-      if (name === 'livingCostAfterMarriage') {
-        setFormData(prev => ({ ...prev, isLivingCostEdited: true }));
-      }
-      if (name === 'housingCostAfterMarriage') {
-        setFormData(prev => ({ ...prev, isHousingCostEdited: true }));
-      }
-      setFormData({ ...formData, [name]: value });
+      setFormData(prev => {
+        const newState = { ...prev, [name]: value };
+        if (name === 'livingCostAfterMarriage') {
+          newState.isLivingCostEdited = true;
+        }
+        if (name === 'housingCostAfterMarriage') {
+          newState.isHousingCostEdited = true;
+        }
+        return newState;
+      });
     }
   };
 
