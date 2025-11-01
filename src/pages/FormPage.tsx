@@ -274,6 +274,7 @@ export default function FormPage() {
   const [result, setResult] = useState<object | string | null>(null);
   const [loading, setLoading] = useState(false);
   const [showRestoreModal, setShowRestoreModal] = useState(false);
+  const [isReady, setIsReady] = useState(false); // フォーム描画準備完了フラグ
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [totalNetAnnualIncome, setTotalNetAnnualIncome] = useState(0);
 
@@ -288,15 +289,19 @@ export default function FormPage() {
 
   // ページ読み込み時にキャッシュを確認・復元する
   useEffect(() => {
-    // 結果ページから戻ってきた場合は、キャッシュ復元ロジックをスキップ
+    // 結果ページから戻ってきた場合は、即座に描画準備完了
     if (initialStateFromLocation) {
+      setIsReady(true);
       return;
     }
 
     const cachedData = localStorage.getItem(LIFE_PLAN_FORM_CACHE_KEY);
     if (cachedData) {
-      // window.confirmの代わりにモーダルを表示する
+      // モーダルを表示してユーザーの選択を待つ
       setShowRestoreModal(true);
+    } else {
+      // キャッシュがなければ即座に描画準備完了
+      setIsReady(true);
     }
   }, [initialStateFromLocation]);
 
@@ -3043,6 +3048,17 @@ const renderConfirmationView = () => {
 
   return (
     <>
+      {!isReady && !showRestoreModal && (
+        <div className="fixed inset-0 bg-gray-100 flex items-center justify-center z-50">
+          <div className="text-center">
+            <svg className="animate-spin h-8 w-8 text-blue-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p className="mt-2 text-gray-600">読み込み中...</p>
+          </div>
+        </div>
+      )}
       {showRestoreModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-8 rounded-lg shadow-xl max-w-sm w-full text-center">
@@ -3053,8 +3069,8 @@ const renderConfirmationView = () => {
                 onClick={() => {
                   localStorage.removeItem(LIFE_PLAN_FORM_CACHE_KEY);
                   setShowRestoreModal(false);
-                  // 念のため初期化
                   setFormData(createDefaultFormData());
+                  setIsReady(true);
                 }}
                 className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-semibold"
               >
@@ -3066,6 +3082,7 @@ const renderConfirmationView = () => {
                   if (cachedData) {
                     setFormData(JSON.parse(cachedData));
                   }
+                  setIsReady(true);
                   setShowRestoreModal(false);
                 }}
                 className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold"
@@ -3106,7 +3123,7 @@ const renderConfirmationView = () => {
         </div>
       )}
 
-    <div className="flex justify-center w-full min-h-screen bg-gray-100">
+    <div className={`flex justify-center w-full min-h-screen bg-gray-100 ${!isReady ? 'opacity-0' : 'opacity-100 transition-opacity duration-300'}`}>
       <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg md:max-w-5xl overflow-visible relative">
         {/* Floating Header */}
         <div id="floating-header" className="fixed left-0 right-0 z-50 transition-opacity duration-500">
