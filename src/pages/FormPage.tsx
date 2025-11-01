@@ -119,6 +119,7 @@ const sections = [
 ];
 
 const LIFE_PLAN_FORM_CACHE_KEY = 'lifePlanFormDataCache';
+const CACHE_EXPIRATION_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 const initialMonthlyInvestmentAmounts: InvestmentMonthlyAmounts = {
   investmentStocksMonthly: '0',
@@ -295,10 +296,18 @@ export default function FormPage() {
       return;
     }
 
-    const cachedData = localStorage.getItem(LIFE_PLAN_FORM_CACHE_KEY);
-    if (cachedData) {
-      // モーダルを表示してユーザーの選択を待つ
-      setShowRestoreModal(true);
+    const cachedItem = localStorage.getItem(LIFE_PLAN_FORM_CACHE_KEY);
+    if (cachedItem) {
+      const { timestamp } = JSON.parse(cachedItem);
+      const isExpired = (Date.now() - timestamp) > CACHE_EXPIRATION_MS;
+
+      if (isExpired) {
+        localStorage.removeItem(LIFE_PLAN_FORM_CACHE_KEY);
+        setIsReady(true);
+      } else {
+        // モーダルを表示してユーザーの選択を待つ
+        setShowRestoreModal(true);
+      }
     } else {
       // キャッシュがなければ即座に描画準備完了
       setIsReady(true);
@@ -315,7 +324,11 @@ export default function FormPage() {
     if (initialStateFromLocation) {
       return;
     }
-    localStorage.setItem(LIFE_PLAN_FORM_CACHE_KEY, JSON.stringify(formData));
+    const cacheItem = {
+      timestamp: Date.now(),
+      data: formData,
+    };
+    localStorage.setItem(LIFE_PLAN_FORM_CACHE_KEY, JSON.stringify(cacheItem));
   }, [formData, initialStateFromLocation, isReady]);
 
   const effectiveSections = useMemo(() => {
@@ -337,8 +350,6 @@ export default function FormPage() {
   // This effect ensures that if we return to the form, we don't show the completion screen
   useEffect(() => {
     if (initialStateFromLocation) {
-      // 結果ページから戻ってきた場合、古いキャッシュは不要なので削除
-      localStorage.removeItem(LIFE_PLAN_FORM_CACHE_KEY);
       setIsCompleted(false);
     }
   }, [initialStateFromLocation]);
@@ -1308,6 +1319,14 @@ export default function FormPage() {
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      // ページを離れる直前に最新のデータを保存する
+      if (isReady && !initialStateFromLocation) {
+        const cacheItem = {
+          timestamp: Date.now(),
+          data: formData,
+        };
+        localStorage.setItem(LIFE_PLAN_FORM_CACHE_KEY, JSON.stringify(cacheItem));
+      }
       e.preventDefault();
       e.returnValue = ""; // Chrome, Firefox で有効
     };
@@ -1317,7 +1336,7 @@ export default function FormPage() {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, []); // This should have no dependencies.
+  }, [formData, isReady, initialStateFromLocation]);
 
   const renderSection = () => {
     switch (effectiveSections[currentSectionIndex]) {
@@ -3090,8 +3109,9 @@ const renderConfirmationView = () => {
               <button
                 onClick={() => {
                   const cachedData = localStorage.getItem(LIFE_PLAN_FORM_CACHE_KEY);
-                  if (cachedData) {
-                    setFormData(JSON.parse(cachedData));
+                  if (cachedData) { 
+                    const { data } = JSON.parse(cachedData);
+                    setFormData(data);
                   }
                   setIsReady(true);
                   setShowRestoreModal(false);
