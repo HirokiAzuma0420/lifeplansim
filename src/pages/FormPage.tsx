@@ -2758,11 +2758,19 @@ const renderConfirmationView = () => {
     const currentSpouseGrossIncome = formData.familyComposition === '既婚' ? (n(formData.spouseMainIncome) * 10000 + n(formData.spouseSideJobIncome) * 10000) : 0;
     const summaryTotalNetAnnualIncome = selfNetIncome + computeNetAnnual(currentSpouseGrossIncome);
 
-    const spouseNetIncome = formData.familyComposition === '既婚' ? computeNetAnnual(currentSpouseGrossIncome) : 0;
+    let spouseNetIncome = formData.familyComposition === '既婚' ? computeNetAnnual(currentSpouseGrossIncome) : 0;
     const currentHouseholdNetIncome = selfNetIncome + spouseNetIncome;
 
     // 結婚イベント
     if (formData.planToMarry === 'する') {
+      // 「結婚する」場合、将来の配偶者収入を計算して spouseNetIncome を更新する
+      let spouseGrossIncomeAfterMarriage = 0;
+      if (formData.spouseIncomePattern === 'パート') spouseGrossIncomeAfterMarriage = 1060000;
+      else if (formData.spouseIncomePattern === '正社員') spouseGrossIncomeAfterMarriage = 3000000;
+      else if (formData.spouseIncomePattern === 'カスタム') spouseGrossIncomeAfterMarriage = n(formData.spouseCustomIncome) * 10000;
+      
+      spouseNetIncome = computeNetAnnual(spouseGrossIncomeAfterMarriage);
+
       let spouseIncomeForSim = 0;
       if (formData.spouseIncomePattern === 'パート') spouseIncomeForSim = 1060000;
       else if (formData.spouseIncomePattern === '正社員') spouseIncomeForSim = 3000000;
