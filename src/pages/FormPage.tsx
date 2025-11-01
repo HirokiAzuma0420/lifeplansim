@@ -2812,18 +2812,32 @@ const renderConfirmationView = () => {
 
     // 退職イベント
     const retirementAge = n(formData.retirementAge);
-    const pensionNetIncome = n(formData.pensionAmount) * 10000 * 12;
-    
+    const pensionStartAge = n(formData.pensionStartAge);
+    const pensionNetIncome = n(formData.pensionAmount) * 10000 * 12; // 本人の年金
+
     // ユーザー本人の退職イベント
-    events.push({
+    if (selfNetIncome > 0) {
+      events.push({
         age: retirementAge,
-        title: '👤 あなたの退職・年金受給',
+        title: '👤 あなたの退職',
         details: [
             { label: '給与収入が停止', value: `手取り年収が減少します` },
-            { label: '年金受給開始', value: `+ ${formatYen(pensionNetIncome)} /年 (開始年齢: ${formData.pensionStartAge}歳)` },
         ],
-        incomeChange: pensionNetIncome - selfNetIncome // 概算の収入変動
-    });
+        incomeChange: -selfNetIncome
+      });
+    }
+
+    // ユーザー本人の年金受給開始イベント
+    if (pensionNetIncome > 0) {
+      events.push({
+        age: pensionStartAge,
+        title: '👤 あなたの年金受給開始',
+        details: [
+          { label: '年金受給開始', value: `+ ${formatYen(pensionNetIncome)} /年` },
+        ],
+        incomeChange: pensionNetIncome
+      });
+    }
 
     // 配偶者の退職イベント
     if (formData.familyComposition === '既婚' || formData.planToMarry === 'する') {
