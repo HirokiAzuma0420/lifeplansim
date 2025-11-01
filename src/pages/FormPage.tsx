@@ -118,6 +118,8 @@ const sections = [
   'シミュレーション設定',
 ];
 
+const LIFE_PLAN_FORM_CACHE_KEY = 'lifePlanFormDataCache';
+
 const initialMonthlyInvestmentAmounts: InvestmentMonthlyAmounts = {
   investmentStocksMonthly: '0',
   investmentTrustMonthly: '0',
@@ -273,7 +275,40 @@ export default function FormPage() {
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [totalNetAnnualIncome, setTotalNetAnnualIncome] = useState(0);
 
-  const [formData, setFormData] = useState<FormDataState>(() => initialStateFromLocation || createDefaultFormData());
+  const [formData, setFormData] = useState<FormDataState>(() => {
+    // 結果ページから戻ってきた場合は、そのデータを優先する
+    if (initialStateFromLocation) {
+      return initialStateFromLocation;
+    }
+    // それ以外の場合は、デフォルト値で初期化（キャッシュの確認はuseEffectで行う）
+    return createDefaultFormData();
+  });
+
+  // ページ読み込み時にキャッシュを確認・復元する
+  useEffect(() => {
+    // 結果ページから戻ってきた場合は、キャッシュ復元ロジックをスキップ
+    if (initialStateFromLocation) {
+      return;
+    }
+
+    const cachedData = localStorage.getItem(LIFE_PLAN_FORM_CACHE_KEY);
+    if (cachedData) {
+      if (window.confirm('前回の入力値があります。引き継ぎますか？')) {
+        setFormData(JSON.parse(cachedData));
+      } else {
+        localStorage.removeItem(LIFE_PLAN_FORM_CACHE_KEY);
+      }
+    }
+  }, [initialStateFromLocation]);
+
+  // formDataが変更されたらキャッシュに保存する
+  useEffect(() => {
+    // 結果ページから戻ってきた直後は保存しない
+    if (initialStateFromLocation) {
+      return;
+    }
+    localStorage.setItem(LIFE_PLAN_FORM_CACHE_KEY, JSON.stringify(formData));
+  }, [formData, initialStateFromLocation]);
 
   const effectiveSections = useMemo(() => {
     return sections.filter((section) => {
@@ -294,6 +329,8 @@ export default function FormPage() {
   // This effect ensures that if we return to the form, we don't show the completion screen
   useEffect(() => {
     if (initialStateFromLocation) {
+      // 結果ページから戻ってきた場合、古いキャッシュは不要なので削除
+      localStorage.removeItem(LIFE_PLAN_FORM_CACHE_KEY);
       setIsCompleted(false);
     }
   }, [initialStateFromLocation]);
