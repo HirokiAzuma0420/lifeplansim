@@ -3066,8 +3066,8 @@ const renderConfirmationView = () => {
               <div>
                 <p className="font-semibold">{n(formData.personAge)}歳 (現在)</p>
                 <ul className="list-disc list-inside text-sm text-gray-600 pl-4">
-                  <li>世帯手取り年収: {formatYen(selfNetIncome + spouseNetIncome)}</li>
                   <li>額面の世帯年収: {formatYen(totalGrossAnnualIncome)}</li>
+                  <li>世帯手取り年収: {formatYen(selfNetIncome + spouseNetIncome)}</li>
                   <li>月の生活費: {formatYen(monthlyLivingExpense)}</li>
                 </ul>
               </div>
