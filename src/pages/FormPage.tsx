@@ -2766,6 +2766,72 @@ const renderConfirmationView = () => {
       ? n(formData.livingCostSimple)
       : totalExpenses; // totalExpenses は既に月額合計（円）として計算されている
 
+    // 現在支払っている月額費用
+    const currentCarLoanMonthly = formData.carCurrentLoanInPayment === 'yes' ? n(formData.carCurrentLoanMonthly) : 0;
+    const currentHousingMonthly = formData.housingType === '賃貸' ? n(formData.currentRentLoanPayment) : (formData.housingType === '持ち家（ローン中）' ? n(formData.loanMonthlyPayment) : 0);
+    
+    const currentCareMonthly = formData.parentCareAssumption === 'はい'
+      ? formData.parentCarePlans.reduce((sum, plan) => {
+          const hasStarted = n(plan.parentCurrentAge) >= n(plan.parentCareStartAge);
+          return hasStarted ? sum + n(plan.monthly10kJPY) * 10000 : sum;
+        }, 0)
+      : 0;
+
+    let currentEducationMonthly = 0;
+    if (formData.hasChildren === 'はい') {
+      // 年齢ステージ別の年間教育費（万円）
+      const educationCostByStage = {
+        '公立中心': {
+          preschool: 22,   // 0-6歳
+          elementary: 32,  // 7-12歳
+          middle: 49,      // 13-15歳
+          high: 46,        // 16-18歳
+          university: 104, // 19-22歳
+        },
+        '公私混合': {
+          preschool: 22,
+          elementary: 32,
+          middle: 49,
+          high: 107, // 私立高校
+          university: 250, // 私立大学
+        },
+        '私立中心': {
+          preschool: 80,
+          elementary: 160,
+          middle: 140,
+          high: 107,
+          university: 250,
+        },
+      };
+
+      const pattern = formData.educationPattern as keyof typeof educationCostByStage;
+      const costStages = educationCostByStage[pattern];
+
+      for (let i = 0; i < n(formData.numberOfChildren); i++) {
+        // 子供の現在の年齢を計算
+        const childBirthYearInPersonAge = n(formData.firstBornAge) + i * 3;
+        const childCurrentAge = n(formData.personAge) - childBirthYearInPersonAge;
+
+        let annualCostForChild = 0;
+        if (costStages) {
+          if (childCurrentAge >= 0 && childCurrentAge <= 6) annualCostForChild = costStages.preschool;
+          else if (childCurrentAge >= 7 && childCurrentAge <= 12) annualCostForChild = costStages.elementary;
+          else if (childCurrentAge >= 13 && childCurrentAge <= 15) annualCostForChild = costStages.middle;
+          else if (childCurrentAge >= 16 && childCurrentAge <= 18) annualCostForChild = costStages.high;
+          else if (childCurrentAge >= 19 && childCurrentAge <= 22) annualCostForChild = costStages.university;
+        }
+
+        currentEducationMonthly += (annualCostForChild * 10000) / 12;
+      }
+    }
+
+    // 表示する項目をフィルタリング
+    const currentPayments = [
+      { label: '車のローン', value: currentCarLoanMonthly },
+      { label: '住居費', value: currentHousingMonthly },
+      { label: '介護費用', value: currentCareMonthly },
+      { label: '教育費(想定)', value: currentEducationMonthly },
+    ].filter(p => p.value > 0);
 
     // サマリー表示用の「現在の」世帯手取り年収
     const currentSpouseGrossIncome = formData.familyComposition === '既婚' ? (n(formData.spouseMainIncome) * 10000 + n(formData.spouseSideJobIncome) * 10000) : 0;
@@ -3069,6 +3135,9 @@ const renderConfirmationView = () => {
                   <li>額面の世帯年収: {formatYen(totalGrossAnnualIncome)}</li>
                   <li>世帯手取り年収: {formatYen(selfNetIncome + spouseNetIncome)}</li>
                   <li>月の生活費: {formatYen(monthlyLivingExpense)}</li>
+                  {currentPayments.map(p => (
+                    <li key={p.label}>{p.label} (月額): {formatYen(p.value)}</li>
+                  ))}
                 </ul>
               </div>
               {events.map((event, index) => {
