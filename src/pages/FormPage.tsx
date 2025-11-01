@@ -2928,6 +2928,13 @@ const renderConfirmationView = () => {
     // イベントを年齢でソート
     events.sort((a, b) => a.age - b.age);
 
+    // 各イベント発生時点での累計収入を計算
+    const incomeAtEvent: number[] = [];
+    let cumulativeIncome = currentHouseholdNetIncome;
+    for (const event of events) {
+      cumulativeIncome += event.incomeChange ?? 0;
+      incomeAtEvent.push(cumulativeIncome);
+    }
     // 収入の変遷を計算
     const finalIncomeHistory: { ageRange: string; income: number }[] = [];
     let lastAge = n(formData.personAge);
@@ -3029,7 +3036,7 @@ const renderConfirmationView = () => {
                         <p className="text-sm mt-1">
                           世帯手取り年収:
                           <span className={incomeDiff >= 0 ? 'text-green-600' : 'text-red-600'}>
-                            {' '}{formatYen((finalIncomeHistory[index - 1]?.income ?? currentHouseholdNetIncome) + incomeDiff)}
+                            {' '}{formatYen(incomeAtEvent[index])}
                             {' '}({incomeDiff >= 0 ? '+' : ''}{formatYen(incomeDiff)})
                           </span>
                         </p>
