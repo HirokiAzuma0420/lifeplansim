@@ -2741,6 +2741,19 @@ const renderConfirmationView = () => {
       });
     }
 
+    // 車の買い替えイベント
+    if (formData.carPurchasePlan === 'yes' && n(formData.carFirstReplacementAfterYears) > 0) {
+      events.push({
+        age: n(formData.personAge) + n(formData.carFirstReplacementAfterYears),
+        title: '🚗 車の買い替え',
+        details: [
+          { label: '1回あたりの買替額', value: formatManYen(formData.carPrice) },
+          { label: 'ローンの有無', value: formData.carLoanUsage === 'はい' ? `あり (${formData.carLoanYears}年)` : 'なし' },
+          { label: '買い替えサイクル', value: `${formData.carReplacementFrequency}年ごと` },
+        ]
+      });
+    }
+
     // 介護イベント
     if (formData.parentCareAssumption === 'はい') {
       formData.parentCarePlans.forEach(plan => {
@@ -2893,7 +2906,7 @@ const renderConfirmationView = () => {
           <ConfirmationSection title="🏦 現在の資産">
             <ConfirmationItem label="総資産" value={formatYen(n(formData.currentSavings) * 10000 + n(formData.investmentStocksCurrent) * 10000 + n(formData.investmentTrustCurrent) * 10000 + n(formData.investmentBondsCurrent) * 10000 + n(formData.investmentIdecoCurrent) * 10000 + n(formData.investmentCryptoCurrent) * 10000 + n(formData.investmentOtherCurrent) * 10000)} />
             <ConfirmationItem label="預貯金" value={formatManYen(formData.currentSavings)} />
-            <ConfirmationItem label="投資評価額" value={formatManYen(n(formData.investmentStocksCurrent) + n(formData.investmentTrustCurrent) + n(formData.investmentBondsCurrent) + n(formData.investmentIdecoCurrent) + n(formData.investmentCryptoCurrent) + n(formData.investmentOtherCurrent))} />
+            <ConfirmationItem label="投資額" value={formatManYen(n(formData.investmentStocksCurrent) + n(formData.investmentTrustCurrent) + n(formData.investmentBondsCurrent) + n(formData.investmentIdecoCurrent) + n(formData.investmentCryptoCurrent) + n(formData.investmentOtherCurrent))} />
           </ConfirmationSection>
         </div>
 
