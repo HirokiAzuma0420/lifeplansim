@@ -1,6 +1,6 @@
 import React from 'react';
-import type { FormDataState } from '../../pages/FormPage';
-import type { YearlyData } from '../../types/simulation';
+import type { FormDataState } from '../../types/form-types';
+import type { YearlyData } from '../../types/simulation-types';
 import {
   Home,
   Car,
@@ -194,12 +194,12 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
 
       {events.map((event, index) => {
         const data = yearlyDataByAge.get(event.age);
-        const balance = data ? data.income - data.totalExpense : 0;
+        const balance = data ? data.income - data.expense : 0;
 
         return (
           <div key={index} className="relative mb-8">
             <div className="absolute left-0 top-1.5 -translate-x-1/2 w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center">
-              <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+          <div className="w-3 h-3 bg-blue-500 rounded-full" />
             </div>
             <div className="ml-4">
               <div className="bg-white rounded-xl shadow p-4 border border-gray-100">
@@ -225,7 +225,7 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
                       <TrendingDown size={16} className="text-red-500" />
                       <div>
                         <p className="text-xs text-gray-500">年間支出</p>
-                        <p className="font-semibold">{formatYen(data.totalExpense)}</p>
+                        <p className="font-semibold">{formatYen(data.expense)}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">

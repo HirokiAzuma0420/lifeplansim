@@ -1,13 +1,15 @@
-﻿﻿﻿﻿import React, { useState, useMemo, useEffect} from 'react';
+﻿﻿import React, { useState, useMemo, useEffect} from 'react';
 import { useLocation, useNavigate, } from 'react-router-dom';
-import type { YearlyData, SimulationInputParams, CarePlan } from '../types/simulation';
+import type { YearlyData, SimulationInputParams, CarePlan } from '@/types/simulation-types';
+import { createApiParams } from '@/utils/api-adapter';
+import { computeNetAnnual, calculateLoanPayment } from '../utils/financial';
+import type { FormDataState, FormLocationState, InvestmentMonthlyAmounts } from '@/types/form-types';
+import * as FC from '@/constants/financial_const';
 
-import { computeNetAnnual } from '../utils/financial';
 
 import { Trash2 } from "lucide-react";
 
-import AssetAccordion from "../components/AssetAccordion";
-import type { InvestmentFormValues, InvestmentMonthlyAmounts } from "../types/investment";
+import AssetAccordion from "@/components/AssetAccordion";
 
 // --- 確認画面用のヘルパーを追加 ---
 const formatYen = (value: number | string | undefined) => {
@@ -55,7 +57,6 @@ const sections = [
 ];
 
 const LIFE_PLAN_FORM_CACHE_KEY = 'lifePlanFormDataCache';
-const CACHE_EXPIRATION_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 const initialMonthlyInvestmentAmounts: InvestmentMonthlyAmounts = {
   investmentStocksMonthly: '0',
@@ -68,13 +69,13 @@ const initialMonthlyInvestmentAmounts: InvestmentMonthlyAmounts = {
 
 const createDefaultCarePlan = (): Omit<CarePlan, 'id'> & { id: number } => ({
   id: Date.now(),
-  parentCurrentAge: 70,
-  parentCareStartAge: 80,
-  monthly10kJPY: 10,
-  years: 5,
+  parentCurrentAge: FC.DEFAULT_PARENT_AGE,
+  parentCareStartAge: FC.DEFAULT_PARENT_CARE_START_AGE,
+  monthly10kJPY: FC.DEFAULT_PARENT_CARE_MONTHLY_COST_MAN_YEN,
+  years: FC.DEFAULT_PARENT_CARE_YEARS,
 });
 
-const createDefaultFormData = () => ({
+const createDefaultFormData = (): FormDataState => ({
   familyComposition: '', // 家族構成
   personAge: '',
   spouseAge: '',
@@ -131,11 +132,11 @@ const createDefaultFormData = () => ({
   isLivingCostEdited: false,
   housingCostAfterMarriage: '',
   isHousingCostEdited: false,
-  marriageAge: '',
-  engagementCost: '200',
-  weddingCost: '330',
-  honeymoonCost: '35',
-  newHomeMovingCost: '50',
+  marriageAge: '', // 万円
+  engagementCost: String(FC.DEFAULT_ENGAGEMENT_COST_MAN_YEN),
+  weddingCost: String(FC.DEFAULT_WEDDING_COST_MAN_YEN),
+  honeymoonCost: String(FC.DEFAULT_HONEYMOON_COST_MAN_YEN),
+  newHomeMovingCost: String(FC.DEFAULT_NEW_HOME_MOVING_COST_MAN_YEN),
   hasChildren: '', // ありorなし
   numberOfChildren: '',
   firstBornAge: '',
@@ -144,16 +145,16 @@ const createDefaultFormData = () => ({
   otherLargeExpenses: '',
   parentCareAssumption: '', // ありor未定orなし
   parentCarePlans: [createDefaultCarePlan()],
-  retirementAge: '65',
-  postRetirementLivingCost: '25',
-  spouseRetirementAge: '65',
-  spousePensionStartAge: '65',
-  spousePensionAmount: '10',
-  pensionStartAge: '65',
-  pensionAmount: '15',
+  retirementAge: String(FC.DEFAULT_RETIREMENT_AGE),
+  postRetirementLivingCost: String(FC.DEFAULT_POST_RETIREMENT_LIVING_COST_MAN_YEN),
+  spouseRetirementAge: String(FC.DEFAULT_RETIREMENT_AGE),
+  spousePensionStartAge: String(FC.DEFAULT_PENSION_START_AGE),
+  spousePensionAmount: String(FC.DEFAULT_SPOUSE_PENSION_MONTHLY_MAN_YEN),
+  pensionStartAge: String(FC.DEFAULT_PENSION_START_AGE),
+  pensionAmount: String(FC.DEFAULT_PENSION_MONTHLY_MAN_YEN),
   currentSavings: '',
   monthlySavings: '',
-  hasInvestment: '', // ありorなし
+  hasInvestment: '',
   investmentStocksCurrent: '',
   investmentTrustCurrent: '',
   investmentBondsCurrent: '',
@@ -170,32 +171,44 @@ const createDefaultFormData = () => ({
   investmentIdecoAnnualSpot: '0',
   investmentCryptoAnnualSpot: '0',
   investmentOtherAnnualSpot: '0',
-  investmentStocksRate: '6.0',
-  investmentTrustRate: '4.0',
-  investmentBondsRate: '1.0',
-  investmentIdecoRate: '4.0',
-  investmentCryptoRate: '8.0',
-  investmentOtherRate: '0.5',
-  simulationPeriodAge: '90',
+  investmentStocksRate: String(FC.DEFAULT_INVESTMENT_RATE.STOCKS),
+  investmentTrustRate: String(FC.DEFAULT_INVESTMENT_RATE.TRUST),
+  investmentBondsRate: String(FC.DEFAULT_INVESTMENT_RATE.BONDS),
+  investmentIdecoRate: String(FC.DEFAULT_INVESTMENT_RATE.IDECO),
+  investmentCryptoRate: String(FC.DEFAULT_INVESTMENT_RATE.CRYPTO),
+  investmentOtherRate: String(FC.DEFAULT_INVESTMENT_RATE.OTHER),
+  simulationPeriodAge: String(FC.DEFAULT_SIMULATION_END_AGE),
   interestRateScenario: 'ランダム変動', // 楽観orストレス
-  fixedInterestRate: '5.0', // 固定利回り用のフィールドを追加
-  emergencyFund: '300',
+  fixedInterestRate: String(FC.DEFAULT_FIXED_INTEREST_RATE_PERCENT), // 固定利回り用のフィールドを追加
+  emergencyFund: String(FC.DEFAULT_EMERGENCY_FUND_MAN_YEN),
   stressTestSeed: '', // 追加
-  appliances: [
-    { name: '冷蔵庫', cycle: 10, cost: 15, firstReplacementAfterYears: '' as number | '' },
-    { name: '洗濯機', cycle: 8, cost: 12, firstReplacementAfterYears: '' as number | '' },
-    { name: 'エアコン', cycle: 10, cost: 10, firstReplacementAfterYears: '' as number | '' },
-    { name: 'テレビ', cycle: 10, cost: 8, firstReplacementAfterYears: '' as number | '' },
-    { name: '電子レンジ', cycle: 8, cost: 3, firstReplacementAfterYears: '' as number | '' },
-    { name: '掃除機', cycle: 6, cost: 2, firstReplacementAfterYears: '' as number | '' },
-  ],
+  appliances: FC.DEFAULT_APPLIANCES,
   // 昇給率をformDataに統合
-  annualRaiseRate: '1.5',
-  spouseAnnualRaiseRate: '1.5',
+  annualRaiseRate: String(FC.DEFAULT_ANNUAL_RAISE_RATE_PERCENT),
+  spouseAnnualRaiseRate: String(FC.DEFAULT_ANNUAL_RAISE_RATE_PERCENT),
 });
 
-export type FormDataState = ReturnType<typeof createDefaultFormData>;
-type FormLocationState = { rawFormData?: FormDataState; sectionIndex?: number };
+interface InvestmentFormValues {
+  investmentStocksCurrent: string | number;
+  investmentStocksAnnualSpot: string | number;
+  investmentStocksRate: string | number;
+  investmentTrustCurrent: string | number;
+  investmentTrustAnnualSpot: string | number;
+  investmentTrustRate: string | number;
+  investmentBondsCurrent: string | number;
+  investmentBondsAnnualSpot: string | number;
+  investmentBondsRate: string | number;
+  investmentIdecoCurrent: string | number;
+  investmentIdecoAnnualSpot: string | number;
+  investmentIdecoRate: string | number;
+  investmentCryptoCurrent: string | number;
+  investmentCryptoAnnualSpot: string | number;
+  investmentCryptoRate: string | number;
+  investmentOtherCurrent: string | number;
+  investmentOtherAnnualSpot: string | number;
+  investmentOtherRate: string | number;
+}
+
 
 
 
@@ -234,8 +247,8 @@ export default function FormPage() {
 
     const cachedItem = localStorage.getItem(LIFE_PLAN_FORM_CACHE_KEY);
     if (cachedItem) {
-      const { timestamp } = JSON.parse(cachedItem);
-      const isExpired = (Date.now() - timestamp) > CACHE_EXPIRATION_MS;
+      const { timestamp } = JSON.parse(cachedItem) as { timestamp: number, data: FormDataState };
+      const isExpired = (Date.now() - timestamp) > FC.FORM_CACHE_EXPIRATION_MS;
 
       if (isExpired) {
         localStorage.removeItem(LIFE_PLAN_FORM_CACHE_KEY);
@@ -298,7 +311,7 @@ export default function FormPage() {
       formData.insuranceCost,
       formData.educationCost,
       formData.otherFixedCost,
-    ].reduce((sum, val) => sum + (Number(val) || 0), 0);
+    ].reduce<number>((sum, val) => sum + (Number(val) || 0), 0);
 
     const variable = [
       formData.foodCost,
@@ -308,10 +321,24 @@ export default function FormPage() {
       formData.socializingCost,
       formData.hobbyEntertainmentCost,
       formData.otherVariableCost,
-    ].reduce((sum, val) => sum + (Number(val) || 0), 0);
+    ].reduce<number>((sum, val) => sum + (Number(val) || 0), 0);
 
     return fixed + variable;
-  }, [formData]);
+  }, [
+    formData.expenseMethod,
+    formData.utilitiesCost,
+    formData.communicationCost,
+    formData.insuranceCost,
+    formData.educationCost,
+    formData.otherFixedCost,
+    formData.foodCost,
+    formData.dailyNecessitiesCost,
+    formData.transportationCost,
+    formData.clothingBeautyCost,
+    formData.socializingCost,
+    formData.hobbyEntertainmentCost,
+    formData.otherVariableCost,
+  ]);
 
   const validateSection = (sectionIndex: number): boolean => {
     const newErrors: {[key: string]: string} = {};
@@ -327,8 +354,8 @@ export default function FormPage() {
       case '現在の収入':
         if (!formData.personAge) {
           newErrors.personAge = '年齢を入力してください。';
-        } else if (n(formData.personAge) < 18 || n(formData.personAge) >= 100) {
-          newErrors.personAge = '18歳から99歳の間で入力してください。';
+        } else if (n(formData.personAge) < FC.VALIDATION_MIN_AGE || n(formData.personAge) > FC.VALIDATION_MAX_AGE) {
+          newErrors.personAge = `${FC.VALIDATION_MIN_AGE}歳から${FC.VALIDATION_MAX_AGE}歳の間で入力してください。`
         }
         if (!formData.mainIncome) {
           newErrors.mainIncome = '本業の年間収入を入力してください。';
@@ -339,8 +366,8 @@ export default function FormPage() {
         if (formData.familyComposition === '既婚') {
           if (!formData.spouseAge) {
             newErrors.spouseAge = '配偶者の年齢を入力してください。';
-          } else if (n(formData.spouseAge) < 18 || n(formData.spouseAge) >= 100) {
-            newErrors.spouseAge = '18歳から99歳の間で入力してください。';
+          } else if (n(formData.spouseAge) < FC.VALIDATION_MIN_AGE || n(formData.spouseAge) > FC.VALIDATION_MAX_AGE) {
+            newErrors.spouseAge = `${FC.VALIDATION_MIN_AGE}歳から${FC.VALIDATION_MAX_AGE}歳の間で入力してください。`
           }
           if (!formData.spouseMainIncome) {
             newErrors.spouseMainIncome = '配偶者の本業年間収入を入力してください。';
@@ -409,7 +436,7 @@ export default function FormPage() {
         if (formData.planToMarry === 'する') {
           if (!formData.marriageAge) newErrors.marriageAge = '結婚予定年齢を入力してください。';
           else if (n(formData.marriageAge) < n(formData.personAge)) newErrors.marriageAge = '現在年齢以上の年齢を入力してください。';
-          if (!formData.spouseAgeAtMarriage) newErrors.spouseAgeAtMarriage = '配偶者の年齢を入力してください。';
+          if (!formData.spouseAgeAtMarriage) newErrors.spouseAgeAtMarriage = '結婚時の配偶者の年齢を入力してください。';
           if (!formData.spouseIncomePattern) newErrors.spouseIncomePattern = '配偶者の収入パターンを選択してください。';
           if (formData.spouseIncomePattern === 'カスタム' && !formData.spouseCustomIncome) {
             newErrors.spouseCustomIncome = '配偶者のカスタム年収を入力してください。';
@@ -429,7 +456,7 @@ export default function FormPage() {
         break;
       case 'ライフイベント - 親の介護':
         if (!formData.parentCareAssumption) newErrors.parentCareAssumption = '介護の想定を選択してください。';
-        if (formData.parentCareAssumption === 'はい') {
+        if (formData.parentCareAssumption === 'はい' && formData.parentCarePlans) {
           formData.parentCarePlans.forEach((plan, index) => {
             if (!plan.parentCurrentAge) newErrors[`parentCarePlans[${index}].parentCurrentAge`] = `${index + 1}人目の親の現在の年齢を入力してください。`;
             if (!plan.parentCareStartAge) newErrors[`parentCarePlans[${index}].parentCareStartAge`] = `${index + 1}人目の介護開始年齢を入力してください。`;
@@ -475,342 +502,10 @@ export default function FormPage() {
     }
   };
 
-
-
   const handleSimulate = async () => {
     setLoading(true);
-
-    const n = (v: unknown): number => {
-      const num = Number(v);
-      return isFinite(num) ? num : 0;
-    };
-
     try {
-      const mainJobIncomeGross = n(formData.mainIncome) * 10000;
-      const sideJobIncomeGross = n(formData.sideJobIncome) * 10000;
-      let spouseMainJobIncomeGross = (formData.familyComposition === '既婚' ? n(formData.spouseMainIncome) : 0) * 10000;
-      const spouseSideJobIncomeGross = (formData.familyComposition === '既婚' ? n(formData.spouseSideJobIncome) : 0) * 10000;
-
-      // 結婚予定がある場合の配偶者収入
-      let spouseIncomeForSim = 0; // シミュレーションパラメータ用
-      if (formData.planToMarry === 'する') {
-        if (formData.spouseIncomePattern === 'パート') {
-          spouseIncomeForSim = 1060000;
-        } else if (formData.spouseIncomePattern === '正社員') {
-          spouseIncomeForSim = 3000000;
-        } else if (formData.spouseIncomePattern === 'カスタム') {
-          spouseIncomeForSim = n(formData.spouseCustomIncome) * 10000;
-        }
-        // 既婚ユーザーの入力と競合しないように、spouseMainJobIncomeGross を上書き
-        spouseMainJobIncomeGross = spouseIncomeForSim;
-      }
-
-      // Detailed expenses: convert monthly inputs (yen per month, car in 10k yen) into annual totals.
-      const monthlyFixedExpense =
-        n(formData.utilitiesCost) +
-        n(formData.communicationCost) +
-        n(formData.insuranceCost) +
-        n(formData.educationCost) +
-        n(formData.otherFixedCost);
-      const monthlyCarExpense = n(formData.carCost) * 10000;
-      const detailedFixedAnnual = (monthlyFixedExpense + monthlyCarExpense) * 12;
-
-      const monthlyVariableExpense =
-        n(formData.foodCost) +
-        n(formData.dailyNecessitiesCost) +
-        n(formData.transportationCost) +
-        n(formData.clothingBeautyCost) +
-        n(formData.socializingCost) +
-        n(formData.hobbyEntertainmentCost) +
-        n(formData.otherVariableCost);
-      const detailedVariableAnnual = monthlyVariableExpense * 12;
-
-      // 資産(円)の集計
-      const currentInvestmentsJPY = (
-        n(formData.investmentStocksCurrent) +
-        n(formData.investmentTrustCurrent) +
-        n(formData.investmentBondsCurrent) +
-        n(formData.investmentIdecoCurrent) +
-        n(formData.investmentCryptoCurrent) +
-        n(formData.investmentOtherCurrent)
-      ) * 10000;
-
-      const monthlyRecurringInvestment = Object.values(formData.monthlyInvestmentAmounts).reduce((sum: number, v) => sum + n(v), 0);
-      const yearlyRecurringInvestmentJPY = monthlyRecurringInvestment * 12;
-
-      const yearlySpotJPY = (
-        n(formData.investmentStocksAnnualSpot) +
-        n(formData.investmentTrustAnnualSpot) +
-        n(formData.investmentBondsAnnualSpot) +
-        n(formData.investmentIdecoAnnualSpot) +
-        n(formData.investmentCryptoAnnualSpot) +
-        n(formData.investmentOtherAnnualSpot)
-      ); // yen per year
-
-      const stocksCurrentYen = n(formData.investmentStocksCurrent) * 10000;
-      const trustCurrentYen = n(formData.investmentTrustCurrent) * 10000;
-      const otherCurrentYen = (n(formData.investmentBondsCurrent) + n(formData.investmentIdecoCurrent) + n(formData.investmentCryptoCurrent) + n(formData.investmentOtherCurrent)) * 10000;
-
-      const monthlyStocksYen = n(formData.monthlyInvestmentAmounts.investmentStocksMonthly);
-      const monthlyTrustYen = n(formData.monthlyInvestmentAmounts.investmentTrustMonthly);
-      const monthlyOtherYen = (
-        n(formData.monthlyInvestmentAmounts.investmentBondsMonthly) +
-        n(formData.monthlyInvestmentAmounts.investmentIdecoMonthly) +
-        n(formData.monthlyInvestmentAmounts.investmentCryptoMonthly) +
-        n(formData.monthlyInvestmentAmounts.investmentOtherMonthly)
-       );
-      const yearlyStocksRecurringYen = monthlyStocksYen * 12;
-      const yearlyTrustRecurringYen = monthlyTrustYen * 12;
-      const yearlyOtherRecurringYen = monthlyOtherYen * 12;
-
-      const stocksSpotYen = n(formData.investmentStocksAnnualSpot);
-      const trustSpotYen = n(formData.investmentTrustAnnualSpot);
-      const otherSpotYen = (
-        n(formData.investmentBondsAnnualSpot) +
-        n(formData.investmentIdecoAnnualSpot) +
-        n(formData.investmentCryptoAnnualSpot) +
-        n(formData.investmentOtherAnnualSpot)
-      );
-
-      const stocksAccountType = formData.investmentStocksAccountType;
-      const trustAccountType = formData.investmentTrustAccountType;
-
-      const nisaCurrentHoldingsJPY = (stocksAccountType === 'nisa' ? stocksCurrentYen : 0) + (trustAccountType === 'nisa' ? trustCurrentYen : 0);
-      const taxableCurrentHoldingsJPY = (stocksAccountType === 'taxable' ? stocksCurrentYen : 0) + (trustAccountType === 'taxable' ? trustCurrentYen : 0) + otherCurrentYen;
-
-      const nisaRecurringAnnualJPY = (stocksAccountType === 'nisa' ? yearlyStocksRecurringYen : 0) + (trustAccountType === 'nisa' ? yearlyTrustRecurringYen : 0);
-      const taxableRecurringAnnualJPY = (stocksAccountType === 'taxable' ? yearlyStocksRecurringYen : 0) + (trustAccountType === 'taxable' ? yearlyTrustRecurringYen : 0) + yearlyOtherRecurringYen;
-
-      const nisaSpotAnnualJPY = (stocksAccountType === 'nisa' ? stocksSpotYen : 0) + (trustAccountType === 'nisa' ? trustSpotYen : 0);
-      const taxableSpotAnnualJPY = (stocksAccountType === 'taxable' ? stocksSpotYen : 0) + (trustAccountType === 'taxable' ? trustSpotYen : 0) + otherSpotYen;
-
-      const totalInvestmentRate = (n(formData.investmentStocksRate) + n(formData.investmentTrustRate) + n(formData.investmentBondsRate) + n(formData.investmentIdecoRate) + n(formData.investmentCryptoRate) + n(formData.investmentOtherRate)) / 6;
-
-      // 商品別（stocks/trust/bonds/crypto/other/iDeCo）を独立に構築
-      const bondsCurrentYen = n(formData.investmentBondsCurrent) * 10000;
-      const idecoCurrentYen = n(formData.investmentIdecoCurrent) * 10000;
-      const cryptoCurrentYen = n(formData.investmentCryptoCurrent) * 10000;
-      const otherOnlyCurrentYen = n(formData.investmentOtherCurrent) * 10000;
-
-      const monthlyBondsYen = n(formData.monthlyInvestmentAmounts.investmentBondsMonthly);
-      const monthlyIdecoOnlyYen = n(formData.monthlyInvestmentAmounts.investmentIdecoMonthly);
-      const monthlyCryptoYen = n(formData.monthlyInvestmentAmounts.investmentCryptoMonthly);
-      const monthlyOtherOnlyYen = n(formData.monthlyInvestmentAmounts.investmentOtherMonthly);
-
-      const yearlyBondsRecurringYen = monthlyBondsYen * 12;
-      const yearlyIdecoRecurringYen = monthlyIdecoOnlyYen * 12;
-      const yearlyCryptoRecurringYen = monthlyCryptoYen * 12;
-      const yearlyOtherOnlyRecurringYen = monthlyOtherOnlyYen * 12;
-
-      const bondsSpotYen = n(formData.investmentBondsAnnualSpot);
-      const idecoSpotYen = n(formData.investmentIdecoAnnualSpot);
-      const cryptoSpotYen = n(formData.investmentCryptoAnnualSpot);
-      const otherOnlySpotYen = n(formData.investmentOtherAnnualSpot);
-
-      const stocksRate = n(formData.investmentStocksRate) / 100;
-      const trustRate = n(formData.investmentTrustRate) / 100;
-      const bondsRate = n(formData.investmentBondsRate) / 100;
-      const idecoRate = n(formData.investmentIdecoRate) / 100;
-      const cryptoRate = n(formData.investmentCryptoRate) / 100;
-      const otherRate = n(formData.investmentOtherRate) / 100;
-
-      const products = [
-        {
-          key: 'stocks',
-          account: stocksAccountType === 'nisa' ? '非課税' : '課税',
-          currentJPY: stocksCurrentYen,
-          recurringJPY: yearlyStocksRecurringYen,
-          spotJPY: stocksSpotYen,
-          expectedReturn: stocksRate,
-        },
-        {
-          key: 'trust',
-          account: trustAccountType === 'nisa' ? '非課税' : '課税',
-          currentJPY: trustCurrentYen,
-          recurringJPY: yearlyTrustRecurringYen,
-          spotJPY: trustSpotYen,
-          expectedReturn: trustRate,
-        },
-        {
-          key: 'bonds',
-          account: '課税',
-          currentJPY: bondsCurrentYen,
-          recurringJPY: yearlyBondsRecurringYen,
-          spotJPY: bondsSpotYen,
-          expectedReturn: bondsRate,
-        },
-        {
-          key: 'crypto',
-          account: '課税',
-          currentJPY: cryptoCurrentYen,
-          recurringJPY: yearlyCryptoRecurringYen,
-          spotJPY: cryptoSpotYen,
-          expectedReturn: cryptoRate,
-        },
-        {
-          key: 'other',
-          account: formData.investmentOtherAccountType === 'nisa' ? '非課税' : '課税',
-          currentJPY: otherOnlyCurrentYen,
-          recurringJPY: yearlyOtherOnlyRecurringYen,
-          spotJPY: otherOnlySpotYen,
-          expectedReturn: otherRate,
-        },
-        {
-          key: 'ideco',
-          account: 'iDeCo',
-          currentJPY: idecoCurrentYen,
-          recurringJPY: yearlyIdecoRecurringYen,
-          spotJPY: idecoSpotYen,
-          expectedReturn: idecoRate,
-        },
-      ] as const;
-
-      const params = {
-        initialAge: n(formData.personAge),
-        spouseInitialAge: formData.familyComposition === '既婚' ? n(formData.spouseAge) : undefined,
-        endAge: n(formData.simulationPeriodAge),
-        retirementAge: n(formData.retirementAge),
-        pensionStartAge: n(formData.pensionStartAge),
-
-        spouseRetirementAge: (formData.familyComposition === '既婚' || formData.planToMarry === 'する') ? n(formData.spouseRetirementAge) : undefined,
-        spousePensionStartAge: (formData.familyComposition === '既婚' || formData.planToMarry === 'する') ? n(formData.spousePensionStartAge) : undefined,
-
-        mainJobIncomeGross: mainJobIncomeGross,
-        sideJobIncomeGross: sideJobIncomeGross,
-        spouseMainJobIncomeGross: spouseMainJobIncomeGross,
-        spouseSideJobIncomeGross: spouseSideJobIncomeGross,
-        incomeGrowthRate: n(formData.annualRaiseRate) / 100,
-        spouseIncomeGrowthRate: (formData.familyComposition === '既婚' || formData.planToMarry === 'する') ? n(formData.spouseAnnualRaiseRate) / 100 : undefined,
-
-        expenseMode: formData.expenseMethod === '簡単' ? 'simple' : 'detailed',
-        // 万円/月 → 円/年
-        livingCostSimpleAnnual: formData.expenseMethod === '簡単' ? n(formData.livingCostSimple) * 10000 * 12 : undefined,
-        detailedFixedAnnual: formData.expenseMethod === '詳細' ? detailedFixedAnnual : undefined,
-        detailedVariableAnnual: formData.expenseMethod === '詳細' ? detailedVariableAnnual : undefined,
-
-        car: {
-          priceJPY: n(formData.carPrice) * 10000,
-          firstAfterYears: n(formData.carFirstReplacementAfterYears),
-          frequencyYears: n(formData.carReplacementFrequency),
-          loan: {
-            use: formData.carLoanUsage === 'はい',
-            years: formData.carLoanUsage === 'はい' ? n(formData.carLoanYears) : undefined,
-            type: formData.carLoanUsage === 'はい' ? formData.carLoanType as '銀行ローン' | 'ディーラーローン' : undefined,
-          },
-          currentLoan: (Number(formData.carCurrentLoanMonthly) > 0 && Number(formData.carCurrentLoanRemainingMonths) > 0) ? { monthlyPaymentJPY: n(formData.carCurrentLoanMonthly), remainingMonths: n(formData.carCurrentLoanRemainingMonths) }: undefined,
-        },
-
-        housing: {
-          type: formData.housingType,
-          rentMonthlyJPY: formData.housingType === '賃貸' ? n(formData.currentRentLoanPayment) : undefined,
-          currentLoan: formData.housingType === '持ち家（ローン中）' && Number(formData.loanMonthlyPayment) > 0 && Number(formData.loanRemainingYears) > 0 ? {
-            monthlyPaymentJPY: n(formData.loanMonthlyPayment),
-            remainingYears: n(formData.loanRemainingYears),
-          } : undefined,
-          purchasePlan: formData.housePurchasePlan ? {
-            age: n(formData.housePurchasePlan.age),
-            priceJPY: n(formData.housePurchasePlan.price) * 10000,
-            downPaymentJPY: n(formData.housePurchasePlan.downPayment) * 10000,
-            years: n(formData.housePurchasePlan.loanYears),
-            rate: n(formData.housingLoanInterestRateType === '指定' ? formData.housingLoanInterestRate : 1.5) / 100,
-          } : undefined,
-          renovations: formData.houseRenovationPlans.map(p => ({
-            age: n((p as RenovationPlan).age),
-            costJPY: n((p as RenovationPlan).cost) * 10000,
-            cycleYears: (p as RenovationPlan).cycleYears ? n((p as RenovationPlan).cycleYears) : undefined,
-          })),
-        },
-
-        marriage: formData.planToMarry === 'する' ? {
-          age: n(formData.marriageAge),
-          engagementJPY: n(formData.engagementCost) * 10000,
-          weddingJPY: n(formData.weddingCost) * 10000,
-          honeymoonJPY: n(formData.honeymoonCost) * 10000,
-          movingJPY: n(formData.newHomeMovingCost) * 10000,
-          // 結婚後の情報を追加
-          spouse: {
-            ageAtMarriage: n(formData.spouseAgeAtMarriage),
-            incomeGross: spouseIncomeForSim,
-          },
-          //結婚後の生活費は月ｘ12する
-          newLivingCostAnnual: n(formData.livingCostAfterMarriage) * 12,
-          newHousingCostAnnual: n(formData.housingCostAfterMarriage) * 12,
-        } : undefined,
-
-        children: formData.hasChildren === 'はい' ? {
-          count: n(formData.numberOfChildren),
-          firstBornAge: n(formData.firstBornAge),
-          educationPattern: formData.educationPattern as '公立中心' | '公私混合' | '私立中心',
-        } : undefined,
-
-        appliances: formData.appliances
-          .filter((a) =>
-            String(a?.name ?? '').trim().length > 0 &&
-            Number(a?.cost) > 0 &&
-            Number(a?.cycle) > 0
-          )
-          .map((p) => ({
-            name: String(p.name),
-            cycleYears: Number(p.cycle),
-            firstAfterYears: Number(p.firstReplacementAfterYears ?? 0),
-            cost10kJPY: Number(p.cost) // 万円（サーバで×10000）
-          })),
-
-        cares: formData.parentCareAssumption === 'はい' ? formData.parentCarePlans.map(p => ({
-          id: p.id,
-          parentCurrentAge: n(p.parentCurrentAge),
-          parentCareStartAge: n(p.parentCareStartAge),
-          years: n(p.years),
-          monthly10kJPY: n(p.monthly10kJPY),
-        })) : [],
-
-        postRetirementLiving10kJPY: n(formData.postRetirementLivingCost),
-        pensionMonthly10kJPY: n(formData.pensionAmount),
-        spousePensionMonthly10kJPY: (formData.familyComposition === '既婚' || formData.planToMarry === 'する') ? n(formData.spousePensionAmount) : undefined,
-
-        currentSavingsJPY: n(formData.currentSavings) * 10000,
-        monthlySavingsJPY: n(formData.monthlySavings),
-
-        currentInvestmentsJPY: currentInvestmentsJPY,
-        yearlyRecurringInvestmentJPY,
-        yearlySpotJPY,
-        expectedReturn: totalInvestmentRate / 100,
-        products: products as unknown as Array<{
-          key: 'stocks' | 'trust' | 'bonds' | 'crypto' | 'other' | 'ideco';
-          account: '課税' | '非課税' | 'iDeCo';
-          currentJPY: number; recurringJPY: number; spotJPY: number; expectedReturn: number;
-        }>,
-        investmentTaxation: {
-          nisa: {
-            currentHoldingsJPY: nisaCurrentHoldingsJPY,
-            annualRecurringContributionJPY: nisaRecurringAnnualJPY,
-            annualSpotContributionJPY: nisaSpotAnnualJPY,
-          },
-          taxable: {
-            currentHoldingsJPY: taxableCurrentHoldingsJPY,
-            annualRecurringContributionJPY: taxableRecurringAnnualJPY,
-            annualSpotContributionJPY: taxableSpotAnnualJPY,
-          },
-        },
-        stressTest: {
-          enabled: formData.interestRateScenario === 'ランダム変動',
-          seed: n(formData.stressTestSeed), // 新しく追加するformDataのプロパティ
-        },
-
-        interestScenario: formData.interestRateScenario as '固定利回り' | 'ランダム変動', // 追加
-        fixedInterestRate: formData.interestRateScenario === '固定利回り' ? n(formData.fixedInterestRate) / 100 : undefined,
-        emergencyFundJPY: n(formData.emergencyFund) * 10000,
-      };
-
-      // 単位統一の最終調整（すべて円でAPIへ渡す）
-      // 1) 生活費（簡単）は「円/月」入力 → 年間円へ変換
-      if (params.expenseMode === 'simple') {
-        params.livingCostSimpleAnnual = n(formData.livingCostSimple) * 12; // 万円/月 -> 円/年
-      }
-      // 2) 投資の月積立は「円/月」入力 → 年間円へ変換
-      params.yearlyRecurringInvestmentJPY = monthlyRecurringInvestment;
-
-      // TODO: UIの「今の家賃/返済」欄（円）をそのまま params.housing に反映する実装は別パッチで対応
+      const params = createApiParams(formData);
 
       const response = await fetch('/api/simulate', {
         method: 'POST',
@@ -872,7 +567,7 @@ export default function FormPage() {
   const handleApplianceChange = (index: number, field: string, value: string) => {
     setFormData(prev => {
       const newAppliances = [...prev.appliances];
-      const isNumberField = field === 'cycle' || field === 'cost';
+      const isNumberField = field === 'cycle' || field === 'cost' || field === 'firstReplacementAfterYears';
       const valueToSet = isNumberField ? (value === '' ? '' : Number(value)) : value;
       newAppliances[index] = { 
         ...newAppliances[index],
@@ -976,25 +671,25 @@ export default function FormPage() {
 
   const totalIncome = useMemo(() => {
     return (
-      (Number(formData.mainIncome) || 0) +
-      (Number(formData.spouseMainIncome) || 0) +
-      (Number(formData.sideJobIncome) || 0) +
-      (Number(formData.spouseSideJobIncome) || 0)
+      Number(formData.mainIncome || 0) +
+      Number(formData.spouseMainIncome || 0) +
+      Number(formData.sideJobIncome || 0) +
+      Number(formData.spouseSideJobIncome || 0)
     );
   }, [formData.mainIncome, formData.spouseMainIncome, formData.sideJobIncome, formData.spouseSideJobIncome]);
 
   const displayTotalIncome = useMemo(() => {
-    return totalIncome * 10000;
+    return totalIncome * FC.YEN_PER_MAN;
   }, [totalIncome]);
 
   const totalMarriageCost = useMemo(() => {
     if (formData.planToMarry !== 'する') return 0;
     return (
-      (Number(formData.engagementCost) || 0) +
-      (Number(formData.weddingCost) || 0) +
-      (Number(formData.honeymoonCost) || 0) +
+      Number(formData.engagementCost || 0) +
+      Number(formData.weddingCost || 0) +
+      Number(formData.honeymoonCost || 0) +
       (Number(formData.newHomeMovingCost) || 0)
-    ) * 10000; // 万円 → 円に変換
+    ) * FC.YEN_PER_MAN; // 万円 → 円に変換
   }, [
     formData.planToMarry,
     formData.engagementCost,
@@ -1006,7 +701,7 @@ export default function FormPage() {
   const totalCareCost = useMemo(() => {
     if (formData.parentCareAssumption !== 'はい' || !formData.parentCarePlans) return 0;
     return formData.parentCarePlans.reduce((total, plan) => {
-      return total + ((Number(plan.monthly10kJPY) || 0) * (Number(plan.years) || 0) * 12);
+      return total + ((Number(plan.monthly10kJPY) || 0) * (Number(plan.years) || 0) * FC.MONTHS_PER_YEAR);
     }, 0);
   }, [formData.parentCareAssumption, formData.parentCarePlans]);
 
@@ -1019,20 +714,15 @@ export default function FormPage() {
 
   const totalCarLoanCost = useMemo(() => {
     if (formData.carLoanUsage !== 'はい') return 0;
-    const principal = Number(formData.carPrice) * 10000 || 0;
+    const principal = Number(formData.carPrice) * FC.YEN_PER_MAN || 0;
     const years = Number(formData.carLoanYears) || 0;
 
-    let annualRate = 0.025; // default
-    if (formData.carLoanType === '銀行ローン') annualRate = 0.015;
-    else if (formData.carLoanType === 'ディーラーローン') annualRate = 0.045;
+    let annualRatePercent = FC.DEFAULT_LOAN_RATES.CAR_GENERAL * 100; // default
+    if (formData.carLoanType === '銀行ローン') annualRatePercent = FC.DEFAULT_LOAN_RATES.CAR_BANK * 100;
+    else if (formData.carLoanType === 'ディーラーローン') annualRatePercent = FC.DEFAULT_LOAN_RATES.CAR_DEALER * 100;
 
-    const interestRate = annualRate / 12;
-    const months = years * 12;
-    if (principal <= 0 || years <= 0) return 0;
-
-    const monthly = principal * interestRate * Math.pow(1 + interestRate, months) / (Math.pow(1 + interestRate, months) - 1);
-    const total = monthly * months;
-    return Math.ceil(total);
+    const { totalPayment } = calculateLoanPayment(principal, annualRatePercent, years);
+    return Math.ceil(totalPayment);
   }, [formData.carPrice, formData.carLoanUsage, formData.carLoanYears, formData.carLoanType]);
 
   const totalInvestment = useMemo(() => {
@@ -1040,49 +730,9 @@ export default function FormPage() {
       (acc: number, val) => acc + Number(val),
       0
     );
-
-    const annualSpotTotal = (
-      (Number(formData.investmentStocksAnnualSpot) || 0) +
-      (Number(formData.investmentTrustAnnualSpot) || 0) +
-      (Number(formData.investmentBondsAnnualSpot) || 0) +
-      (Number(formData.investmentIdecoAnnualSpot) || 0) +
-      (Number(formData.investmentCryptoAnnualSpot) || 0) +
-      (Number(formData.investmentOtherAnnualSpot) || 0)
-    );
-
-    return {
-      monthly: monthlyTotal,
-      annual: (monthlyTotal * 12) + annualSpotTotal
-    };
-  }, [
-    formData.monthlyInvestmentAmounts,
-    formData.investmentStocksAnnualSpot,
-    formData.investmentTrustAnnualSpot,
-    formData.investmentBondsAnnualSpot,
-    formData.investmentIdecoAnnualSpot,
-    formData.investmentCryptoAnnualSpot,
-    formData.investmentOtherAnnualSpot,
-  ]);
-
-  const calculateLoanPayment = (principal: number, annualInterestRate: number, years: number): { annualPayment: number, totalPayment: number } => {
-    if (principal <= 0 || annualInterestRate < 0 || years <= 0) {
-      return { annualPayment: 0, totalPayment: 0 };
-    }
-
-    const monthlyInterestRate = annualInterestRate / 100 / 12;
-    const totalMonths = years * 12;
-
-    if (monthlyInterestRate === 0) {
-      const annualPayment = principal / years;
-      return { annualPayment: annualPayment, totalPayment: principal };
-    }
-
-    const monthlyPayment = principal * monthlyInterestRate * Math.pow((1 + monthlyInterestRate), totalMonths) / (Math.pow((1 + monthlyInterestRate), totalMonths) - 1);
-    const annualPayment = monthlyPayment * 12;
-    const totalPayment = annualPayment * years;
-
-    return { annualPayment: Math.ceil(annualPayment / 1000) * 1000, totalPayment: Math.ceil(totalPayment / 1000) * 1000 };
-  };
+    // 年間スポット投資額はシミュレーションパラメータでのみ使用するため、ここでは月額のみ計算
+    return { monthly: monthlyTotal };
+  }, [formData.monthlyInvestmentAmounts]);
 
   const { estimatedAnnualLoanPayment, estimatedTotalLoanPayment } = useMemo(() => {
     const housingLoanStatus = formData.housingLoanStatus;
@@ -1092,7 +742,7 @@ export default function FormPage() {
     const isFutureBuyer = formData.housingType === '賃貸' && formData.housePurchasePlan !== null;
     const isCurrentLoanHolder = formData.housingType === '持ち家（ローン中）' && Number(formData.loanMonthlyPayment) > 0 && Number(formData.loanRemainingYears) > 0;
 
-    if (housingLoanStatus === 'これから借りる予定' || isFutureBuyer) {
+    if (housingLoanStatus === 'これから借りる' || isFutureBuyer) {
       const price = (isFutureBuyer ? formData.housePurchasePlan?.price : Number(formData.housePurchasePrice)) || 0;
       const downPayment = (isFutureBuyer ? formData.housePurchasePlan?.downPayment : Number(formData.headDownPayment)) || 0;
       const years = (isFutureBuyer ? formData.housePurchasePlan?.loanYears : Number(formData.housingLoanYears)) || 0;
@@ -1100,9 +750,9 @@ export default function FormPage() {
       const customInterestRate = (isFutureBuyer ? formData.housePurchasePlan?.interestRate : Number(formData.housingLoanInterestRate)) || 0;
 
       if (price > 0 && years > 0 && interestRateType) {
-        const principal = (price - downPayment) * 10000; // Convert to yen
+        const principal = (price - downPayment) * FC.YEN_PER_MAN; // Convert to yen
 
-        let interestRate = 1.5; // Default general interest rate
+        let interestRate = FC.DEFAULT_LOAN_RATES.HOUSING_GENERAL * 100; // Default general interest rate
         if (interestRateType === '指定') {
           interestRate = customInterestRate;
         }
@@ -1115,8 +765,8 @@ export default function FormPage() {
       const loanRemainingYears = Number(formData.loanRemainingYears) || 0;
 
       if (loanMonthlyPayment > 0 && loanRemainingYears > 0) {
-        annualPayment = Math.ceil(loanMonthlyPayment * 12 / 1000) * 1000;
-        totalPayment = Math.ceil(annualPayment * loanRemainingYears / 1000) * 1000;
+        annualPayment = Math.ceil(loanMonthlyPayment * FC.MONTHS_PER_YEAR / 1000) * 1000;
+        totalPayment = Math.ceil(annualPayment * loanRemainingYears / 1000) * 1000; // 概算
       }
     }
 
@@ -1140,10 +790,10 @@ export default function FormPage() {
 
     const singleLivingCost = formData.expenseMethod === '簡単'
       ? Number(formData.livingCostSimple) || 0
-      : totalExpenses / 10000; // totalExpensesは円/月なので万円/月に変換
+      : totalExpenses / FC.YEN_PER_MAN; // totalExpensesは円/月なので万円/月に変換
 
-    if (singleLivingCost > 0) {
-      const recommendedCost = Math.round(singleLivingCost * 1.5);
+    if (singleLivingCost > 0 && !formData.isLivingCostEdited) {
+      const recommendedCost = Math.round(singleLivingCost * FC.POST_MARRIAGE_COST_INCREASE_RATE.LIVING);
       setFormData(prev => ({
         ...prev,
         livingCostAfterMarriage: String(recommendedCost)
@@ -1156,8 +806,8 @@ export default function FormPage() {
 
     const singleHousingCost = Number(formData.currentRentLoanPayment) || 0;
 
-    if (singleHousingCost > 0) {
-      const recommendedCost = Math.round(singleHousingCost * 1.3);
+    if (singleHousingCost > 0 && !formData.isHousingCostEdited) {
+      const recommendedCost = Math.round(singleHousingCost * FC.POST_MARRIAGE_COST_INCREASE_RATE.HOUSING);
       setFormData(prev => ({
         ...prev,
         housingCostAfterMarriage: String(recommendedCost)
@@ -1225,10 +875,10 @@ export default function FormPage() {
   }, [currentSectionIndex]);
 
   useEffect(() => {
-    const mainJobIncomeGross = (Number(formData.mainIncome) || 0) * 10000;
-    const sideJobIncomeGross = (Number(formData.sideJobIncome) || 0) * 10000;
-    const spouseMainJobIncomeGross = (formData.familyComposition === '既婚' ? (Number(formData.spouseMainIncome) || 0) : 0) * 10000;
-    const spouseSideJobIncomeGross = (formData.familyComposition === '既婚' ? (Number(formData.spouseSideJobIncome) || 0) : 0) * 10000;
+    const mainJobIncomeGross = (Number(formData.mainIncome) || 0) * FC.YEN_PER_MAN;
+    const sideJobIncomeGross = (Number(formData.sideJobIncome) || 0) * FC.YEN_PER_MAN;
+    const spouseMainJobIncomeGross = (formData.familyComposition === '既婚' ? (Number(formData.spouseMainIncome) || 0) : 0) * FC.YEN_PER_MAN;
+    const spouseSideJobIncomeGross = (formData.familyComposition === '既婚' ? (Number(formData.spouseSideJobIncome) || 0) : 0) * FC.YEN_PER_MAN;
 
     const selfNetAnnual = computeNetAnnual(mainJobIncomeGross) + computeNetAnnual(sideJobIncomeGross);
     const spouseNetAnnual = computeNetAnnual(spouseMainJobIncomeGross) + computeNetAnnual(spouseSideJobIncomeGross);
@@ -1843,7 +1493,7 @@ export default function FormPage() {
                         ...prev,
                         housePurchaseIntent: 'yes',
                         housePurchasePlan: prev.housePurchasePlan === null 
-                          ? { age: 0, price: 0, downPayment: 0, loanYears: 0, interestRate: 0 } 
+                          ? { age: '', price: '', downPayment: '', loanYears: '', interestRate: '' } 
                           : prev.housePurchasePlan
                       }));
                       }}
@@ -2169,9 +1819,9 @@ export default function FormPage() {
                     required
                   >
                     <option value="">選択してください</option>
-                    <option value="公立中心">公立中心（〜1,000万円/人）</option>
-                    <option value="公私混合">公私混合（〜1,600万円/人）</option>
-                    <option value="私立中心">私立中心（〜2,000万円/人）</option>
+                    <option value="公立中心">公立中心（〜{FC.EDUCATION_COST_SUMMARY['公立中心']}万円/人）</option>
+                    <option value="公私混合">公私混合（〜{FC.EDUCATION_COST_SUMMARY['公私混合']}万円/人）</option>
+                    <option value="私立中心">私立中心（〜{FC.EDUCATION_COST_SUMMARY['私立中心']}万円/人）</option>
                   </select>
                   {errors.educationPattern && <p className="text-red-500 text-xs italic mt-1">{errors.educationPattern}</p>}
                 </div>
@@ -2306,24 +1956,24 @@ export default function FormPage() {
                     type="radio"
                     className="custom-radio"
                     name="parentCareAssumption"
-                    value="いいえ"
-                    checked={formData.parentCareAssumption === 'いいえ'}
+                    value="なし"
+                    checked={formData.parentCareAssumption === 'なし'}
                     onChange={handleInputChange}
                     required
                   />
-                  <span className="ml-2">いいえ</span>
+                  <span className="ml-2">なし</span>
                 </label>
                 <label className="inline-flex items-center">
                   <input
                     type="radio"
                     className="custom-radio"
                     name="parentCareAssumption"
-                    value="まだ分からない"
-                    checked={formData.parentCareAssumption === 'まだ分からない'}
+                    value="未定"
+                    checked={formData.parentCareAssumption === '未定'}
                     onChange={handleInputChange}
                     required
                   />
-                  <span className="ml-2">まだ分からない</span>
+                  <span className="ml-2">未定</span>
                 </label>
               </div>
               {errors.parentCareAssumption && <p className="text-red-500 text-xs italic mt-2">{errors.parentCareAssumption}</p>}
@@ -2400,7 +2050,7 @@ export default function FormPage() {
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="postRetirementLivingCost">
                 老後の生活費（月額）[万円]
               </label>
-              <input type="number" id="postRetirementLivingCost" name="postRetirementLivingCost" value={formData.postRetirementLivingCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.postRetirementLivingCost ? 'border-red-500' : ''}`} defaultValue={25} />
+              <input type="number" id="postRetirementLivingCost" name="postRetirementLivingCost" value={formData.postRetirementLivingCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.postRetirementLivingCost ? 'border-red-500' : ''}`} />
               {errors.postRetirementLivingCost && <p className="text-red-500 text-xs italic mt-1">{errors.postRetirementLivingCost}</p>}
             </div>
 
@@ -2410,21 +2060,21 @@ export default function FormPage() {
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="retirementAge">
                   退職予定年齢は？[歳]
                 </label>
-                <input type="number" id="retirementAge" name="retirementAge" value={formData.retirementAge} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.retirementAge ? 'border-red-500' : ''}`} defaultValue={65} />
+                <input type="number" id="retirementAge" name="retirementAge" value={formData.retirementAge} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.retirementAge ? 'border-red-500' : ''}`} />
                 {errors.retirementAge && <p className="text-red-500 text-xs italic mt-1">{errors.retirementAge}</p>}
               </div>
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="pensionStartAge">
                   年金の想定受給開始年齢は？[歳]
                 </label>
-                <input type="number" id="pensionStartAge" name="pensionStartAge" value={formData.pensionStartAge} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.pensionStartAge ? 'border-red-500' : ''}`} defaultValue={65} />
+                <input type="number" id="pensionStartAge" name="pensionStartAge" value={formData.pensionStartAge} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.pensionStartAge ? 'border-red-500' : ''}`} />
                 {errors.pensionStartAge && <p className="text-red-500 text-xs italic mt-1">{errors.pensionStartAge}</p>}
               </div>
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="pensionAmount">
                   年金受給額（月額）[万円]
                 </label>
-                <input type="number" id="pensionAmount" name="pensionAmount" value={formData.pensionAmount} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.pensionAmount ? 'border-red-500' : ''}`} defaultValue={15} />
+                <input type="number" id="pensionAmount" name="pensionAmount" value={formData.pensionAmount} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.pensionAmount ? 'border-red-500' : ''}`} />
                 {errors.pensionAmount && <p className="text-red-500 text-xs italic mt-1">{errors.pensionAmount}</p>}
               </div>
             </div>
@@ -2443,7 +2093,6 @@ export default function FormPage() {
                     value={formData.spouseRetirementAge}
                     onChange={handleInputChange}
                     className={`shadow border rounded w-full py-2 px-3 text-gray-700 ${errors.spouseRetirementAge ? 'border-red-500' : ''}`}
-                    defaultValue={65}
                   />
                   {errors.spouseRetirementAge && <p className="text-red-500 text-xs italic mt-1">{errors.spouseRetirementAge}</p>}
                 </div>
@@ -2458,13 +2107,12 @@ export default function FormPage() {
                     value={formData.spousePensionStartAge}
                     onChange={handleInputChange}
                     className={`shadow border rounded w-full py-2 px-3 text-gray-700 ${errors.spousePensionStartAge ? 'border-red-500' : ''}`}
-                    defaultValue={65}
                   />
                   {errors.spousePensionStartAge && <p className="text-red-500 text-xs italic mt-1">{errors.spousePensionStartAge}</p>}
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="spousePensionAmount">配偶者の年金受給額（月額）[万円]</label>
-                  <input type="number" id="spousePensionAmount" name="spousePensionAmount" value={formData.spousePensionAmount} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 ${errors.spousePensionAmount ? 'border-red-500' : ''}`} defaultValue={10} />
+                  <input type="number" id="spousePensionAmount" name="spousePensionAmount" value={formData.spousePensionAmount} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 ${errors.spousePensionAmount ? 'border-red-500' : ''}`} />
                   {errors.spousePensionAmount && <p className="text-red-500 text-xs italic mt-1">{errors.spousePensionAmount}</p>}
                 </div>
               </div>
@@ -2590,7 +2238,7 @@ export default function FormPage() {
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="simulationPeriodAge">
                 シミュレーションの対象期間（現在から何歳まで）[歳]
               </label>
-              <input type="number" id="simulationPeriodAge" name="simulationPeriodAge" value={formData.simulationPeriodAge} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.simulationPeriodAge ? 'border-red-500' : ''}`} defaultValue={90} />
+              <input type="number" id="simulationPeriodAge" name="simulationPeriodAge" value={formData.simulationPeriodAge} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.simulationPeriodAge ? 'border-red-500' : ''}`} />
               {errors.simulationPeriodAge && <p className="text-red-500 text-xs italic mt-1">{errors.simulationPeriodAge}</p>}
             </div>
             <div className="mb-4">
@@ -2648,7 +2296,7 @@ export default function FormPage() {
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="emergencyFund">
                 生活防衛資金（常に確保したい現金額）[万円]
               </label>
-              <input type="number" id="emergencyFund" name="emergencyFund" value={formData.emergencyFund} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.emergencyFund ? 'border-red-500' : ''}`} defaultValue={300} />
+              <input type="number" id="emergencyFund" name="emergencyFund" value={formData.emergencyFund} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.emergencyFund ? 'border-red-500' : ''}`} />
               {errors.emergencyFund && <p className="text-red-500 text-xs italic mt-1">{errors.emergencyFund}</p>}
             </div>
           </div>
@@ -2663,7 +2311,7 @@ export default function FormPage() {
   const isHouseLoanSection = effectiveSections[currentSectionIndex] === 'ライフイベント - 家';
   const shouldShowLoanBox = isHouseLoanSection && 
   (
-    formData.housingLoanStatus === 'これから借りる予定' || 
+    formData.housingLoanStatus === 'これから借りる' || 
     formData.housingLoanStatus === 'すでに返済中' || 
     formData.housePurchasePlan !== null ||
     (formData.housingType === '持ち家（ローン中）' && Number(formData.loanMonthlyPayment) > 0 && Number(formData.loanRemainingYears) > 0)
@@ -2691,18 +2339,18 @@ const renderConfirmationView = () => {
     const n = (v: unknown) => Number(v) || 0;
 
     // --- 右カラム（ライフプラン）のイベントを構築 ---
-    const events: { age: number, title: string, details: { label: string, value: React.ReactNode }[], incomeChange?: number }[] = [];
+    const events: { age: number, title: string, details: { label: string, value: React.ReactNode }[] }[] = [];
 
     // 現在の収入
-    const selfGrossIncome = n(formData.mainIncome) * 10000 + n(formData.sideJobIncome) * 10000;
+    const selfGrossIncome = n(formData.mainIncome) * FC.YEN_PER_MAN + n(formData.sideJobIncome) * FC.YEN_PER_MAN;
     const selfNetIncome = computeNetAnnual(selfGrossIncome);
     
     // --- 確認画面用の追加計算 (現在の状況ベース) ---
     // 現在の額面世帯年収
     const currentSpouseGrossIncome = formData.familyComposition === '既婚' ? (n(formData.spouseMainIncome) * 10000 + n(formData.spouseSideJobIncome) * 10000) : 0;
     const currentTotalGrossAnnualIncome = selfGrossIncome + currentSpouseGrossIncome;
-
-    // 月の生活費
+    
+    // 月の生活費（円）
     const monthlyLivingExpense = formData.expenseMethod === '簡単'
       ? n(formData.livingCostSimple)
       : totalExpenses; // totalExpenses は既に月額合計（円）として計算されている
@@ -2714,7 +2362,7 @@ const renderConfirmationView = () => {
     const currentCareMonthly = formData.parentCareAssumption === 'はい'
       ? formData.parentCarePlans.reduce((sum, plan) => {
           const hasStarted = n(plan.parentCurrentAge) >= n(plan.parentCareStartAge);
-          return hasStarted ? sum + n(plan.monthly10kJPY) * 10000 : sum;
+          return hasStarted ? sum + n(plan.monthly10kJPY) * FC.YEN_PER_MAN : sum;
         }, 0)
       : 0;
 
@@ -2762,7 +2410,7 @@ const renderConfirmationView = () => {
           else if (childCurrentAge >= 19 && childCurrentAge <= 22) annualCostForChild = costStages.university;
         }
 
-        currentEducationMonthly += (annualCostForChild * 10000) / 12;
+        currentEducationMonthly += (annualCostForChild * FC.YEN_PER_MAN) / FC.MONTHS_PER_YEAR;
       }
     }
 
@@ -2790,9 +2438,9 @@ const renderConfirmationView = () => {
     // 結婚イベント
     if (formData.planToMarry === 'する') {
       let spouseIncomeForSim = 0;
-      if (formData.spouseIncomePattern === 'パート') spouseIncomeForSim = 1060000;
-      else if (formData.spouseIncomePattern === '正社員') spouseIncomeForSim = 3000000;
-      else if (formData.spouseIncomePattern === 'カスタム') spouseIncomeForSim = n(formData.spouseCustomIncome) * 10000;
+      if (formData.spouseIncomePattern === 'パート') spouseIncomeForSim = FC.SPOUSE_INCOME_PATTERNS.PART_TIME;
+      else if (formData.spouseIncomePattern === '正社員') spouseIncomeForSim = FC.SPOUSE_INCOME_PATTERNS.FULL_TIME;
+      else if (formData.spouseIncomePattern === 'カスタム') spouseIncomeForSim = n(formData.spouseCustomIncome) * FC.YEN_PER_MAN;
       
       const spouseNetIncomeAfterMarriage = computeNetAnnual(spouseIncomeForSim);
       
@@ -2803,7 +2451,6 @@ const renderConfirmationView = () => {
           { label: '結婚費用', value: formatYen(totalMarriageCost) },
           { label: '配偶者の収入が加算', value: `+ ${formatYen(spouseNetIncomeAfterMarriage)} /年` },
         ],
-        incomeChange: spouseNetIncomeAfterMarriage
       });
     }
 
@@ -2860,7 +2507,7 @@ const renderConfirmationView = () => {
         // 介護開始が本人の何歳の時かを計算
         const startAge = n(formData.personAge) + (n(plan.parentCareStartAge) - n(plan.parentCurrentAge));
         const endAge = startAge + n(plan.years);
-        const annualCost = n(plan.monthly10kJPY) * 10000 * 12;
+        const annualCost = n(plan.monthly10kJPY) * FC.YEN_PER_MAN * FC.MONTHS_PER_YEAR;
 
         events.push({
           age: startAge,
@@ -2888,42 +2535,17 @@ const renderConfirmationView = () => {
       });
     }
 
-    // イベントを年齢でソート（退職イベントの前に一度ソートが必要）
-    events.sort((a, b) => a.age - b.age);
-
-    // 収入の変遷を計算（退職イベントの計算に必要）
-    const incomeHistory: { ageRange: string; income: number }[] = [];
-    let lastAgeForHistory = n(formData.personAge);
-    let timelineHouseholdNetIncomeForHistory = currentTotalNetAnnualIncome;
-
-    for (const event of events) {
-      if (event.age > lastAgeForHistory) {
-        incomeHistory.push({
-          ageRange: `${lastAgeForHistory}歳〜`,
-          income: timelineHouseholdNetIncomeForHistory
-        });
-      }
-      if (event.incomeChange !== undefined) {
-        timelineHouseholdNetIncomeForHistory += event.incomeChange;
-      }
-      lastAgeForHistory = event.age;
-    }
-
-
     // 退職イベント
     const retirementAge = n(formData.retirementAge);
     const pensionStartAge = n(formData.pensionStartAge);
-    const pensionNetIncome = n(formData.pensionAmount) * 10000 * 12; // 本人の年金
+    const pensionNetIncome = n(formData.pensionAmount) * FC.YEN_PER_MAN * FC.MONTHS_PER_YEAR; // 本人の年金
 
     // ユーザー本人の退職イベント
     if (selfNetIncome > 0) {
       events.push({
         age: retirementAge,
         title: '👤 あなたの退職',
-        details: [
-            { label: '給与収入が停止', value: `手取り年収が減少します` },
-        ],
-        incomeChange: -selfNetIncome
+        details: [{ label: '給与収入が停止', value: `手取り年収が減少します` }],
       });
     }
 
@@ -2932,10 +2554,7 @@ const renderConfirmationView = () => {
       events.push({
         age: pensionStartAge,
         title: '👤 あなたの年金受給開始',
-        details: [
-          { label: '年金受給開始', value: `+ ${formatYen(pensionNetIncome)} /年` },
-        ],
-        incomeChange: pensionNetIncome
+        details: [{ label: '年金受給開始', value: `+ ${formatYen(pensionNetIncome)} /年` }],
       });
     }
 
@@ -2946,14 +2565,14 @@ const renderConfirmationView = () => {
 
         const spouseRetirementTargetAge = n(formData.spouseRetirementAge);
         const spousePensionStartTargetAge = n(formData.spousePensionStartAge);
-        const spousePensionNetIncome = n(formData.spousePensionAmount) * 10000 * 12;
+        const spousePensionNetIncome = n(formData.spousePensionAmount) * FC.YEN_PER_MAN * FC.MONTHS_PER_YEAR;
 
         // 配偶者の収入は、結婚予定がある場合、結婚後の収入を基準に計算する (修正)
         const spouseBaseNetIncome = (() => {
           if (formData.planToMarry === 'する') {
-            if (formData.spouseIncomePattern === 'パート') return computeNetAnnual(1060000);
-            if (formData.spouseIncomePattern === '正社員') return computeNetAnnual(3000000);
-            if (formData.spouseIncomePattern === 'カスタム') return computeNetAnnual(n(formData.spouseCustomIncome) * 10000);
+            if (formData.spouseIncomePattern === 'パート') return computeNetAnnual(FC.SPOUSE_INCOME_PATTERNS.PART_TIME);
+            if (formData.spouseIncomePattern === '正社員') return computeNetAnnual(FC.SPOUSE_INCOME_PATTERNS.FULL_TIME);
+            if (formData.spouseIncomePattern === 'カスタム') return computeNetAnnual(n(formData.spouseCustomIncome) * FC.YEN_PER_MAN);
             return 0;
           }
           return currentSpouseNetIncome;
@@ -2967,10 +2586,7 @@ const renderConfirmationView = () => {
             events.push({
                age: spouseRetirementAgeOnPersonTimeline,
                title: 'パートナーの退職',
-               details: [
-                   { label: '給与収入が停止', value: `手取り年収が減少します` },
-               ],
-               incomeChange: -spouseBaseNetIncome
+               details: [{ label: '給与収入が停止', value: `手取り年収が減少します` }],
            });
         }
 
@@ -2979,10 +2595,7 @@ const renderConfirmationView = () => {
             events.push({
                age: spousePensionStartAgeOnPersonTimeline,
                title: 'パートナーの年金受給開始',
-               details: [
-                   { label: '年金受給開始', value: `+ ${formatYen(spousePensionNetIncome)} /年` },
-               ],
-               incomeChange: spousePensionNetIncome
+               details: [{ label: '年金受給開始', value: `+ ${formatYen(spousePensionNetIncome)} /年` }],
            });
         }
     }
@@ -2990,57 +2603,24 @@ const renderConfirmationView = () => {
     // イベントを年齢でソート
     events.sort((a, b) => a.age - b.age);
 
-    // 各イベント発生時点での累計収入を計算
-    const incomeAtEvent: number[] = [];
-    let cumulativeIncome = currentTotalNetAnnualIncome;
-    for (const event of events) {
-      cumulativeIncome += event.incomeChange ?? 0;
-      incomeAtEvent.push(cumulativeIncome);
-    }
-    // 収入の変遷を計算
-    const finalIncomeHistory: { ageRange: string; income: number }[] = [];
-    let lastAge = n(formData.personAge);
-
-    // タイムライン用の収入履歴を再計算
-    let timelineHouseholdNetIncome = currentTotalNetAnnualIncome;
-    for (const event of events) {
-      if (event.age > lastAge) {
-        finalIncomeHistory.push({
-          ageRange: `${lastAge}歳〜`,
-          income: timelineHouseholdNetIncome
-        });
-      }
-      if (event.incomeChange !== undefined) {
-        timelineHouseholdNetIncome += event.incomeChange;
-      }
-      lastAge = event.age;
-    }
-    // 最後の期間を追加
-    if (lastAge <= n(formData.simulationPeriodAge)) {
-      finalIncomeHistory.push({
-        ageRange: `${lastAge}歳〜`,
-        income: timelineHouseholdNetIncome
-      });
-    }
-
     // --- サマリー表示用の「現在の」年間支出を計算 ---
     let summaryAnnualExpense = 0;
     if (formData.expenseMethod === '簡単') {
       // 簡単入力の場合、生活費は「円/月」なので円/年に変換
-      summaryAnnualExpense += n(formData.livingCostSimple) * 12;
+      summaryAnnualExpense += n(formData.livingCostSimple) * FC.MONTHS_PER_YEAR;
     } else {
       // 詳細入力の場合、totalExpensesは「円/月」の合計なので年額に変換
-      summaryAnnualExpense += totalExpenses * 12;
+      summaryAnnualExpense += totalExpenses * FC.MONTHS_PER_YEAR;
     }
     // 現在の住居費（円/月）を年額に変換して加算
     if (formData.housingType === '賃貸') {
-      summaryAnnualExpense += n(formData.currentRentLoanPayment) * 12;
+      summaryAnnualExpense += n(formData.currentRentLoanPayment) * FC.MONTHS_PER_YEAR;
     } else if (formData.housingType === '持ち家（ローン中）') {
-      summaryAnnualExpense += n(formData.loanMonthlyPayment) * 12;
+      summaryAnnualExpense += n(formData.loanMonthlyPayment) * FC.MONTHS_PER_YEAR;
     }
     // 現在の車のローン（円/月）を年額に変換して加算
     if (formData.carCurrentLoanInPayment === 'yes') {
-      summaryAnnualExpense += n(formData.carCurrentLoanMonthly) * 12;
+      summaryAnnualExpense += n(formData.carCurrentLoanMonthly) * FC.MONTHS_PER_YEAR;
     }
     // 毎月の貯蓄額は支出に含めない（キャッシュフローで考慮されるため）
     // const totalAnnualExpense = summaryAnnualExpense; // 変数名が冗長なので直接使う
@@ -3067,7 +2647,7 @@ const renderConfirmationView = () => {
             />
           </ConfirmationSection>
           <ConfirmationSection title="🏦 現在の資産">
-            <ConfirmationItem label="総資産" value={formatYen(n(formData.currentSavings) * 10000 + n(formData.investmentStocksCurrent) * 10000 + n(formData.investmentTrustCurrent) * 10000 + n(formData.investmentBondsCurrent) * 10000 + n(formData.investmentIdecoCurrent) * 10000 + n(formData.investmentCryptoCurrent) * 10000 + n(formData.investmentOtherCurrent) * 10000)} />
+            <ConfirmationItem label="総資産" value={formatYen(n(formData.currentSavings) * FC.YEN_PER_MAN + n(formData.investmentStocksCurrent) * FC.YEN_PER_MAN + n(formData.investmentTrustCurrent) * FC.YEN_PER_MAN + n(formData.investmentBondsCurrent) * FC.YEN_PER_MAN + n(formData.investmentIdecoCurrent) * FC.YEN_PER_MAN + n(formData.investmentCryptoCurrent) * FC.YEN_PER_MAN + n(formData.investmentOtherCurrent) * FC.YEN_PER_MAN)} />
             <ConfirmationItem label="預貯金" value={formatManYen(formData.currentSavings)} />
             <ConfirmationItem label="投資額" value={formatManYen(n(formData.investmentStocksCurrent) + n(formData.investmentTrustCurrent) + n(formData.investmentBondsCurrent) + n(formData.investmentIdecoCurrent) + n(formData.investmentCryptoCurrent) + n(formData.investmentOtherCurrent))} />
           </ConfirmationSection>
@@ -3099,7 +2679,6 @@ const renderConfirmationView = () => {
                 </ul>
               </div>
               {events.map((event, index) => {
-                const incomeDiff = event.incomeChange;
                 return (
                   <div key={index}>
                     <hr className="my-4" />
@@ -3111,15 +2690,6 @@ const renderConfirmationView = () => {
                           <li key={i}>{detail.label}: {detail.value}</li>
                         ))} 
                       </ul>
-                      {incomeDiff !== undefined && (
-                        <p className="text-sm mt-1">
-                          世帯手取り年収:
-                          <span className={incomeDiff >= 0 ? 'text-green-600' : 'text-red-600'}>
-                            {' '}{formatYen(incomeAtEvent[index])}
-                            {' '}({incomeDiff >= 0 ? '+' : ''}{formatYen(incomeDiff)})
-                          </span>
-                        </p>
-                      )}
                     </div>
                   </div>
                 );
@@ -3231,7 +2801,7 @@ const renderConfirmationView = () => {
         <div className="h-1"></div>
         
         {renderFloatingBox(totalExpenses, currentSectionIndex === effectiveSections.indexOf('現在の支出') && totalExpenses > 0, "生活費総額")}
-        {renderFloatingBox(displayTotalIncome, currentSectionIndex === effectiveSections.indexOf('現在の収入') && displayTotalIncome > 0, "年間収入総額", "top-[1.5rem]")}
+        {renderFloatingBox(displayTotalIncome, currentSectionIndex === effectiveSections.indexOf('現在の収入') && displayTotalIncome > 0, "額面年収総額", "top-[1.5rem]")}
         {renderFloatingBox(totalNetAnnualIncome, currentSectionIndex === effectiveSections.indexOf('現在の収入') && totalNetAnnualIncome > 0, "年間手取り総額", "top-[5rem]")}
         
         {renderFloatingBox(estimatedAnnualLoanPayment, shouldShowLoanBox && estimatedAnnualLoanPayment > 0, "年間返済額")}
@@ -3241,8 +2811,7 @@ const renderConfirmationView = () => {
         {renderFloatingBox(totalRetirementMonthly * 10000, currentSectionIndex === effectiveSections.indexOf('ライフイベント - 老後') && totalRetirementMonthly > 0, '老後の不足額')}
         
         {renderFloatingBox(totalInvestment.monthly, currentSectionIndex === effectiveSections.indexOf('投資') && totalInvestment.monthly > 0, "月間投資総額")}
-        {renderFloatingBox(totalInvestment.annual, currentSectionIndex === effectiveSections.indexOf('投資') && totalInvestment.annual > 0, "年間投資総額", "top-[5rem]")}
-        {renderFloatingBox(displayTotalApplianceCost * 10000, currentSectionIndex === effectiveSections.indexOf('ライフイベント - 生活') && displayTotalApplianceCost > 0, "家電買い替え総額")}
+        {renderFloatingBox(displayTotalApplianceCost * FC.YEN_PER_MAN, currentSectionIndex === effectiveSections.indexOf('ライフイベント - 生活') && displayTotalApplianceCost > 0, "家電買い替え総額")}
         {renderFloatingBox(
           totalMarriageCost,
           currentSectionIndex === effectiveSections.indexOf('ライフイベント - 結婚') && totalMarriageCost > 0,

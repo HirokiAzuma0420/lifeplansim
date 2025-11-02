@@ -18,6 +18,6 @@ export type InvestmentAccountTypeField =
 
 export type InvestmentMonthlyField = `${InvestmentAssetKey}Monthly`;
 
-export type InvestmentFormValues = Record<InvestmentValueField, string>;
+export type InvestmentFormValues = Record<InvestmentValueField, string | number>;
 
-export type InvestmentMonthlyAmounts = Record<InvestmentMonthlyField, string>;
+export type InvestmentMonthlyAmounts = Record<InvestmentMonthlyField, string | number>;

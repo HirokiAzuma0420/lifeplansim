@@ -8,12 +8,12 @@ import AssetPieChart from '../components/dashboard/AssetPieChart';
 import AssetTable from '../components/dashboard/AssetTable';
 import CashFlowTable from '../components/dashboard/CashFlowTable.tsx';
 import AccordionCard from '../components/dashboard/AccordionCard.tsx';
-import { getAssetGrade } from '../assets/getAssetGrade';
-import { buildDashboardDataset } from '../utils/simulation';
-import type { SimulationInputParams, YearlyData, InvestmentProduct } from '../types/simulation'; // InvestmentProduct をインポート
+import { getAssetGrade } from '../assets/getAssetGrade.ts';
+import { buildDashboardDataset } from '../utils/dashboard-helper.ts';
+import type { SimulationInputParams, YearlyData, InvestmentProduct } from '../types/simulation-types';
 import { useOrientation } from '../hooks/useOrientation';
 import sampleInput from '../../sample/input_sample.json';
-import type { FormDataState } from './FormPage'; // FormDataState をインポート
+import type { FormDataState } from '../types/form-types'; // FormDataState をインポート
 
 const COLORS = {
   現金: '#3B82F6',

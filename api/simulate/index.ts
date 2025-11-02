@@ -1,168 +1,15 @@
-﻿﻿// Local minimal types to avoid '@vercel/node' runtime/type dependency
+// Local minimal types to avoid '@vercel/node' runtime/type dependency
 type VercelRequest = { method?: string; body?: unknown; query?: Record<string, unknown> };
 type VercelResponse = { status: (code: number) => { json: (data: unknown) => void } };
+import * as FC from '../../src/constants/financial_const';
+import { computeNetAnnual, calculateLoanPayment as calculateLoanPaymentShared } from '../../src/utils/financial';
+import type { InvestmentProduct, SimulationInputParams, AccountBucket, YearlyData, CarePlan } from '../../src/types/simulation-types';
 
-// 商品別投資の詳細（任意）
-type InvestmentProduct = {
-  key: 'stocks' | 'trust' | 'bonds' | 'crypto' | 'other' | 'ideco';
-  account: '課税' | '非課税' | 'iDeCo';
-  currentJPY: number;
-  recurringJPY: number; // 年間つみたて額（円/年）
-  spotJPY: number;      // 年間スポット（円/年）
-  expectedReturn: number; // 小数（例: 0.05）
-};
-
-interface CarePlan {
-  id: string | number;
-  parentCurrentAge: number;
-  parentCareStartAge: number;
-  years: number;
-  monthly10kJPY: number;
-}
-
-const SPECIFIC_ACCOUNT_TAX_RATE = 0.20315;
-const NISA_CONTRIBUTION_CAP = 18_000_000; // 生涯上限（新NISAの成長投資枠+つみたて枠の合計目安として扱う）
-// 年間上限（新NISA）
-// const NISA_RECURRING_ANNUAL_CAP = 1_200_000; // つみたて投資枠（年）
-// const NISA_SPOT_ANNUAL_CAP = 2_400_000;     // 成長投資枠（年）
-
-interface InputParams {
-  initialAge: number;
-  spouseInitialAge?: number;
-  endAge: number;
-  retirementAge: number;
-  spouseRetirementAge?: number;
-  pensionStartAge: number;
-
-  mainJobIncomeGross: number;
-  sideJobIncomeGross: number;
-  spouseMainJobIncomeGross?: number;
-  spouseSideJobIncomeGross?: number;
-  incomeGrowthRate: number;
-  spouseIncomeGrowthRate?: number;
-
-  expenseMode: 'simple' | 'detailed';
-  livingCostSimpleAnnual?: number;
-  detailedFixedAnnual?: number;
-  detailedVariableAnnual?: number;
-
-  car: {
-    priceJPY: number;
-    firstAfterYears: number;
-    frequencyYears: number;
-    loan: {
-      use: boolean;
-      years?: number;
-      type?: '銀行ローン' | 'ディーラーローン';
-    };
-    currentLoan?: {
-      monthlyPaymentJPY: number;
-      remainingMonths?: number;
-      remainingYears?: number;
-    };
-  };
-
-  housing: {
-    type: '賃貸' | '持ち家（ローン中）' | '持ち家（完済）';
-    rentMonthlyJPY?: number;
-    currentLoan?: {
-      monthlyPaymentJPY: number;
-      remainingYears: number;
-    };
-    purchasePlan?: {
-      age: number;
-      priceJPY: number;
-      downPaymentJPY: number;
-      years: number;
-      rate: number;
-    };
-    renovations?: {
-      age: number;
-      costJPY: number;
-      cycleYears?: number;
-    }[];
-  };
-
-  marriage?: {
-    age: number;
-    engagementJPY: number;
-    weddingJPY: number;
-    honeymoonJPY: number;
-    movingJPY: number;
-    spouse: {
-      ageAtMarriage: number;
-      incomeGross: number;
-    };
-    newLivingCostAnnual: number;
-    newHousingCostAnnual: number;
-  };
-
-  children?: {
-    count: number;
-    firstBornAge: number;
-    educationPattern: '公立中心' | '公私混合' | '私立中心';
-  };
-
-  appliances?: {
-    name: string;
-    cycleYears: number;
-    firstAfterYears: number;
-    cost10kJPY: number;
-  }[];
-
-  cares?: CarePlan[];
-
-  postRetirementLiving10kJPY: number;
-  pensionMonthly10kJPY: number;
-  spousePensionStartAge?: number;
-  spousePensionMonthly10kJPY?: number;
-
-  currentSavingsJPY: number;
-  monthlySavingsJPY: number;
-
-  products?: InvestmentProduct[];
-  stressTest: {
-    enabled: boolean;
-    seed?: number;
-  };
-
-  interestScenario: '固定利回り' | 'ランダム変動';
-  fixedInterestRate?: number;
-  emergencyFundJPY: number;
-}
-
-interface AccountBucket {
-  principal: number;
-  balance: number;
-}
-
-interface YearlyData {
-  year: number;
-  age: number;
-  income: number;
-  totalExpense: number;
-  livingExpense: number;
-  housingExpense: number;
-  carExpense: number;
-  applianceExpense: number;
-  childExpense: number;
-  marriageExpense: number;
-  careExpense: number;
-  retirementExpense: number;
-  totalInvestment: number;
-  cashFlow: number;
-  savings: number;
-  nisa: AccountBucket;
-  ideco: AccountBucket;
-  taxable: AccountBucket;
-  totalAssets: number;
-  assetAllocation: {
-    cash: number;
-    investment: number;
-    nisa: number;
-    ideco: number;
-  };
-  products: Record<string, AccountBucket>;
+interface Appliance {
+  name: string;
+  cost10kJPY: number;
+  cycleYears: number;
+  firstAfterYears: number;
 }
 
 // ユーティリティ関数
@@ -170,46 +17,6 @@ const n = (v: unknown): number => {
   const num = Number(v);
   return isFinite(num) ? num : 0;
 };
-
-// ローン返済額計算関数 (年額)
-const calculateLoanPayment = (principal: number, annualInterestRate: number, years: number): number => {
-  if (principal <= 0 || annualInterestRate < 0 || years <= 0) {
-    return 0;
-  }
-  const monthlyInterestRate = annualInterestRate / 12;
-  const totalMonths = years * 12;
-  if (monthlyInterestRate === 0) {
-    return principal / years;
-  }
-  const monthlyPayment = principal * monthlyInterestRate * Math.pow((1 + monthlyInterestRate), totalMonths) / (Math.pow((1 + monthlyInterestRate), totalMonths) - 1);
-  return monthlyPayment * 12;
-};
-
-// 額面収入から手取り収入を計算する関数
-function computeNetAnnual(grossAnnualIncome: number): number {
-  const income = n(grossAnnualIncome);
-  let salaryIncomeDeduction: number;
-  if (income <= 1625000) { salaryIncomeDeduction = 550000; }
-  else if (income <= 1800000) { salaryIncomeDeduction = income * 0.4 - 100000; }
-  else if (income <= 3600000) { salaryIncomeDeduction = income * 0.3 + 80000; }
-  else if (income <= 6600000) { salaryIncomeDeduction = income * 0.2 + 440000; }
-  else if (income <= 8500000) { salaryIncomeDeduction = income * 0.1 + 1100000; }
-  else { salaryIncomeDeduction = 1950000; }
-  const socialInsurancePremium = income * 0.15;
-  const basicDeduction = 480000;
-  const taxableIncome = Math.max(0, income - salaryIncomeDeduction - socialInsurancePremium - basicDeduction);
-  let incomeTax: number;
-  if (taxableIncome <= 1950000) { incomeTax = taxableIncome * 0.05; }
-  else if (taxableIncome <= 3300000) { incomeTax = taxableIncome * 0.1 - 97500; }
-  else if (taxableIncome <= 6950000) { incomeTax = taxableIncome * 0.2 - 427500; }
-  else if (taxableIncome <= 9000000) { incomeTax = taxableIncome * 0.23 - 636000; }
-  else if (taxableIncome <= 18000000) { incomeTax = taxableIncome * 0.33 - 1536000; }
-  else if (taxableIncome <= 40000000) { incomeTax = taxableIncome * 0.4 - 2796000; }
-  else { incomeTax = taxableIncome * 0.45 - 4796000; }
-  const residentTax = taxableIncome * 0.1 + 5000;
-  const netAnnualIncome = income - socialInsurancePremium - incomeTax - residentTax;
-  return Math.max(0, netAnnualIncome);
-}
 
 // Helper function to generate normally distributed random numbers (Box-Muller transform)
 function boxMullerTransform(): [number, number] {
@@ -253,12 +60,12 @@ function generateReturnSeries(
 
   // 3. 暴落イベントをランダムに挿入
   const crashYears = new Set<number>();
-  // 最初の暴落は3-5年後に設定
-  let nextCrashYear = Math.floor(Math.random() * 3) + 3;
+  // 最初の暴落は設定値に基づいて設定
+  let nextCrashYear = Math.floor(Math.random() * (FC.CRASH_EVENT_CONFIG.FIRST_CRASH_YEAR_MAX - FC.CRASH_EVENT_CONFIG.FIRST_CRASH_YEAR_MIN + 1)) + FC.CRASH_EVENT_CONFIG.FIRST_CRASH_YEAR_MIN;
   while (nextCrashYear < years) {
     crashYears.add(nextCrashYear);
-    // 次の暴落は8-10年後に設定
-    nextCrashYear += Math.floor(Math.random() * 3) + 8;
+    // 次の暴落は設定値に基づいて設定
+    nextCrashYear += Math.floor(Math.random() * (FC.CRASH_EVENT_CONFIG.SUBSEQUENT_CRASH_YEAR_MAX - FC.CRASH_EVENT_CONFIG.SUBSEQUENT_CRASH_YEAR_MIN + 1)) + FC.CRASH_EVENT_CONFIG.SUBSEQUENT_CRASH_YEAR_MIN;
   }
 
   crashYears.forEach(yearIndex => {
@@ -283,14 +90,14 @@ function generateReturnSeries(
   return correctedReturns;
 }
 
-function runMonteCarloSimulation(params: InputParams, numberOfSimulations: number): YearlyData[] {
+function runMonteCarloSimulation(params: SimulationInputParams, numberOfSimulations: number): YearlyData[] {
   const allSimulations: YearlyData[][] = [];
 
   // 1. runSimulationを100回実行
   for (let i = 0; i < numberOfSimulations; i++) {
     // 毎回異なるリターン系列を生成するために、シードを少し変更する
     // stressTestが有効でない場合でも、この関数が呼ばれたら有効にする
-    const simParams: InputParams = {
+    const simParams: SimulationInputParams = {
       ...params,
       stressTest: {
         ...params.stressTest,
@@ -313,7 +120,7 @@ function runMonteCarloSimulation(params: InputParams, numberOfSimulations: numbe
     const yearDataTemplate = { ...firstSimulation[i] };
 
     // 平均化するキーを定義
-    const keysToAverage: (keyof YearlyData)[] = ['income', 'totalExpense', 'savings', 'totalAssets'];
+    const keysToAverage: (keyof YearlyData)[] = ['income', 'expense', 'savings', 'totalAssets'];
     const bucketKeys: (keyof AccountBucket)[] = ['principal', 'balance'];
 
     const averagedYearData: YearlyData = { ...yearDataTemplate };
@@ -327,8 +134,13 @@ function runMonteCarloSimulation(params: InputParams, numberOfSimulations: numbe
     // 各口座の principal と balance の平均を計算
     for (const account of ['nisa', 'ideco', 'taxable'] as const) {
       for (const key of bucketKeys) {
-        const sum = allSimulations.reduce((acc, sim) => acc + (n(sim[i][account]?.[key])), 0);
-        averagedYearData[account][key] = sum / numberOfSimulations;
+        const sum = allSimulations.reduce((acc, sim) => {
+          const accountData = sim[i]?.[account];
+          return acc + (accountData ? n(accountData[key]) : 0);
+        }, 0);
+        if (averagedYearData[account]) {
+          averagedYearData[account][key] = sum / numberOfSimulations;
+        }
       }
     }
 
@@ -364,7 +176,7 @@ function runMonteCarloSimulation(params: InputParams, numberOfSimulations: numbe
   return averageYearlyData;
 }
 
-function isInputParamsBody(x: unknown): x is { inputParams: InputParams } {
+function isInputParamsBody(x: unknown): x is { inputParams: SimulationInputParams } {
   if (!x || typeof x !== 'object') return false;
   const r = x as Record<string, unknown>;
   if (!('inputParams' in r)) return false;
@@ -374,33 +186,8 @@ function isInputParamsBody(x: unknown): x is { inputParams: InputParams } {
   return 'initialAge' in m && 'endAge' in m && 'retirementAge' in m;
 }
 
-// --- 教育費用の年齢別重み付けテーブル ---
-const EDUCATION_COST_TABLE = {
-  '公立中心': { // 総額約1,000万円
-    '0-6': 22,   // 22万円/年
-    '7-12': 33,  // 33万円/年
-    '13-15': 44, // 44万円/年
-    '16-18': 55, // 55万円/年
-    '19-22': 88, // 88万円/年
-  },
-  '公私混合': { // 総額約1,600万円
-    '0-6': 35,
-    '7-12': 53,
-    '13-15': 70,
-    '16-18': 88,
-    '19-22': 141,
-  },
-  '私立中心': { // 総額約2,000万円
-    '0-6': 44,
-    '7-12': 66,
-    '13-15': 88,
-    '16-18': 110,
-    '19-22': 176,
-  },
-};
-
 function getAnnualChildCost(age: number, pattern: '公立中心' | '公私混合' | '私立中心'): number {
-  const costTable = EDUCATION_COST_TABLE[pattern];
+  const costTable = FC.EDUCATION_COST_TABLE[pattern];
   let costInManYen = 0;
 
   if (age >= 0 && age <= 6) costInManYen = costTable['0-6'];
@@ -409,19 +196,18 @@ function getAnnualChildCost(age: number, pattern: '公立中心' | '公私混合
   else if (age >= 16 && age <= 18) costInManYen = costTable['16-18'];
   else if (age >= 19 && age <= 22) costInManYen = costTable['19-22'];
 
-  return costInManYen * 10000; // 円に変換して返す
+  return costInManYen * FC.YEN_PER_MAN; // 円に変換して返す
 }
 
-
-function runSimulation(params: InputParams): YearlyData[] {
+function runSimulation(params: SimulationInputParams): YearlyData[] {
 
   // --- シミュレーション準備 ---
   const yearlyData: YearlyData[] = [];
   let currentAge = params.initialAge;
   const now = new Date();
   const baseYear = now.getFullYear();
-  const startMonth = now.getMonth(); // 0-indexed (0-11)
-  const firstYearRemainingMonths = 12 - startMonth;
+  const startMonth = now.getMonth(); // 0-indexed
+  const firstYearRemainingMonths = FC.MONTHS_PER_YEAR - startMonth;
   let productList: InvestmentProduct[] = Array.isArray(params.products) ? params.products : [];
   const simulationYears = params.endAge - params.initialAge + 1;
 
@@ -439,18 +225,16 @@ function runSimulation(params: InputParams): YearlyData[] {
         .reduce((sum, p) => sum + n(p.currentJPY), 0);
       let nisaRecycleAmountForNextYear = 0; // NISA枠復活対応：翌年に復活する売却元本額
   
-      const idecoCashOutAge = Math.min(params.retirementAge, 75);
+      const idecoCashOutAge = Math.min(params.retirementAge, FC.IDECO_MAX_CASHOUT_AGE);
   // --- リターン系列の事前生成 ---
   const stressTestEnabled = params.stressTest?.enabled ?? false;
-  const VOLATILITY_MAP: Record<InvestmentProduct['key'], number> = {
-    stocks: 0.20, trust: 0.18, bonds: 0.05, crypto: 0.80, ideco: 0.18, other: 0.10,
-  };
+  const VOLATILITY_MAP: Record<InvestmentProduct['key'], number> = FC.VOLATILITY_MAP;
   const productReturnSeries = new Map<string, number[]>();
-  if (params.interestScenario === '固定利回り' && params.fixedInterestRate != null) {
+  if (params.interestScenario === '固定利回り' && params.expectedReturn != null) {
     // 固定利回りの場合、全商品の期待リターンを上書き
     productList = productList.map(p => ({
       ...p,
-      expectedReturn: params.fixedInterestRate as number,
+      expectedReturn: params.expectedReturn as number,
     }));
   } else if (params.interestScenario === 'ランダム変動' || stressTestEnabled) {
     productList.forEach((p, index) => {
@@ -463,12 +247,12 @@ function runSimulation(params: InputParams): YearlyData[] {
 
   // --- ループで変化する状態変数 ---
   let carCurrentLoanMonthsRemaining = Math.max(0, n(params.car?.currentLoan?.remainingMonths));
-  const appliancesOnly = Array.isArray(params.appliances) ? params.appliances.filter(a => a && String(a.name ?? '').trim().length > 0 && Number(a.cost10kJPY) > 0 && Number(a.cycleYears) > 0) : [];
+  const appliancesOnly: Appliance[] = Array.isArray(params.appliances) ? params.appliances.filter((a: Appliance) => a && String(a.name ?? '').trim().length > 0 && Number(a.cost10kJPY) > 0 && Number(a.cycleYears) > 0) : [];
 
   // --- シミュレーションループ ---
   // ループ内で変更される状態変数
-  let currentLivingExpense = params.expenseMode === 'simple' ? n(params.livingCostSimpleAnnual) : (n(params.detailedFixedAnnual) + n(params.detailedVariableAnnual));
-  let currentHousingExpense = params.housing?.type === '賃貸' ? (n(params.housing.rentMonthlyJPY) * 12) : 0;
+  const currentLivingExpense = params.expenseMode === 'simple' ? n(params.livingCostSimpleAnnual) : (n(params.detailedFixedAnnual) + n(params.detailedVariableAnnual));
+  const currentHousingExpense = params.housing?.type === '賃貸' ? (n(params.housing.rentMonthlyJPY) * FC.MONTHS_PER_YEAR) : 0;
   let activeCarLoans: { endAge: number, annualPayment: number }[] = [];
 
 
@@ -477,7 +261,7 @@ function runSimulation(params: InputParams): YearlyData[] {
     nisaRecycleAmountForNextYear = 0; // 今年のリサイクル額計算のためにリセット
 
     const year = baseYear + i;
-    const yearFraction = (i === 0) ? firstYearRemainingMonths / 12 : 1;
+    const yearFraction = (i === 0) ? firstYearRemainingMonths / FC.MONTHS_PER_YEAR : 1;
     const spouseCurrentAge = params.spouseInitialAge ? params.initialAge + i + (params.spouseInitialAge - params.initialAge) : undefined;
 
     // --- 0. iDeCo現金化 (イベント) ---
@@ -497,11 +281,10 @@ function runSimulation(params: InputParams): YearlyData[] {
     // --- 結婚イベント ---
     if (params.marriage && currentAge === n(params.marriage.age)) {
       // 配偶者情報を更新
-      params.spouseInitialAge = params.marriage.spouse.ageAtMarriage;
-      params.spouseMainJobIncomeGross = params.marriage.spouse.incomeGross;
-      // 生活費・住居費を更新
-      currentLivingExpense = params.marriage.newLivingCostAnnual;
-      currentHousingExpense = params.marriage.newHousingCostAnnual;
+      if (params.marriage.spouse) {
+        params.spouseInitialAge = params.marriage.spouse.ageAtMarriage;
+        params.spouseMainJobIncomeGross = params.marriage.spouse.incomeGross;
+      }
     }
 
     // --- 1. 収支計算 (Cash Flow) ---
@@ -513,14 +296,15 @@ function runSimulation(params: InputParams): YearlyData[] {
 
     let spouseGrossIncome = 0;
     // 結婚後は spouseCurrentAge が定義される
-    if (spouseCurrentAge !== undefined && spouseCurrentAge < n(params.spouseRetirementAge)) {
+    if (spouseCurrentAge !== undefined && params.spouseRetirementAge && spouseCurrentAge < n(params.spouseRetirementAge)) {
       spouseGrossIncome = ((n(params.spouseMainJobIncomeGross) ?? 0) * Math.pow(1 + (n(params.spouseIncomeGrowthRate) ?? 0), i) + (n(params.spouseSideJobIncomeGross) ?? 0));
     }
-    let pensionAnnual = currentAge >= params.pensionStartAge ? n(params.pensionMonthly10kJPY) * 10000 * 12 : 0;
+    let pensionAnnual = currentAge >= params.pensionStartAge ? n(params.pensionMonthly10kJPY) * FC.YEN_PER_MAN * FC.MONTHS_PER_YEAR : 0;
     if (spouseCurrentAge !== undefined && spouseCurrentAge >= n(params.spousePensionStartAge)) {
-      pensionAnnual += n(params.spousePensionMonthly10kJPY) * 10000 * 12;
+      pensionAnnual += n(params.spousePensionMonthly10kJPY) * FC.YEN_PER_MAN * FC.MONTHS_PER_YEAR;
     }
     let idecoDeductionThisYear = 0;
+    let investmentIncome = 0; // 投資収益を初期化
     if (currentAge < idecoCashOutAge) {
       productList.filter(p => p.account === 'iDeCo').forEach(p => {
         idecoDeductionThisYear += (n(p.recurringJPY) + n(p.spotJPY)) * yearFraction;
@@ -532,7 +316,7 @@ function runSimulation(params: InputParams): YearlyData[] {
     let livingExpense = 0;
     let retirementExpense = 0;
     if (currentAge >= params.retirementAge) {
-      retirementExpense = n(params.postRetirementLiving10kJPY) * 10000 * 12 * yearFraction;
+      retirementExpense = n(params.postRetirementLiving10kJPY) * FC.YEN_PER_MAN * FC.MONTHS_PER_YEAR * yearFraction - pensionAnnual;
     } else {
       livingExpense = currentLivingExpense * yearFraction;
     }
@@ -551,11 +335,11 @@ function runSimulation(params: InputParams): YearlyData[] {
     }
     let careExpense = 0;
     if (Array.isArray(params.cares)) {
-      params.cares.forEach(plan => {
+      params.cares.forEach((plan: CarePlan) => {
         const parentAge = n(plan.parentCurrentAge) + i;
         const careStartAge = n(plan.parentCareStartAge);
         if (parentAge >= careStartAge && parentAge < careStartAge + n(plan.years)) {
-          careExpense += n(plan.monthly10kJPY) * 10000 * 12 * yearFraction;
+          careExpense += n(plan.monthly10kJPY) * FC.YEN_PER_MAN * FC.MONTHS_PER_YEAR * yearFraction;
         }
       });
     }
@@ -570,21 +354,21 @@ function runSimulation(params: InputParams): YearlyData[] {
         const diff = currentAge - firstAge;
         const cycle = n(a.cycleYears);
         if (diff === 0 || (cycle > 0 && diff % cycle === 0)) {
-          applianceExpense += n(a.cost10kJPY) * 10000;
+          applianceExpense += n(a.cost10kJPY) * FC.YEN_PER_MAN;
         }
       }
     }
     let carExpense = 0;
     if (params.car) {
       let carRecurring = 0;
-      if (carCurrentLoanMonthsRemaining > 0) {
-        const monthsThisYear = (i === 0) ? Math.min(firstYearRemainingMonths, carCurrentLoanMonthsRemaining) : Math.min(12, carCurrentLoanMonthsRemaining);
+      if (carCurrentLoanMonthsRemaining > 0) { // 12はMONTHS_PER_YEARに
+        const monthsThisYear = (i === 0) ? Math.min(firstYearRemainingMonths, carCurrentLoanMonthsRemaining) : Math.min(FC.MONTHS_PER_YEAR, carCurrentLoanMonthsRemaining);
         carRecurring += n(params.car.currentLoan?.monthlyPaymentJPY) * monthsThisYear;
         carCurrentLoanMonthsRemaining -= monthsThisYear;
       }
 
       // 将来の買い替えローンをアクティブローンリストに追加
-      if (n(params.car.priceJPY) > 0 && n(params.car.firstAfterYears) >= 0 && n(params.car.frequencyYears) > 0) {
+      if (n(params.car.priceJPY) > 0 && params.car.firstAfterYears !== undefined && n(params.car.firstAfterYears) >= 0 && n(params.car.frequencyYears) > 0) {
         const base = params.initialAge + n(params.car.firstAfterYears);
         if (currentAge >= base) {
           const yearsSinceFirst = currentAge - base;
@@ -595,10 +379,10 @@ function runSimulation(params: InputParams): YearlyData[] {
             } else { // ローン購入
               const loanYears = n(params.car.loan.years);
               if (loanYears > 0) {
-                let annualRate = 0.025;
-                if (params.car.loan.type === '銀行ローン') annualRate = 0.015;
-                else if (params.car.loan.type === 'ディーラーローン') annualRate = 0.045;
-                const annualPayment = calculateLoanPayment(n(params.car.priceJPY), annualRate, loanYears);
+                let annualRate = FC.DEFAULT_LOAN_RATES.CAR_GENERAL;
+                if (params.car.loan.type === '銀行ローン') annualRate = FC.DEFAULT_LOAN_RATES.CAR_BANK;
+                else if (params.car.loan.type === 'ディーラーローン') annualRate = FC.DEFAULT_LOAN_RATES.CAR_DEALER;
+                const annualPayment = calculateLoanPaymentShared(n(params.car.priceJPY), annualRate * 100, loanYears).annualPayment;
                 activeCarLoans.push({ endAge: currentAge + loanYears, annualPayment });
               }
             }
@@ -612,7 +396,7 @@ function runSimulation(params: InputParams): YearlyData[] {
           carRecurring += loan.annualPayment * yearFraction;
         }
       });
-      // 終了したローンをリストから削除
+      // 終了したローンをリストから削除 (endAgeになったら削除)
       activeCarLoans = activeCarLoans.filter((loan: { endAge: number; }) => currentAge < loan.endAge);
 
       carExpense = carRecurring;
@@ -627,15 +411,15 @@ function runSimulation(params: InputParams): YearlyData[] {
         }
       }
       if (params.housing.type === '持ち家（ローン中）' && params.housing.currentLoan && currentAge < params.initialAge + n(params.housing.currentLoan.remainingYears)) {
-        housingExpense += n(params.housing.currentLoan.monthlyPaymentJPY) * 12 * yearFraction;
+        housingExpense += n(params.housing.currentLoan.monthlyPaymentJPY) * FC.MONTHS_PER_YEAR * yearFraction;
       }
       if (params.housing.purchasePlan && currentAge >= n(params.housing.purchasePlan.age)) {
         if (currentAge === n(params.housing.purchasePlan.age)) {
           housingExpense += n(params.housing.purchasePlan.downPaymentJPY);
         }
-        if (currentAge < n(params.housing.purchasePlan.age) + n(params.housing.purchasePlan.years)) {
+        if (params.housing.purchasePlan.years && currentAge < n(params.housing.purchasePlan.age) + n(params.housing.purchasePlan.years)) {
           const loanPrincipal = n(params.housing.purchasePlan.priceJPY) - n(params.housing.purchasePlan.downPaymentJPY);
-          housingExpense += calculateLoanPayment(loanPrincipal, n(params.housing.purchasePlan.rate), n(params.housing.purchasePlan.years)) * yearFraction;
+          housingExpense += calculateLoanPaymentShared(loanPrincipal, n(params.housing.purchasePlan.rate) * 100, n(params.housing.purchasePlan.years)).annualPayment * yearFraction;
         }
       }
       if (params.housing.renovations) {
@@ -649,7 +433,7 @@ function runSimulation(params: InputParams): YearlyData[] {
         }
       }
     }
-    const totalExpense = livingExpense + retirementExpense + childExpense + careExpense + marriageExpense + applianceExpense + carExpense + housingExpense;
+    const totalExpense = livingExpense + Math.max(0, retirementExpense) + childExpense + careExpense + marriageExpense + applianceExpense + carExpense + housingExpense;
 
     // 1c. 現金残高の更新
     const cashFlow = annualIncome - totalExpense;
@@ -689,7 +473,7 @@ function runSimulation(params: InputParams): YearlyData[] {
             });
             const gains = Math.max(0, totalBalanceInAccount - totalPrincipalInAccount);
             const gainsRatio = totalBalanceInAccount > 0 ? gains / totalBalanceInAccount : 0;
-            const taxOnWithdrawal = totalWithdrawalAmount * gainsRatio * SPECIFIC_ACCOUNT_TAX_RATE;
+            const taxOnWithdrawal = totalWithdrawalAmount * gainsRatio * FC.SPECIFIC_ACCOUNT_TAX_RATE;
             netProceeds = totalWithdrawalAmount - taxOnWithdrawal;
         }
 
@@ -720,15 +504,14 @@ function runSimulation(params: InputParams): YearlyData[] {
     }
 
     // --- 3. 投資の実行 (黒字の場合) ---
-    let totalInvestmentOutflow = 0;
     const canInvest = currentAge < params.retirementAge;
     if (canInvest) { // 退職するまでは投資を継続
       const investableAmount = Math.max(0, savings - n(params.emergencyFundJPY));
       let investedThisYear = 0;
-      let remainingNisaAllowance = Math.max(0, NISA_CONTRIBUTION_CAP - cumulativeNisaContribution);
+      let remainingNisaAllowance = Math.max(0, FC.NISA_LIFETIME_CAP - cumulativeNisaContribution);
       
       // NISA年間投資上限の準備
-      const NISA_ANNUAL_CAP = 3_600_000;
+      // const NISA_ANNUAL_CAP = 3_600_000; // 定数ファイルからインポート
       let nisaInvestedThisYear = 0;
 
       for (const p of productList) {
@@ -742,7 +525,7 @@ function runSimulation(params: InputParams): YearlyData[] {
 
         let investmentApplied = 0;
         if (p.account === '非課税' && remainingNisaAllowance > 0) {
-          const remainingAnnualCap = Math.max(0, NISA_ANNUAL_CAP - nisaInvestedThisYear);
+          const remainingAnnualCap = Math.max(0, FC.NISA_ANNUAL_CAP - nisaInvestedThisYear);
           const nisaAllowed = Math.min(actualContribution, remainingNisaAllowance, remainingAnnualCap);
           
           productBalances[productId].principal += nisaAllowed;
@@ -756,7 +539,7 @@ function runSimulation(params: InputParams): YearlyData[] {
           productBalances[productId].principal += actualContribution;
           productBalances[productId].balance += actualContribution;
           investmentApplied = actualContribution;
-        } else if (p.account === 'iDeCo' && currentAge < 60) { // iDeCoは60歳まで
+        } else if (p.account === 'iDeCo' && currentAge < FC.IDECO_MAX_CONTRIBUTION_AGE) { // iDeCoは定数で指定した年齢まで
           productBalances[productId].principal += actualContribution;
           productBalances[productId].balance += actualContribution;
           investmentApplied = actualContribution;
@@ -764,7 +547,6 @@ function runSimulation(params: InputParams): YearlyData[] {
         investedThisYear += investmentApplied;
       }
       savings -= investedThisYear;
-      totalInvestmentOutflow = investedThisYear;
     }
 
     // --- 4. 資産の成長 (利回り反映) ---
@@ -779,7 +561,9 @@ function runSimulation(params: InputParams): YearlyData[] {
       } else { // 固定利回り
         yearlyReturn = n(p.expectedReturn);
       }
+      const growth = productBucket.balance * yearlyReturn * yearFraction;
       productBucket.balance *= ((1 + yearlyReturn) ** yearFraction);
+      investmentIncome += growth;
     });
 
     // --- 5. 年間データの集計と記録 ---
@@ -787,6 +571,7 @@ function runSimulation(params: InputParams): YearlyData[] {
     const ideco = { principal: 0, balance: 0 };
     const taxable = { principal: 0, balance: 0 };
     const productsForYear: Record<string, AccountBucket> = {};
+    let totalInvestmentPrincipal = 0;
 
     productList.forEach((p, index) => {
       const productId = `${p.key}-${index}`;
@@ -797,6 +582,7 @@ function runSimulation(params: InputParams): YearlyData[] {
       };
       productsForYear[productId] = roundedBucket;
 
+      totalInvestmentPrincipal += productBucket.principal;
       if (p.account === '非課税') {
         nisa.principal += productBucket.principal;
         nisa.balance += productBucket.balance;
@@ -814,22 +600,29 @@ function runSimulation(params: InputParams): YearlyData[] {
     yearlyData.push({
       year,
       age: currentAge,
-      income: Math.round(annualIncome),
-      totalExpense: Math.round(totalExpense),
-      livingExpense: Math.round(livingExpense),
-      housingExpense: Math.round(housingExpense),
-      carExpense: Math.round(carExpense),
-      applianceExpense: Math.round(applianceExpense),
-      childExpense: Math.round(childExpense),
-      marriageExpense: Math.round(marriageExpense),
-      careExpense: Math.round(careExpense),
-      retirementExpense: Math.round(retirementExpense),
+      income: Math.round(annualIncome + investmentIncome),
+      incomeDetail: {
+        self: Math.round(computeNetAnnual(selfGrossIncome - idecoDeductionThisYear) * yearFraction),
+        spouse: Math.round(computeNetAnnual(spouseGrossIncome) * yearFraction),
+        investment: Math.round(investmentIncome),
+      },
+      expense: Math.round(totalExpense),
+      expenseDetail: {
+        living: Math.round(livingExpense),
+        car: Math.round(carExpense),
+        housing: Math.round(housingExpense),
+        marriage: Math.round(marriageExpense),
+        children: Math.round(childExpense),
+        appliances: Math.round(applianceExpense),
+        care: Math.round(careExpense),
+        retirementGap: Math.round(Math.max(0, retirementExpense)),
+      },
       savings: Math.round(savings),
-      totalInvestment: Math.round(totalInvestmentOutflow),
-      cashFlow: Math.round(cashFlow),
       nisa: { principal: Math.round(nisa.principal), balance: Math.round(nisa.balance) },
       ideco: { principal: Math.round(ideco.principal), balance: Math.round(ideco.balance) },
       taxable: { principal: Math.round(taxable.principal), balance: Math.round(taxable.balance) },
+      investmentPrincipal: Math.round(totalInvestmentPrincipal),
+      balance: Math.round(annualIncome + investmentIncome - totalExpense),
       totalAssets: Math.round(totalAssets),
       assetAllocation: {
         cash: Math.round(savings),
@@ -868,7 +661,7 @@ export default async function(req: VercelRequest, res: VercelResponse) {
   if (params.interestScenario === '固定利回り') {
     resultData = runSimulation(params);
   } else {
-    resultData = runMonteCarloSimulation(params, 100);
+    resultData = runMonteCarloSimulation(params, FC.MONTE_CARLO_SIMULATION_COUNT);
   }
 
   res.status(200).json({ yearlyData: resultData });

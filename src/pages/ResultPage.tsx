@@ -1,4 +1,4 @@
-﻿import { useMemo, useCallback, useState, useEffect } from 'react';
+﻿﻿import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import IncomePositionChart from '../components/dashboard/IncomePositionChart';
 import SavingsPositionChart from '../components/dashboard/SavingsPositionChart';
@@ -10,9 +10,9 @@ import CashFlowTable from '../components/dashboard/CashFlowTable.tsx';
 import AccordionCard from '../components/dashboard/AccordionCard.tsx';
 import LifePlanTimeline from '../components/dashboard/LifePlanTimeline.tsx';
 import { getAssetGrade } from '../assets/getAssetGrade';
-import { buildDashboardDataset } from '../utils/simulation';
-import type { SimulationInputParams, SimulationNavigationState, YearlyData, InvestmentProduct } from '../types/simulation';
-import type { FormDataState } from './FormPage';
+import { buildDashboardDataset } from '../utils/dashboard-helper';
+import type { SimulationInputParams, SimulationNavigationState, YearlyData, InvestmentProduct } from '../types/simulation-types';
+import type { FormDataState } from '../types/form-types';
 import { useOrientation } from '../hooks/useOrientation';
 import { computeNetAnnual } from '../utils/financial'; // 共通関数をインポート
 
@@ -258,7 +258,7 @@ export default function ResultPage() {
 
             {rawFormData && (
               <AccordionCard title="ライフプラン・タイムライン">
-                <LifePlanTimeline rawFormData={rawFormData as FormDataState} yearlyData={yearlyData} />
+                <LifePlanTimeline rawFormData={rawFormData as unknown as FormDataState} yearlyData={yearlyData} />
               </AccordionCard>
             )}
 
