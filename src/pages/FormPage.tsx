@@ -2945,8 +2945,16 @@ const renderConfirmationView = () => {
         const spousePensionStartTargetAge = n(formData.spousePensionStartAge);
         const spousePensionNetIncome = n(formData.spousePensionAmount) * 10000 * 12;
 
-        // 配偶者の収入は、結婚予定がある場合、結婚後の収入を基準に計算する
-        const spouseBaseNetIncome = formData.planToMarry === 'する' ? computeNetAnnual(n(formData.spouseCustomIncome) * 10000) : currentSpouseNetIncome;
+        // 配偶者の収入は、結婚予定がある場合、結婚後の収入を基準に計算する (修正)
+        const spouseBaseNetIncome = (() => {
+          if (formData.planToMarry === 'する') {
+            if (formData.spouseIncomePattern === 'パート') return computeNetAnnual(1060000);
+            if (formData.spouseIncomePattern === '正社員') return computeNetAnnual(3000000);
+            if (formData.spouseIncomePattern === 'カスタム') return computeNetAnnual(n(formData.spouseCustomIncome) * 10000);
+            return 0;
+          }
+          return currentSpouseNetIncome;
+        })();
         const spouseRetirementAgeOnPersonTimeline = personAge + (spouseRetirementTargetAge - spouseCurrentAge);
         // 配偶者の年金受給が、本人の何歳の時に起こるか
         const spousePensionStartAgeOnPersonTimeline = personAge + (spousePensionStartTargetAge - spouseCurrentAge);
