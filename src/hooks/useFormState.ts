@@ -182,11 +182,12 @@ export const useFormState = () => {
   const validateSection = useCallback((sectionIndex: number) => {
     const sectionName = effectiveSections[sectionIndex];
     const newErrors: { [key: string]: string } = {};
-
+    // バリデーションロジックの実装例
     if (sectionName === '家族構成') {
       if (!formData.familyComposition) {
         newErrors.familyComposition = '家族構成を選択してください。';
       }
+    } else if (sectionName === '現在の収入') { // New block for Income section validation
       if (!formData.personAge || n(formData.personAge) < FC.VALIDATION_MIN_AGE || n(formData.personAge) > FC.VALIDATION_MAX_AGE) {
         newErrors.personAge = `年齢は${FC.VALIDATION_MIN_AGE}歳から${FC.VALIDATION_MAX_AGE}歳の間で入力してください。`;
       }
@@ -194,6 +195,13 @@ export const useFormState = () => {
         if (!formData.spouseAge || n(formData.spouseAge) < FC.VALIDATION_MIN_AGE || n(formData.spouseAge) > FC.VALIDATION_MAX_AGE) {
           newErrors.spouseAge = `配偶者の年齢は${FC.VALIDATION_MIN_AGE}歳から${FC.VALIDATION_MAX_AGE}歳の間で入力してください。`;
         }
+      }
+      // Also add validation for mainIncome and spouseMainIncome
+      if (!formData.mainIncome || n(formData.mainIncome) <= 0) {
+        newErrors.mainIncome = '本業年間収入を入力してください。';
+      }
+      if (formData.familyComposition === '既婚' && (!formData.spouseMainIncome || n(formData.spouseMainIncome) <= 0)) {
+        newErrors.spouseMainIncome = '配偶者の本業年間収入を入力してください。';
       }
     }
     // Add validation for other sections here as needed

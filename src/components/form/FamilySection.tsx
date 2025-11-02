@@ -47,42 +47,6 @@ const FamilySection: React.FC<FamilySectionProps> = ({ formData, handleInputChan
         </div>
         {errors.familyComposition && <p className="text-red-500 text-xs italic mt-2">{errors.familyComposition}</p>}
       </div>
-
-      <div className="mb-4">
-        <label htmlFor="personAge" className="block text-gray-700 text-sm font-bold mb-2">
-          あなたの年齢<span className="text-red-500">*</span>
-        </label>
-        <input
-          type="number"
-          id="personAge"
-          name="personAge"
-          value={formData.personAge}
-          onChange={handleInputChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          placeholder="例: 30"
-          required
-        />
-        {errors.personAge && <p className="text-red-500 text-xs italic mt-2">{errors.personAge}</p>}
-      </div>
-
-      {formData.familyComposition === '既婚' && (
-        <div className="mb-4">
-          <label htmlFor="spouseAge" className="block text-gray-700 text-sm font-bold mb-2">
-            配偶者の年齢<span className="text-red-500">*</span>
-          </label>
-          <input
-            type="number"
-            id="spouseAge"
-            name="spouseAge"
-            value={formData.spouseAge}
-            onChange={handleInputChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="例: 32"
-            required
-          />
-          {errors.spouseAge && <p className="text-red-500 text-xs italic mt-2">{errors.spouseAge}</p>}
-        </div>
-      )}
     </div>
   );
 };
