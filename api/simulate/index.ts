@@ -253,6 +253,10 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
   // ループ内で変更される状態変数
   let activeCarLoans: { endAge: number, annualPayment: number }[] = [];
 
+  // 年収をループ内で更新するための変数を初期化
+  let currentSelfGrossIncome = n(params.mainJobIncomeGross) + n(params.sideJobIncomeGross);
+  let currentSpouseGrossIncome = (n(params.spouseMainJobIncomeGross) ?? 0) + (n(params.spouseSideJobIncomeGross) ?? 0);
+
   // ループ内で変更される状態変数
   for (let i = 0; currentAge <= params.endAge; i++, currentAge++) {
     cumulativeNisaContribution -= nisaRecycleAmountForNextYear; // NISA枠復活
@@ -261,6 +265,16 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
     const year = baseYear + i;
     const yearFraction = (i === 0) ? firstYearRemainingMonths / FC.MONTHS_PER_YEAR : 1;
     const spouseCurrentAge = params.spouseInitialAge ? params.initialAge + i + (params.spouseInitialAge - params.initialAge) : undefined;
+
+    // 昇給を適用（初年度は適用しない）
+    if (i > 0) {
+      if (currentAge < params.retirementAge) {
+        currentSelfGrossIncome *= (1 + n(params.incomeGrowthRate));
+      }
+      if (spouseCurrentAge !== undefined && params.spouseRetirementAge && spouseCurrentAge < n(params.spouseRetirementAge)) {
+        currentSpouseGrossIncome *= (1 + (n(params.spouseIncomeGrowthRate) ?? 0));
+      }
+    }
     let spouseGrossIncome = 0; // Moved declaration to top of loop
     let investedThisYear = 0; // Added here
 
@@ -283,11 +297,11 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
       // 配偶者情報を更新
       if (params.marriage.spouse) {
         params.spouseInitialAge = params.marriage.spouse.ageAtMarriage;
-        params.spouseMainJobIncomeGross = params.marriage.spouse.incomeGross;
+        currentSpouseGrossIncome = params.marriage.spouse.incomeGross; // 結婚時点の年収で上書き
         // Re-evaluate spouseGrossIncome for the current year after marriage
         // spouseGrossIncome はこのブロックの前に計算されているため、ここで再計算する
         if (spouseCurrentAge !== undefined && params.spouseRetirementAge && spouseCurrentAge < n(params.spouseRetirementAge)) {
-          spouseGrossIncome = ((n(params.spouseMainJobIncomeGross) ?? 0) * Math.pow(1 + (n(params.spouseIncomeGrowthRate) ?? 0), i) + (n(params.spouseSideJobIncomeGross) ?? 0));
+          spouseGrossIncome = currentSpouseGrossIncome;
         }
       }
     }
@@ -295,14 +309,16 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
     // --- 1. 収支計算 (Cash Flow) ---
     // 1a. 収入
     let selfGrossIncome = 0;
-    if (currentAge < params.retirementAge) {
-      selfGrossIncome = (n(params.mainJobIncomeGross) * Math.pow(1 + n(params.incomeGrowthRate), i) + n(params.sideJobIncomeGross));
+    if (currentAge >= params.retirementAge) {
+      selfGrossIncome = 0; // 退職後は給与収入ゼロ
+    } else {
+      selfGrossIncome = currentSelfGrossIncome;
     }
 
     spouseGrossIncome = 0;
     // 結婚後は spouseCurrentAge が定義される
     if (spouseCurrentAge !== undefined && params.spouseRetirementAge && spouseCurrentAge < n(params.spouseRetirementAge)) {
-      spouseGrossIncome = ((n(params.spouseMainJobIncomeGross) ?? 0) * Math.pow(1 + (n(params.spouseIncomeGrowthRate) ?? 0), i) + (n(params.spouseSideJobIncomeGross) ?? 0));
+      spouseGrossIncome = currentSpouseGrossIncome;
     }
     let pensionAnnual = currentAge >= params.pensionStartAge ? n(params.pensionMonthly10kJPY) * FC.YEN_PER_MAN * FC.MONTHS_PER_YEAR : 0;
     if (spouseCurrentAge !== undefined && spouseCurrentAge >= n(params.spousePensionStartAge)) {
