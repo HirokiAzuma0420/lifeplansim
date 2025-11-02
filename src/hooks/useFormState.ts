@@ -5,6 +5,11 @@ import type { CarePlan } from '@/types/simulation-types';
 import * as FC from '@/constants/financial_const';
 import { computeNetAnnual, calculateLoanPayment } from '@/utils/financial';
 
+const n = (v: unknown): number => {
+  const num = Number(v);
+  return isFinite(num) ? num : 0;
+};
+
 const LIFE_PLAN_FORM_CACHE_KEY = 'lifePlanFormDataCache';
 
 const initialMonthlyInvestmentAmounts: InvestmentMonthlyAmounts = {
