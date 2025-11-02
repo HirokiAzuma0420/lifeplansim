@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const raiseRateOptions = [
   { value: '0', label: 'なし' },
@@ -13,41 +13,47 @@ export const RaiseRateRadioGroup: React.FC<{
   value: string | number;
   onChange: (name: string, value: string) => void;
 }> = ({ name, value, onChange }) => {
-  // 空文字列もカスタム入力として扱う
-  const isCustom = value === '' || !raiseRateOptions.some(opt => opt.value === String(value));
-  const radioValue = isCustom ? 'custom' : String(value);
+  const [selectedOption, setSelectedOption] = useState(() => {
+    const isPredefined = raiseRateOptions.some(opt => opt.value === String(value));
+    return isPredefined ? String(value) : 'custom';
+  });
+
+  useEffect(() => {
+    const isPredefined = raiseRateOptions.some(opt => opt.value === String(value));
+    if (!isPredefined) {
+      setSelectedOption('custom');
+    }
+  }, [value]);
 
   const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const nextValue = e.target.value;
+    setSelectedOption(nextValue);
     if (nextValue !== 'custom') {
       onChange(name, nextValue);
-    } else {
-      // カスタム選択時は現在のカスタム値を維持（もしなければデフォルト値）
-      onChange(name, isCustom ? String(value) : '1.5');
     }
   };
 
   return (
     <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
       {raiseRateOptions.map((opt) => (
-        <label key={opt.value} className={`cursor-pointer border rounded-md shadow-sm px-3 py-1 transition-colors duration-200 ${radioValue === opt.value ? 'bg-blue-600 text-white border-blue-600' : 'bg-white hover:bg-gray-50'}`}>
+        <label key={opt.value} className={`cursor-pointer border rounded-md shadow-sm px-3 py-1 transition-colors duration-200 ${selectedOption === opt.value ? 'bg-blue-600 text-white border-blue-600' : 'bg-white hover:bg-gray-50'}`}>
           <input
             type="radio"
             name={name}
             value={opt.value}
-            checked={radioValue === opt.value}
+            checked={selectedOption === opt.value}
             onChange={handleRadioChange}
             className="sr-only"
           />
           {opt.label}
         </label>
       ))}
-      <div className={`flex items-center max-w-[150px] transition-opacity duration-300 ${radioValue === 'custom' ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-        {radioValue === 'custom' && (
+      <div className={`flex items-center max-w-[150px] transition-opacity duration-300 ${selectedOption === 'custom' ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+        {selectedOption === 'custom' && (
           <>
           <input
             type="number"
-            value={isCustom ? value : 1.5}
+            value={value}
             min={0}
             max={20}
             step={0.1}
