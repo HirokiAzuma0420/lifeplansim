@@ -2694,10 +2694,10 @@ const renderConfirmationView = () => {
     const selfGrossIncome = n(formData.mainIncome) * 10000 + n(formData.sideJobIncome) * 10000;
     const selfNetIncome = computeNetAnnual(selfGrossIncome);
     
-    // --- 確認画面用の追加計算 ---
-    // 額面の世帯年収
-    const currentSpouseGrossIncomeForSummary = formData.familyComposition === '既婚' ? (n(formData.spouseMainIncome) * 10000 + n(formData.spouseSideJobIncome) * 10000) : 0;
-    const totalGrossAnnualIncome = selfGrossIncome + currentSpouseGrossIncomeForSummary;
+    // --- 確認画面用の追加計算 (現在の状況ベース) ---
+    // 現在の額面世帯年収
+    const currentSpouseGrossIncome = formData.familyComposition === '既婚' ? (n(formData.spouseMainIncome) * 10000 + n(formData.spouseSideJobIncome) * 10000) : 0;
+    const currentTotalGrossAnnualIncome = selfGrossIncome + currentSpouseGrossIncome;
 
     // 月の生活費
     const monthlyLivingExpense = formData.expenseMethod === '簡単'
@@ -2780,23 +2780,12 @@ const renderConfirmationView = () => {
       currentEducationMonthly;
 
 
-    // サマリー表示用の「現在の」世帯手取り年収
-    const currentSpouseGrossIncome = formData.familyComposition === '既婚' ? (n(formData.spouseMainIncome) * 10000 + n(formData.spouseSideJobIncome) * 10000) : 0;
-    const summaryTotalNetAnnualIncome = selfNetIncome + computeNetAnnual(currentSpouseGrossIncome);
-
-    let spouseNetIncome = formData.familyComposition === '既婚' ? computeNetAnnual(currentSpouseGrossIncome) : 0;
-    const currentHouseholdNetIncome = selfNetIncome + spouseNetIncome;
+    // 現在の手取り世帯年収
+    const currentSpouseNetIncome = formData.familyComposition === '既婚' ? computeNetAnnual(currentSpouseGrossIncome) : 0;
+    const currentTotalNetAnnualIncome = selfNetIncome + currentSpouseNetIncome;
 
     // 結婚イベント
     if (formData.planToMarry === 'する') {
-      // 「結婚する」場合、将来の配偶者収入を計算して spouseNetIncome を更新する
-      let spouseGrossIncomeAfterMarriage = 0;
-      if (formData.spouseIncomePattern === 'パート') spouseGrossIncomeAfterMarriage = 1060000;
-      else if (formData.spouseIncomePattern === '正社員') spouseGrossIncomeAfterMarriage = 3000000;
-      else if (formData.spouseIncomePattern === 'カスタム') spouseGrossIncomeAfterMarriage = n(formData.spouseCustomIncome) * 10000;
-      
-      spouseNetIncome = computeNetAnnual(spouseGrossIncomeAfterMarriage);
-
       let spouseIncomeForSim = 0;
       if (formData.spouseIncomePattern === 'パート') spouseIncomeForSim = 1060000;
       else if (formData.spouseIncomePattern === '正社員') spouseIncomeForSim = 3000000;
@@ -2902,7 +2891,7 @@ const renderConfirmationView = () => {
     // 収入の変遷を計算（退職イベントの計算に必要）
     const incomeHistory: { ageRange: string; income: number }[] = [];
     let lastAgeForHistory = n(formData.personAge);
-    let timelineHouseholdNetIncomeForHistory = currentHouseholdNetIncome;
+    let timelineHouseholdNetIncomeForHistory = currentTotalNetAnnualIncome;
 
     for (const event of events) {
       if (event.age > lastAgeForHistory) {
@@ -2956,20 +2945,21 @@ const renderConfirmationView = () => {
         const spousePensionStartTargetAge = n(formData.spousePensionStartAge);
         const spousePensionNetIncome = n(formData.spousePensionAmount) * 10000 * 12;
 
-        // 配偶者の退職が、本人の何歳の時に起こるか
+        // 配偶者の収入は、結婚予定がある場合、結婚後の収入を基準に計算する
+        const spouseBaseNetIncome = formData.planToMarry === 'する' ? computeNetAnnual(n(formData.spouseCustomIncome) * 10000) : currentSpouseNetIncome;
         const spouseRetirementAgeOnPersonTimeline = personAge + (spouseRetirementTargetAge - spouseCurrentAge);
         // 配偶者の年金受給が、本人の何歳の時に起こるか
         const spousePensionStartAgeOnPersonTimeline = personAge + (spousePensionStartTargetAge - spouseCurrentAge);
 
         // 配偶者の収入がある場合、退職イベントを追加
-        if (spouseNetIncome > 0) {
+        if (spouseBaseNetIncome > 0) {
             events.push({
                age: spouseRetirementAgeOnPersonTimeline,
                title: 'パートナーの退職',
                details: [
                    { label: '給与収入が停止', value: `手取り年収が減少します` },
                ],
-               incomeChange: -spouseNetIncome
+               incomeChange: -spouseBaseNetIncome
            });
         }
 
@@ -2991,7 +2981,7 @@ const renderConfirmationView = () => {
 
     // 各イベント発生時点での累計収入を計算
     const incomeAtEvent: number[] = [];
-    let cumulativeIncome = currentHouseholdNetIncome;
+    let cumulativeIncome = currentTotalNetAnnualIncome;
     for (const event of events) {
       cumulativeIncome += event.incomeChange ?? 0;
       incomeAtEvent.push(cumulativeIncome);
@@ -3001,7 +2991,7 @@ const renderConfirmationView = () => {
     let lastAge = n(formData.personAge);
 
     // タイムライン用の収入履歴を再計算
-    let timelineHouseholdNetIncome = currentHouseholdNetIncome;
+    let timelineHouseholdNetIncome = currentTotalNetAnnualIncome;
     for (const event of events) {
       if (event.age > lastAge) {
         finalIncomeHistory.push({
@@ -3054,13 +3044,13 @@ const renderConfirmationView = () => {
             {formData.familyComposition === '既婚' && <ConfirmationItem label="配偶者の年齢" value={`${formData.spouseAge} 歳`} />}
           </ConfirmationSection>
           <ConfirmationSection title="💰 現在の収支（年間）">            
-            <ConfirmationItem label="世帯の手取り年収" value={formatYen(summaryTotalNetAnnualIncome)} />
+            <ConfirmationItem label="世帯の手取り年収" value={formatYen(currentTotalNetAnnualIncome)} />
             <ConfirmationItem label="世帯の年間支出" value={formatYen(summaryAnnualExpense)} />
             <ConfirmationItem
               label="年間収支"
               value={
-                <span className={summaryTotalNetAnnualIncome - summaryAnnualExpense >= 0 ? 'text-green-600' : 'text-red-600'}>
-                  {summaryTotalNetAnnualIncome - summaryAnnualExpense >= 0 ? '+' : ''}{formatYen(summaryTotalNetAnnualIncome - summaryAnnualExpense)}
+                <span className={currentTotalNetAnnualIncome - summaryAnnualExpense >= 0 ? 'text-green-600' : 'text-red-600'}>
+                  {currentTotalNetAnnualIncome - summaryAnnualExpense >= 0 ? '+' : ''}{formatYen(currentTotalNetAnnualIncome - summaryAnnualExpense)}
                 </span>
               }
             />
@@ -3080,9 +3070,9 @@ const renderConfirmationView = () => {
                 <p className="font-semibold">{n(formData.personAge)}歳 (現在)</p>
                 <ul className="list-disc list-inside text-sm text-gray-600 pl-4">
                   <li className="list-none pt-2 mt-2 border-t border-gray-200 font-semibold">収入</li>
-                  <li>額面の世帯年収: {formatYen(totalGrossAnnualIncome)}
+                  <li>額面の世帯年収: {formatYen(currentTotalGrossAnnualIncome)}
                     <ul className="list-none pl-5">
-                      <li>└ 手取り年収: {formatYen(selfNetIncome + spouseNetIncome)}</li>
+                      <li>└ 手取り年収: {formatYen(currentTotalNetAnnualIncome)}</li>
                     </ul>
                   </li>
                   <li className="list-none pt-2 mt-2 border-t border-gray-200 font-semibold">支出</li>
