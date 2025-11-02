@@ -1,4 +1,4 @@
-﻿import { useMemo, useCallback, useState, useEffect } from 'react';
+﻿﻿import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import IncomePositionChart from '../components/dashboard/IncomePositionChart';
 import SavingsPositionChart from '../components/dashboard/SavingsPositionChart';
@@ -8,9 +8,11 @@ import AssetPieChart from '../components/dashboard/AssetPieChart';
 import AssetTable from '../components/dashboard/AssetTable';
 import CashFlowTable from '../components/dashboard/CashFlowTable.tsx';
 import AccordionCard from '../components/dashboard/AccordionCard.tsx';
+import LifePlanTimeline from '../components/dashboard/LifePlanTimeline.tsx';
 import { getAssetGrade } from '../assets/getAssetGrade';
 import { buildDashboardDataset } from '../utils/simulation';
 import type { SimulationInputParams, SimulationNavigationState, YearlyData } from '../types/simulation';
+import type { FormDataState } from './FormPage';
 import { useOrientation } from '../hooks/useOrientation';
 
 // InvestmentProduct 型を ResultPage.tsx にも定義
@@ -327,6 +329,12 @@ export default function ResultPage() {
               </p>
               <CashFlowTable enrichedData={dataset.enrichedData} />
             </AccordionCard>
+
+            {rawFormData && (
+              <AccordionCard title="ライフプラン・タイムライン">
+                <LifePlanTimeline rawFormData={rawFormData as FormDataState} yearlyData={yearlyData} />
+              </AccordionCard>
+            )}
 
           </div>
         </div>
