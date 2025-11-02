@@ -256,6 +256,12 @@ export default function ResultPage() {
               </div>
             </AccordionCard>
 
+            {rawFormData && (
+              <AccordionCard title="ライフプラン・タイムライン">
+                <LifePlanTimeline rawFormData={rawFormData as FormDataState} yearlyData={yearlyData} />
+              </AccordionCard>
+            )}
+
             <AccordionCard title="収入・貯蓄の同世代比較">
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                 <IncomePositionChart age={currentAge} income={selfGrossIncome} />
@@ -284,12 +290,6 @@ export default function ResultPage() {
               </p>
               <CashFlowTable enrichedData={dataset.enrichedData} />
             </AccordionCard>
-
-            {rawFormData && (
-              <AccordionCard title="ライフプラン・タイムライン">
-                <LifePlanTimeline rawFormData={rawFormData as FormDataState} yearlyData={yearlyData} />
-              </AccordionCard>
-            )}
 
           </div>
         </div>
