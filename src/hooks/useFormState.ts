@@ -213,6 +213,35 @@ export const useFormState = () => {
     setIsReady(true);
   }, []);
 
+  // NEW useEffect to handle initial loading and cache
+  useEffect(() => {
+    if (initialStateFromLocation) {
+      setIsReady(true);
+      return;
+    }
+
+    const cachedData = localStorage.getItem(LIFE_PLAN_FORM_CACHE_KEY);
+    if (cachedData) {
+      try {
+        const { timestamp, data } = JSON.parse(cachedData);
+        if (Date.now() - timestamp < FC.FORM_CACHE_EXPIRATION_MS) {
+          setFormData(data);
+          setShowRestoreModal(true); // Show modal to ask user to restore
+        } else {
+          // Cache expired, clear it
+          localStorage.removeItem(LIFE_PLAN_FORM_CACHE_KEY);
+          setIsReady(true); // Ready with default data
+        }
+      } catch (e) {
+        console.error("Failed to parse cached form data:", e);
+        localStorage.removeItem(LIFE_PLAN_FORM_CACHE_KEY);
+        setIsReady(true); // Ready with default data
+      }
+    } else {
+      setIsReady(true); // No cache, ready with default data
+    }
+  }, [initialStateFromLocation]); // Run once on mount, or when initialStateFromLocation changes
+
   // Input handlers
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
