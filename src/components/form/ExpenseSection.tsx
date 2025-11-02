@@ -73,92 +73,111 @@ const ExpenseSection: React.FC<ExpenseSectionProps> = ({ formData, handleInputCh
           <p className="text-sm text-gray-600 bg-blue-50 p-3 rounded-md mb-4">
             ※住居費と自動車関連費は、後のセクションで詳細を入力します。
           </p>
-          <h3 className="text-lg font-semibold mb-2">固定費</h3>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="utilitiesCost">
-              水道・光熱費[円]
-            </label>
-            <input type="number" id="utilitiesCost" name="utilitiesCost" value={formData.utilitiesCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.utilitiesCost ? 'border-red-500' : ''}`} required />
-            {errors.utilitiesCost && <p className="text-red-500 text-xs italic mt-1">{errors.utilitiesCost}</p>}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">固定費</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="utilitiesCost">水道・光熱費</label>
+                <div className="flex">
+                  <input type="number" id="utilitiesCost" name="utilitiesCost" value={formData.utilitiesCost} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.utilitiesCost ? 'border-red-500' : ''}`} required />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">円/月</span>
+                </div>
+                {errors.utilitiesCost && <p className="text-red-500 text-xs italic mt-1">{errors.utilitiesCost}</p>}
+              </div>
+              <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="communicationCost">通信費</label>
+                <div className="flex">
+                  <input type="number" id="communicationCost" name="communicationCost" value={formData.communicationCost} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.communicationCost ? 'border-red-500' : ''}`} required />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">円/月</span>
+                </div>
+                {errors.communicationCost && <p className="text-red-500 text-xs italic mt-1">{errors.communicationCost}</p>}
+              </div>
+              <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="insuranceCost">保険</label>
+                <div className="flex">
+                  <input type="number" id="insuranceCost" name="insuranceCost" value={formData.insuranceCost} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.insuranceCost ? 'border-red-500' : ''}`} required />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">円/月</span>
+                </div>
+                {errors.insuranceCost && <p className="text-red-500 text-xs italic mt-1">{errors.insuranceCost}</p>}
+              </div>
+              <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="educationCost">教養・教育</label>
+                <div className="flex">
+                  <input type="number" id="educationCost" name="educationCost" value={formData.educationCost} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.educationCost ? 'border-red-500' : ''}`} required />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">円/月</span>
+                </div>
+                {errors.educationCost && <p className="text-red-500 text-xs italic mt-1">{errors.educationCost}</p>}
+              </div>
+              <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="otherFixedCost">その他</label>
+                <div className="flex">
+                  <input type="number" id="otherFixedCost" name="otherFixedCost" value={formData.otherFixedCost} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.otherFixedCost ? 'border-red-500' : ''}`} defaultValue={0} />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">円/月</span>
+                </div>
+                {errors.otherFixedCost && <p className="text-red-500 text-xs italic mt-1">{errors.otherFixedCost}</p>}
+              </div>
+            </div>
           </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="communicationCost">
-              通信費[円]
-            </label>
-            <input type="number" id="communicationCost" name="communicationCost" value={formData.communicationCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.communicationCost ? 'border-red-500' : ''}`} required />
-            {errors.communicationCost && <p className="text-red-500 text-xs italic mt-1">{errors.communicationCost}</p>}
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="insuranceCost">
-              保険[円]
-            </label>
-            <input type="number" id="insuranceCost" name="insuranceCost" value={formData.insuranceCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.insuranceCost ? 'border-red-500' : ''}`} required />
-            {errors.insuranceCost && <p className="text-red-500 text-xs italic mt-1">{errors.insuranceCost}</p>}
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="educationCost">
-              教養・教育[円]
-            </label>
-            <input type="number" id="educationCost" name="educationCost" value={formData.educationCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.educationCost ? 'border-red-500' : ''}`} required />
-            {errors.educationCost && <p className="text-red-500 text-xs italic mt-1">{errors.educationCost}</p>}
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="otherFixedCost">
-              その他[円]
-            </label>
-            <input type="number" id="otherFixedCost" name="otherFixedCost" value={formData.otherFixedCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.otherFixedCost ? 'border-red-500' : ''}`} defaultValue={0} />
-            {errors.otherFixedCost && <p className="text-red-500 text-xs italic mt-1">{errors.otherFixedCost}</p>}
-          </div>
-
-          <h3 className="text-lg font-semibold mb-2">変動費</h3>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="foodCost">
-              食費[円]
-            </label>
-            <input type="number" id="foodCost" name="foodCost" value={formData.foodCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.foodCost ? 'border-red-500' : ''}`} required />
-            {errors.foodCost && <p className="text-red-500 text-xs italic mt-1">{errors.foodCost}</p>}
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="dailyNecessitiesCost">
-              日用品[円]
-            </label>
-            <input type="number" id="dailyNecessitiesCost" name="dailyNecessitiesCost" value={formData.dailyNecessitiesCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.dailyNecessitiesCost ? 'border-red-500' : ''}`} required />
-            {errors.dailyNecessitiesCost && <p className="text-red-500 text-xs italic mt-1">{errors.dailyNecessitiesCost}</p>}
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="transportationCost">
-              交通費[円]
-            </label>
-            <input type="number" id="transportationCost" name="transportationCost" value={formData.transportationCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.transportationCost ? 'border-red-500' : ''}`} required />
-            {errors.transportationCost && <p className="text-red-500 text-xs italic mt-1">{errors.transportationCost}</p>}
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="clothingBeautyCost">
-              衣類・美容[円]
-            </label>
-            <input type="number" id="clothingBeautyCost" name="clothingBeautyCost" value={formData.clothingBeautyCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.clothingBeautyCost ? 'border-red-500' : ''}`} required />
-            {errors.clothingBeautyCost && <p className="text-red-500 text-xs italic mt-1">{errors.clothingBeautyCost}</p>}
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="socializingCost">
-              交際費[円]
-            </label>
-            <input type="number" id="socializingCost" name="socializingCost" value={formData.socializingCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.socializingCost ? 'border-red-500' : ''}`} required />
-            {errors.socializingCost && <p className="text-red-500 text-xs italic mt-1">{errors.socializingCost}</p>}
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="hobbyEntertainmentCost">
-              趣味・娯楽[円]
-            </label>
-            <input type="number" id="hobbyEntertainmentCost" name="hobbyEntertainmentCost" value={formData.hobbyEntertainmentCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.hobbyEntertainmentCost ? 'border-red-500' : ''}`} required />
-            {errors.hobbyEntertainmentCost && <p className="text-red-500 text-xs italic mt-1">{errors.hobbyEntertainmentCost}</p>}
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="otherVariableCost">
-              その他[円]
-            </label>
-            <input type="number" id="otherVariableCost" name="otherVariableCost" value={formData.otherVariableCost} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.otherVariableCost ? 'border-red-500' : ''}`} defaultValue={0} />
-            {errors.otherVariableCost && <p className="text-red-500 text-xs italic mt-1">{errors.otherVariableCost}</p>}
+          <div className="space-y-4 mt-6">
+            <h3 className="text-lg font-semibold">変動費</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="foodCost">食費</label>
+                <div className="flex">
+                  <input type="number" id="foodCost" name="foodCost" value={formData.foodCost} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.foodCost ? 'border-red-500' : ''}`} required />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">円/月</span>
+                </div>
+                {errors.foodCost && <p className="text-red-500 text-xs italic mt-1">{errors.foodCost}</p>}
+              </div>
+              <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="dailyNecessitiesCost">日用品</label>
+                <div className="flex">
+                  <input type="number" id="dailyNecessitiesCost" name="dailyNecessitiesCost" value={formData.dailyNecessitiesCost} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.dailyNecessitiesCost ? 'border-red-500' : ''}`} required />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">円/月</span>
+                </div>
+                {errors.dailyNecessitiesCost && <p className="text-red-500 text-xs italic mt-1">{errors.dailyNecessitiesCost}</p>}
+              </div>
+              <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="transportationCost">交通費</label>
+                <div className="flex">
+                  <input type="number" id="transportationCost" name="transportationCost" value={formData.transportationCost} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.transportationCost ? 'border-red-500' : ''}`} required />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">円/月</span>
+                </div>
+                {errors.transportationCost && <p className="text-red-500 text-xs italic mt-1">{errors.transportationCost}</p>}
+              </div>
+              <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="clothingBeautyCost">衣類・美容</label>
+                <div className="flex">
+                  <input type="number" id="clothingBeautyCost" name="clothingBeautyCost" value={formData.clothingBeautyCost} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.clothingBeautyCost ? 'border-red-500' : ''}`} required />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">円/月</span>
+                </div>
+                {errors.clothingBeautyCost && <p className="text-red-500 text-xs italic mt-1">{errors.clothingBeautyCost}</p>}
+              </div>
+              <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="socializingCost">交際費</label>
+                <div className="flex">
+                  <input type="number" id="socializingCost" name="socializingCost" value={formData.socializingCost} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.socializingCost ? 'border-red-500' : ''}`} required />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">円/月</span>
+                </div>
+                {errors.socializingCost && <p className="text-red-500 text-xs italic mt-1">{errors.socializingCost}</p>}
+              </div>
+              <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="hobbyEntertainmentCost">趣味・娯楽</label>
+                <div className="flex">
+                  <input type="number" id="hobbyEntertainmentCost" name="hobbyEntertainmentCost" value={formData.hobbyEntertainmentCost} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.hobbyEntertainmentCost ? 'border-red-500' : ''}`} required />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">円/月</span>
+                </div>
+                {errors.hobbyEntertainmentCost && <p className="text-red-500 text-xs italic mt-1">{errors.hobbyEntertainmentCost}</p>}
+              </div>
+              <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="otherVariableCost">その他</label>
+                <div className="flex">
+                  <input type="number" id="otherVariableCost" name="otherVariableCost" value={formData.otherVariableCost} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.otherVariableCost ? 'border-red-500' : ''}`} defaultValue={0} />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">円/月</span>
+                </div>
+                {errors.otherVariableCost && <p className="text-red-500 text-xs italic mt-1">{errors.otherVariableCost}</p>}
+              </div>
+            </div>
           </div>
         </div>
     </div>

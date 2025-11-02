@@ -52,23 +52,23 @@ const ChildrenLifeEventSection: React.FC<ChildrenLifeEventSectionProps> = ({ for
       </div>
       <div className={`accordion-content ${formData.hasChildren === 'はい' ? 'open' : ''}`}>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="numberOfChildren">
-              子供の人数は？[人]
-            </label>
-            <input type="number" id="numberOfChildren" name="numberOfChildren" value={formData.numberOfChildren} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.numberOfChildren ? 'border-red-500' : ''}`} required />
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="numberOfChildren">子供の人数</label>
+            <div className="flex">
+              <input type="number" id="numberOfChildren" name="numberOfChildren" value={formData.numberOfChildren} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.numberOfChildren ? 'border-red-500' : ''}`} required />
+              <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">人</span>
+            </div>
             {errors.numberOfChildren && <p className="text-red-500 text-xs italic mt-1">{errors.numberOfChildren}</p>}
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="firstBornAge">
-              最初のお子さんが生まれた（または生まれる予定）のあなたの年齢は？[歳]
-            </label>
-            <input type="number" id="firstBornAge" name="firstBornAge" value={formData.firstBornAge} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.firstBornAge ? 'border-red-500' : ''}`} required />
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="firstBornAge">第一子が生まれるあなたの年齢</label>
+            <div className="flex">
+              <input type="number" id="firstBornAge" name="firstBornAge" value={formData.firstBornAge} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.firstBornAge ? 'border-red-500' : ''}`} required />
+              <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">歳</span>
+            </div>
             {errors.firstBornAge && <p className="text-red-500 text-xs italic mt-1">{errors.firstBornAge}</p>}
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="educationPattern">
-              教育費の想定パターンは？
-            </label>
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="educationPattern">教育費の想定パターン</label>
             <select 
               id="educationPattern"
               name="educationPattern"

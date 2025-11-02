@@ -17,17 +17,19 @@ const SavingsSection: React.FC<SavingsSectionProps> = ({ formData, handleInputCh
       <h2 className="text-2xl font-bold text-center mb-4">貯蓄に関する質問</h2>
       
       <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="currentSavings">
-          現在の預貯金総額は？[万円]
-        </label>
-        <input type="number" id="currentSavings" name="currentSavings" value={formData.currentSavings} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.currentSavings ? 'border-red-500' : ''}`} required />
+        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="currentSavings">現在の預貯金総額</label>
+        <div className="flex">
+          <input type="number" id="currentSavings" name="currentSavings" value={formData.currentSavings} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.currentSavings ? 'border-red-500' : ''}`} required />
+          <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
+        </div>
         {errors.currentSavings && <p className="text-red-500 text-xs italic mt-1">{errors.currentSavings}</p>}
       </div>
       <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="monthlySavings">
-          毎月の貯蓄額は？[円]
-        </label>
-        <input type="number" id="monthlySavings" name="monthlySavings" value={formData.monthlySavings} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.monthlySavings ? 'border-red-500' : ''}`} required />
+        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="monthlySavings">毎月の貯蓄額</label>
+        <div className="flex">
+          <input type="number" id="monthlySavings" name="monthlySavings" value={formData.monthlySavings} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.monthlySavings ? 'border-red-500' : ''}`} required />
+          <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">円/月</span>
+        </div>
         {errors.monthlySavings && <p className="text-red-500 text-xs italic mt-1">{errors.monthlySavings}</p>}
       </div>
     </div>

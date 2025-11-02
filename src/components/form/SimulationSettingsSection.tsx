@@ -16,10 +16,11 @@ const SimulationSettingsSection: React.FC<SimulationSettingsSectionProps> = ({ f
       </div>
       <h2 className="text-2xl font-bold text-center mb-4">シミュレーション設定に関する質問</h2>
       <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="simulationPeriodAge">
-          シミュレーションの対象期間（現在から何歳まで）[歳]
-        </label>
-        <input type="number" id="simulationPeriodAge" name="simulationPeriodAge" value={formData.simulationPeriodAge} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.simulationPeriodAge ? 'border-red-500' : ''}`} />
+        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="simulationPeriodAge">シミュレーションの対象期間（何歳まで）</label>
+        <div className="flex">
+          <input type="number" id="simulationPeriodAge" name="simulationPeriodAge" value={formData.simulationPeriodAge} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.simulationPeriodAge ? 'border-red-500' : ''}`} />
+          <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">歳</span>
+        </div>
         {errors.simulationPeriodAge && <p className="text-red-500 text-xs italic mt-1">{errors.simulationPeriodAge}</p>}
       </div>
       <div className="mb-4">
@@ -56,17 +57,20 @@ const SimulationSettingsSection: React.FC<SimulationSettingsSectionProps> = ({ f
         <div className={`accordion-content ${formData.interestRateScenario === '固定利回り' ? 'open' : ''}`}>
           <div className="mt-4 p-4 border border-blue-200 bg-blue-50 rounded-md">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="fixedInterestRate">
-              固定利率（%）
+              固定利率
             </label>
-            <input
-              type="number"
-              id="fixedInterestRate"
-              name="fixedInterestRate"
-              value={formData.fixedInterestRate}
-              onChange={handleInputChange}
-              step="0.1"
-              className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
+            <div className="flex">
+              <input
+                type="number"
+                id="fixedInterestRate"
+                name="fixedInterestRate"
+                value={formData.fixedInterestRate}
+                onChange={handleInputChange}
+                step="0.1"
+                className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+              <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">%</span>
+            </div>
             <p className="text-xs text-gray-600 mt-2">
               この設定を有効にすると投資セクションの個別利率は無視されます。
             </p>
@@ -74,10 +78,11 @@ const SimulationSettingsSection: React.FC<SimulationSettingsSectionProps> = ({ f
         </div>
       </div>
       <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="emergencyFund">
-          生活防衛資金（常に確保したい現金額）[万円]
-        </label>
-        <input type="number" id="emergencyFund" name="emergencyFund" value={formData.emergencyFund} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.emergencyFund ? 'border-red-500' : ''}`} />
+        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="emergencyFund">生活防衛資金（常に確保したい現金額）</label>
+        <div className="flex">
+          <input type="number" id="emergencyFund" name="emergencyFund" value={formData.emergencyFund} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.emergencyFund ? 'border-red-500' : ''}`} />
+          <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
+        </div>
         {errors.emergencyFund && <p className="text-red-500 text-xs italic mt-1">{errors.emergencyFund}</p>}
       </div>
     </div>

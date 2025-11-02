@@ -82,31 +82,35 @@ const ParentCareLifeEventSection: React.FC<ParentCareLifeEventSectionProps> = ({
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`parentCarePlans[${index}].parentCurrentAge`}>
-                  現在の年齢[歳]
-                </label>
-                <input type="number" id={`parentCarePlans[${index}].parentCurrentAge`} value={plan.parentCurrentAge} onChange={(e) => handleCarePlanChange(index, 'parentCurrentAge', e.target.value)} className={`shadow border rounded w-full py-2 px-3 text-gray-700 ${errors[`parentCarePlans[${index}].parentCurrentAge`] ? 'border-red-500' : ''}`} />
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`parentCarePlans[${index}].parentCurrentAge`}>現在の年齢</label>
+                <div className="flex">
+                  <input type="number" id={`parentCarePlans[${index}].parentCurrentAge`} value={plan.parentCurrentAge} onChange={(e) => handleCarePlanChange(index, 'parentCurrentAge', e.target.value)} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors[`parentCarePlans[${index}].parentCurrentAge`] ? 'border-red-500' : ''}`} />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">歳</span>
+                </div>
                 {errors[`parentCarePlans[${index}].parentCurrentAge`] && <p className="text-red-500 text-xs italic mt-1">{errors[`parentCarePlans[${index}].parentCurrentAge`]}</p>}
               </div>
               <div>
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`parentCarePlans[${index}].parentCareStartAge`}>
-                  介護開始年齢[歳]
-                </label>
-                <input type="number" id={`parentCarePlans[${index}].parentCareStartAge`} value={plan.parentCareStartAge} onChange={(e) => handleCarePlanChange(index, 'parentCareStartAge', e.target.value)} className={`shadow border rounded w-full py-2 px-3 text-gray-700 ${errors[`parentCarePlans[${index}].parentCareStartAge`] ? 'border-red-500' : ''}`} />
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`parentCarePlans[${index}].parentCareStartAge`}>介護開始年齢</label>
+                <div className="flex">
+                  <input type="number" id={`parentCarePlans[${index}].parentCareStartAge`} value={plan.parentCareStartAge} onChange={(e) => handleCarePlanChange(index, 'parentCareStartAge', e.target.value)} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors[`parentCarePlans[${index}].parentCareStartAge`] ? 'border-red-500' : ''}`} />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">歳</span>
+                </div>
                 {errors[`parentCarePlans[${index}].parentCareStartAge`] && <p className="text-red-500 text-xs italic mt-1">{errors[`parentCarePlans[${index}].parentCareStartAge`]}</p>}
               </div>
               <div>
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`parentCarePlans[${index}].monthly10kJPY`}>
-                  介護費用の想定（月額）[万円]
-                </label>
-                <input type="number" id={`parentCarePlans[${index}].monthly10kJPY`} value={plan.monthly10kJPY} onChange={(e) => handleCarePlanChange(index, 'monthly10kJPY', e.target.value)} className={`shadow border rounded w-full py-2 px-3 text-gray-700 ${errors[`parentCarePlans[${index}].monthly10kJPY`] ? 'border-red-500' : ''}`} />
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`parentCarePlans[${index}].monthly10kJPY`}>介護費用の想定（月額）</label>
+                <div className="flex">
+                  <input type="number" id={`parentCarePlans[${index}].monthly10kJPY`} value={plan.monthly10kJPY} onChange={(e) => handleCarePlanChange(index, 'monthly10kJPY', e.target.value)} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors[`parentCarePlans[${index}].monthly10kJPY`] ? 'border-red-500' : ''}`} />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
+                </div>
                 {errors[`parentCarePlans[${index}].monthly10kJPY`] && <p className="text-red-500 text-xs italic mt-1">{errors[`parentCarePlans[${index}].monthly10kJPY`]}</p>}
               </div>
               <div>
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`parentCarePlans[${index}].years`}>
-                  介護期間の想定[年]
-                </label>
-                <input type="number" id={`parentCarePlans[${index}].years`} value={plan.years} onChange={(e) => handleCarePlanChange(index, 'years', e.target.value)} className={`shadow border rounded w-full py-2 px-3 text-gray-700 ${errors[`parentCarePlans[${index}].years`] ? 'border-red-500' : ''}`} />
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`parentCarePlans[${index}].years`}>介護期間の想定</label>
+                <div className="flex">
+                  <input type="number" id={`parentCarePlans[${index}].years`} value={plan.years} onChange={(e) => handleCarePlanChange(index, 'years', e.target.value)} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors[`parentCarePlans[${index}].years`] ? 'border-red-500' : ''}`} />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">年</span>
+                </div>
                 {errors[`parentCarePlans[${index}].years`] && <p className="text-red-500 text-xs italic mt-1">{errors[`parentCarePlans[${index}].years`]}</p>}
               </div>
             </div>

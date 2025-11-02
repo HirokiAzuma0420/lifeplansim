@@ -30,14 +30,20 @@ const CarLifeEventSection: React.FC<CarLifeEventSectionProps> = ({ formData, han
         </div>
         <div className={`overflow-hidden transition-all duration-300 ease-in-out ${formData.carCurrentLoanInPayment === 'yes' ? 'max-h-64 opacity-100 mt-4' : 'max-h-0 opacity-0'}`}>
           <div className="mt-4 grid gap-4 md:grid-cols-2">
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carCurrentLoanMonthly">月々の返済額（円/月）</label>
-              <input type="number" id="carCurrentLoanMonthly" name="carCurrentLoanMonthly" value={formData.carCurrentLoanMonthly} onChange={handleInputChange} className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${errors.carCurrentLoanMonthly ? 'border-red-500' : ''}`} />
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carCurrentLoanMonthly">月々の返済額</label>
+              <div className="flex">
+                <input type="number" id="carCurrentLoanMonthly" name="carCurrentLoanMonthly" value={formData.carCurrentLoanMonthly} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors.carCurrentLoanMonthly ? 'border-red-500' : ''}`} />
+                <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">円/月</span>
+              </div>
               {errors.carCurrentLoanMonthly && <p className="text-red-500 text-xs italic mt-1">{errors.carCurrentLoanMonthly}</p>}
             </div>
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carCurrentLoanRemainingMonths">残り支払い回数（ヶ月）</label>
-              <input type="number" id="carCurrentLoanRemainingMonths" name="carCurrentLoanRemainingMonths" value={formData.carCurrentLoanRemainingMonths} onChange={handleInputChange} className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${errors.carCurrentLoanRemainingMonths ? 'border-red-500' : ''}`} />
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carCurrentLoanRemainingMonths">残り支払い回数</label>
+              <div className="flex">
+                <input type="number" id="carCurrentLoanRemainingMonths" name="carCurrentLoanRemainingMonths" value={formData.carCurrentLoanRemainingMonths} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors.carCurrentLoanRemainingMonths ? 'border-red-500' : ''}`} />
+                <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">ヶ月</span>
+              </div>
               {errors.carCurrentLoanRemainingMonths && <p className="text-red-500 text-xs italic mt-1">{errors.carCurrentLoanRemainingMonths}</p>}
             </div>
           </div>
@@ -61,24 +67,27 @@ const CarLifeEventSection: React.FC<CarLifeEventSectionProps> = ({ formData, han
 
       <div className={`accordion-content ${formData.carPurchasePlan === 'yes' ? 'open' : ''}`}>
       <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carFirstReplacementAfterYears">
-          初回買い替えは今から何年後？[年]
-        </label>
-        <input type="number" id="carFirstReplacementAfterYears" name="carFirstReplacementAfterYears" value={formData.carFirstReplacementAfterYears} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.carFirstReplacementAfterYears ? 'border-red-500' : ''}`} />
+        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carFirstReplacementAfterYears">初回買い替えは何年後？</label>
+        <div className="flex">
+          <input type="number" id="carFirstReplacementAfterYears" name="carFirstReplacementAfterYears" value={formData.carFirstReplacementAfterYears} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.carFirstReplacementAfterYears ? 'border-red-500' : ''}`} />
+          <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">年後</span>
+        </div>
         {errors.carFirstReplacementAfterYears && <p className="text-red-500 text-xs italic mt-1">{errors.carFirstReplacementAfterYears}</p>}
       </div>
       <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carPrice">
-          今後買い替える車の価格帯は？[万円]
-        </label>
-        <input type="number" id="carPrice" name="carPrice" value={formData.carPrice} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.carPrice ? 'border-red-500' : ''}`} required />
+        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carPrice">買い替える車の価格帯</label>
+        <div className="flex">
+          <input type="number" id="carPrice" name="carPrice" value={formData.carPrice} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.carPrice ? 'border-red-500' : ''}`} required />
+          <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
+        </div>
         {errors.carPrice && <p className="text-red-500 text-xs italic mt-1">{errors.carPrice}</p>}
       </div>
       <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carReplacementFrequency">
-          車を乗り換える頻度は？[年]
-        </label>
-        <input type="number" id="carReplacementFrequency" name="carReplacementFrequency" value={formData.carReplacementFrequency} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.carReplacementFrequency ? 'border-red-500' : ''}`} required />
+        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carReplacementFrequency">車を乗り換える頻度</label>
+        <div className="flex">
+          <input type="number" id="carReplacementFrequency" name="carReplacementFrequency" value={formData.carReplacementFrequency} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.carReplacementFrequency ? 'border-red-500' : ''}`} required />
+          <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">年ごと</span>
+        </div>
         {errors.carReplacementFrequency && <p className="text-red-500 text-xs italic mt-1">{errors.carReplacementFrequency}</p>}
       </div>
       <div className="mb-4">

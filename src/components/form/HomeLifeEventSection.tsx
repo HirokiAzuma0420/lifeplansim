@@ -39,22 +39,31 @@ const HomeLifeEventSection: React.FC<HomeLifeEventSectionProps> = ({ formData, h
 
         <div className={`overflow-hidden transition-all duration-300 ease-in-out ${formData.housingType === '賃貸' ? 'max-h-24 opacity-100 mt-3' : 'max-h-0 opacity-0'}`}>
           <div className="mt-3">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="currentRentLoanPayment">家賃（円/月）</label>
-            <input type="number" id="currentRentLoanPayment" name="currentRentLoanPayment" value={formData.currentRentLoanPayment} onChange={handleInputChange} className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${errors.currentRentLoanPayment ? 'border-red-500' : ''}`} />
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="currentRentLoanPayment">家賃</label>
+            <div className="flex">
+              <input type="number" id="currentRentLoanPayment" name="currentRentLoanPayment" value={formData.currentRentLoanPayment} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors.currentRentLoanPayment ? 'border-red-500' : ''}`} />
+              <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">円/月</span>
+            </div>
             {errors.currentRentLoanPayment && <p className="text-red-500 text-xs italic mt-1">{errors.currentRentLoanPayment}</p>}
           </div>
         </div>
 
         <div className={`overflow-hidden transition-all duration-300 ease-in-out ${formData.housingType === '持ち家（ローン中）' ? 'max-h-64 opacity-100 mt-3' : 'max-h-0 opacity-0'}`}>
           <div className="mt-3 space-y-4">
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="loanMonthlyPayment">月額返済（円/月）</label>
-              <input type="number" id="loanMonthlyPayment" name="loanMonthlyPayment" value={formData.loanMonthlyPayment} onChange={handleInputChange} className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${errors.loanMonthlyPayment ? 'border-red-500' : ''}`} />
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="loanMonthlyPayment">月額返済</label>
+              <div className="flex">
+                <input type="number" id="loanMonthlyPayment" name="loanMonthlyPayment" value={formData.loanMonthlyPayment} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors.loanMonthlyPayment ? 'border-red-500' : ''}`} />
+                <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">円/月</span>
+              </div>
               {errors.loanMonthlyPayment && <p className="text-red-500 text-xs italic mt-1">{errors.loanMonthlyPayment}</p>}
             </div>
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="loanRemainingYears">残存年数（年）</label>
-              <input type="number" id="loanRemainingYears" name="loanRemainingYears" value={formData.loanRemainingYears} onChange={handleInputChange} className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${errors.loanRemainingYears ? 'border-red-500' : ''}`} />
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="loanRemainingYears">残存年数</label>
+              <div className="flex">
+                <input type="number" id="loanRemainingYears" name="loanRemainingYears" value={formData.loanRemainingYears} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors.loanRemainingYears ? 'border-red-500' : ''}`} />
+                <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">年</span>
+              </div>
               {errors.loanRemainingYears && <p className="text-red-500 text-xs italic mt-1">{errors.loanRemainingYears}</p>}
             </div>
           </div>
@@ -96,28 +105,43 @@ const HomeLifeEventSection: React.FC<HomeLifeEventSectionProps> = ({ formData, h
           {formData.housePurchasePlan && (
             <div className="mt-4 space-y-4">
               <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">購入予定年齢</label>
-                <input type="number" name="housePurchasePlan.age" value={formData.housePurchasePlan.age ?? ''} onChange={handleInputChange} className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.age'] ? 'border-red-500' : ''}`} />
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="housePurchasePlan.age">購入予定年齢</label>
+                <div className="flex">
+                  <input type="number" id="housePurchasePlan.age" name="housePurchasePlan.age" value={formData.housePurchasePlan.age ?? ''} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.age'] ? 'border-red-500' : ''}`} />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">歳</span>
+                </div>
                 {errors['housePurchasePlan.age'] && <p className="text-red-500 text-xs italic mt-1">{errors['housePurchasePlan.age']}</p>}
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">予定価格[万円]</label>
-                <input type="number" name="housePurchasePlan.price" value={formData.housePurchasePlan.price ?? ''} onChange={handleInputChange} className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.price'] ? 'border-red-500' : ''}`} />
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="housePurchasePlan.price">予定価格</label>
+                <div className="flex">
+                  <input type="number" id="housePurchasePlan.price" name="housePurchasePlan.price" value={formData.housePurchasePlan.price ?? ''} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.price'] ? 'border-red-500' : ''}`} />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
+                </div>
                 {errors['housePurchasePlan.price'] && <p className="text-red-500 text-xs italic mt-1">{errors['housePurchasePlan.price']}</p>}
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">頭金[万円]</label>
-                <input type="number" name="housePurchasePlan.downPayment" value={formData.housePurchasePlan.downPayment ?? ''} onChange={handleInputChange} className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.downPayment'] ? 'border-red-500' : ''}`} />
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="housePurchasePlan.downPayment">頭金</label>
+                <div className="flex">
+                  <input type="number" id="housePurchasePlan.downPayment" name="housePurchasePlan.downPayment" value={formData.housePurchasePlan.downPayment ?? ''} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.downPayment'] ? 'border-red-500' : ''}`} />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
+                </div>
                 {errors['housePurchasePlan.downPayment'] && <p className="text-red-500 text-xs italic mt-1">{errors['housePurchasePlan.downPayment']}</p>}
               </div>
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2">ローン年数</label>
-                <input type="number" name="housePurchasePlan.loanYears" value={formData.housePurchasePlan.loanYears ?? ''} onChange={handleInputChange} className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.loanYears'] ? 'border-red-500' : ''}`} />
+                <div className="flex">
+                  <input type="number" name="housePurchasePlan.loanYears" value={formData.housePurchasePlan.loanYears ?? ''} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.loanYears'] ? 'border-red-500' : ''}`} />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">年</span>
+                </div>
                 {errors['housePurchasePlan.loanYears'] && <p className="text-red-500 text-xs italic mt-1">{errors['housePurchasePlan.loanYears']}</p>}
               </div>
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2">想定金利（%）</label>
-                <input type="number" name="housePurchasePlan.interestRate" value={formData.housePurchasePlan.interestRate ?? ''} onChange={handleInputChange} step="0.1" className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.interestRate'] ? 'border-red-500' : ''}`} />
+                <div className="flex">
+                  <input type="number" name="housePurchasePlan.interestRate" value={formData.housePurchasePlan.interestRate ?? ''} onChange={handleInputChange} step="0.1" className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.interestRate'] ? 'border-red-500' : ''}`} />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">%</span>
+                </div>
                 {errors['housePurchasePlan.interestRate'] && <p className="text-red-500 text-xs italic mt-1">{errors['housePurchasePlan.interestRate']}</p>}
               </div>
             </div>
