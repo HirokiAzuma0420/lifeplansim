@@ -263,6 +263,8 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
     const year = baseYear + i;
     const yearFraction = (i === 0) ? firstYearRemainingMonths / FC.MONTHS_PER_YEAR : 1;
     const spouseCurrentAge = params.spouseInitialAge ? params.initialAge + i + (params.spouseInitialAge - params.initialAge) : undefined;
+    let spouseGrossIncome = 0; // Moved declaration to top of loop
+    let investedThisYear = 0; // Added here
 
     // --- 0. iDeCo現金化 (イベント) ---
     // 収支計算の前に処理し、その年の現金を増やしておく
@@ -284,6 +286,11 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
       if (params.marriage.spouse) {
         params.spouseInitialAge = params.marriage.spouse.ageAtMarriage;
         params.spouseMainJobIncomeGross = params.marriage.spouse.incomeGross;
+        // Re-evaluate spouseGrossIncome for the current year after marriage
+        // spouseGrossIncome はこのブロックの前に計算されているため、ここで再計算する
+        if (spouseCurrentAge !== undefined && params.spouseRetirementAge && spouseCurrentAge < n(params.spouseRetirementAge)) {
+          spouseGrossIncome = ((n(params.spouseMainJobIncomeGross) ?? 0) * Math.pow(1 + (n(params.spouseIncomeGrowthRate) ?? 0), i) + (n(params.spouseSideJobIncomeGross) ?? 0));
+        }
       }
     }
 
@@ -294,7 +301,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
       selfGrossIncome = (n(params.mainJobIncomeGross) * Math.pow(1 + n(params.incomeGrowthRate), i) + n(params.sideJobIncomeGross));
     }
 
-    let spouseGrossIncome = 0;
+    spouseGrossIncome = 0;
     // 結婚後は spouseCurrentAge が定義される
     if (spouseCurrentAge !== undefined && params.spouseRetirementAge && spouseCurrentAge < n(params.spouseRetirementAge)) {
       spouseGrossIncome = ((n(params.spouseMainJobIncomeGross) ?? 0) * Math.pow(1 + (n(params.spouseIncomeGrowthRate) ?? 0), i) + (n(params.spouseSideJobIncomeGross) ?? 0));
@@ -314,9 +321,9 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
 
     // 1b. 支出
     let livingExpense = 0;
-    let retirementExpense = 0;
+    let postRetirementLivingCost = 0; // Added new variable
     if (currentAge >= params.retirementAge) {
-      retirementExpense = n(params.postRetirementLiving10kJPY) * FC.YEN_PER_MAN * FC.MONTHS_PER_YEAR * yearFraction - pensionAnnual;
+      postRetirementLivingCost = n(params.postRetirementLiving10kJPY) * FC.YEN_PER_MAN * FC.MONTHS_PER_YEAR * yearFraction; // Use new variable
     } else {
       livingExpense = currentLivingExpense * yearFraction;
     }
@@ -433,7 +440,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
         }
       }
     }
-    const totalExpense = livingExpense + Math.max(0, retirementExpense) + childExpense + careExpense + marriageExpense + applianceExpense + carExpense + housingExpense;
+    const totalExpense = livingExpense + postRetirementLivingCost + childExpense + careExpense + marriageExpense + applianceExpense + carExpense + housingExpense;
 
     // 1c. 現金残高の更新
     const cashFlow = annualIncome - totalExpense;
@@ -507,7 +514,6 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
     const canInvest = currentAge < params.retirementAge;
     if (canInvest) { // 退職するまでは投資を継続
       const investableAmount = Math.max(0, savings - n(params.emergencyFundJPY));
-      let investedThisYear = 0;
       let remainingNisaAllowance = Math.max(0, FC.NISA_LIFETIME_CAP - cumulativeNisaContribution);
       
       // NISA年間投資上限の準備
@@ -615,15 +621,16 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
         children: Math.round(childExpense),
         appliances: Math.round(applianceExpense),
         care: Math.round(careExpense),
-        retirementGap: Math.round(Math.max(0, retirementExpense)),
+        retirementGap: Math.round(Math.max(0, postRetirementLivingCost - pensionAnnual)),
       },
       savings: Math.round(savings),
       nisa: { principal: Math.round(nisa.principal), balance: Math.round(nisa.balance) },
       ideco: { principal: Math.round(ideco.principal), balance: Math.round(ideco.balance) },
       taxable: { principal: Math.round(taxable.principal), balance: Math.round(taxable.balance) },
       investmentPrincipal: Math.round(totalInvestmentPrincipal),
-      balance: Math.round(annualIncome + investmentIncome - totalExpense),
+      balance: Math.round(annualIncome + investmentIncome - totalExpense - investedThisYear),
       totalAssets: Math.round(totalAssets),
+      investedAmount: Math.round(investedThisYear),
       assetAllocation: {
         cash: Math.round(savings),
         investment: Math.round(taxable.balance),

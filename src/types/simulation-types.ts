@@ -33,6 +33,7 @@ export interface YearlyData {
   investmentPrincipal: number;
   totalAssets: number;
   balance: number;
+  investedAmount: number;
   assetAllocation: {
     cash: number;
     investment: number;
