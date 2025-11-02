@@ -13,7 +13,8 @@ export const RaiseRateRadioGroup: React.FC<{
   value: string | number;
   onChange: (name: string, value: string) => void;
 }> = ({ name, value, onChange }) => {
-  const isCustom = !raiseRateOptions.some(opt => opt.value === String(value));
+  // 空文字列もカスタム入力として扱う
+  const isCustom = value === '' || !raiseRateOptions.some(opt => opt.value === String(value));
   const radioValue = isCustom ? 'custom' : String(value);
 
   const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {

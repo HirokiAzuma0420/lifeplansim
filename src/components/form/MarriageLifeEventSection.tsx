@@ -88,6 +88,12 @@ const MarriageLifeEventSection: React.FC<MarriageLifeEventSectionProps> = ({ for
                 <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
               </div>
               {errors.spouseCustomIncome && <p className="text-red-500 text-xs italic mt-1">{errors.spouseCustomIncome}</p>}
+              <fieldset className="mt-4">
+                <legend className="block text-gray-700 text-sm font-bold mb-2">
+                  配偶者の昇給率（年率）
+                </legend>
+                <RaiseRateRadioGroup name="spouseAnnualRaiseRate" value={formData.spouseAnnualRaiseRate} onChange={handleRaiseRateChange} />
+              </fieldset>
             </div>
           )}
           {formData.spouseIncomePattern === '正社員' && (
