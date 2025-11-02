@@ -394,7 +394,7 @@ export default function FormPage() {
           if (formData.housePurchaseIntent === 'yes' && formData.housePurchasePlan) {
             if (!formData.housePurchasePlan.age) newErrors['housePurchasePlan.age'] = '購入予定年齢を入力してください。';
             if (!formData.housePurchasePlan.price) newErrors['housePurchasePlan.price'] = '予定価格を入力してください。';
-            if (formData.housePurchasePlan.downPayment === undefined) newErrors['housePurchasePlan.downPayment'] = '頭金を入力してください。';
+          if (formData.housePurchasePlan.downPayment === undefined || formData.housePurchasePlan.downPayment === null || formData.housePurchasePlan.downPayment === '') newErrors['housePurchasePlan.downPayment'] = '頭金を入力してください。';
             if (!formData.housePurchasePlan.loanYears) newErrors['housePurchasePlan.loanYears'] = 'ローン年数を入力してください。';
             if (!formData.housePurchasePlan.interestRate) newErrors['housePurchasePlan.interestRate'] = '想定金利を入力してください。';
           }
@@ -941,7 +941,7 @@ export default function FormPage() {
         ...formData,
         housePurchasePlan: {
           ...(formData.housePurchasePlan || { age: 0, price: 0, downPayment: 0, loanYears: 0, interestRate: 0 }),
-          [field]: Number(value)
+              [field]: value === '' ? '' : Number(value)
         }
       });
     } else if (name.startsWith('investment') && name.endsWith('Monthly')) {
