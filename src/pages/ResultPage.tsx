@@ -1,4 +1,4 @@
-﻿﻿import { useMemo, useCallback, useState, useEffect } from 'react';
+﻿import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import IncomePositionChart from '../components/dashboard/IncomePositionChart';
 import SavingsPositionChart from '../components/dashboard/SavingsPositionChart';
@@ -11,19 +11,10 @@ import AccordionCard from '../components/dashboard/AccordionCard.tsx';
 import LifePlanTimeline from '../components/dashboard/LifePlanTimeline.tsx';
 import { getAssetGrade } from '../assets/getAssetGrade';
 import { buildDashboardDataset } from '../utils/simulation';
-import type { SimulationInputParams, SimulationNavigationState, YearlyData } from '../types/simulation';
+import type { SimulationInputParams, SimulationNavigationState, YearlyData, InvestmentProduct } from '../types/simulation';
 import type { FormDataState } from './FormPage';
 import { useOrientation } from '../hooks/useOrientation';
-
-// InvestmentProduct 型を ResultPage.tsx にも定義
-type InvestmentProduct = {
-  key: 'stocks' | 'trust' | 'bonds' | 'crypto' | 'other' | 'ideco';
-  account: '課税' | '非課税' | 'iDeCo';
-  currentJPY: number;
-  recurringJPY: number;
-  spotJPY: number;
-  expectedReturn: number;
-};
+import { computeNetAnnual } from '../utils/financial'; // 共通関数をインポート
 
 const COLORS = {
   現金: '#3B82F6',
@@ -55,42 +46,6 @@ const sections = [
 
 const formatCurrency = (value: number): string => `¥${Math.round(value).toLocaleString()}`;
 const formatPercent = (value: number): string => `${(value * 100).toFixed(1)}%`;
-
-// FormPage.tsxから computeNetAnnual 関数を移植
-function computeNetAnnual(grossAnnualIncome: number): number {
-  const n = (v: unknown): number => {
-    const num = Number(v);
-    return isFinite(num) ? num : 0;
-  };
-
-  const income = n(grossAnnualIncome);
-
-  let salaryIncomeDeduction: number;
-  if (income <= 1625000) { salaryIncomeDeduction = 550000; }
-  else if (income <= 1800000) { salaryIncomeDeduction = income * 0.4 - 100000; }
-  else if (income <= 3600000) { salaryIncomeDeduction = income * 0.3 + 80000; }
-  else if (income <= 6600000) { salaryIncomeDeduction = income * 0.2 + 440000; }
-  else if (income <= 8500000) { salaryIncomeDeduction = income * 0.1 + 1100000; }
-  else { salaryIncomeDeduction = 1950000; }
-
-  const socialInsurancePremium = income * 0.15;
-  const basicDeduction = 480000;
-  const taxableIncome = Math.max(0, income - salaryIncomeDeduction - socialInsurancePremium - basicDeduction);
-
-  let incomeTax: number;
-  if (taxableIncome <= 1950000) { incomeTax = taxableIncome * 0.05; }
-  else if (taxableIncome <= 3300000) { incomeTax = taxableIncome * 0.1 - 97500; }
-  else if (taxableIncome <= 6950000) { incomeTax = taxableIncome * 0.2 - 427500; }
-  else if (taxableIncome <= 9000000) { incomeTax = taxableIncome * 0.23 - 636000; }
-  else if (taxableIncome <= 18000000) { incomeTax = taxableIncome * 0.33 - 1536000; }
-  else if (taxableIncome <= 40000000) { incomeTax = taxableIncome * 0.4 - 2796000; }
-  else { incomeTax = taxableIncome * 0.45 - 4796000; }
-
-  const residentTax = taxableIncome * 0.1 + 5000;
-  const netAnnualIncome = income - socialInsurancePremium - incomeTax - residentTax;
-
-  return Math.max(0, netAnnualIncome);
-}
 
 export default function ResultPage() {
   const navigate = useNavigate();
