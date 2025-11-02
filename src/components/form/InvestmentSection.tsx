@@ -1,35 +1,140 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import type { FormDataState, InvestmentMonthlyAmounts } from '@/types/form-types';
-import AssetAccordion from '@/components/AssetAccordion';
+import type { InvestmentAssetKey, InvestmentAccountTypeField } from '@/types/investment';
 
 interface InvestmentSectionProps {
   formData: FormDataState;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
   monthlyInvestmentAmounts: InvestmentMonthlyAmounts;
 }
-/*
-interface InvestmentFormValues {
-  investmentStocksCurrent: string | number;
-  investmentStocksAnnualSpot: string | number;
-  investmentStocksRate: string | number;
-  investmentTrustCurrent: string | number;
-  investmentTrustAnnualSpot: string | number;
-  investmentTrustRate: string | number;
-  investmentBondsCurrent: string | number;
-  investmentBondsAnnualSpot: string | number;
-  investmentBondsRate: string | number;
-  investmentIdecoCurrent: string | number;
-  investmentIdecoAnnualSpot: string | number;
-  investmentIdecoRate: string | number;
-  investmentCryptoCurrent: string | number;
-  investmentCryptoAnnualSpot: string | number;
-  investmentCryptoRate: string | number;
-  investmentOtherCurrent: string | number;
-  investmentOtherAnnualSpot: string | number;
-  investmentOtherRate: string | number;
-}*/
+
+const ACCOUNT_TYPE_OPTIONS = [
+  { value: 'nisa' as const, label: 'NISA口座' },
+  { value: 'taxable' as const, label: '特定口座' },
+];
+
+interface AssetAccordionProps {
+  assetName: string;
+  assetKey: InvestmentAssetKey;
+  accountTypeFieldName?: InvestmentAccountTypeField;
+  children: React.ReactNode;
+}
 
 const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, handleInputChange, monthlyInvestmentAmounts }) => {
+  const [openAccordions, setOpenAccordions] = useState<string[]>([]);
+
+  const toggleAccordion = (assetKey: string) => {
+    setOpenAccordions(prev =>
+      prev.includes(assetKey) ? prev.filter(k => k !== assetKey) : [...prev, assetKey]
+    );
+  };
+
+  const renderAssetAccordion = ({ assetName, assetKey, accountTypeFieldName, children }: AssetAccordionProps) => {
+    const isOpen = openAccordions.includes(assetKey);
+    const accountTypeValue = formData[accountTypeFieldName || 'investmentStocksAccountType'];
+
+    return (
+      <div className="border border-gray-200 rounded-lg mb-2">
+        <button
+          type="button"
+          className="flex justify-between items-center w-full p-4 text-left font-semibold text-gray-700 bg-gray-50 hover:bg-gray-100 focus:outline-none"
+          onClick={() => toggleAccordion(assetKey)}
+          aria-expanded={isOpen}
+          aria-controls={`accordion-content-${assetKey}`}
+        >
+          <span>{assetName}</span>
+          <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+        </button>
+        <div
+          id={`accordion-content-${assetKey}`}
+          role="region"
+          className={`overflow-hidden transition-all duration-300 ease-in-out ${
+            isOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
+          }`}
+        >
+          <div className="p-4 border-t border-gray-200">
+            {accountTypeFieldName && (
+              <div className="mb-4">
+                <span className="block text-gray-700 text-sm font-bold mb-2">口座を選択</span>
+                <div className="flex flex-wrap gap-6 mt-2">
+                  {ACCOUNT_TYPE_OPTIONS.map((option) => (
+                    <label key={option.value} className="inline-flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name={accountTypeFieldName}
+                        value={option.value}
+                        checked={(accountTypeValue ?? 'taxable') === option.value}
+                        onChange={handleInputChange}
+                        className="h-4 w-4"
+                      />
+                      <span className="text-sm text-gray-700">{option.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+            {children}
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`${assetKey}Monthly`}>
+                月額積立
+              </label>
+              <div className="flex">
+                <input
+                  type="number"
+                  id={`${assetKey}Monthly`}
+                  name={`${assetKey}Monthly`}
+                  value={monthlyInvestmentAmounts[`${assetKey}Monthly`]}
+                  onChange={handleInputChange}
+                  className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  defaultValue="0"
+                  min="0"
+                />
+                <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">円</span>
+              </div>
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`${assetKey}AnnualSpot`}>
+                年間スポット
+              </label>
+              <div className="flex">
+                <input
+                  type="number"
+                  id={`${assetKey}AnnualSpot`}
+                  name={`${assetKey}AnnualSpot`}
+                  value={formData[`${assetKey}AnnualSpot`]}
+                  onChange={handleInputChange}
+                  className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  defaultValue="0"
+                  min="0"
+                />
+                <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">円</span>
+              </div>
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`${assetKey}Rate`}>
+                想定利率（年率）
+              </label>
+              <div className="flex">
+                <input
+                  type="number"
+                  id={`${assetKey}Rate`}
+                  name={`${assetKey}Rate`}
+                  value={formData[`${assetKey}Rate`]}
+                  onChange={handleInputChange}
+                  className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  step="0.1"
+                  min="0"
+                />
+                <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="p-4">
       {/* Image placeholder */}
@@ -38,104 +143,78 @@ const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, handleI
       </div>
       <h2 className="text-2xl font-bold text-center mb-4">投資に関する質問</h2>
       <div className="space-y-4">
-        <AssetAccordion
-          assetName="株式"
-          assetKey="investmentStocks"
-          formData={formData}
-          handleInputChange={handleInputChange}
-          monthlyInvestmentAmounts={monthlyInvestmentAmounts}
-          accountTypeFieldName="investmentStocksAccountType"
-          accountTypeValue={formData.investmentStocksAccountType}
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
+        {renderAssetAccordion({
+          assetName: '株式',
+          assetKey: 'investmentStocks',
+          accountTypeFieldName: 'investmentStocksAccountType',
+          children: (
+            <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">現在の評価額</label>
               <div className="flex">
                 <input type="number" name="investmentStocksCurrent" value={formData.investmentStocksCurrent} onChange={handleInputChange} className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700" />
                 <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
               </div>
             </div>
-          </div>
-        </AssetAccordion>
-        <AssetAccordion
-          assetName="投資信託"
-          assetKey="investmentTrust"
-          formData={formData}
-          handleInputChange={handleInputChange}
-          monthlyInvestmentAmounts={monthlyInvestmentAmounts}
-          accountTypeFieldName="investmentTrustAccountType"
-          accountTypeValue={formData.investmentTrustAccountType}
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
+          ),
+        })}
+        {renderAssetAccordion({
+          assetName: '投資信託',
+          assetKey: 'investmentTrust',
+          accountTypeFieldName: 'investmentTrustAccountType',
+          children: (
+            <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">現在の評価額</label>
               <div className="flex">
                 <input type="number" name="investmentTrustCurrent" value={formData.investmentTrustCurrent} onChange={handleInputChange} className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700" />
                 <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
               </div>
             </div>
-          </div>
-        </AssetAccordion>
-        <AssetAccordion
-          assetName="債券"
-          assetKey="investmentBonds"
-          formData={formData}
-          handleInputChange={handleInputChange}
-          monthlyInvestmentAmounts={monthlyInvestmentAmounts}
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
+          ),
+        })}
+        {renderAssetAccordion({
+          assetName: '債券',
+          assetKey: 'investmentBonds',
+          children: (
+            <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">現在の評価額</label>
               <div className="flex">
                 <input type="number" name="investmentBondsCurrent" value={formData.investmentBondsCurrent} onChange={handleInputChange} className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700" />
                 <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
               </div>
             </div>
-          </div>
-        </AssetAccordion>
-        <AssetAccordion
-          assetName="iDeCo"
-          assetKey="investmentIdeco"
-          formData={formData}
-          handleInputChange={handleInputChange}
-          monthlyInvestmentAmounts={monthlyInvestmentAmounts}
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
+          ),
+        })}
+        {renderAssetAccordion({
+          assetName: 'iDeCo',
+          assetKey: 'investmentIdeco',
+          children: (
+            <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">現在の評価額</label>
               <div className="flex">
                 <input type="number" name="investmentIdecoCurrent" value={formData.investmentIdecoCurrent} onChange={handleInputChange} className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700" />
                 <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
               </div>
             </div>
-          </div>
-        </AssetAccordion>
-        <AssetAccordion
-          assetName="仮想通貨"
-          assetKey="investmentCrypto"
-          formData={formData}
-          handleInputChange={handleInputChange}
-          monthlyInvestmentAmounts={monthlyInvestmentAmounts}
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
+          ),
+        })}
+        {renderAssetAccordion({
+          assetName: '仮想通貨',
+          assetKey: 'investmentCrypto',
+          children: (
+            <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">現在の評価額</label>
               <div className="flex">
                 <input type="number" name="investmentCryptoCurrent" value={formData.investmentCryptoCurrent} onChange={handleInputChange} className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700" />
                 <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
               </div>
             </div>
-          </div>
-        </AssetAccordion>
-        <AssetAccordion
-          assetName="その他"
-          assetKey="investmentOther"
-          formData={formData}
-          handleInputChange={handleInputChange}
-          monthlyInvestmentAmounts={monthlyInvestmentAmounts}
-          accountTypeFieldName="investmentOtherAccountType"
-          accountTypeValue={formData.investmentOtherAccountType}
-        >
+          ),
+        })}
+        {renderAssetAccordion({
+          assetName: 'その他',
+          assetKey: 'investmentOther',
+          accountTypeFieldName: 'investmentOtherAccountType',
+          children: (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">現在の評価額</label>
@@ -145,7 +224,8 @@ const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, handleI
               </div>
             </div>
           </div>
-        </AssetAccordion>
+          ),
+        })}
       </div>
     </div>
   );
