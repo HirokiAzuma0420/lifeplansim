@@ -1,4 +1,4 @@
-﻿﻿import React, { useState, useEffect, useCallback } from 'react';
+﻿import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { YearlyData, SimulationInputParams } from '@/types/simulation-types';
 import { createApiParams } from '@/utils/api-adapter';
@@ -290,6 +290,7 @@ export default function FormPage() {
     const totalMonthlyExpense = monthlyLivingExpense + currentHousingMonthly + currentCarLoanMonthly + currentCareMonthly + currentEducationMonthly;
     const currentSpouseNetIncome = formData.familyComposition === '既婚' ? computeNetAnnual(currentSpouseGrossIncome) : 0;
     const currentTotalNetAnnualIncome = selfNetIncome + currentSpouseNetIncome;
+    let dynamicTotalNetIncome = currentTotalNetAnnualIncome; // イベントごとに更新される動的な世帯年収
 
     if (formData.planToMarry === 'する') {
       let spouseIncomeForSim = 0;
@@ -297,12 +298,14 @@ export default function FormPage() {
       else if (formData.spouseIncomePattern === '正社員') spouseIncomeForSim = FC.SPOUSE_INCOME_PATTERNS.FULL_TIME;
       else if (formData.spouseIncomePattern === 'カスタム') spouseIncomeForSim = n(formData.spouseCustomIncome) * FC.YEN_PER_MAN;
       const spouseNetIncomeAfterMarriage = computeNetAnnual(spouseIncomeForSim);
+      dynamicTotalNetIncome = selfNetIncome + spouseNetIncomeAfterMarriage; // 結婚後の年収で更新
       events.push({
         age: n(formData.marriageAge),
         title: '💒 結婚',
         details: [
           { label: '結婚費用', value: formatYen(totalMarriageCost) },
           { label: '配偶者の収入が加算', value: `+ ${formatYen(spouseNetIncomeAfterMarriage)} /年` },
+          { label: '更新後の世帯手取り年収', value: formatYen(dynamicTotalNetIncome) },
           { label: '月々の生活費', value: `${formatYen(n(formData.livingCostAfterMarriage))}` },
           { label: '月々の住居費', value: `${formatYen(n(formData.housingCostAfterMarriage))}` },
         ]
@@ -380,31 +383,26 @@ export default function FormPage() {
     const pensionStartAge = n(formData.pensionStartAge);
     const pensionNetIncome = n(formData.pensionAmount) * FC.YEN_PER_MAN * FC.MONTHS_PER_YEAR;
 
+    // イベントを時系列でソートするために一旦配列に格納
+    const incomeEvents: { age: number, title: string, details: { label: string, value: React.ReactNode }[], incomeChange: number, type: 'self-retire' | 'self-pension' | 'spouse-retire' | 'spouse-pension' }[] = [];
+
     if (selfNetIncome > 0) {
-      events.push({
+      incomeEvents.push({
         age: retirementAge,
         title: '👤 あなたの退職',
-        details: [
-          { label: '給与収入が停止', value: `手取り年収が減少します` },
-          {
-            label: '更新後の世帯手取り年収',
-            value: formatYen(currentTotalNetAnnualIncome - selfNetIncome)
-          }
-        ],
+        details: [{ label: '給与収入が停止', value: `手取り年収が減少します` }],
+        incomeChange: -selfNetIncome,
+        type: 'self-retire',
       });
     }
 
     if (pensionNetIncome > 0) {
-      events.push({
+      incomeEvents.push({
         age: pensionStartAge,
         title: '👤 あなたの年金受給開始',
-        details: [
-          { label: '年金受給開始', value: `+ ${formatYen(pensionNetIncome)} /年` },
-          {
-            label: '更新後の世帯手取り年収',
-            value: formatYen((retirementAge <= pensionStartAge ? 0 : selfNetIncome) + pensionNetIncome + (formData.familyComposition === '既婚' ? currentSpouseNetIncome : 0))
-          }
-        ],
+        details: [{ label: '年金受給開始', value: `+ ${formatYen(pensionNetIncome)} /年` }],
+        incomeChange: pensionNetIncome,
+        type: 'self-pension',
       });
     }
 
@@ -427,33 +425,39 @@ export default function FormPage() {
       const spousePensionStartAgeOnPersonTimeline = personAge + (spousePensionStartTargetAge - spouseCurrentAge);
 
       if (spouseBaseNetIncome > 0) {
-        events.push({
+        incomeEvents.push({
           age: spouseRetirementAgeOnPersonTimeline,
           title: 'パートナーの退職',
-          details: [
-            { label: '給与収入が停止', value: `手取り年収が減少します` },
-            {
-              label: '更新後の世帯手取り年収',
-              value: formatYen(currentTotalNetAnnualIncome - spouseBaseNetIncome)
-            }
-          ],
+          details: [{ label: '給与収入が停止', value: `手取り年収が減少します` }],
+          incomeChange: -spouseBaseNetIncome,
+          type: 'spouse-retire',
         });
       }
 
       if (spousePensionNetIncome > 0) {
-        events.push({
+        incomeEvents.push({
           age: spousePensionStartAgeOnPersonTimeline,
           title: 'パートナーの年金受給開始',
-          details: [
-            { label: '年金受給開始', value: `+ ${formatYen(spousePensionNetIncome)} /年` },
-            {
-              label: '更新後の世帯手取り年収',
-              value: formatYen(selfNetIncome + (spouseRetirementTargetAge <= spousePensionStartTargetAge ? 0 : spouseBaseNetIncome) + spousePensionNetIncome)
-            }
-          ],
+          details: [{ label: '年金受給開始', value: `+ ${formatYen(spousePensionNetIncome)} /年` }],
+          incomeChange: spousePensionNetIncome,
+          type: 'spouse-pension',
         });
       }
     }
+
+    // 収入イベントを時系列でソートし、動的に年収を計算してイベントリストに追加
+    incomeEvents.sort((a, b) => a.age - b.age);
+    incomeEvents.forEach(event => {
+      dynamicTotalNetIncome += event.incomeChange;
+      events.push({
+        age: event.age,
+        title: event.title,
+        details: [
+          ...event.details,
+          { label: '更新後の世帯手取り年収', value: formatYen(dynamicTotalNetIncome) }
+        ]
+      });
+    });
 
     events.sort((a, b) => a.age - b.age);
 
