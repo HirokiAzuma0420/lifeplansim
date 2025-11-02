@@ -110,7 +110,7 @@ const createDefaultFormData = () => ({
   carCurrentLoanMonthly: '',
   carCurrentLoanRemainingMonths: '',
   housePurchaseIntent: '',
-  housePurchasePlan: null as { age: number, price: number, downPayment: number, loanYears: number, interestRate: number } | null,
+  housePurchasePlan: null as { age: number | '', price: number | '', downPayment: number | '', loanYears: number | '', interestRate: number | '' } | null,
   houseRenovationPlans: [] as { age: number, cost: number, cycleYears?: number }[],
   housePurchaseAge: '',
   housePurchasePrice: '',
