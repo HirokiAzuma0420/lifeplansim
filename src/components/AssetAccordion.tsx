@@ -60,8 +60,7 @@ const AssetAccordion: React.FC<AssetAccordionProps> = ({
         }`}
       >
         <div className="p-4 border-t border-gray-200">
-          {children}
-          {accountTypeFieldName ? (
+          {accountTypeFieldName && (
             <div className="mb-4">
               <span className="block text-gray-700 text-sm font-bold mb-2">口座を選択</span>
               <div className="flex flex-wrap gap-6 mt-2">
@@ -80,7 +79,8 @@ const AssetAccordion: React.FC<AssetAccordionProps> = ({
                 ))}
               </div>
             </div>
-          ) : null}
+          )}
+          {children}
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`${assetKey}Current`}>
               現在の資産[万円]
@@ -100,37 +100,43 @@ const AssetAccordion: React.FC<AssetAccordionProps> = ({
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`${assetKey}Monthly`}>
               月額積立[円]
             </label>
-            <input
-              type="number"
-              id={`${assetKey}Monthly`}
-              name={`${assetKey}Monthly`}
-              value={monthlyInvestmentAmounts[`${assetKey}Monthly`]}
-              onChange={handleInputChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              defaultValue="0"
-              min="0"
-            />
+            <div className="flex">
+              <input
+                type="number"
+                id={`${assetKey}Monthly`}
+                name={`${assetKey}Monthly`}
+                value={monthlyInvestmentAmounts[`${assetKey}Monthly`]}
+                onChange={handleInputChange}
+                className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                defaultValue="0"
+                min="0"
+              />
+              <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">円</span>
+            </div>
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`${assetKey}AnnualSpot`}>
               年間スポット[円]
             </label>
-            <input
-              type="number"
-              id={`${assetKey}AnnualSpot`}
-              name={`${assetKey}AnnualSpot`}
-              value={formData[`${assetKey}AnnualSpot`]}
-              onChange={handleInputChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              defaultValue="0"
-              min="0"
-            />
+            <div className="flex">
+              <input
+                type="number"
+                id={`${assetKey}AnnualSpot`}
+                name={`${assetKey}AnnualSpot`}
+                value={formData[`${assetKey}AnnualSpot`]}
+                onChange={handleInputChange}
+                className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                defaultValue="0"
+                min="0"
+              />
+              <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">円</span>
+            </div>
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`${assetKey}Rate`}>
               想定利率[%]
             </label>
-            {/* <input
+            <input
               type="number"
               id={`${assetKey}Rate`}
               name={`${assetKey}Rate`}
@@ -139,7 +145,7 @@ const AssetAccordion: React.FC<AssetAccordionProps> = ({
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               step="0.1"
               min="0"
-            /> */}
+            />
           </div>
         </div>
       </div>

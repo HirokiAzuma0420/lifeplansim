@@ -55,13 +55,6 @@ const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, handleI
                 <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
               </div>
             </div>
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2">期待利回り（年率）</label>
-              <div className="flex">
-                <input type="number" name="investmentStocksRate" value={formData.investmentStocksRate} onChange={handleInputChange} className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700" />
-                <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">%</span>
-              </div>
-            </div>
           </div>
         </AssetAccordion>
         <AssetAccordion
@@ -81,13 +74,6 @@ const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, handleI
                 <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
               </div>
             </div>
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2">期待利回り（年率）</label>
-              <div className="flex">
-                <input type="number" name="investmentTrustRate" value={formData.investmentTrustRate} onChange={handleInputChange} className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700" />
-                <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">%</span>
-              </div>
-            </div>
           </div>
         </AssetAccordion>
         <AssetAccordion
@@ -103,13 +89,6 @@ const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, handleI
               <div className="flex">
                 <input type="number" name="investmentBondsCurrent" value={formData.investmentBondsCurrent} onChange={handleInputChange} className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700" />
                 <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
-              </div>
-            </div>
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2">期待利回り（年率）</label>
-              <div className="flex">
-                <input type="number" name="investmentBondsRate" value={formData.investmentBondsRate} onChange={handleInputChange} className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700" />
-                <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">%</span>
               </div>
             </div>
           </div>
@@ -129,13 +108,6 @@ const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, handleI
                 <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
               </div>
             </div>
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2">期待利回り（年率）</label>
-              <div className="flex">
-                <input type="number" name="investmentIdecoRate" value={formData.investmentIdecoRate} onChange={handleInputChange} className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700" />
-                <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">%</span>
-              </div>
-            </div>
           </div>
         </AssetAccordion>
         <AssetAccordion
@@ -151,13 +123,6 @@ const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, handleI
               <div className="flex">
                 <input type="number" name="investmentCryptoCurrent" value={formData.investmentCryptoCurrent} onChange={handleInputChange} className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700" />
                 <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
-              </div>
-            </div>
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2">期待利回り（年率）</label>
-              <div className="flex">
-                <input type="number" name="investmentCryptoRate" value={formData.investmentCryptoRate} onChange={handleInputChange} className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700" />
-                <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">%</span>
               </div>
             </div>
           </div>
@@ -177,13 +142,6 @@ const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, handleI
               <div className="flex">
                 <input type="number" name="investmentOtherCurrent" value={formData.investmentOtherCurrent} onChange={handleInputChange} className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700" />
                 <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
-              </div>
-            </div>
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2">期待利回り（年率）</label>
-              <div className="flex">
-                <input type="number" name="investmentOtherRate" value={formData.investmentOtherRate} onChange={handleInputChange} className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700" />
-                <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">%</span>
               </div>
             </div>
           </div>
