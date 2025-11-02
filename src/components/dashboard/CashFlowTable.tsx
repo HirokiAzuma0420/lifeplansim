@@ -1,4 +1,4 @@
-import type { EnrichedYearlyAsset } from '../../utils/simulation';
+import type { EnrichedYearlyAsset } from '../../utils/dashboard-helper';
 
 interface CashFlowTableProps {
   enrichedData: EnrichedYearlyAsset[];

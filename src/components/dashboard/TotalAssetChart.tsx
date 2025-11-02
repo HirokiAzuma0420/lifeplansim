@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import type { TooltipProps } from 'recharts';
 import type { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
-import type { EnrichedYearlyAsset } from '../../utils/simulation';
+import type { EnrichedYearlyAsset } from '../../utils/dashboard-helper';
 import { useOrientation } from '../../hooks/useOrientation';
 import RotatePrompt from './RotatePrompt';
 
