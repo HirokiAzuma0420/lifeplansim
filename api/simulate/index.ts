@@ -251,11 +251,9 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
 
   // --- シミュレーションループ ---
   // ループ内で変更される状態変数
-  const currentLivingExpense = params.expenseMode === 'simple' ? n(params.livingCostSimpleAnnual) : (n(params.detailedFixedAnnual) + n(params.detailedVariableAnnual));
-  const currentHousingExpense = params.housing?.type === '賃貸' ? (n(params.housing.rentMonthlyJPY) * FC.MONTHS_PER_YEAR) : 0;
   let activeCarLoans: { endAge: number, annualPayment: number }[] = [];
 
-
+  // ループ内で変更される状態変数
   for (let i = 0; currentAge <= params.endAge; i++, currentAge++) {
     cumulativeNisaContribution -= nisaRecycleAmountForNextYear; // NISA枠復活
     nisaRecycleAmountForNextYear = 0; // 今年のリサイクル額計算のためにリセット
@@ -321,12 +319,21 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
 
     // 1b. 支出
     let livingExpense = 0;
-    let postRetirementLivingCost = 0; // Added new variable
     if (currentAge >= params.retirementAge) {
-      postRetirementLivingCost = n(params.postRetirementLiving10kJPY) * FC.YEN_PER_MAN * FC.MONTHS_PER_YEAR * yearFraction; // Use new variable
+      // 退職後は老後生活費を適用
+      livingExpense = n(params.postRetirementLiving10kJPY) * FC.YEN_PER_MAN * FC.MONTHS_PER_YEAR * yearFraction;
+    } else if (params.marriage && currentAge >= n(params.marriage.age)) {
+      // 結婚後は結婚後の生活費を適用
+      livingExpense = n(params.marriage.newLivingCostAnnual) * yearFraction;
     } else {
-      livingExpense = currentLivingExpense * yearFraction;
+      // それ以外は通常の生活費
+      livingExpense = (params.expenseMode === 'simple' ? n(params.livingCostSimpleAnnual) : (n(params.detailedFixedAnnual) + n(params.detailedVariableAnnual))) * yearFraction;
     }
+
+    // retirementGapの計算用に、年金と老後生活費の差額を計算
+    const postRetirementLivingCostForGap = currentAge >= params.retirementAge ? n(params.postRetirementLiving10kJPY) * FC.YEN_PER_MAN * FC.MONTHS_PER_YEAR : 0;
+    const retirementGap = Math.max(0, postRetirementLivingCostForGap - pensionAnnual);
+
     let childExpense = 0;
     if (params.children) {
       const { count, firstBornAge, educationPattern } = params.children;
@@ -409,11 +416,12 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
       carExpense = carRecurring;
     }
     let housingExpense = 0;
-    if (params.housing) {
+    const currentHousingExpense = params.housing?.type === '賃貸' ? (n(params.housing.rentMonthlyJPY) * FC.MONTHS_PER_YEAR) : 0;
+    if (params.housing) { // 既存の住宅関連ロジック
       if (params.housing.type === '賃貸' && currentHousingExpense > 0) {
         const willBuyHouse = !!params.housing.purchasePlan;
         const purchaseAge = params.housing.purchasePlan?.age ?? Infinity;
-        if (!willBuyHouse || currentAge < purchaseAge) {
+        if (!willBuyHouse || currentAge < purchaseAge) { // 購入前は賃貸料を計上
           housingExpense += currentHousingExpense * yearFraction;
         }
       }
@@ -440,7 +448,18 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
         }
       }
     }
-    const totalExpense = livingExpense + postRetirementLivingCost + childExpense + careExpense + marriageExpense + applianceExpense + carExpense + housingExpense;
+
+    // 結婚後の住居費を反映させるロジックを追加
+    if (params.marriage && currentAge >= n(params.marriage.age)) {
+      // 住宅購入計画がある場合、購入前は結婚後の賃貸費用、購入後はローン返済がhousingExpenseに含まれるため、ここでは何もしない
+      // 住宅購入計画がない場合、結婚後の住居費を適用
+      const willBuyHouse = !!params.housing?.purchasePlan;
+      const purchaseAge = params.housing?.purchasePlan?.age ?? Infinity;
+      if (!willBuyHouse || currentAge < purchaseAge) {
+        housingExpense = n(params.marriage.newHousingCostAnnual) * yearFraction;
+      }
+    }
+    const totalExpense = livingExpense + childExpense + careExpense + marriageExpense + applianceExpense + carExpense + housingExpense;
 
     // 1c. 現金残高の更新
     const cashFlow = annualIncome - totalExpense;
@@ -622,7 +641,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
         children: Math.round(childExpense),
         appliances: Math.round(applianceExpense),
         care: Math.round(careExpense),
-        retirementGap: Math.round(Math.max(0, postRetirementLivingCost - pensionAnnual)),
+        retirementGap: Math.round(retirementGap),
       },
       savings: Math.round(savings),
       nisa: { principal: Math.round(nisa.principal), balance: Math.round(nisa.balance) },

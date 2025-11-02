@@ -33,8 +33,14 @@
   "carCurrentLoanInPayment": "no",
   "carCurrentLoanMonthly": "",
   "carCurrentLoanRemainingMonths": "",
-  "housePurchaseIntent": "no",
-  "housePurchasePlan": null,
+  "housePurchaseIntent": "yes",
+  "housePurchasePlan": {
+    "age": 37,
+    "price": 2800,
+    "downPayment": 200,
+    "loanYears": 35,
+    "interestRate": 1.8
+  },
   "houseRenovationPlans": [],
   "housePurchaseAge": "",
   "housePurchasePrice": "",
