@@ -37,33 +37,33 @@ const n = (v: unknown): number => {
   return isFinite(num) ? num : 0;
 };
 
-const EventIcon: React.FC<{ title: string }> = ({ title }) => {
+const EventIcon: React.FC<{ iconKey: string }> = ({ iconKey }) => {
   const iconMap: { [key: string]: React.ReactNode } = {
-    '👤': <User size={20} className="text-blue-500" />,
-    '💒': <Heart size={20} className="text-pink-500" />,
-    '👶': <Baby size={20} className="text-teal-500" />,
-    '🎓': <GraduationCap size={20} className="text-indigo-500" />,
-    '🏠': <Home size={20} className="text-green-500" />,
-    '🛠️': <Wrench size={20} className="text-gray-500" />,
-    '🚗': <Car size={20} className="text-orange-500" />,
-    '👨‍👩‍👧‍👦': <Users size={20} className="text-purple-500" />,
-    '💼': <Briefcase size={20} className="text-red-500" />,
-    '👴': <Landmark size={20} className="text-yellow-600" />,
+    'user': <User size={20} className="text-blue-500" />,
+    'marriage': <Heart size={20} className="text-pink-500" />,
+    'child': <Baby size={20} className="text-teal-500" />,
+    'education': <GraduationCap size={20} className="text-indigo-500" />,
+    'house': <Home size={20} className="text-green-500" />,
+    'renovation': <Wrench size={20} className="text-gray-500" />,
+    'car': <Car size={20} className="text-orange-500" />,
+    'care': <Users size={20} className="text-purple-500" />,
+    'retirement': <Briefcase size={20} className="text-red-500" />,
+    'pension': <Landmark size={20} className="text-yellow-600" />,
   };
-  const iconKey = title.split(' ')[0];
   return <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-4">{iconMap[iconKey] || <Activity size={20} />}</div>;
 };
 
 const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: YearlyData[] }> = ({ rawFormData, yearlyData }) => {
   const events = React.useMemo(() => {
-    const allEvents: { age: number, title: string, details: { label: string, value: React.ReactNode }[] }[] = [];
+    const allEvents: { age: number, iconKey: string, title: string, details: { label: string, value: React.ReactNode }[] }[] = [];
     const formData = rawFormData;
 
     // 結婚
     if (formData.planToMarry === 'する') {
       allEvents.push({
         age: n(formData.marriageAge),
-        title: '💒 結婚',
+        iconKey: 'marriage',
+        title: '結婚',
         details: [
           { label: '結婚費用', value: formatYen((n(formData.engagementCost) + n(formData.weddingCost) + n(formData.honeymoonCost) + n(formData.newHomeMovingCost)) * 10000) },
         ],
@@ -76,12 +76,14 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
         const birthAge = n(formData.firstBornAge) + i * 3;
         allEvents.push({
           age: birthAge,
-          title: `👶 ${i + 1}人目の子供誕生`,
+          iconKey: 'child',
+          title: `${i + 1}人目の子供誕生`,
           details: [{ label: '教育費が発生', value: `〜${birthAge + 22}歳まで` }],
         });
         allEvents.push({
           age: birthAge + 22,
-          title: `🎓 ${i + 1}人目の子供独立`,
+          iconKey: 'education',
+          title: `${i + 1}人目の子供独立`,
           details: [{ label: '教育費が終了', value: '' }],
         });
       }
@@ -91,7 +93,8 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
     if (formData.housePurchasePlan) {
       allEvents.push({
         age: n(formData.housePurchasePlan.age),
-        title: '🏠 住宅購入',
+        iconKey: 'house',
+        title: '住宅購入',
         details: [
           { label: '物件価格', value: formatManYen(formData.housePurchasePlan.price) },
           { label: '頭金', value: formatManYen(formData.housePurchasePlan.downPayment) },
@@ -105,7 +108,8 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
       if (n(plan.age) > 0) {
         allEvents.push({
           age: n(plan.age),
-          title: `🛠️ リフォーム (${index + 1})`,
+          iconKey: 'renovation',
+          title: `リフォーム (${index + 1})`,
           details: [
             { label: '費用', value: formatManYen(plan.cost) },
             { label: '繰り返し', value: plan.cycleYears ? `${plan.cycleYears}年ごと` : '1回のみ' },
@@ -118,7 +122,8 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
     if (formData.carPurchasePlan === 'yes' && n(formData.carFirstReplacementAfterYears) > 0) {
       allEvents.push({
         age: n(formData.personAge) + n(formData.carFirstReplacementAfterYears),
-        title: '🚗 車の買い替え',
+        iconKey: 'car',
+        title: '車の買い替え',
         details: [
           { label: '価格', value: formatManYen(formData.carPrice) },
           { label: '頻度', value: `${formData.carReplacementFrequency}年ごと` },
@@ -132,7 +137,8 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
         const startAge = n(formData.personAge) + (n(plan.parentCareStartAge) - n(plan.parentCurrentAge));
         allEvents.push({
           age: startAge,
-          title: '👨‍👩‍👧‍👦 親の介護開始',
+          iconKey: 'care',
+          title: '親の介護開始',
           details: [{ label: '月額費用', value: formatManYen(plan.monthly10kJPY) }],
         });
       });
@@ -141,14 +147,16 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
     // 退職
     allEvents.push({
       age: n(formData.retirementAge),
-      title: '💼 あなたの退職',
+      iconKey: 'retirement',
+      title: 'あなたの退職',
       details: [{ label: '給与収入が停止', value: '' }],
     });
     if (formData.familyComposition === '既婚' || formData.planToMarry === 'する') {
       const spouseRetirementAgeOnPersonTimeline = n(formData.personAge) + (n(formData.spouseRetirementAge) - (formData.familyComposition === '既婚' ? n(formData.spouseAge) : n(formData.spouseAgeAtMarriage)));
       allEvents.push({
         age: spouseRetirementAgeOnPersonTimeline,
-        title: '💼 パートナーの退職',
+        iconKey: 'retirement',
+        title: 'パートナーの退職',
         details: [{ label: '給与収入が停止', value: '' }],
       });
     }
@@ -156,14 +164,16 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
     // 年金
     allEvents.push({
       age: n(formData.pensionStartAge),
-      title: '👴 あなたの年金受給開始',
+      iconKey: 'pension',
+      title: 'あなたの年金受給開始',
       details: [{ label: '月額', value: formatManYen(formData.pensionAmount) }],
     });
     if (formData.familyComposition === '既婚' || formData.planToMarry === 'する') {
       const spousePensionStartAgeOnPersonTimeline = n(formData.personAge) + (n(formData.spousePensionStartAge) - (formData.familyComposition === '既婚' ? n(formData.spouseAge) : n(formData.spouseAgeAtMarriage)));
       allEvents.push({
         age: spousePensionStartAgeOnPersonTimeline,
-        title: '👴 パートナーの年金受給開始',
+        iconKey: 'pension',
+        title: 'パートナーの年金受給開始',
         details: [{ label: '月額', value: formatManYen(formData.spousePensionAmount) }],
       });
     }
@@ -193,8 +203,8 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
             </div>
             <div className="ml-4">
               <div className="bg-white rounded-xl shadow p-4 border border-gray-100">
-                <div className="flex items-center mb-3">
-                  <EventIcon title={event.title} />
+                <div className="flex items-start md:items-center mb-3">
+                  <EventIcon iconKey={event.iconKey} />
                   <div>
                     <p className="font-bold text-gray-800">{event.age}歳: {event.title}</p>
                     <div className="text-xs text-gray-500 space-x-2">
