@@ -8,71 +8,85 @@
 ```
 src/
 ├── components/
-│   ├── common/              # 共通UIコンポーネント (Button, Input, etc.)
-│   ├── form/                # 入力フォーム関連コンポーネント
-│   │   ├── PersonalInfoSection.tsx
-│   │   ├── IncomeSection.tsx
+│   ├── dashboard/           # 結果表示（ダッシュボード）関連コンポーネント
+│   │   ├── TotalAssetChart.tsx
+│   │   ├── CashFlowTable.tsx
+│   │   ├── IncomePositionChart.tsx
+│   │   ├── LifePlanTimeline.tsx
 │   │   └── ...
-│   └── result/              # 結果表示関連コンポーネント
-│       ├── TotalAssetsChart.tsx   # 総資産推移グラフ
-│       ├── DeviationScore.tsx     # 偏差値表示
-│       ├── ResultRank.tsx         # ランク・コメント表示
-│       └── CashFlowTable.tsx      # キャッシュフロー表
-├── pages/
-│   ├── FormPage.tsx           # 入力フォームページのコンテナ
-│   ├── ResultPage.tsx         # 結果表示ページのコンテナ
-│   └── TopPage.tsx            # トップページ
+│   └── form/                # 入力フォームの各セクションコンポーネント
+│       ├── FamilySection.tsx
+│       ├── IncomeSection.tsx
+│       └── ...
+├── constants/
+│   └── financial_const.ts   # 金融関連のマジックナンバーを定数化
 ├── hooks/
-│   └── useSimulation.ts       # シミュレーションAPI呼び出しと状態管理のカスタムフック
-├── services/
-│   └── api.ts                 # APIクライアント
-├── store/
-│   └── formStore.ts           # フォームの状態を管理 (Zustand/Redux)
-└── types/
-    └── simulation.ts        # シミュレーション関連の型定義
+│   └── useFormState.ts      # フォームの状態管理とロジックをカプセル化
+├── pages/
+│   ├── FormPage.tsx         # 入力フォームページのコンテナ
+│   ├── ResultPage.tsx       # 結果表示ページのコンテナ
+│   └── TopPage.tsx
+├── types/
+│   ├── form-types.ts        # フォームのUI状態に関する型定義
+│   └── simulation-types.ts  # シミュレーションのコア（I/O）に関する型定義
+└── utils/
+    ├── api-adapter.ts       # フォームデータをAPI入力パラメータに変換
+    ├── dashboard-helper.ts  # シミュレーション結果を描画用に加工
+    └── financial.ts         # 手取り計算など、共有の金融計算ロジック
 ```
 
-### 3. 主要コンポーネント詳細
+## 3. 主要コンポーネント・フック・ページ詳細
 
-#### 3.1. `FormPage.tsx`
+### 3.1. `FormPage.tsx`
 - **責務**:
-    - 各入力セクションコンポーネントを統括する。
-    - フォーム全体の入力状態を管理する（`formStore` を利用）。
-    - 「シミュレーション実行」ボタンのクリックイベントをハンドルし、`useSimulation` フック経由でAPIを呼び出す。
-    - API実行中はローディング状態を表示し、完了後に結果ページへ遷移させる。
+    - 各入力セクションコンポーネント (`FamilySection` など) を統括し、プログレスバーと連動した表示制御を行う。
+    - `useFormState` カスタムフックを呼び出し、フォームの状態と更新ロジックを取得する。
+    - 「シミュレーション実行」ボタンのクリックイベントをハンドルし、`utils/api-adapter.ts` を使ってフォームデータをAPIの要求する `SimulationInputParams` 形式に変換した上で、APIを呼び出す。
+    - API実行中はローディング状態を表示し、完了後に結果データ (`yearlyData`, `inputParams` 等) を `navigate` の state に詰めて結果ページへ遷移させる。
 
-#### 3.2. `TotalAssetsChart.tsx`
-- **Props**: `data: SimulationResult['annualData']`
+### 3.2. `useFormState.ts` (カスタムフック)
 - **責務**:
-    - `Chart.js` や他のチャートライブラリを用いて、年次の総資産推移を折れ線グラフで描画する。
-    - 資産の内訳（預金、投資など）を積み上げグラフで表現する。
-    - 退職年齢のラインなど、補助的な情報を表示する。
+    - `useState` を使用して、フォーム全体の巨大な状態 (`FormDataState`) を管理する。
+    - `handleInputChange` や、配列を扱うための各種ハンドラ (`addAppliance`, `handleCarePlanChange` など) を提供する。
+    - **キャッシュ管理**: `useEffect` を使用してフォームの入力内容を `localStorage` に自動保存し、ページ再読み込み時に復元モーダルを表示する。
+    - **副作用の管理**: `useEffect` を用い、特定の入力値（例: 独身から既婚へ）の変更に応じて他の入力値を自動計算・更新する。
+    - **値のメモ化**: `useMemo` を使い、入力値から算出される表示用の値（合計支出、ローン総額など）を計算し、パフォーマンスを最適化する。
+    - **バリデーション**: `validateSection` 関数を提供し、セクション単位での入力チェックを行う。
+    - `FormPage` コンポーネントに対し、状態 (`formData`)、セッター、各種ハンドラ、計算済み表示値などをまとめて提供する。
 
-#### 3.3. `useSimulation.ts` (カスタムフック)
+### 3.3. `ResultPage.tsx`
 - **責務**:
-    - シミュレーションの実行に関するロジックをカプセル化する。
-    - 外部に `execute(input: SimulationInput)` 関数、`isLoading`、`error`、`result` 状態を公開する。
-    - `execute` が呼ばれたら、`services/api.ts` を使ってバックエンドAPIにPOSTリクエストを送信する。
-    - レスポンスを状態として保持する。
+    - `useLocation` フック経由で `FormPage` から渡されたシミュレーション結果 (`yearlyData`) と入力パラメータ (`inputParams`) を受け取る。
+    - `utils/dashboard-helper.ts` の `buildDashboardDataset` を使い、APIからの生データをグラフ描画用に加工・リッチ化する。
+    - 加工したデータを各ダッシュボードコンポーネントに `props` として渡し、結果を多角的に可視化する。
+    - 主要な可視化コンポーネント:
+        - `TotalAssetChart`: 総資産の推移（積立グラフ）
+        - `LifePlanTimeline`: 主要なライフイベントを時系列で表示
+        - `IncomePositionChart`, `SavingsPositionChart`: 収入と貯蓄額を同世代と比較
+        - `InvestmentPrincipalChart`: 投資元本と評価額の推移
+        - `AssetPieChart`: 最終的な資産の内訳（円グラフ）
+        - `CashFlowTable`: 年単位の収支詳細テーブル
 
 ## 4. バックエンド (API) 詳細
 
-### `api/simulate.ts` (Vercel Serverless Function)
+### `api/simulate/index.ts` (Vercel Serverless Function)
 
 1.  **リクエスト受信**:
     - `POST` メソッド以外は `405 Method Not Allowed` を返す。
     - リクエストボディ (JSON) をパースする。
 2.  **入力データ検証 (Validation)**:
-    - `zod` などのライブラリを使用し、入力データが `SimulationInput` の型に準拠しているか、値が妥当な範囲か（例: 年齢が0以上など）を検証する。
+    - カスタムの型ガード関数 `isInputParamsBody` を使用し、リクエストボディに必要な `inputParams` オブジェクトが含まれているか、最低限のプロパティ（`initialAge` など）が存在するかをチェックする。
     - 不正なデータの場合は `400 Bad Request` とエラー詳細を返す。
 3.  **シミュレーション実行**:
-    - メインの計算ロジックを呼び出す。このロジックは別のモジュール (`simulation-core.ts` など) に分離することが望ましい。
-    - 計算ロジック:
-        - 初期資産を設定。
-        - シミュレーション期間（例: 100歳まで）を1年ずつループ。
-        - 各年で、収入（昇給率を考慮）、支出（恒常費、ライフイベント費）、投資リターンの計算を行う。
-        - 資産残高を更新する。
-        - 各年の計算結果を配列に格納する。
+    - メインの計算ロジックは同ファイル内の `runSimulation` 関数および `runMonteCarloSimulation` 関数に実装されている。
+    - **`runSimulation`**:
+        - 1年ずつループし、各年の収入（昇給率考慮）、支出（ライフイベント、ローン返済等）、投資リターンを計算し、資産残高を更新する。
+        - 生活防衛費が尽きた場合の資産取り崩しロジックも含む。
+        - NISA枠の管理（生涯投資枠、年間投資枠、売却枠の再利用）も行う。
+    - **`runMonteCarloSimulation`**:
+        - `interestScenario` が「ランダム変動」の場合に選択される。
+        - `generateReturnSeries` を用いて、設定された期待リターンとボラティリティに基づき、正規分布に従うリターン系列を生成する。この際、ランダムな**暴落イベント**も挿入される。
+        - `runSimulation` を複数回（例: 100回）実行し、各年の結果の平均値を最終的な結果として返す。
 4.  **レスポンス返却**:
-    - 計算が成功したら、`SimulationResult` 型のオブジェクトをJSONとして `200 OK` で返す。
+    - 計算が成功したら、`{ yearlyData: YearlyData[] }` 形式のオブジェクトをJSONとして `200 OK` で返す。
     - 計算中にエラーが発生した場合は `500 Internal Server Error` を返す。

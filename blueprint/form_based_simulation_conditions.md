@@ -1,32 +1,34 @@
-# FormPage.tsx から想定されるシミュレーション条件
+# /api/simulate API パラメータ仕様
 
-`src/pages/FormPage.tsx` の入力フォームから生成され、 `/api/simulate` に送信されるシミュレーションのパラメータ（条件）一覧です。
+`src/pages/FormPage.tsx` の入力フォームから生成され、 `/api/simulate` に送信されるシミュレーションのパラメータ（`SimulationInputParams`）の一覧です。
+
+**注:** フォーム上では「万円」などの単位で入力される項目がありますが、`api-adapter.ts` によって全て円単位(`JPY`)に変換されてAPIに渡されます。
 
 ## 1. 基本設定 (Basic Settings)
 
-- `initialAge`: シミュレーション開始時の本人の年齢 (歳)
-- `spouseInitialAge`: シミュレーション開始時の配偶者の年齢 (歳) ※既婚の場合のみ
+- `initialAge`: 本人の年齢 (歳)
+- `spouseInitialAge`: 配偶者の年齢 (歳) ※既婚の場合
 - `endAge`: シミュレーション終了年齢 (歳)
 - `retirementAge`: 本人の退職予定年齢 (歳)
-- `pensionStartAge`: 年金受給開始年齢 (歳)
+- `spouseRetirementAge`: 配偶者の退職予定年齢 (歳) ※配偶者がいる場合
 - `emergencyFundJPY`: 生活防衛資金 (円)
 
 ## 2. 収入 (Income)
 
 - `mainJobIncomeGross`: 本人の本業の年間総収入 (円)
 - `sideJobIncomeGross`: 本人の副業の年間総収入 (円)
-- `spouseMainJobIncomeGross`: 配偶者の本業の年間総収入 (円) ※既婚の場合のみ
-- `spouseSideJobIncomeGross`: 配偶者の副業の年間総収入 (円) ※既婚の場合のみ
+- `spouseMainJobIncomeGross`: 配偶者の本業の年間総収入 (円) ※配偶者がいる場合
+- `spouseSideJobIncomeGross`: 配偶者の副業の年間総収入 (円) ※配偶者がいる場合
 - `incomeGrowthRate`: 本人の収入増加率 (年率)
-- `spouseIncomeGrowthRate`: 配偶者の収入増加率 (年率) ※既婚の場合のみ
+- `spouseIncomeGrowthRate`: 配偶者の収入増加率 (年率) ※配偶者がいる場合
 
 ## 3. 支出 (Expenses)
 
-- `expenseMode`: 支出の入力モード (`simple` または `detailed`)
+- `expenseMode`: 支出の入力モード (`simple` | `detailed`)
 - `livingCostSimpleAnnual`: 年間生活費 (円) ※簡単入力モードの場合
 - `detailedFixedAnnual`: 年間固定費 (円) ※詳細入力モードの場合
 - `detailedVariableAnnual`: 年間変動費 (円) ※詳細入力モードの場合
-- `postRetirementLiving10kJPY`: 退職後の生活費 (万円/月)
+- `postRetirementLiving10kJPY`: 退職後の生活費 (万円/月) ※この項目のみ万円単位
 
 ## 4. ライフイベント (Life Events)
 
@@ -67,6 +69,9 @@
 - `marriage.weddingJPY`: 結婚式費用 (円)
 - `marriage.honeymoonJPY`: 新婚旅行費用 (円)
 - `marriage.movingJPY`: 新居への引っ越し費用 (円)
+- `marriage.spouse`: 結婚相手の情報
+    - `ageAtMarriage`: 結婚時の相手の年齢 (歳)
+    - `incomeGross`: 結婚後の相手の年間総収入 (円)
 
 ### 4.4. 子供 (Children)
 
@@ -80,30 +85,33 @@
     - `name`: 家電名
     - `cycleYears`: 買い替えサイクル (年)
     - `firstAfterYears`: 初回買い替えまでの年数 (年)
-    - `cost10kJPY`: 費用 (万円)
+    - `cost10kJPY`: 費用 (万円) ※この項目のみ万円単位
 
 ### 4.6. 親の介護 (Parental Care)
 
-- `care.assume`: 介護が発生すると想定するかどうか (boolean)
-- `care.parentCurrentAge`: 親の現在の年齢 (歳)
-- `care.parentCareStartAge`: 親の要介護開始年齢 (歳)
-- `care.years`: 介護期間 (年)
-- `care.monthly10kJPY`: 月々の介護費用 (万円)
+- `cares`: 親の介護計画 (`CarePlan` の配列)
+    - `parentCurrentAge`: 親の現在の年齢 (歳)
+    - `parentCareStartAge`: 親の要介護開始年齢 (歳)
+    - `years`: 介護期間 (年)
+    - `monthly10kJPY`: 月々の介護費用 (万円) ※この項目のみ万円単位
 
 ## 5. 年金 (Pension)
 
-- `pensionMonthly10kJPY`: 年金受給額 (万円/月)
+- `pensionStartAge`: 本人の年金受給開始年齢 (歳)
+- `pensionMonthly10kJPY`: 本人の年金受給額 (万円/月) ※この項目のみ万円単位
+- `spousePensionStartAge`: 配偶者の年金受給開始年齢 (歳) ※配偶者がいる場合
+- `spousePensionMonthly10kJPY`: 配偶者の年金受給額 (万円/月) ※この項目のみ万円単位
 
 ## 6. 貯蓄と投資 (Savings & Investments)
 
 ### 6.1. 貯蓄 (Savings)
 
 - `currentSavingsJPY`: 現在の預貯金総額 (円)
-- `monthlySavingsJPY`: 毎月の貯蓄額 (円)
+- `monthlySavingsJPY`: 毎月の貯蓄額 (円) **(注: APIには渡されるが、現在のシミュレーションロジックでは使用されていません)**
 
 ### 6.2. 投資 (Investments)
 
-- `products`: 投資商品の詳細 (配列)
+- `products`: 投資商品の詳細 (`InvestmentProduct` の配列)
     - `key`: 商品キー (`stocks`, `trust`, `bonds`, `crypto`, `other`, `ideco`)
     - `account`: 口座種別 (`課税`, `非課税`, `iDeCo`)
     - `currentJPY`: 現在の評価額 (円)
@@ -111,5 +119,6 @@
     - `spotJPY`: 年間スポット購入額 (円)
     - `expectedReturn`: 期待リターン (年率)
 - `interestScenario`: 利回りシナリオ (`固定利回り` | `ランダム変動`)
+- `expectedReturn`: 固定利回りシナリオ時の期待リターン (年率)
 - `stressTest.enabled`: ストレステストを有効にするか (boolean)
-- `stressTest.seed`: ストレステストのシード値
+- `stressTest.seed`: ストレステ- `stressTest.seed`: ストレステストのシード値
