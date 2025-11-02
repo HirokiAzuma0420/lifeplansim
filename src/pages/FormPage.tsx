@@ -2106,7 +2106,9 @@ export default function FormPage() {
             <h2 className="text-2xl font-bold text-center mb-4">子供に関する質問</h2>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                子供はいますか？
+                {formData.familyComposition === '既婚'
+                  ? '子供はいますか？（今後の予定を含む）'
+                  : '将来、子供を持つ予定はありますか？'}
               </label>
               <div className="mt-2">
                 <label className="inline-flex items-center mr-4">
@@ -2119,7 +2121,7 @@ export default function FormPage() {
                     onChange={handleRadioChange}
                     required
                   />
-                  <span className="ml-2">はい</span>
+                  <span className="ml-2">{formData.familyComposition === '既婚' ? 'はい' : 'ある'}</span>
                 </label>
                 <label className="inline-flex items-center">
                   <input
@@ -2131,7 +2133,7 @@ export default function FormPage() {
                     onChange={handleRadioChange}
                     required
                   />
-                  <span className="ml-2">いいえ</span>
+                  <span className="ml-2">{formData.familyComposition === '既婚' ? 'いいえ' : 'ない'}</span>
                 </label>
               </div>
               {errors.hasChildren && <p className="text-red-500 text-xs italic mt-2">{errors.hasChildren}</p>}
@@ -2146,7 +2148,7 @@ export default function FormPage() {
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="firstBornAge">
-                    最初の子が生まれる予定年齢は？[歳]
+                    最初のお子さんが生まれた（または生まれる予定）のあなたの年齢は？[歳]
                   </label>
                   <input type="number" id="firstBornAge" name="firstBornAge" value={formData.firstBornAge} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.firstBornAge ? 'border-red-500' : ''}`} required />
                   {errors.firstBornAge && <p className="text-red-500 text-xs italic mt-1">{errors.firstBornAge}</p>}
