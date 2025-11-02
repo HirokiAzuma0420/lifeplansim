@@ -3,9 +3,10 @@ import { ChevronDown } from 'lucide-react';
 import type {
   InvestmentAccountTypeField,
   InvestmentAssetKey,
-  InvestmentFormValues,
   InvestmentMonthlyAmounts,
 } from '../types/investment';
+import type { ReactNode } from 'react';
+import type { FormDataState } from '../types/form-types';
 
 const ACCOUNT_TYPE_OPTIONS = [
   { value: 'nisa' as const, label: 'NISA口座'},
@@ -14,12 +15,13 @@ const ACCOUNT_TYPE_OPTIONS = [
 
 interface AssetAccordionProps {
   assetName: string;
-  formData: InvestmentFormValues;
+  formData: FormDataState;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
   monthlyInvestmentAmounts: InvestmentMonthlyAmounts;
   assetKey: InvestmentAssetKey;
   accountTypeFieldName?: InvestmentAccountTypeField;
   accountTypeValue?: 'nisa' | 'taxable';
+  children?: ReactNode;
 }
 
 const AssetAccordion: React.FC<AssetAccordionProps> = ({
@@ -30,6 +32,7 @@ const AssetAccordion: React.FC<AssetAccordionProps> = ({
   assetKey,
   accountTypeFieldName,
   accountTypeValue,
+  children,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -57,6 +60,7 @@ const AssetAccordion: React.FC<AssetAccordionProps> = ({
         }`}
       >
         <div className="p-4 border-t border-gray-200">
+          {children}
           {accountTypeFieldName ? (
             <div className="mb-4">
               <span className="block text-gray-700 text-sm font-bold mb-2">口座を選択</span>
@@ -81,7 +85,7 @@ const AssetAccordion: React.FC<AssetAccordionProps> = ({
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`${assetKey}Current`}>
               現在の資産[万円]
             </label>
-            <input
+            {/* <input
               type="number"
               id={`${assetKey}Current`}
               name={`${assetKey}Current`}
@@ -90,7 +94,7 @@ const AssetAccordion: React.FC<AssetAccordionProps> = ({
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="例：300"
               min="0"
-            />
+            /> */}
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`${assetKey}Monthly`}>
@@ -126,7 +130,7 @@ const AssetAccordion: React.FC<AssetAccordionProps> = ({
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`${assetKey}Rate`}>
               想定利率[%]
             </label>
-            <input
+            {/* <input
               type="number"
               id={`${assetKey}Rate`}
               name={`${assetKey}Rate`}
@@ -135,7 +139,7 @@ const AssetAccordion: React.FC<AssetAccordionProps> = ({
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               step="0.1"
               min="0"
-            />
+            /> */}
           </div>
         </div>
       </div>
@@ -144,6 +148,3 @@ const AssetAccordion: React.FC<AssetAccordionProps> = ({
 };
 
 export default AssetAccordion;
-
-
-
