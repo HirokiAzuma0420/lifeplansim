@@ -448,8 +448,9 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
 
     // --- 2. 資産の取り崩し (赤字補填) ---
     // 生活防衛資金を下回った場合に、投資資産を売却して現金を補填する
-    if (savings < n(params.emergencyFundJPY)) {
-      let shortfall = n(params.emergencyFundJPY) - savings;
+    const emergencyFund = n(params.emergencyFundJPY);
+    if (savings < emergencyFund) {
+      let shortfall = emergencyFund - savings;
       const withdrawalOrder: ('課税' | '非課税')[] = ['課税', '非課税'];
 
       for (const accountType of withdrawalOrder) {
