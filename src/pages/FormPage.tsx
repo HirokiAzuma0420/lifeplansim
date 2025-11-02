@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from 'react';
+﻿﻿import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { YearlyData, SimulationInputParams } from '@/types/simulation-types';
 import { createApiParams } from '@/utils/api-adapter';
@@ -303,7 +303,9 @@ export default function FormPage() {
         details: [
           { label: '結婚費用', value: formatYen(totalMarriageCost) },
           { label: '配偶者の収入が加算', value: `+ ${formatYen(spouseNetIncomeAfterMarriage)} /年` },
-        ],
+          { label: '月々の生活費', value: `${formatYen(n(formData.livingCostAfterMarriage))}` },
+          { label: '月々の住居費', value: `${formatYen(n(formData.housingCostAfterMarriage))}` },
+        ]
       });
     }
 
@@ -382,7 +384,13 @@ export default function FormPage() {
       events.push({
         age: retirementAge,
         title: '👤 あなたの退職',
-        details: [{ label: '給与収入が停止', value: `手取り年収が減少します` }],
+        details: [
+          { label: '給与収入が停止', value: `手取り年収が減少します` },
+          {
+            label: '更新後の世帯手取り年収',
+            value: formatYen(currentTotalNetAnnualIncome - selfNetIncome)
+          }
+        ],
       });
     }
 
@@ -390,7 +398,13 @@ export default function FormPage() {
       events.push({
         age: pensionStartAge,
         title: '👤 あなたの年金受給開始',
-        details: [{ label: '年金受給開始', value: `+ ${formatYen(pensionNetIncome)} /年` }],
+        details: [
+          { label: '年金受給開始', value: `+ ${formatYen(pensionNetIncome)} /年` },
+          {
+            label: '更新後の世帯手取り年収',
+            value: formatYen((retirementAge <= pensionStartAge ? 0 : selfNetIncome) + pensionNetIncome + (formData.familyComposition === '既婚' ? currentSpouseNetIncome : 0))
+          }
+        ],
       });
     }
 
@@ -416,7 +430,13 @@ export default function FormPage() {
         events.push({
           age: spouseRetirementAgeOnPersonTimeline,
           title: 'パートナーの退職',
-          details: [{ label: '給与収入が停止', value: `手取り年収が減少します` }],
+          details: [
+            { label: '給与収入が停止', value: `手取り年収が減少します` },
+            {
+              label: '更新後の世帯手取り年収',
+              value: formatYen(currentTotalNetAnnualIncome - spouseBaseNetIncome)
+            }
+          ],
         });
       }
 
@@ -424,7 +444,13 @@ export default function FormPage() {
         events.push({
           age: spousePensionStartAgeOnPersonTimeline,
           title: 'パートナーの年金受給開始',
-          details: [{ label: '年金受給開始', value: `+ ${formatYen(spousePensionNetIncome)} /年` }],
+          details: [
+            { label: '年金受給開始', value: `+ ${formatYen(spousePensionNetIncome)} /年` },
+            {
+              label: '更新後の世帯手取り年収',
+              value: formatYen(selfNetIncome + (spouseRetirementTargetAge <= spousePensionStartTargetAge ? 0 : spouseBaseNetIncome) + spousePensionNetIncome)
+            }
+          ],
         });
       }
     }
