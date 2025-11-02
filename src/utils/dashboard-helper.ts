@@ -70,6 +70,7 @@ export const buildDashboardDataset = (
     const nisaContribution = Math.max(0, nisaPrincipal - prevNisaPrincipal);
     const idecoContribution = Math.max(0, idecoPrincipal - prevIdecoPrincipal);
 
+    const cashFlow = sanitize(entry.income) - sanitize(entry.expense) - investmentAmount;
     const result: EnrichedYearlyAsset = {
       age: entry.age,
       year: entry.year,
@@ -79,7 +80,7 @@ export const buildDashboardDataset = (
       投資元本: sanitize(entry.investmentPrincipal),
       年間収入: sanitize(entry.income),
       年間投資額: investmentAmount, // 修正後の値を使用
-      年間収支: sanitize(entry.balance), // APIからの値を直接使用
+      年間収支: cashFlow, // フロントで再計算
       年間支出: sanitize(entry.expense),
       現金: sanitize(entry.savings),
       NISA: sanitize(entry.nisa.balance),

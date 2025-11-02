@@ -606,7 +606,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
     yearlyData.push({
       year,
       age: currentAge,
-      income: Math.round(annualIncome + investmentIncome),
+      income: Math.round(annualIncome),
       incomeDetail: {
         self: Math.round(computeNetAnnual(selfGrossIncome - idecoDeductionThisYear) * yearFraction),
         spouse: Math.round(computeNetAnnual(spouseGrossIncome) * yearFraction),
@@ -628,7 +628,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
       ideco: { principal: Math.round(ideco.principal), balance: Math.round(ideco.balance) },
       taxable: { principal: Math.round(taxable.principal), balance: Math.round(taxable.balance) },
       investmentPrincipal: Math.round(totalInvestmentPrincipal),
-      balance: Math.round(annualIncome + investmentIncome - totalExpense - investedThisYear),
+      balance: Math.round(annualIncome - totalExpense - investedThisYear),
       totalAssets: Math.round(totalAssets),
       investedAmount: Math.round(investedThisYear),
       assetAllocation: {

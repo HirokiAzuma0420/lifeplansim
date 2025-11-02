@@ -1,4 +1,4 @@
-﻿﻿import { useMemo, useCallback, useState, useEffect } from 'react';
+﻿﻿﻿﻿import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import IncomePositionChart from '../components/dashboard/IncomePositionChart';
 import SavingsPositionChart from '../components/dashboard/SavingsPositionChart';
@@ -136,7 +136,7 @@ export default function ResultPage() {
   // サマリー表示用に、按分されていない「世帯」の手取り年収を計算
   const spouseGrossIncome = (inputParams.spouseMainJobIncomeGross ?? 0) + (inputParams.spouseSideJobIncomeGross ?? 0);
   const totalGrossIncome = selfGrossIncome + spouseGrossIncome;
-  const totalNetAnnualIncome = selfNetAnnualIncome + computeNetAnnual(spouseGrossIncome);
+  const totalNetAnnualIncome = selfNetAnnualIncome + (spouseGrossIncome > 0 ? computeNetAnnual(spouseGrossIncome) : 0);
 
   const savingsForChart = dataset.firstYear?.totalAssets ?? 0;
 
