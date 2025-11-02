@@ -1,5 +1,6 @@
 import React from 'react';
 import type { FormDataState } from '@/types/form-types';
+import RaiseRateRadioGroup from './RaiseRateRadioGroup';
 
 interface MarriageLifeEventSectionProps {
   formData: FormDataState;
@@ -8,6 +9,12 @@ interface MarriageLifeEventSectionProps {
 }
 
 const MarriageLifeEventSection: React.FC<MarriageLifeEventSectionProps> = ({ formData, handleInputChange, errors }) => {
+  const handleRaiseRateChange = (name: string, value: string) => {
+    handleInputChange({
+      target: { name, value },
+    } as React.ChangeEvent<HTMLInputElement>);
+  };
+
   return (
     <div className="p-4">
       {/* Image placeholder */}
@@ -79,6 +86,14 @@ const MarriageLifeEventSection: React.FC<MarriageLifeEventSectionProps> = ({ for
               <input type="number" id="spouseCustomIncome" name="spouseCustomIncome" value={formData.spouseCustomIncome} onChange={handleInputChange} className={`shadow border rounded w-full py-2 px-3 text-gray-700 ${errors.spouseCustomIncome ? 'border-red-500' : ''}`} />
               {errors.spouseCustomIncome && <p className="text-red-500 text-xs italic mt-1">{errors.spouseCustomIncome}</p>}
             </div>
+          )}
+          {formData.spouseIncomePattern === '正社員' && (
+            <fieldset className="mb-4 mt-4 pl-4 border-l-4 border-blue-300">
+              <legend className="block text-gray-700 text-sm font-bold mb-2">
+                配偶者の昇給率（年率）
+              </legend>
+              <RaiseRateRadioGroup name="spouseAnnualRaiseRate" value={formData.spouseAnnualRaiseRate} onChange={handleRaiseRateChange} />
+            </fieldset>
           )}
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="livingCostAfterMarriage">
