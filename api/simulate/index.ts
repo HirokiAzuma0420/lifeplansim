@@ -215,7 +215,7 @@ function withdrawToCoverShortfall(
   productBalances: Record<string, AccountBucket>
 ): { newSavings: number; newProductBalances: Record<string, AccountBucket>; nisaRecycleAmount: number } {
   const withdrawalOrder: ('課税' | '非課税')[] = ['課税', '非課税'];
-  let nisaRecycleAmountForNextYear = 0;
+  let totalNisaRecycled = 0;
 
   for (const accountType of withdrawalOrder) {
     if (shortfall <= 0) break;
@@ -232,9 +232,6 @@ function withdrawToCoverShortfall(
 
     if (totalBalanceInAccount <= 0) continue;
 
-    let grossWithdrawalAmount = 0;
-    let netProceeds = 0;
-
     if (accountType === '課税') {
       let totalPrincipalInAccount = 0;
       productsInAccount.forEach(p => {
@@ -242,37 +239,49 @@ function withdrawToCoverShortfall(
         const productId = `${p.key}-${originalIndex}`;
         totalPrincipalInAccount += productBalances[productId]?.principal ?? 0;
       });
-      const gainRatio = totalBalanceInAccount > 0 ? Math.max(0, totalBalanceInAccount - totalPrincipalInAccount) / totalBalanceInAccount : 0;
-      const requiredGrossWithdrawal = shortfall / (1 - gainRatio * FC.SPECIFIC_ACCOUNT_TAX_RATE);
-      grossWithdrawalAmount = Math.min(totalBalanceInAccount, requiredGrossWithdrawal);
-      const taxOnWithdrawal = grossWithdrawalAmount * gainRatio * FC.SPECIFIC_ACCOUNT_TAX_RATE;
-      netProceeds = grossWithdrawalAmount - taxOnWithdrawal;
+      const gainRatio = totalBalanceInAccount > 0 ? Math.max(0, (totalBalanceInAccount - totalPrincipalInAccount) / totalBalanceInAccount) : 0;
+      const requiredGross = shortfall / (1 - gainRatio * FC.SPECIFIC_ACCOUNT_TAX_RATE);
+      const grossWithdrawal = Math.min(totalBalanceInAccount, requiredGross);
+      const tax = grossWithdrawal * gainRatio * FC.SPECIFIC_ACCOUNT_TAX_RATE;
+      const netProceeds = grossWithdrawal - tax;
+
+      productsInAccount.forEach(p => {
+        const originalIndex = productList.indexOf(p);
+        const productId = `${p.key}-${originalIndex}`;
+        const productBucket = productBalances[productId];
+        if (!productBucket || totalBalanceInAccount <= 0 || productBucket.balance <= 0) return;
+        const proportion = productBucket.balance / totalBalanceInAccount;
+        const withdrawalAmount = grossWithdrawal * proportion;
+        const principalRatio = productBucket.balance > 0 ? productBucket.principal / productBucket.balance : 1;
+        const principalWithdrawn = withdrawalAmount * principalRatio;
+        productBucket.principal -= principalWithdrawn;
+        productBucket.balance -= withdrawalAmount;
+      });
+
+      savings += netProceeds;
+      shortfall -= netProceeds;
+
     } else { // 非課税
-      grossWithdrawalAmount = Math.min(totalBalanceInAccount, shortfall);
-      netProceeds = grossWithdrawalAmount;
+      const withdrawalAmount = Math.min(totalBalanceInAccount, shortfall);
+      productsInAccount.forEach(p => {
+        const originalIndex = productList.indexOf(p);
+        const productId = `${p.key}-${originalIndex}`;
+        const productBucket = productBalances[productId];
+        if (!productBucket || totalBalanceInAccount <= 0 || productBucket.balance <= 0) return;
+        const proportion = productBucket.balance / totalBalanceInAccount;
+        const amountToWithdraw = withdrawalAmount * proportion;
+        const principalRatio = productBucket.balance > 0 ? productBucket.principal / productBucket.balance : 1;
+        const principalWithdrawn = amountToWithdraw * principalRatio;
+        productBucket.principal -= principalWithdrawn;
+        productBucket.balance -= amountToWithdraw;
+        totalNisaRecycled += principalWithdrawn;
+      });
+      savings += withdrawalAmount;
+      shortfall -= withdrawalAmount;
     }
-
-    productsInAccount.forEach(p => {
-      const originalIndex = productList.indexOf(p);
-      const productId = `${p.key}-${originalIndex}`;
-      const productBucket = productBalances[productId];
-      if (!productBucket || totalBalanceInAccount <= 0 || productBucket.balance <= 0) return;
-      const proportion = productBucket.balance / totalBalanceInAccount;
-      const withdrawalAmount = grossWithdrawalAmount * proportion;
-      const principalRatio = productBucket.balance > 0 ? productBucket.principal / productBucket.balance : 1;
-      const principalWithdrawn = withdrawalAmount * principalRatio;
-      productBucket.principal -= principalWithdrawn;
-      productBucket.balance -= withdrawalAmount;
-      if (accountType === '非課税') {
-        nisaRecycleAmountForNextYear += principalWithdrawn;
-      }
-    });
-
-    savings += netProceeds;
-    shortfall -= netProceeds;
   }
 
-  return { newSavings: savings, newProductBalances: productBalances, nisaRecycleAmount: nisaRecycleAmountForNextYear };
+  return { newSavings: savings, newProductBalances: productBalances, nisaRecycleAmount: totalNisaRecycled };
 }
 
 function runSimulation(params: SimulationInputParams): YearlyData[] {
