@@ -238,6 +238,7 @@ export const createApiParams = (formData: FormDataState): SimulationInputParams 
     interestScenario: formData.interestRateScenario as '固定利回り' | 'ランダム変動',
     expectedReturn: formData.interestRateScenario === '固定利回り' ? n(formData.fixedInterestRate) / 100 : undefined,
     emergencyFundJPY: n(formData.emergencyFund) * FC.YEN_PER_MAN,
+    useSpouseNisa: formData.useSpouseNisa,
   };
 
   return params;
