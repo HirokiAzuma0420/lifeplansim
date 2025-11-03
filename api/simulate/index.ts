@@ -567,24 +567,13 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
     const cashFlow = annualIncome - totalExpense;
     savings += cashFlow;
 
-    // --- 2. 資産の取り崩し (赤字補填) ---
-    // 生活防衛資金を下回った場合に、投資資産を売却して現金を補填する
-    const emergencyFund = n(params.emergencyFundJPY);
-    if (savings < emergencyFund) {
-      const shortfall = emergencyFund - savings;
-      const result = withdrawToCoverShortfall(shortfall, savings, productList, productBalances);
-      savings = result.newSavings;
-      // productBalancesは参照渡しで更新されている
-      nisaRecycleAmountForNextYear += result.nisaRecycleAmount;
-    }
-
     // --- 3. 投資の実行 (黒字の場合) ---
     const canInvest = currentAge < params.retirementAge;
     if (canInvest) { // 退職するまでは投資を継続
-      const investableAmount = Math.max(0, savings - n(params.emergencyFundJPY));      
+      const investableAmount = Math.max(0, savings - n(params.emergencyFundJPY));
       let remainingNisaAllowance = Math.max(0, nisaLifetimeCap - cumulativeNisaContribution);
       let nisaInvestedThisYear = 0;
-      
+
       for (const p of productList) {
         if (investedThisYear >= investableAmount) break;
 
@@ -598,7 +587,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
         if (p.account === '非課税' && remainingNisaAllowance > 0) {
           const remainingAnnualCap = Math.max(0, FC.NISA_ANNUAL_CAP - nisaInvestedThisYear);
           const nisaAllowed = Math.min(actualContribution, remainingNisaAllowance, remainingAnnualCap);
-          
+
           productBalances[productId].principal += nisaAllowed;
           productBalances[productId].balance += nisaAllowed;
           cumulativeNisaContribution += nisaAllowed;
@@ -618,16 +607,17 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
         investedThisYear += investmentApplied;
       }
       savings -= investedThisYear;
+    }
 
-      // ★★★ 投資実行後に再度、生活防衛資金のチェックと補填を行う
-      if (savings < emergencyFund) {
-        const shortfall = emergencyFund - savings;
-        const result = withdrawToCoverShortfall(shortfall, savings, productList, productBalances);
-        savings = result.newSavings;
-        // productBalancesは参照渡しで更新されている
-        nisaRecycleAmountForNextYear += result.nisaRecycleAmount;
-      }
-
+    // --- 2. 資産の取り崩し (赤字補填) ---
+    // 生活防衛資金を下回った場合に、投資資産を売却して現金を補填する
+    const emergencyFund = n(params.emergencyFundJPY);
+    if (savings < emergencyFund) {
+      const shortfall = emergencyFund - savings;
+      const result = withdrawToCoverShortfall(shortfall, savings, productList, productBalances);
+      savings = result.newSavings;
+      // productBalancesは参照渡しで更新されている
+      nisaRecycleAmountForNextYear += result.nisaRecycleAmount;
     }
 
     // --- 4. 資産の成長 (利回り反映) ---
