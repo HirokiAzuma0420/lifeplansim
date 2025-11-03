@@ -160,7 +160,7 @@ export const useFormState = () => {
 
   // `effectiveSections` と `validateSection` をフック内に定義
   const effectiveSections = useMemo(() => {
-    const sections = [
+    const allSections = [
       '家族構成',
       '現在の収入',
       '現在の支出',
@@ -175,9 +175,11 @@ export const useFormState = () => {
       '投資',
       'シミュレーション設定',
     ];
-    // パートナーがいない場合は関連セクションを除外するなどのロジックをここに集約
-    return sections;
-  }, []);
+    if (formData.familyComposition === '既婚') {
+      return allSections.filter(section => section !== 'ライフイベント - 結婚');
+    }
+    return allSections;
+  }, [formData.familyComposition]);
 
   const validateSection = useCallback((sectionIndex: number) => {
     const sectionName = effectiveSections[sectionIndex];

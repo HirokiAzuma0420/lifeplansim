@@ -1,4 +1,4 @@
-﻿﻿﻿﻿import { useMemo, useCallback, useState, useEffect } from 'react';
+﻿﻿﻿﻿﻿﻿import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import IncomePositionChart from '../components/dashboard/IncomePositionChart';
 import SavingsPositionChart from '../components/dashboard/SavingsPositionChart';
@@ -301,13 +301,17 @@ export default function ResultPage() {
             <ul className="space-y-2 max-h-64 overflow-y-auto">
               {sections
                 .map((section, index) => ({ section, originalIndex: index }))
-                .filter(
-                  item =>
-                    !(
-                      item.section === 'ライフイベント - 結婚' &&
-                      rawFormData?.familyComposition === '既婚'
-                    )
-                )
+                .filter(item => {
+                  if (!rawFormData) return true;
+                  // 既婚の場合は結婚セクションを除外
+                  if (
+                    (rawFormData as unknown as FormDataState).familyComposition === '既婚' &&
+                    item.section === 'ライフイベント - 結婚'
+                  ) {
+                    return false;
+                  }
+                  return true;
+                })
                 .map(({ section, originalIndex }) => (
                 <li key={originalIndex}>
                   <button
