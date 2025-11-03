@@ -199,6 +199,82 @@ function getAnnualChildCost(age: number, pattern: '公立中心' | '公私混合
   return costInManYen * FC.YEN_PER_MAN; // 円に変換して返す
 }
 
+/**
+ * 指定された不足額を補填するために、投資資産から取り崩しを行う。
+ * 取り崩しは 課税口座 -> 非課税口座 の優先順位で行われる。
+ * @param shortfall - 補填が必要な金額
+ * @param savings - 現在の現金預金残高
+ * @param productList - 投資商品のリスト
+ * @param productBalances - 各商品の残高情報
+ * @returns 更新された現金預金、商品残高、および翌年復活するNISA枠の金額
+ */
+function withdrawToCoverShortfall(
+  shortfall: number,
+  savings: number,
+  productList: InvestmentProduct[],
+  productBalances: Record<string, AccountBucket>
+): { newSavings: number; newProductBalances: Record<string, AccountBucket>; nisaRecycleAmount: number } {
+  const withdrawalOrder: ('課税' | '非課税')[] = ['課税', '非課税'];
+  let nisaRecycleAmountForNextYear = 0;
+
+  for (const accountType of withdrawalOrder) {
+    if (shortfall <= 0) break;
+
+    const productsInAccount = productList.filter(p => p.account === accountType);
+    if (productsInAccount.length === 0) continue;
+
+    let totalBalanceInAccount = 0;
+    productsInAccount.forEach(p => {
+      const originalIndex = productList.indexOf(p);
+      const productId = `${p.key}-${originalIndex}`;
+      totalBalanceInAccount += productBalances[productId]?.balance ?? 0;
+    });
+
+    if (totalBalanceInAccount <= 0) continue;
+
+    let grossWithdrawalAmount = 0;
+    let netProceeds = 0;
+
+    if (accountType === '課税') {
+      let totalPrincipalInAccount = 0;
+      productsInAccount.forEach(p => {
+        const originalIndex = productList.indexOf(p);
+        const productId = `${p.key}-${originalIndex}`;
+        totalPrincipalInAccount += productBalances[productId]?.principal ?? 0;
+      });
+      const gainRatio = totalBalanceInAccount > 0 ? Math.max(0, totalBalanceInAccount - totalPrincipalInAccount) / totalBalanceInAccount : 0;
+      const requiredGrossWithdrawal = shortfall / (1 - gainRatio * FC.SPECIFIC_ACCOUNT_TAX_RATE);
+      grossWithdrawalAmount = Math.min(totalBalanceInAccount, requiredGrossWithdrawal);
+      const taxOnWithdrawal = grossWithdrawalAmount * gainRatio * FC.SPECIFIC_ACCOUNT_TAX_RATE;
+      netProceeds = grossWithdrawalAmount - taxOnWithdrawal;
+    } else { // 非課税
+      grossWithdrawalAmount = Math.min(totalBalanceInAccount, shortfall);
+      netProceeds = grossWithdrawalAmount;
+    }
+
+    productsInAccount.forEach(p => {
+      const originalIndex = productList.indexOf(p);
+      const productId = `${p.key}-${originalIndex}`;
+      const productBucket = productBalances[productId];
+      if (!productBucket || totalBalanceInAccount <= 0 || productBucket.balance <= 0) return;
+      const proportion = productBucket.balance / totalBalanceInAccount;
+      const withdrawalAmount = grossWithdrawalAmount * proportion;
+      const principalRatio = productBucket.balance > 0 ? productBucket.principal / productBucket.balance : 1;
+      const principalWithdrawn = withdrawalAmount * principalRatio;
+      productBucket.principal -= principalWithdrawn;
+      productBucket.balance -= withdrawalAmount;
+      if (accountType === '非課税') {
+        nisaRecycleAmountForNextYear += principalWithdrawn;
+      }
+    });
+
+    savings += netProceeds;
+    shortfall -= netProceeds;
+  }
+
+  return { newSavings: savings, newProductBalances: productBalances, nisaRecycleAmount: nisaRecycleAmountForNextYear };
+}
+
 function runSimulation(params: SimulationInputParams): YearlyData[] {
   // NISA夫婦合算枠を考慮した生涯上限額を設定
   const nisaLifetimeCap = params.useSpouseNisa ? FC.NISA_LIFETIME_CAP * FC.NISA_COUPLE_MULTIPLIER : FC.NISA_LIFETIME_CAP;
@@ -486,65 +562,11 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
     // 生活防衛資金を下回った場合に、投資資産を売却して現金を補填する
     const emergencyFund = n(params.emergencyFundJPY);
     if (savings < emergencyFund) {
-      let shortfall = emergencyFund - savings;
-      const withdrawalOrder: ('課税' | '非課税')[] = ['課税', '非課税'];
-
-      for (const accountType of withdrawalOrder) {
-        if (shortfall <= 0) break;
-
-        const productsInAccount = productList.filter(p => p.account === accountType);
-        if (productsInAccount.length === 0) continue;
-
-        let totalBalanceInAccount = 0;
-        productsInAccount.forEach(p => {
-          const originalIndex = productList.indexOf(p);
-          const productId = `${p.key}-${originalIndex}`;
-          totalBalanceInAccount += productBalances[productId]?.balance ?? 0;
-        });
-
-        if (totalBalanceInAccount <= 0) continue;
-
-        const totalWithdrawalAmount = Math.min(totalBalanceInAccount, shortfall); // ここでは税金を考慮せず、必要額をそのまま引き出す
-        let netProceeds = totalWithdrawalAmount;
-
-        // 課税口座の場合、売却益に課税
-        if (accountType === '課税') {
-            let totalPrincipalInAccount = 0;
-            productsInAccount.forEach(p => {
-                const originalIndex = productList.indexOf(p);
-                const productId = `${p.key}-${originalIndex}`;
-                totalPrincipalInAccount += productBalances[productId]?.principal ?? 0;
-            });
-            const gains = Math.max(0, totalBalanceInAccount - totalPrincipalInAccount);
-            const gainsRatio = totalBalanceInAccount > 0 ? gains / totalBalanceInAccount : 0;
-            const taxOnWithdrawal = totalWithdrawalAmount * gainsRatio * FC.SPECIFIC_ACCOUNT_TAX_RATE;
-            netProceeds = totalWithdrawalAmount - taxOnWithdrawal;
-        }
-
-        // 各商品から按分して取り崩す
-        productsInAccount.forEach(p => {
-          const originalIndex = productList.indexOf(p);
-          const productId = `${p.key}-${originalIndex}`;
-          const productBucket = productBalances[productId];
-          if (!productBucket || totalBalanceInAccount <= 0 || productBucket.balance <= 0) return;
-
-          const proportion = productBucket.balance / totalBalanceInAccount;
-          const withdrawalAmount = totalWithdrawalAmount * proportion;
-          const principalRatio = productBucket.balance > 0 ? productBucket.principal / productBucket.balance : 1;
-          const principalWithdrawn = withdrawalAmount * principalRatio;
-
-          productBucket.principal -= principalWithdrawn;
-          productBucket.balance -= withdrawalAmount;
-
-          // NISA枠復活：売却した元本を記録
-          if (accountType === '非課税') {
-            nisaRecycleAmountForNextYear += principalWithdrawn;
-          }
-        });
-
-        savings += netProceeds;
-        shortfall -= netProceeds;
-      }
+      const shortfall = emergencyFund - savings;
+      const result = withdrawToCoverShortfall(shortfall, savings, productList, productBalances);
+      savings = result.newSavings;
+      // productBalancesは参照渡しで更新されている
+      nisaRecycleAmountForNextYear += result.nisaRecycleAmount;
     }
 
     // --- 3. 投資の実行 (黒字の場合) ---
@@ -587,6 +609,16 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
         investedThisYear += investmentApplied;
       }
       savings -= investedThisYear;
+
+      // ★★★ 投資実行後に再度、生活防衛資金のチェックと補填を行う
+      if (savings < emergencyFund) {
+        const shortfall = emergencyFund - savings;
+        const result = withdrawToCoverShortfall(shortfall, savings, productList, productBalances);
+        savings = result.newSavings;
+        // productBalancesは参照渡しで更新されている
+        nisaRecycleAmountForNextYear += result.nisaRecycleAmount;
+      }
+
     }
 
     // --- 4. 資産の成長 (利回り反映) ---
