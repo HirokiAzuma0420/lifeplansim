@@ -20,6 +20,7 @@ import RetirementLifeEventSection from '@/components/form/RetirementLifeEventSec
 import SavingsSection from '@/components/form/SavingsSection';
 import InvestmentSection from '@/components/form/InvestmentSection';
 import SimulationSettingsSection from '@/components/form/SimulationSettingsSection';
+import { MASTER_SECTIONS } from '@/constants/financial_const';
 
 // --- Helper Components ---
 const formatYen = (value: number | string | undefined) => {
@@ -73,9 +74,9 @@ export default function FormPage() {
 
   useEffect(() => {
     const sectionIndexFromState = (location.state as { sectionIndex?: number })?.sectionIndex ?? 0;
-    const originalSectionName = effectiveSections[sectionIndexFromState];
+    const originalSectionName = MASTER_SECTIONS[sectionIndexFromState];
     const effectiveIndex = effectiveSections.indexOf(originalSectionName);
-    setCurrentSectionIndex(effectiveIndex !== -1 ? effectiveIndex : 0);
+    setCurrentSectionIndex(effectiveIndex > -1 ? effectiveIndex : 0);
   }, [effectiveSections, initialStateFromLocation, location.state]);
 
   useEffect(() => {

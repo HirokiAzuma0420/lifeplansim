@@ -6,6 +6,7 @@
  * 3. 制度・税制 (System & Tax Rules)
  * 4. シミュレーション・エンジン設定 (Simulation Engine Settings)
  * 5. フォーム初期値 (Form Default Values)
+ * 6. UI定数 (UI Constants)
  * 6. 計算ロジック定数 (Calculation Logic Constants)
  */
 
@@ -138,6 +139,27 @@ export const DEFAULT_APPLIANCES = [
   { name: 'テレビ', cycle: 10, cost: 8, firstReplacementAfterYears: '' as number | '' },
   { name: '電子レンジ', cycle: 8, cost: 3, firstReplacementAfterYears: '' as number | '' },
   { name: '掃除機', cycle: 6, cost: 2, firstReplacementAfterYears: '' as number | '' },
+];
+
+// =================================================================================
+// 6. UI定数 (UI Constants)
+// =================================================================================
+
+/** フォームのセクション名マスターリスト */
+export const MASTER_SECTIONS = [
+  '家族構成',
+  '現在の収入',
+  '現在の支出',
+  'ライフイベント - 車',
+  'ライフイベント - 家',
+  'ライフイベント - 結婚',
+  'ライフイベント - 子供',
+  'ライフイベント - 生活',
+  'ライフイベント - 親の介護',
+  'ライフイベント - 老後',
+  '貯蓄',
+  '投資',
+  'シミュレーション設定',
 ];
 
 // =================================================================================
