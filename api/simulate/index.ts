@@ -200,6 +200,8 @@ function getAnnualChildCost(age: number, pattern: '公立中心' | '公私混合
 }
 
 function runSimulation(params: SimulationInputParams): YearlyData[] {
+  // NISA夫婦合算枠を考慮した生涯上限額を設定
+  const nisaLifetimeCap = params.useSpouseNisa ? FC.NISA_LIFETIME_CAP * FC.NISA_COUPLE_MULTIPLIER : FC.NISA_LIFETIME_CAP;
 
   // --- シミュレーション準備 ---
   const yearlyData: YearlyData[] = [];
@@ -549,7 +551,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
     const canInvest = currentAge < params.retirementAge;
     if (canInvest) { // 退職するまでは投資を継続
       const investableAmount = Math.max(0, savings - n(params.emergencyFundJPY));      
-      let remainingNisaAllowance = Math.max(0, FC.NISA_LIFETIME_CAP - cumulativeNisaContribution);
+      let remainingNisaAllowance = Math.max(0, nisaLifetimeCap - cumulativeNisaContribution);
       let nisaInvestedThisYear = 0;
       
       for (const p of productList) {

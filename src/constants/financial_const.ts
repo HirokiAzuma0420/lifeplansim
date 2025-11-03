@@ -44,6 +44,11 @@ export const SPECIFIC_ACCOUNT_TAX_RATE = 0.20315;
 export const NISA_LIFETIME_CAP = 18_000_000;
 
 /**
+ * NISA夫婦合算枠を適用する場合の乗数
+ */
+export const NISA_COUPLE_MULTIPLIER = 2;
+
+/**
  * 新NISAの年間投資枠の合計。
  */
 export const NISA_ANNUAL_CAP = 3_600_000;
