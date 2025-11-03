@@ -149,6 +149,7 @@ export interface FormDataState {
   }[];
   annualRaiseRate: string;
   spouseAnnualRaiseRate: string;
+  useSpouseNisa: boolean;
 }
 
 export type FormLocationState = { rawFormData?: FormDataState; sectionIndex?: number };

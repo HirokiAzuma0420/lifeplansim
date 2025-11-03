@@ -131,6 +131,7 @@ export interface SimulationInputParams {
   };
   interestScenario: '固定利回り' | 'ランダム変動';
   emergencyFundJPY: number;
+  useSpouseNisa?: boolean;
 }
 
 export interface SimulationNavigationState {

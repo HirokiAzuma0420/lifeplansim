@@ -139,6 +139,7 @@ const createDefaultFormData = (): FormDataState => ({
   appliances: FC.DEFAULT_APPLIANCES,
   annualRaiseRate: String(FC.DEFAULT_ANNUAL_RAISE_RATE_PERCENT),
   spouseAnnualRaiseRate: String(FC.DEFAULT_ANNUAL_RAISE_RATE_PERCENT),
+  useSpouseNisa: false,
 });
 
 export const useFormState = () => {

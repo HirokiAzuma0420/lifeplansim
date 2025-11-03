@@ -14,7 +14,7 @@ import { buildDashboardDataset } from '../utils/dashboard-helper';
 import type { SimulationInputParams, SimulationNavigationState, YearlyData, InvestmentProduct } from '../types/simulation-types';
 import type { FormDataState } from '../types/form-types';
 import { useOrientation } from '../hooks/useOrientation';
-import { computeNetAnnual } from '../utils/financial';
+import { computeNetAnnual } from '../utils/financial'; // 共通関数をインポート
 import { MASTER_SECTIONS } from '@/constants/financial_const';
 
 const COLORS = {
