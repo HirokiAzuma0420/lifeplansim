@@ -272,7 +272,8 @@ export const useFormState = () => {
 
   // Input handlers
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
+    const { name, type } = e.target;
+    const value = type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
 
     if (name.startsWith('houseRenovationPlans')) {
       const indices = name.match(/\d+/g);
@@ -303,7 +304,7 @@ export const useFormState = () => {
         }
       }));
     } else {
-      const isNumericField = e.target.type === 'number' && name !== 'stressTestSeed';
+      const isNumericField = type === 'number' && name !== 'stressTestSeed';
       const valueToSet = isNumericField ? (value === '' ? '' : Number(value)) : value;
       setFormData(prev => {
         const newState = { ...prev, [name]: valueToSet };

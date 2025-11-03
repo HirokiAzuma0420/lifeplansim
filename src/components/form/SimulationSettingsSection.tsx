@@ -8,6 +8,9 @@ interface SimulationSettingsSectionProps {
 }
 
 const SimulationSettingsSection: React.FC<SimulationSettingsSectionProps> = ({ formData, handleInputChange, errors }) => {
+  // 配偶者がいる（または将来いる）場合にのみNISA合算オプションを表示
+  const showSpouseNisaOption = formData.familyComposition === '既婚' || formData.planToMarry === 'する';
+
   return (
     <div className="p-4">
       {/* Image placeholder */}
@@ -85,6 +88,26 @@ const SimulationSettingsSection: React.FC<SimulationSettingsSectionProps> = ({ f
         </div>
         {errors.emergencyFund && <p className="text-red-500 text-xs italic mt-1">{errors.emergencyFund}</p>}
       </div>
+
+      {showSpouseNisaOption && (
+        <div className="mb-4 p-4 border border-blue-200 bg-blue-50 rounded-md">
+          <label className="flex items-center text-gray-700 text-sm font-bold">
+            <input
+              type="checkbox"
+              name="useSpouseNisa"
+              checked={formData.useSpouseNisa}
+              onChange={handleInputChange}
+              className="custom-checkbox"
+            />
+            <span className="ml-2">配偶者のNISA枠も合算して投資を最大化する</span>
+          </label>
+          <p className="text-xs text-gray-600 mt-2 pl-6">
+            チェックを入れると、NISAの生涯投資上限額が夫婦2人分の3,600万円として計算されます。
+            これにより、より積極的な非課税投資のシミュレーションが可能になります。
+          </p>
+        </div>
+      )}
+
     </div>
   );
 };
