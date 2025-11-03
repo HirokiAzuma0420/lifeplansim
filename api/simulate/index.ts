@@ -260,6 +260,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
   // ループ内で変更される状態変数
   for (let i = 0; currentAge <= params.endAge; i++, currentAge++) {
     cumulativeNisaContribution -= nisaRecycleAmountForNextYear; // NISA枠復活
+    let spouseGrossIncome = 0;
     nisaRecycleAmountForNextYear = 0; // 今年のリサイクル額計算のためにリセット
 
     const year = baseYear + i;
@@ -275,8 +276,6 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
         currentSpouseGrossIncome *= (1 + (n(params.spouseIncomeGrowthRate) ?? 0));
       }
     }
-    let spouseGrossIncome = 0; // Moved declaration to top of loop
-    let investedThisYear = 0; // Added here
 
     // --- 0. iDeCo現金化 (イベント) ---
     // 収支計算の前に処理し、その年の現金を増やしておく
@@ -299,7 +298,6 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
         params.spouseInitialAge = params.marriage.spouse.ageAtMarriage;
         currentSpouseGrossIncome = params.marriage.spouse.incomeGross; // 結婚時点の年収で上書き
         // Re-evaluate spouseGrossIncome for the current year after marriage
-        // spouseGrossIncome はこのブロックの前に計算されているため、ここで再計算する
         if (spouseCurrentAge !== undefined && params.spouseRetirementAge && spouseCurrentAge < n(params.spouseRetirementAge)) {
           spouseGrossIncome = currentSpouseGrossIncome;
         }
@@ -308,6 +306,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
 
     // --- 1. 収支計算 (Cash Flow) ---
     // 1a. 収入
+    let investedThisYear = 0; // ★★★ この年の投資額をリセット
     let selfGrossIncome = 0;
     if (currentAge >= params.retirementAge) {
       selfGrossIncome = 0; // 退職後は給与収入ゼロ
@@ -549,13 +548,10 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
     // --- 3. 投資の実行 (黒字の場合) ---
     const canInvest = currentAge < params.retirementAge;
     if (canInvest) { // 退職するまでは投資を継続
-      const investableAmount = Math.max(0, savings - n(params.emergencyFundJPY));
+      const investableAmount = Math.max(0, savings - n(params.emergencyFundJPY));      
       let remainingNisaAllowance = Math.max(0, FC.NISA_LIFETIME_CAP - cumulativeNisaContribution);
-      
-      // NISA年間投資上限の準備
-      // const NISA_ANNUAL_CAP = 3_600_000; // 定数ファイルからインポート
       let nisaInvestedThisYear = 0;
-
+      
       for (const p of productList) {
         if (investedThisYear >= investableAmount) break;
 
@@ -664,7 +660,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
       ideco: { principal: Math.round(ideco.principal), balance: Math.round(ideco.balance) },
       taxable: { principal: Math.round(taxable.principal), balance: Math.round(taxable.balance) },
       investmentPrincipal: Math.round(totalInvestmentPrincipal),
-      balance: Math.round(annualIncome - totalExpense - investedThisYear),
+      balance: Math.round(cashFlow - investedThisYear),
       totalAssets: Math.round(totalAssets),
       investedAmount: Math.round(investedThisYear),
       assetAllocation: {
