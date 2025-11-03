@@ -312,6 +312,12 @@ export const useFormState = () => {
         if (name === 'housingCostAfterMarriage') {
           newState.isHousingCostEdited = true;
         }
+        // 住居タイプが「賃貸」以外に変更された場合、将来の購入プランをリセット
+        if (name === 'housingType' && value !== '賃貸') {
+          newState.housePurchaseIntent = 'no';
+          newState.housePurchasePlan = null;
+        }
+
         return newState;
       });
     }
