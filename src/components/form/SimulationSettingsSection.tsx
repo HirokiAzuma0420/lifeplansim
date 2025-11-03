@@ -19,14 +19,6 @@ const SimulationSettingsSection: React.FC<SimulationSettingsSectionProps> = ({ f
       </div>
       <h2 className="text-2xl font-bold text-center mb-4">シミュレーション設定に関する質問</h2>
       <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="simulationPeriodAge">シミュレーションの対象期間（何歳まで）</label>
-        <div className="flex">
-          <input type="number" id="simulationPeriodAge" name="simulationPeriodAge" value={formData.simulationPeriodAge} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.simulationPeriodAge ? 'border-red-500' : ''}`} />
-          <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">歳</span>
-        </div>
-        {errors.simulationPeriodAge && <p className="text-red-500 text-xs italic mt-1">{errors.simulationPeriodAge}</p>}
-      </div>
-      <div className="mb-4">
         <label className="block text-gray-700 text-sm font-bold mb-2">
           利回りシナリオの選択
         </label>
@@ -41,7 +33,7 @@ const SimulationSettingsSection: React.FC<SimulationSettingsSectionProps> = ({ f
               onChange={handleInputChange}
               required
             />
-            <span className="ml-2">固定利回り（例：年3%）</span>
+            <span className="ml-2">固定利回り</span>
           </label>
           <label className="inline-flex items-center">
             <input
@@ -80,6 +72,15 @@ const SimulationSettingsSection: React.FC<SimulationSettingsSectionProps> = ({ f
           </div>
         </div>
       </div>
+      <div className="mb-4">
+        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="simulationPeriodAge">シミュレーションの対象期間（何歳まで）</label>
+        <div className="flex">
+          <input type="number" id="simulationPeriodAge" name="simulationPeriodAge" value={formData.simulationPeriodAge} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.simulationPeriodAge ? 'border-red-500' : ''}`} />
+          <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">歳</span>
+        </div>
+        {errors.simulationPeriodAge && <p className="text-red-500 text-xs italic mt-1">{errors.simulationPeriodAge}</p>}
+      </div>
+
       <div className="mb-4">
         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="emergencyFund">生活防衛資金（常に確保したい現金額）</label>
         <div className="flex">
