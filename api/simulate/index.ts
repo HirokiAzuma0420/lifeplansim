@@ -109,7 +109,10 @@ function generateReturnSeries(
   return correctedReturns;
 }
 
-function runMonteCarloSimulation(params: SimulationInputParams, numberOfSimulations: number): YearlyData[] {
+function runMonteCarloSimulation(
+  params: SimulationInputParams,
+  numberOfSimulations: number
+): { yearlyData: YearlyData[]; summary: { bankruptcyRate: number } } {
   const allSimulations: YearlyData[][] = [];
 
   // 1. runSimulationを100回実行
@@ -127,7 +130,18 @@ function runMonteCarloSimulation(params: SimulationInputParams, numberOfSimulati
     allSimulations.push(runSimulation(simParams));
   }
 
-  if (allSimulations.length === 0) return [];
+  if (allSimulations.length === 0) return { yearlyData: [], summary: { bankruptcyRate: 0 } };
+
+  // 破綻確率の計算
+  let bankruptCount = 0;
+  for (const sim of allSimulations) {
+    // いずれかの年で総資産が0以下になったら破綻とみなす
+    if (sim.some(yearData => yearData.totalAssets <= 0)) {
+      bankruptCount++;
+    }
+  }
+  const bankruptcyRate = bankruptCount / numberOfSimulations;
+
 
   // 2. 平均値を計算
   const firstSimulation = allSimulations[0];
@@ -192,7 +206,10 @@ function runMonteCarloSimulation(params: SimulationInputParams, numberOfSimulati
     averageYearlyData.push(averagedYearData);
   }
 
-  return averageYearlyData;
+  return {
+    yearlyData: averageYearlyData,
+    summary: { bankruptcyRate },
+  };
 }
 
 function isInputParamsBody(x: unknown): x is { inputParams: SimulationInputParams } {
@@ -783,17 +800,20 @@ export default async function(req: VercelRequest, res: VercelResponse) {
   }
   const params = rawBody.inputParams;
 
-  let resultData: YearlyData[];
+  let result: { yearlyData: YearlyData[]; summary?: { bankruptcyRate: number } };
 
   const isDebugRun = req.query?.debug_run === 'true';
 
   if (isDebugRun) {
-    resultData = runSimulation(params);
+    result = { yearlyData: runSimulation(params) };
   } else if (params.interestScenario === '固定利回り') {
-    resultData = runSimulation(params);
+    result = {
+      yearlyData: runSimulation(params),
+      summary: { bankruptcyRate: 0 }, // 固定利回りでは破綻確率は0（または計算しない）
+    };
   } else {
-    resultData = runMonteCarloSimulation(params, FC.MONTE_CARLO_SIMULATION_COUNT);
+    result = runMonteCarloSimulation(params, FC.MONTE_CARLO_SIMULATION_COUNT);
   }
 
-  res.status(200).json({ yearlyData: resultData });
+  res.status(200).json(result);
 }

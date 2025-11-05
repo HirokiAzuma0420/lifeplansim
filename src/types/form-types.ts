@@ -1,4 +1,4 @@
-import type { CarePlan } from './simulation-types';
+import type { CarePlan, SimulationNavigationState } from './simulation-types';
 
 export type InvestmentAssetKey =
   | 'investmentStocks'
@@ -153,3 +153,7 @@ export interface FormDataState {
 }
 
 export type FormLocationState = { rawFormData?: FormDataState; sectionIndex?: number };
+
+export interface SimulationResult extends Partial<SimulationNavigationState> {
+  message?: string;
+}

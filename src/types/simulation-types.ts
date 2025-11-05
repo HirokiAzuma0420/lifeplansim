@@ -1,3 +1,21 @@
+export interface DebugInfo {
+  replenishmentTriggered: boolean;
+  savings_before_cashFlow?: number;
+  savings_after_cashFlow?: number;
+  savings_before_withdrawToCoverShortfall?: number;
+  savings_before?: number;
+  shortfall?: number;
+  savings_after?: number;
+  savings_after_withdrawToCoverShortfall?: number;
+  savings_before_investment_reduction?: number;
+  savings_after_investment_reduction?: number;
+  savings_before_asset_growth?: number;
+  savings_after_asset_growth?: number;
+  totalInvestmentPrincipal_before_push?: number;
+  savings_before_yearlyData_push?: number;
+  savings_at_yearlyData_push_assignment?: number;
+}
+
 export type InvestmentProduct = {
   key: 'stocks' | 'trust' | 'bonds' | 'crypto' | 'other' | 'ideco';
   account: '課税' | '非課税' | 'iDeCo';
@@ -41,7 +59,7 @@ export interface YearlyData {
     ideco: number;
   };
   products: Record<string, AccountBucket>;
-  debug?: any; // For temporary debugging
+  debug?: DebugInfo;
 }
 
 export interface PercentileData {
@@ -138,6 +156,7 @@ export interface SimulationInputParams {
 export interface SimulationNavigationState {
   yearlyData: YearlyData[];
   percentileData?: PercentileData;
+  summary?: { bankruptcyRate: number };
   inputParams: SimulationInputParams;
   rawFormData?: Record<string, unknown>;
 }

@@ -6,14 +6,14 @@ import TotalAssetChart from '../components/dashboard/TotalAssetChart';
 import InvestmentPrincipalChart from '../components/dashboard/InvestmentPrincipalChart';
 import AssetPieChart from '../components/dashboard/AssetPieChart';
 import AssetTable from '../components/dashboard/AssetTable';
-import CashFlowTable from '../components/dashboard/CashFlowTable.tsx';
+import CashFlowTable from '../components/dashboard/CashFlowTable';
 import AccordionCard from '../components/dashboard/AccordionCard.tsx';
 import { getAssetGrade } from '../assets/getAssetGrade.ts';
 import { buildDashboardDataset } from '../utils/dashboard-helper.ts';
 import type { SimulationInputParams, YearlyData, InvestmentProduct } from '../types/simulation-types';
 import { useOrientation } from '../hooks/useOrientation';
 import sampleInput from '../../sample/input_sample.json';
-import type { FormDataState } from '../types/form-types'; // FormDataState をインポート
+import type { FormDataState, SimulationResult } from '../types/form-types';
 
 const COLORS = {
   現金: '#3B82F6',
@@ -35,6 +35,7 @@ export default function SamplePage() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   const [yearlyData, setYearlyData] = useState<YearlyData[]>([]);
+  const [summary, setSummary] = useState<{ bankruptcyRate: number } | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -157,11 +158,12 @@ export default function SamplePage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ inputParams: apiParams }),
         });
-        const data = await response.json();
+        const data: SimulationResult = await response.json();
         if (!response.ok) {
           throw new Error(data.message || 'サンプルのシミュレーション実行中にエラーが発生しました。');
         }
-        setYearlyData(data.yearlyData || []);
+        setYearlyData(data.yearlyData ?? []);
+        setSummary(data.summary);
       } catch (e: unknown) {
         setError(e instanceof Error ? e.message : '不明なエラーが発生しました。');
         console.error(e);
@@ -234,6 +236,14 @@ export default function SamplePage() {
     { label: 'ピーク資産額', value: formatCurrency(peakAssetValue), note: 'シミュレーション期間中の最大値' },
     { label: '生活防衛費', value: formatCurrency(n(sampleInput.emergencyFund) * 10000), note: '不足時に現金化して補填します' }, // 正しい値を参照
   ];
+
+  if (summary && typeof summary.bankruptcyRate === 'number') {
+    summaryCards.splice(4, 0, { // ピーク資産額の前に挿入
+      label: 'プラン破綻確率',
+      value: formatPercent(summary.bankruptcyRate),
+      note: '資産が枯渇する確率の目安',
+    });
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 py-10">

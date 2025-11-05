@@ -105,11 +105,11 @@ export default function FormPage() {
         throw new Error(data.message || 'シミュレーションエラー');
       }
       const yearly = Array.isArray(data.yearlyData) ? (data.yearlyData as YearlyData[]) : [];
-      if (yearly.length === 0) {
+      if (!data.yearlyData || yearly.length === 0) {
         throw new Error('シミュレーション結果が空です');
       }
       setResult(null);
-      navigate('/result', { state: { yearlyData: yearly, percentileData: data.percentileData, inputParams: params as SimulationInputParams, rawFormData: formData } });
+      navigate('/result', { state: { yearlyData: data.yearlyData, summary: data.summary, percentileData: data.percentileData, inputParams: params as SimulationInputParams, rawFormData: formData } });
     } catch (error: unknown) {
       console.error(error);
       if (error instanceof Error) {

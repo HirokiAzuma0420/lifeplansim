@@ -1,4 +1,4 @@
-﻿﻿import { useMemo, useCallback, useState, useEffect } from 'react';
+﻿﻿﻿﻿import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import IncomePositionChart from '../components/dashboard/IncomePositionChart';
 import SavingsPositionChart from '../components/dashboard/SavingsPositionChart';
@@ -6,7 +6,7 @@ import TotalAssetChart from '../components/dashboard/TotalAssetChart';
 import InvestmentPrincipalChart from '../components/dashboard/InvestmentPrincipalChart';
 import AssetPieChart from '../components/dashboard/AssetPieChart';
 import AssetTable from '../components/dashboard/AssetTable';
-import CashFlowTable from '../components/dashboard/CashFlowTable.tsx';
+import CashFlowTable from '../components/dashboard/CashFlowTable';
 import AccordionCard from '../components/dashboard/AccordionCard.tsx';
 import LifePlanTimeline from '../components/dashboard/LifePlanTimeline.tsx';
 import { getAssetGrade } from '../assets/getAssetGrade';
@@ -53,6 +53,7 @@ export default function ResultPage() {
   // SimulationInputParams に products を追加
   const yearlyData = useMemo(() => rawYearlyData ?? [], [rawYearlyData]);
   const inputParams = state?.inputParams as (SimulationInputParams & { products?: InvestmentProduct[] }) | undefined;
+  const summary = state?.summary;
 
   const percentileData = state?.percentileData;
   const dataset = useMemo(() => buildDashboardDataset(yearlyData, inputParams, percentileData), [yearlyData, inputParams, percentileData]);
@@ -164,6 +165,15 @@ export default function ResultPage() {
       note: '不足時に現金化して補填します',
     },
   ];
+
+  if (summary && typeof summary.bankruptcyRate === 'number') {
+    summaryCards.splice(4, 0, { // ピーク資産額の前に挿入
+      label: 'プラン破綻確率',
+      value: formatPercent(summary.bankruptcyRate),
+      note: '資産が枯渇する確率の目安',
+    });
+  }
+
 
   return (
     <div className="min-h-screen bg-gray-100 py-10">
