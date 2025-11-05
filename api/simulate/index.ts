@@ -27,6 +27,7 @@ type DebugInfo = {
   savings_after_asset_growth?: number;
   totalInvestmentPrincipal_before_push?: number;
   savings_before_yearlyData_push?: number;
+  savings_at_yearlyData_push_assignment?: number;
   finalSavingsForYear?: number;
 };
 
@@ -719,6 +720,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
 
     debugInfo.totalInvestmentPrincipal_before_push = totalInvestmentPrincipal;
     debugInfo.savings_before_yearlyData_push = savings;
+    debugInfo.savings_at_yearlyData_push_assignment = savings;
 
     yearlyData.push({
       year,
