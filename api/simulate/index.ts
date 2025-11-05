@@ -612,9 +612,10 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
     // --- 2. 資産の取り崩し (赤字補填) ---
     // 生活防衛資金を下回った場合に、投資資産を売却して現金を補填する
     const emergencyFund = n(params.emergencyFundJPY);
-    console.log(`Year: ${year}, Age: ${currentAge}, Savings: ${savings}, Emergency Fund: ${emergencyFund}`);
+    let shortfallForDebug = 0;
     if (savings < emergencyFund) {
       const shortfall = emergencyFund - savings;
+      shortfallForDebug = shortfall;
       const result = withdrawToCoverShortfall(shortfall, savings, productList, productBalances);
       savings = result.newSavings;
       // productBalancesは参照渡しで更新されている
@@ -694,7 +695,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
       ideco: { principal: Math.round(ideco.principal), balance: Math.round(ideco.balance) },
       taxable: { principal: Math.round(taxable.principal), balance: Math.round(taxable.balance) },
       investmentPrincipal: Math.round(totalInvestmentPrincipal),
-      balance: Math.round(cashFlow - investedThisYear + emergencyFund), // for debugging
+      balance: Math.round(cashFlow - investedThisYear + shortfallForDebug),
       totalAssets: Math.round(totalAssets),
       investedAmount: Math.round(investedThisYear),
       assetAllocation: {
