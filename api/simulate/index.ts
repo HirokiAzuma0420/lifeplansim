@@ -12,6 +12,13 @@ interface Appliance {
   firstAfterYears: number;
 }
 
+type DebugInfo = {
+  replenishmentTriggered: boolean;
+  savings_before?: number;
+  shortfall?: number;
+  savings_after?: number;
+};
+
 // ユーティリティ関数
 const n = (v: unknown): number => {
   const num = Number(v);
@@ -490,14 +497,14 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
           const yearsSinceFirst = currentAge - base;
           const cycle = n(params.car.frequencyYears);
           if (cycle > 0 && yearsSinceFirst % cycle === 0) { // 買い替え年
-            if (!params.car.loan.use) { // 現金購入
+            if (!params.car.loan?.use) { // 現金購入
               carRecurring += n(params.car.priceJPY);
             } else { // ローン購入
-              const loanYears = n(params.car.loan.years);
+              const loanYears = n(params.car.loan?.years);
               if (loanYears > 0) {
                 let annualRate = FC.DEFAULT_LOAN_RATES.CAR_GENERAL;
-                if (params.car.loan.type === '銀行ローン') annualRate = FC.DEFAULT_LOAN_RATES.CAR_BANK;
-                else if (params.car.loan.type === 'ディーラーローン') annualRate = FC.DEFAULT_LOAN_RATES.CAR_DEALER;
+                if (params.car.loan?.type === '銀行ローン') annualRate = FC.DEFAULT_LOAN_RATES.CAR_BANK;
+                else if (params.car.loan?.type === 'ディーラーローン') annualRate = FC.DEFAULT_LOAN_RATES.CAR_DEALER;
                 const annualPayment = calculateLoanPaymentShared(n(params.car.priceJPY), annualRate * 100, loanYears).annualPayment;
                 activeCarLoans.push({ endAge: currentAge + loanYears, annualPayment });
               }
@@ -612,7 +619,12 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
     // --- 2. 資産の取り崩し (赤字補填) ---
     // 生活防衛資金を下回った場合に、投資資産を売却して現金を補填する
     const emergencyFund = n(params.emergencyFundJPY);
-    const debugInfo: { replenishmentTriggered: boolean; savings_before?: number; shortfall?: number; savings_after?: number; } = { replenishmentTriggered: false };
+    const debugInfo: DebugInfo = {
+      replenishmentTriggered: false,
+      savings_before: undefined,
+      shortfall: undefined,
+      savings_after: undefined
+    };
 
     if (savings < emergencyFund) {
       const shortfall = emergencyFund - savings;
