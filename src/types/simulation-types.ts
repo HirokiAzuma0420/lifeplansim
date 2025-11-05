@@ -41,6 +41,7 @@ export interface YearlyData {
     ideco: number;
   };
   products: Record<string, AccountBucket>;
+  debug?: any; // For temporary debugging
 }
 
 export interface PercentileData {

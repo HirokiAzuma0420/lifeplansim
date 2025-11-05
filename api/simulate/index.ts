@@ -612,13 +612,18 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
     // --- 2. 資産の取り崩し (赤字補填) ---
     // 生活防衛資金を下回った場合に、投資資産を売却して現金を補填する
     const emergencyFund = n(params.emergencyFundJPY);
-    let shortfallForDebug = 0;
+    const debugInfo: any = { replenishmentTriggered: false };
+
     if (savings < emergencyFund) {
       const shortfall = emergencyFund - savings;
-      shortfallForDebug = shortfall;
+      debugInfo.replenishmentTriggered = true;
+      debugInfo.savings_before = savings;
+      debugInfo.shortfall = shortfall;
+
       const result = withdrawToCoverShortfall(shortfall, savings, productList, productBalances);
       savings = result.newSavings;
-      // productBalancesは参照渡しで更新されている
+      debugInfo.savings_after = savings;
+
       nisaRecycleAmountForNextYear += result.nisaRecycleAmount;
     }
 
@@ -705,6 +710,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
         ideco: Math.round(ideco.balance),
       },
       products: productsForYear,
+      debug: debugInfo,
     });
   }
 
