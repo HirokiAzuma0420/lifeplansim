@@ -18,6 +18,7 @@ type DebugInfo = {
   shortfall?: number;
   savings_after?: number;
   totalInvestmentPrincipal_before_push?: number;
+  finalSavingsForYear?: number;
 };
 
 // ユーティリティ関数
@@ -572,8 +573,10 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
     const totalExpense = livingExpense + childExpense + careExpense + marriageExpense + applianceExpense + carExpense + housingExpense;
 
     // 1c. 現金残高の更新
+    console.log(`[DEBUG ${year}] Before cashFlow: savings=${savings}`); // 追加
     const cashFlow = annualIncome - totalExpense;
     savings += cashFlow;
+    console.log(`[DEBUG ${year}] After cashFlow: savings=${savings}`); // 追加
 
     // --- 3. 投資の実行 (黒字の場合) ---
     const canInvest = currentAge < params.retirementAge;
@@ -614,7 +617,9 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
         }
         investedThisYear += investmentApplied;
       }
+      console.log(`[DEBUG ${year}] Before investment reduction: savings=${savings}, investedThisYear=${investedThisYear}`); // 追加
       savings -= investedThisYear;
+      console.log(`[DEBUG ${year}] After investment reduction: savings=${savings}`); // 追加
     }
 
     // --- 2. 資産の取り崩し (赤字補填) ---
@@ -629,6 +634,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
     };
 
     if (savings < emergencyFund) {
+      console.log(`[DEBUG ${year}] Before withdrawToCoverShortfall: savings=${savings}, emergencyFund=${emergencyFund}, shortfall=${emergencyFund - savings}`); // 追加
       const shortfall = emergencyFund - savings;
       debugInfo.replenishmentTriggered = true;
       debugInfo.savings_before = savings;
@@ -637,11 +643,13 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
       const result = withdrawToCoverShortfall(shortfall, savings, productList, productBalances);
       savings = result.newSavings;
       debugInfo.savings_after = savings;
+      console.log(`[DEBUG ${year}] After withdrawToCoverShortfall: savings=${savings}, debug.savings_after=${debugInfo.savings_after}`); // 追加
 
       nisaRecycleAmountForNextYear += result.nisaRecycleAmount;
     }
 
     // --- 4. 資産の成長 (利回り反映) ---
+    console.log(`[DEBUG ${year}] Before asset growth: savings=${savings}`); // 追加
     productList.forEach((p, index) => {
       const productId = `${p.key}-${index}`;
       const productBucket = productBalances[productId];
@@ -657,6 +665,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
       productBucket.balance *= ((1 + yearlyReturn) ** yearFraction);
       investmentIncome += growth;
     });
+    console.log(`[DEBUG ${year}] After asset growth: savings=${savings}`); // 追加
 
     // --- 5. 年間データの集計と記録 ---
     const nisa = { principal: 0, balance: 0 };
@@ -691,6 +700,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
 
     debugInfo.totalInvestmentPrincipal_before_push = totalInvestmentPrincipal;
 
+    console.log(`[DEBUG ${year}] Before yearlyData.push: savings=${savings}`); // 追加
     yearlyData.push({
       year,
       age: currentAge,
