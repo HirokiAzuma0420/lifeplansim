@@ -142,72 +142,20 @@ function runMonteCarloSimulation(
   }
   const bankruptcyRate = bankruptCount / numberOfSimulations;
 
+  // 2. 中央値のシミュレーション結果を選択
+  // 最終年の総資産額に基づいてソート
+  allSimulations.sort((a, b) => {
+    const lastA = a[a.length - 1];
+    const lastB = b[b.length - 1];
+    return (lastA?.totalAssets ?? 0) - (lastB?.totalAssets ?? 0);
+  });
 
-  // 2. 平均値を計算
-  const firstSimulation = allSimulations[0];
-  const numYears = firstSimulation.length;
-  const averageYearlyData: YearlyData[] = [];
-
-  for (let i = 0; i < numYears; i++) {
-    // 最初のシミュレーション結果をベースに、各年の静的なデータをコピー
-    const yearDataTemplate = { ...firstSimulation[i] };
-
-    // 平均化するキーを定義
-    const keysToAverage: (keyof YearlyData)[] = ['income', 'expense', 'savings', 'totalAssets'];
-    const bucketKeys: (keyof AccountBucket)[] = ['principal', 'balance'];
-
-    const averagedYearData: YearlyData = { ...yearDataTemplate };
-
-    // 各数値プロパティの平均を計算
-    for (const key of keysToAverage) {
-      const sum = allSimulations.reduce((acc, sim) => acc + (n(sim[i][key])), 0);
-      (averagedYearData[key] as number) = sum / numberOfSimulations;
-    }
-
-    // 各口座の principal と balance の平均を計算
-    for (const account of ['nisa', 'ideco', 'taxable'] as const) {
-      for (const key of bucketKeys) {
-        const sum = allSimulations.reduce((acc, sim) => {
-          const accountData = sim[i]?.[account];
-          return acc + (accountData ? n(accountData[key]) : 0);
-        }, 0);
-        if (averagedYearData[account]) {
-          averagedYearData[account][key] = sum / numberOfSimulations;
-        }
-      }
-    }
-
-    // assetAllocation も平均化
-    const assetAllocationSum = { cash: 0, investment: 0, nisa: 0, ideco: 0 };
-    for (const sim of allSimulations) {
-      assetAllocationSum.cash += n(sim[i].assetAllocation.cash);
-      assetAllocationSum.investment += n(sim[i].assetAllocation.investment);
-      assetAllocationSum.nisa += n(sim[i].assetAllocation.nisa);
-      assetAllocationSum.ideco += n(sim[i].assetAllocation.ideco);
-    }
-    averagedYearData.assetAllocation.cash = assetAllocationSum.cash / numberOfSimulations;
-    averagedYearData.assetAllocation.investment = assetAllocationSum.investment / numberOfSimulations;
-    averagedYearData.assetAllocation.nisa = assetAllocationSum.nisa / numberOfSimulations;
-    averagedYearData.assetAllocation.ideco = assetAllocationSum.ideco / numberOfSimulations;
-
-    // 商品別残高(products)も平均化
-    const productKeys = Object.keys(firstSimulation[i].products);
-    const averagedProducts: Record<string, AccountBucket> = {};
-    for (const productId of productKeys) {
-      const principalSum = allSimulations.reduce((acc, sim) => acc + n(sim[i].products[productId]?.principal), 0);
-      const balanceSum = allSimulations.reduce((acc, sim) => acc + n(sim[i].products[productId]?.balance), 0);
-      averagedProducts[productId] = {
-        principal: principalSum / numberOfSimulations,
-        balance: balanceSum / numberOfSimulations,
-      };
-    }
-    averagedYearData.products = averagedProducts;
-
-    averageYearlyData.push(averagedYearData);
-  }
+  // 中央値のインデックスを計算し、そのシミュレーションデータを取得
+  const medianIndex = Math.floor(allSimulations.length / 2);
+  const medianSimulationData = allSimulations[medianIndex];
 
   return {
-    yearlyData: averageYearlyData,
+    yearlyData: medianSimulationData,
     summary: { bankruptcyRate },
   };
 }
