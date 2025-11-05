@@ -17,6 +17,7 @@ type DebugInfo = {
   savings_before?: number;
   shortfall?: number;
   savings_after?: number;
+  balances_before_withdrawal?: Record<string, AccountBucket>;
 };
 
 // ユーティリティ関数
@@ -623,8 +624,11 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
       replenishmentTriggered: false,
       savings_before: undefined,
       shortfall: undefined,
-      savings_after: undefined
+      savings_after: undefined,
+      balances_before_withdrawal: undefined
     };
+
+    debugInfo.balances_before_withdrawal = JSON.parse(JSON.stringify(productBalances));
 
     if (savings < emergencyFund) {
       const shortfall = emergencyFund - savings;
