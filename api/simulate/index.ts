@@ -17,7 +17,7 @@ type DebugInfo = {
   savings_before?: number;
   shortfall?: number;
   savings_after?: number;
-  balances_before_withdrawal?: Record<string, AccountBucket>;
+  totalInvestmentPrincipal_before_push?: number;
 };
 
 // ユーティリティ関数
@@ -625,10 +625,8 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
       savings_before: undefined,
       shortfall: undefined,
       savings_after: undefined,
-      balances_before_withdrawal: undefined
+      totalInvestmentPrincipal_before_push: undefined
     };
-
-    debugInfo.balances_before_withdrawal = JSON.parse(JSON.stringify(productBalances));
 
     if (savings < emergencyFund) {
       const shortfall = emergencyFund - savings;
@@ -690,6 +688,8 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
     });
 
     const totalAssets = savings + nisa.balance + ideco.balance + taxable.balance;
+
+    debugInfo.totalInvestmentPrincipal_before_push = totalInvestmentPrincipal;
 
     yearlyData.push({
       year,
