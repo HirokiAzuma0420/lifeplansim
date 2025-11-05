@@ -11,15 +11,13 @@ export function computeNetAnnual(grossAnnualIncome: number): number {
 
   let salaryIncomeDeduction: number;
   if (income <= FC.SALARY_INCOME_DEDUCTION_BRACKETS[0][0]) {
-    salaryIncomeDeduction = FC.SALARY_INCOME_DEDUCTION_MIN;
+    salaryIncomeDeduction = FC.SALARY_INCOME_DEDUCTION_BRACKETS[0][2];
   } else if (income <= FC.SALARY_INCOME_DEDUCTION_BRACKETS[1][0]) {
-    salaryIncomeDeduction = income * FC.SALARY_INCOME_DEDUCTION_BRACKETS[1][1] - FC.SALARY_INCOME_DEDUCTION_BRACKETS[1][2];
+    salaryIncomeDeduction = income * FC.SALARY_INCOME_DEDUCTION_BRACKETS[1][1] + FC.SALARY_INCOME_DEDUCTION_BRACKETS[1][2];
   } else if (income <= FC.SALARY_INCOME_DEDUCTION_BRACKETS[2][0]) {
     salaryIncomeDeduction = income * FC.SALARY_INCOME_DEDUCTION_BRACKETS[2][1] + FC.SALARY_INCOME_DEDUCTION_BRACKETS[2][2];
   } else if (income <= FC.SALARY_INCOME_DEDUCTION_BRACKETS[3][0]) {
     salaryIncomeDeduction = income * FC.SALARY_INCOME_DEDUCTION_BRACKETS[3][1] + FC.SALARY_INCOME_DEDUCTION_BRACKETS[3][2];
-  } else if (income <= FC.SALARY_INCOME_DEDUCTION_BRACKETS[4][0]) {
-    salaryIncomeDeduction = income * FC.SALARY_INCOME_DEDUCTION_BRACKETS[4][1] + FC.SALARY_INCOME_DEDUCTION_BRACKETS[4][2];
   } else {
     salaryIncomeDeduction = FC.SALARY_INCOME_DEDUCTION_MAX;
   }
@@ -27,21 +25,12 @@ export function computeNetAnnual(grossAnnualIncome: number): number {
   const socialInsurancePremium = income * FC.SOCIAL_INSURANCE_RATE;
   const taxableIncome = Math.max(0, income - salaryIncomeDeduction - socialInsurancePremium - FC.BASIC_DEDUCTION);
 
-  let incomeTax: number;
-  if (taxableIncome <= FC.INCOME_TAX_BRACKETS[0][0]) {
-    incomeTax = taxableIncome * FC.INCOME_TAX_BRACKETS[0][1] - FC.INCOME_TAX_BRACKETS[0][2];
-  } else if (taxableIncome <= FC.INCOME_TAX_BRACKETS[1][0]) {
-    incomeTax = taxableIncome * FC.INCOME_TAX_BRACKETS[1][1] - FC.INCOME_TAX_BRACKETS[1][2];
-  } else if (taxableIncome <= FC.INCOME_TAX_BRACKETS[2][0]) {
-    incomeTax = taxableIncome * FC.INCOME_TAX_BRACKETS[2][1] - FC.INCOME_TAX_BRACKETS[2][2];
-  } else if (taxableIncome <= FC.INCOME_TAX_BRACKETS[3][0]) {
-    incomeTax = taxableIncome * FC.INCOME_TAX_BRACKETS[3][1] - FC.INCOME_TAX_BRACKETS[3][2];
-  } else if (taxableIncome <= FC.INCOME_TAX_BRACKETS[4][0]) {
-    incomeTax = taxableIncome * FC.INCOME_TAX_BRACKETS[4][1] - FC.INCOME_TAX_BRACKETS[4][2];
-  } else if (taxableIncome <= FC.INCOME_TAX_BRACKETS[5][0]) {
-    incomeTax = taxableIncome * FC.INCOME_TAX_BRACKETS[5][1] - FC.INCOME_TAX_BRACKETS[5][2];
-  } else {
-    incomeTax = taxableIncome * 0.45 - 4796000; // 4000万超
+  let incomeTax: number = 0;
+  for (const bracket of FC.INCOME_TAX_BRACKETS) {
+    if (taxableIncome <= bracket[0]) {
+      incomeTax = taxableIncome * bracket[1] - bracket[2];
+      break;
+    }
   }
 
   const residentTax = taxableIncome * FC.RESIDENT_TAX_RATE + FC.RESIDENT_TAX_FLAT_AMOUNT;

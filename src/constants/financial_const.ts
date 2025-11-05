@@ -214,13 +214,11 @@ export const RESIDENT_TAX_FLAT_AMOUNT = 5000;
  * [上限金額, 料率, 控除額]
  */
 export const SALARY_INCOME_DEDUCTION_BRACKETS: [number, number, number][] = [
-  [1_625_000, 0.4, 100_000], // 162.5万以下は55万固定だが、計算式に合わせる
-  [1_800_000, 0.4, 100_000],
+  [1_900_000, 0, 650_000],
   [3_600_000, 0.3, 80_000],
   [6_600_000, 0.2, 440_000],
   [8_500_000, 0.1, 1_100_000],
 ];
-export const SALARY_INCOME_DEDUCTION_MIN = 550_000;
 export const SALARY_INCOME_DEDUCTION_MAX = 1_950_000;
 
 /**
@@ -234,6 +232,7 @@ export const INCOME_TAX_BRACKETS: [number, number, number][] = [
   [9_000_000, 0.23, 636_000],
   [18_000_000, 0.33, 1_536_000],
   [40_000_000, 0.40, 2_796_000],
+  [Infinity, 0.45, 4_796_000],
 ];
 
 /**
