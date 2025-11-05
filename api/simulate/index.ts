@@ -750,7 +750,11 @@ export default async function(req: VercelRequest, res: VercelResponse) {
 
   let resultData: YearlyData[];
 
-  if (params.interestScenario === '固定利回り') {
+  const isDebugRun = req.query?.debug_run === 'true';
+
+  if (isDebugRun) {
+    resultData = runSimulation(params);
+  } else if (params.interestScenario === '固定利回り') {
     resultData = runSimulation(params);
   } else {
     resultData = runMonteCarloSimulation(params, FC.MONTE_CARLO_SIMULATION_COUNT);
