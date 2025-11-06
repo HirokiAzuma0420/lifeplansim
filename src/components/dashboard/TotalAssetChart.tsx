@@ -22,6 +22,29 @@ interface LabelProps {
   index: number;
 }
 
+// Y軸のカスタムティック
+interface CustomizedYAxisTickProps {
+  x?: number;
+  y?: number;
+  payload?: {
+    value: string | number;
+  };
+}
+
+const CustomizedYAxisTick: React.FC<CustomizedYAxisTickProps> = ({ x = 0, y = 0, payload }) => {
+  if (payload) {
+    const value = Math.round(Number(payload.value) / 10000);
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <text x={0} y={0} dy={4} textAnchor="end" fill="#666" fontSize={12}>
+          {value.toLocaleString()}<tspan fontSize={10} dy={-1}>万円</tspan>
+        </text>
+      </g>
+    );
+  }
+  return null;
+};
+
 const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameType>) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload as EnrichedYearlyAsset;
@@ -166,15 +189,15 @@ export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, r
         <AreaChart
           data={dataWithDiff}
           margin={{
-            top: 20,
-            right: 30,
-            left: 20,
-            bottom: 30,
+            top: 40,
+            right: 40,
+            left: 60,
+            bottom: 40,
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="year" />
-          <YAxis tickFormatter={(value) => `${Math.round(Number(value) / 10000)}万円`} domain={[0, yAxisMax]} />
+          <YAxis tick={<CustomizedYAxisTick />} domain={[0, yAxisMax]} />
           <Tooltip content={<CustomTooltip />} />
           <Legend wrapperStyle={{ bottom: 5 }} />
           {assetKeys.map((key) => (
