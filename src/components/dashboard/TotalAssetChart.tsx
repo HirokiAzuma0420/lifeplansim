@@ -191,7 +191,7 @@ export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, r
           margin={{
             top: 40,
             right: 40,
-            left: 60,
+            left: 40,
             bottom: 40,
           }}
         >
