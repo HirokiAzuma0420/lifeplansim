@@ -40,6 +40,8 @@ export interface YearlyData {
     spouse: number;
     investment: number;
     oneTime?: number;
+    publicPension?: number;
+    personalPension?: number;
   };
   expense: number;
   expenseDetail: {

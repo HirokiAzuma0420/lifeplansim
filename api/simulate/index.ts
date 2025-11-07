@@ -427,14 +427,8 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
     if (retirementIncomes.length > 0) {
       const totalRetirementIncome = retirementIncomes.reduce((sum, income) => sum + income.amount, 0);
       const maxYearsOfService = retirementIncomes.reduce((max, income) => Math.max(max, income.yearsOfService || 0), 0);
-      const totalTax = calculateRetirementIncomeTax(totalRetirementIncome, maxYearsOfService);
-
-      // 税金を按分し、手取り額を oneTimeIncomeThisYear に加算
-      retirementIncomes.forEach(income => {
-        const taxRatio = totalRetirementIncome > 0 ? income.amount / totalRetirementIncome : 0;
-        const tax = totalTax * taxRatio;
-        oneTimeIncomeThisYear += income.amount - tax;
-      });
+      const netTotalRetirementIncome = totalRetirementIncome - calculateRetirementIncomeTax(totalRetirementIncome, maxYearsOfService);
+      oneTimeIncomeThisYear += netTotalRetirementIncome;
     }
 
     // 個人年金・その他一時金の処理
@@ -781,6 +775,8 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
         spouse: Math.round(computeNetAnnual(spouseGrossIncome) * yearFraction),
         investment: Math.round(investmentIncome),
         oneTime: Math.round(oneTimeIncomeThisYear),
+        publicPension: Math.round(pensionAnnual),
+        personalPension: Math.round(personalPensionIncome),
       },
       expense: Math.round(totalExpense),
       expenseDetail: {
