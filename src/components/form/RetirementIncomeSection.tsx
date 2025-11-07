@@ -40,7 +40,7 @@ const FormInput: React.FC<React.InputHTMLAttributes<HTMLInputElement> & { label:
   </div>
 );
 
-const FormNumberInput: React.FC<React.InputHTMLAttributes<HTMLInputElement> & { label: string; error?: string; unit?: string }> = (props) => <FormInput type="number" {...props} />;
+const FormNumberInput: React.FC<React.InputHTMLAttributes<HTMLInputElement> & { label: string; error?: string; unit?: string }> = (props) => <FormInput type="number" step="1" {...props} />;
 
 const FormSelect: React.FC<React.SelectHTMLAttributes<HTMLSelectElement> & { label: string; error?: string; children: React.ReactNode }> = ({ label, name, value, onChange, error, children }) => (
   <div className="mb-4">
@@ -55,10 +55,9 @@ const FormSelect: React.FC<React.SelectHTMLAttributes<HTMLSelectElement> & { lab
 const PersonRetirementIncomeForm: React.FC<{
   personPrefix: '' | 'spouse';
   formData: FormDataState;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   setFormData: React.Dispatch<React.SetStateAction<FormDataState>>;
   errors: Record<string, string>;
-}> = ({ personPrefix, formData, handleInputChange, setFormData, errors }) => {
+}> = ({ personPrefix, formData, setFormData, errors }) => {
 
   const retirementIncomeKey = personPrefix ? 'spouseRetirementIncome' : 'retirementIncome';
   const hasRetirementIncome = !!formData[retirementIncomeKey];
@@ -105,6 +104,16 @@ const PersonRetirementIncomeForm: React.FC<{
     });
   };
 
+  const handleObjectChange = (key: 'retirementIncome' | 'spouseRetirementIncome', field: string, value: string | number) => {
+    setFormData(prev => ({
+      ...prev,
+      [key]: {
+        ...prev[key],
+        [field]: value,
+      },
+    }));
+  };
+
   return (
     <div className="space-y-6">
       {/* 退職金 */}
@@ -116,9 +125,9 @@ const PersonRetirementIncomeForm: React.FC<{
         />
         {hasRetirementIncome && (
           <div className="mt-4 space-y-4 pl-4 border-l-2">
-            <FormNumberInput unit="万円" name={`${retirementIncomeKey}.amount`} value={formData[retirementIncomeKey]?.amount || ''} onChange={handleInputChange} label="受取額" error={errors[`${retirementIncomeKey}.amount`]} />
-            <FormNumberInput unit="歳" name={`${retirementIncomeKey}.age`} value={formData[retirementIncomeKey]?.age || ''} onChange={handleInputChange} label="受取年齢" error={errors[`${retirementIncomeKey}.age`]} />
-            <FormNumberInput unit="年" name={`${retirementIncomeKey}.yearsOfService`} value={formData[retirementIncomeKey]?.yearsOfService || ''} onChange={handleInputChange} label="退職時点の勤続年数" error={errors[`${retirementIncomeKey}.yearsOfService`]} />
+            <FormNumberInput unit="万円" name={`${retirementIncomeKey}.amount`} value={formData[retirementIncomeKey]?.amount || ''} onChange={(e) => handleObjectChange(retirementIncomeKey, 'amount', e.target.value)} label="受取額" error={errors[`${retirementIncomeKey}.amount`]} />
+            <FormNumberInput unit="歳" name={`${retirementIncomeKey}.age`} value={formData[retirementIncomeKey]?.age || ''} onChange={(e) => handleObjectChange(retirementIncomeKey, 'age', e.target.value)} label="受取年齢" error={errors[`${retirementIncomeKey}.age`]} />
+            <FormNumberInput unit="年" name={`${retirementIncomeKey}.yearsOfService`} value={formData[retirementIncomeKey]?.yearsOfService || ''} onChange={(e) => handleObjectChange(retirementIncomeKey, 'yearsOfService', e.target.value)} label="退職時点の勤続年数" error={errors[`${retirementIncomeKey}.yearsOfService`]} />
           </div>
         )}
       </div>
@@ -193,7 +202,7 @@ const PersonRetirementIncomeForm: React.FC<{
   );
 };
 
-export default function RetirementIncomeSection({ formData, handleInputChange, setFormData, errors }: RetirementIncomeSectionProps) {
+export default function RetirementIncomeSection({ formData, setFormData, errors }: RetirementIncomeSectionProps) {
   const [activeTab, setActiveTab] = useState<'main' | 'spouse'>('main');
   const showSpouseTab = formData.familyComposition === '既婚' || formData.planToMarry === 'する';
 
@@ -239,7 +248,6 @@ export default function RetirementIncomeSection({ formData, handleInputChange, s
           <PersonRetirementIncomeForm
             personPrefix=""
             formData={formData}
-            handleInputChange={handleInputChange}
             setFormData={setFormData}
             errors={errors}
           />
@@ -248,7 +256,6 @@ export default function RetirementIncomeSection({ formData, handleInputChange, s
           <PersonRetirementIncomeForm
             personPrefix="spouse"
             formData={formData}
-            handleInputChange={handleInputChange}
             setFormData={setFormData}
             errors={errors}
           />

@@ -502,6 +502,20 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
     }
     const annualIncome = (computeNetAnnual(selfGrossIncome - idecoDeductionThisYear) + computeNetAnnual(spouseGrossIncome)) * yearFraction + pensionAnnual + personalPensionIncome;
 
+    let childExpense = 0;
+    if (params.children) {
+      const { count, firstBornAge, educationPattern } = params.children;
+      if (educationPattern === '公立中心' || educationPattern === '公私混合' || educationPattern === '私立中心') {
+        for (let j = 0; j < n(count); j++) {
+          const childBirthYearInSim = n(firstBornAge) - params.initialAge + j * 3;
+          const childAge = i - childBirthYearInSim;
+          if (childAge >= 0 && childAge <= 22) {
+            childExpense += getAnnualChildCost(childAge, educationPattern) * yearFraction;
+          }
+        }
+      }
+    }
+
     // 1b. 支出
     let livingExpense = 0;
     if (currentAge >= params.retirementAge) {
@@ -518,20 +532,6 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
     // retirementGapの計算用に、年金と老後生活費の差額を計算
     const postRetirementLivingCostForGap = currentAge >= params.retirementAge ? n(params.postRetirementLiving10kJPY) * FC.YEN_PER_MAN * FC.MONTHS_PER_YEAR : 0;
     const retirementGap = Math.max(0, postRetirementLivingCostForGap - pensionAnnual);
-
-    let childExpense = 0;
-    if (params.children) {
-      const { count, firstBornAge, educationPattern } = params.children;
-      if (educationPattern === '公立中心' || educationPattern === '公私混合' || educationPattern === '私立中心') {
-        for (let j = 0; j < n(count); j++) {
-          const childBirthYearInSim = n(firstBornAge) - params.initialAge + j * 3;
-          const childAge = i - childBirthYearInSim;
-          if (childAge >= 0 && childAge <= 22) {
-            childExpense += getAnnualChildCost(childAge, educationPattern) * yearFraction;
-          }
-        }
-      }
-    }
     let careExpense = 0;
     if (Array.isArray(params.cares)) {
       params.cares.forEach((plan: CarePlan) => {

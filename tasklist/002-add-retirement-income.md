@@ -1,8 +1,8 @@
 # TASK-002: 退職金・個人年金等の一時金収入と退職所得控除の対応
 
-- **ステータス**: 未着手
-- **担当者**: (未定)
-- **期日**: (未定)
+- **ステータス**: 完了
+- **担当者**: Gemini
+- **期日**: 2025/11/07
 - **関連コンポーネント**:
   - `src/pages/FormPage.tsx`
   - `src/components/form/RetirementIncomeSection.tsx` (新規作成)
