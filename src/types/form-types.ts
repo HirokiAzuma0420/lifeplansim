@@ -185,6 +185,12 @@ export interface FormDataState {
   // その他一時金
   otherLumpSums: OtherLumpSum[];
   spouseOtherLumpSums: OtherLumpSum[];
+
+  // 定年再雇用
+  assumeReemployment?: boolean;
+  reemploymentReductionRate?: string;
+  spouseAssumeReemployment?: boolean;
+  spouseReemploymentReductionRate?: string;
 }
 
 export type FormLocationState = { rawFormData?: FormDataState; sectionIndex?: number };

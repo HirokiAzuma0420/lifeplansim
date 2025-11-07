@@ -179,6 +179,16 @@ export interface SimulationInputParams {
   spousePersonalPensionPlans?: PersonalPensionPlanParams[];
   otherLumpSums?: OtherLumpSumParams[];
   spouseOtherLumpSums?: OtherLumpSumParams[];
+
+  // 定年再雇用
+  reemployment?: {
+    startAge: number; // 60歳固定
+    reductionRate: number; // 0.0 ~ 1.0 の数値 (例: 30%減給なら 0.3)
+  };
+  spouseReemployment?: {
+    startAge: number; // 60歳固定
+    reductionRate: number; // 0.0 ~ 1.0 の数値 (例: 30%減給なら 0.3)
+  };
 }
 
 export interface SimulationNavigationState {

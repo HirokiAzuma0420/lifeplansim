@@ -11,6 +11,7 @@ import AccordionCard from '../components/dashboard/AccordionCard.tsx';
 import { getAssetGrade } from '../assets/getAssetGrade.ts';
 import { buildDashboardDataset } from '../utils/dashboard-helper.ts';
 import type { SimulationInputParams, YearlyData, InvestmentProduct } from '../types/simulation-types';
+import { n } from '../utils/financial.ts';
 import { useOrientation } from '../hooks/useOrientation';
 import sampleInput from '../../sample/input_sample.json';
 import type { FormDataState, SimulationResult } from '../types/form-types';
@@ -52,11 +53,6 @@ export default function SamplePage() {
       setError(null);
       try {
         // FormPage.tsxからデータ変換ロジックを移植
-        const n = (v: unknown): number => {
-          const num = Number(v);
-          return isFinite(num) ? num : 0;
-        };
-
         const formData: FormDataState = sampleInput as unknown as FormDataState; // formData を FormDataState で型付け
 
         const mainJobIncomeGross = n(formData.mainIncome) * 10000;
@@ -206,11 +202,6 @@ export default function SamplePage() {
       </div>
     );
   }
-
-  const n = (v: unknown): number => { // n関数をトップレベルに移動
-    const num = Number(v);
-    return isFinite(num) ? num : 0;
-  };
 
   const currentAge = inputParams.initialAge || dataset.firstYear?.age || 0;
   const retireAge = inputParams.retirementAge || currentAge;

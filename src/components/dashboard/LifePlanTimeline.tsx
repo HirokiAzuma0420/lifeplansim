@@ -2,6 +2,7 @@ import React from 'react';
 import type { FormDataState } from '../../types/form-types';
 import type { YearlyData } from '../../types/simulation-types';
 import {
+  // n, // `n` は `lucide-react` からではなく、`../../utils/financial` からインポートします。
   Home,
   Car,
   Heart,
@@ -19,6 +20,7 @@ import {
   Users,
   Wrench,
 } from 'lucide-react';
+import { n } from '../../utils/financial';
 
 const formatYen = (value: number | string | undefined, sign = false) => {
   const num = Number(value);
@@ -31,11 +33,6 @@ const formatManYen = (value: number | string | undefined) => {
   const num = Number(value);
   if (value === undefined || isNaN(num)) return '未設定';
   return `${Math.round(num * 10000).toLocaleString()} 円`;
-};
-
-const n = (v: unknown): number => {
-  const num = Number(v);
-  return isFinite(num) ? num : 0;
 };
 
 const EventIcon: React.FC<{ iconKey: string }> = ({ iconKey }) => {

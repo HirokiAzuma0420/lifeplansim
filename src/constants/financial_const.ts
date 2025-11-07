@@ -251,3 +251,8 @@ export const POST_MARRIAGE_COST_INCREASE_RATE = {
   LIVING: 1.5,
   HOUSING: 1.3,
 };
+
+/**
+ * 定年再雇用の減給率
+ */
+export const DEFAULT_REEMPLOYMENT_REDUCTION_RATE_PERCENT = 30; // 30%減給

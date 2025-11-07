@@ -3,12 +3,7 @@ import { useLocation, type Location } from 'react-router-dom';
 import type { FormDataState, FormLocationState, InvestmentMonthlyAmounts } from '@/types/form-types';
 import type { CarePlan } from '@/types/simulation-types';
 import * as FC from '@/constants/financial_const';
-import { computeNetAnnual, calculateLoanPayment } from '@/utils/financial';
-
-const n = (v: unknown): number => {
-  const num = Number(v);
-  return isFinite(num) ? num : 0;
-};
+import { computeNetAnnual, calculateLoanPayment, n } from '@/utils/financial';
 
 const LIFE_PLAN_FORM_CACHE_KEY = 'lifePlanFormDataCache';
 
@@ -148,6 +143,11 @@ const createDefaultFormData = (): FormDataState => ({
   spousePersonalPensionPlans: [],
   otherLumpSums: [],
   spouseOtherLumpSums: [],
+  // 定年再雇用
+  assumeReemployment: false,
+  reemploymentReductionRate: String(FC.DEFAULT_REEMPLOYMENT_REDUCTION_RATE_PERCENT),
+  spouseAssumeReemployment: false,
+  spouseReemploymentReductionRate: String(FC.DEFAULT_REEMPLOYMENT_REDUCTION_RATE_PERCENT),
 });
 
 export const useFormState = () => {
@@ -265,9 +265,17 @@ export const useFormState = () => {
   }, [initialStateFromLocation]); // Run once on mount, or when initialStateFromLocation changes
 
   // Input handlers
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = useCallback((
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> | { target: { name: string; type: string; value: string | boolean; checked?: boolean } }
+  ) => {
     const { name, type } = e.target;
-    const value = type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
+    let value: string | number | boolean;
+
+    if (type === 'checkbox') {
+      value = (e.target as HTMLInputElement).checked;
+    } else {
+      value = e.target.value;
+    }
 
     if (name.startsWith('houseRenovationPlans')) {
       const indices = name.match(/\d+/g);
@@ -299,7 +307,13 @@ export const useFormState = () => {
       }));
     } else {
       const isNumericField = type === 'number' && name !== 'stressTestSeed';
-      const valueToSet = isNumericField ? (value === '' ? '' : Number(value)) : value;
+      let valueToSet: string | number | boolean = value; // Explicitly type to allow boolean
+      if (isNumericField) {
+        valueToSet = value === '' ? '' : Number(value);
+      } else if (type === 'radio' && typeof value === 'string' && (value === 'true' || value === 'false')) {
+        valueToSet = value === 'true'; // Convert string 'true'/'false' to boolean
+      }
+
       setFormData(prev => {
         const newState = { ...prev, [name]: valueToSet };
         if (name === 'livingCostAfterMarriage') {

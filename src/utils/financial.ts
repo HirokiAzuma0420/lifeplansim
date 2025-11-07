@@ -1,5 +1,10 @@
 import * as FC from '../../src/constants/financial_const';
 
+export const n = (v: unknown): number => {
+  const num = Number(v);
+  return isFinite(num) ? num : 0;
+};
+
 /**
  * 額面年収から手取り年収を概算します。
  * @param grossAnnualIncome 額面年収（円）

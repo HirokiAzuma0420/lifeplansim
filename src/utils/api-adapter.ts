@@ -1,11 +1,7 @@
 import type { SimulationInputParams } from '@/types/simulation-types';
 import type { FormDataState } from '@/types/form-types';
 import * as FC from '@/constants/financial_const';
-
-const n = (v: unknown): number => {
-  const num = Number(v);
-  return isFinite(num) ? num : 0;
-};
+import { n } from './financial';
 
 export const createApiParams = (formData: FormDataState): SimulationInputParams => {
   const mainJobIncomeGross = n(formData.mainIncome) * FC.YEN_PER_MAN;
