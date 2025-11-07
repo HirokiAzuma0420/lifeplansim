@@ -212,9 +212,11 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
       });
     }
     if (formData.spouseRetirementIncome && n(formData.spouseRetirementIncome.age) > 0) {
+      // パートナーのイベント発生年齢を、本人の年齢タイムラインに換算する
       const spouseBaseAge = formData.familyComposition === '既婚' ? n(formData.spouseAge) : n(formData.spouseAgeAtMarriage);
       const ageDiff = n(formData.spouseRetirementIncome.age) - spouseBaseAge;
       const eventAgeOnPersonTimeline = n(formData.personAge) + ageDiff;
+
       allEvents.push({
         age: eventAgeOnPersonTimeline,
         iconKey: 'retirement',
