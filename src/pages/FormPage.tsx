@@ -470,12 +470,14 @@ export default function FormPage() {
 
     if (formData.familyComposition === '既婚' || formData.planToMarry === 'する') {
       const personAge = n(formData.personAge);
-      const spouseCurrentAge = formData.familyComposition === '既婚' ? n(formData.spouseAge) : n(formData.spouseAgeAtMarriage);
+      const spouseBaseAge = formData.familyComposition === '既婚' ? n(formData.spouseAge) : n(formData.spouseAgeAtMarriage);
       const spouseRetirementTargetAge = n(formData.spouseRetirementAge);
       const spousePensionStartTargetAge = n(formData.spousePensionStartAge);
       const spousePensionNetIncome = n(formData.spousePensionAmount) * FC.YEN_PER_MAN * FC.MONTHS_PER_YEAR;
+      const currentSpouseNetIncome = formData.familyComposition === '既婚' ? computeNetAnnual((n(formData.spouseMainIncome) + n(formData.spouseSideJobIncome)) * FC.YEN_PER_MAN) : 0;
+
       const spouseBaseNetIncome = (() => {
-        if (formData.planToMarry === 'する') {
+        if (formData.planToMarry === 'する' && formData.familyComposition !== '既婚') {
           if (formData.spouseIncomePattern === 'パート') return computeNetAnnual(FC.SPOUSE_INCOME_PATTERNS.PART_TIME);
           if (formData.spouseIncomePattern === '正社員') return computeNetAnnual(FC.SPOUSE_INCOME_PATTERNS.FULL_TIME);
           if (formData.spouseIncomePattern === 'カスタム') return computeNetAnnual(n(formData.spouseCustomIncome) * FC.YEN_PER_MAN);
@@ -483,8 +485,12 @@ export default function FormPage() {
         }
         return currentSpouseNetIncome;
       })();
-      const spouseRetirementAgeOnPersonTimeline = personAge + (spouseRetirementTargetAge - spouseCurrentAge);
-      const spousePensionStartAgeOnPersonTimeline = personAge + (spousePensionStartTargetAge - spouseCurrentAge);
+
+      const retirementAgeDiff = spouseRetirementTargetAge - spouseBaseAge;
+      const spouseRetirementAgeOnPersonTimeline = personAge + retirementAgeDiff;
+
+      const pensionAgeDiff = spousePensionStartTargetAge - spouseBaseAge;
+      const spousePensionStartAgeOnPersonTimeline = personAge + pensionAgeDiff;
 
       if (spouseBaseNetIncome > 0) {
         incomeEvents.push({

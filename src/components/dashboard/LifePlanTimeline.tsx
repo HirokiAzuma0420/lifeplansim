@@ -155,7 +155,10 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
       details: [{ label: '給与収入が停止', value: '' }],
     });
     if (formData.familyComposition === '既婚' || formData.planToMarry === 'する') {
-      const spouseRetirementAgeOnPersonTimeline = n(formData.personAge) + (n(formData.spouseRetirementAge) - (formData.familyComposition === '既婚' ? n(formData.spouseAge) : n(formData.spouseAgeAtMarriage)));
+      const spouseBaseAge = formData.familyComposition === '既婚' ? n(formData.spouseAge) : n(formData.spouseAgeAtMarriage);
+      const ageDiff = n(formData.spouseRetirementAge) - spouseBaseAge;
+      const spouseRetirementAgeOnPersonTimeline = n(formData.personAge) + ageDiff;
+
       allEvents.push({
         age: spouseRetirementAgeOnPersonTimeline,
         iconKey: 'retirement',
@@ -172,7 +175,10 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
       details: [{ label: '月額', value: formatManYen(formData.pensionAmount) }],
     });
     if (formData.familyComposition === '既婚' || formData.planToMarry === 'する') {
-      const spousePensionStartAgeOnPersonTimeline = n(formData.personAge) + (n(formData.spousePensionStartAge) - (formData.familyComposition === '既婚' ? n(formData.spouseAge) : n(formData.spouseAgeAtMarriage)));
+      const spouseBaseAge = formData.familyComposition === '既婚' ? n(formData.spouseAge) : n(formData.spouseAgeAtMarriage);
+      const ageDiff = n(formData.spousePensionStartAge) - spouseBaseAge;
+      const spousePensionStartAgeOnPersonTimeline = n(formData.personAge) + ageDiff;
+
       allEvents.push({
         age: spousePensionStartAgeOnPersonTimeline,
         iconKey: 'pension',
