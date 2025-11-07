@@ -27,8 +27,8 @@
   "carPrice": 400,
   "carReplacementFrequency": 10,
   "carLoanUsage": "はい",
-  "carLoanYears": "7",
-  "carLoanType": "ディーラーローン",
+  "carLoanYears": "5",
+  "carLoanType": "銀行ローン",
   "housingType": "賃貸",
   "carCurrentLoanInPayment": "yes",
   "carCurrentLoanMonthly": 29600,
@@ -41,13 +41,7 @@
     "loanYears": 10,
     "interestRate": 2
   },
-  "houseRenovationPlans": [
-    {
-      "age": 61,
-      "cost": 100,
-      "cycleYears": 10
-    }
-  ],
+  "houseRenovationPlans": [],
   "housePurchaseAge": "",
   "housePurchasePrice": "",
   "headDownPayment": "",
@@ -56,8 +50,8 @@
   "housingLoanInterestRate": "",
   "housingLoanStatus": "",
   "loanOriginalAmount": "",
-  "loanMonthlyPayment": 80000,
-  "loanRemainingYears": 34,
+  "loanMonthlyPayment": "",
+  "loanRemainingYears": "",
   "loanInterestRate": "",
   "planToMarry": "",
   "spouseAgeAtMarriage": "",
@@ -73,24 +67,24 @@
   "honeymoonCost": "35",
   "newHomeMovingCost": "50",
   "hasChildren": "いいえ",
-  "numberOfChildren": 1,
-  "firstBornAge": 36,
-  "educationPattern": "公立中心",
+  "numberOfChildren": "",
+  "firstBornAge": "",
+  "educationPattern": "",
   "currentRentLoanPayment": 61000,
   "otherLargeExpenses": "",
   "parentCareAssumption": "はい",
   "parentCarePlans": [
     {
-      "id": 1762089831993,
-      "parentCurrentAge": 72,
+      "id": 1762483511659,
+      "parentCurrentAge": 73,
       "parentCareStartAge": 85,
-      "monthly10kJPY": 10,
+      "monthly10kJPY": 3,
       "years": 5
     }
   ],
   "retirementAge": "65",
   "postRetirementLivingCost": 30,
-  "spouseRetirementAge": 55,
+  "spouseRetirementAge": "65",
   "spousePensionStartAge": "65",
   "spousePensionAmount": 9,
   "pensionStartAge": "65",
@@ -99,9 +93,9 @@
   "monthlySavings": 20000,
   "hasInvestment": "",
   "investmentStocksCurrent": 300,
-  "investmentTrustCurrent": 470,
+  "investmentTrustCurrent": 480,
   "investmentBondsCurrent": "",
-  "investmentIdecoCurrent": 57,
+  "investmentIdecoCurrent": 60,
   "investmentCryptoCurrent": "",
   "investmentOtherCurrent": "",
   "investmentStocksAccountType": "taxable",
@@ -127,10 +121,10 @@
   "investmentIdecoRate": "4",
   "investmentCryptoRate": "8",
   "investmentOtherRate": "0.5",
-  "simulationPeriodAge": 100,
+  "simulationPeriodAge": "90",
   "interestRateScenario": "ランダム変動",
   "fixedInterestRate": "5",
-  "emergencyFund": 340,
+  "emergencyFund": "300",
   "stressTestSeed": "",
   "appliances": [
     {
@@ -166,5 +160,38 @@
   ],
   "annualRaiseRate": "0.8",
   "spouseAnnualRaiseRate": "0",
-  "useSpouseNisa": true
+  "useSpouseNisa": false,
+  "retirementIncome": {
+    "amount": "400",
+    "age": "65",
+    "yearsOfService": "22"
+  },
+  "spouseRetirementIncome": null,
+  "personalPensionPlans": [
+    {
+      "id": 1762483599494,
+      "type": "lumpSum",
+      "amount": "330",
+      "startAge": "65",
+      "duration": ""
+    }
+  ],
+  "spousePersonalPensionPlans": [
+    {
+      "id": 1762483618642,
+      "type": "fixedTerm",
+      "amount": "62",
+      "startAge": "60",
+      "duration": "5"
+    },
+    {
+      "id": 1762483641129,
+      "type": "fixedTerm",
+      "amount": "31",
+      "startAge": "65",
+      "duration": "10"
+    }
+  ],
+  "otherLumpSums": [],
+  "spouseOtherLumpSums": []
 }

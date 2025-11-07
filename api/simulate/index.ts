@@ -328,6 +328,9 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
   let currentSelfGrossIncome = n(params.mainJobIncomeGross) + n(params.sideJobIncomeGross);
   let currentSpouseGrossIncome = (n(params.spouseMainJobIncomeGross) ?? 0) + (n(params.spouseSideJobIncomeGross) ?? 0);
 
+  // 一時金収入を計上するための変数を初期化
+  let oneTimeIncomeThisYear = 0;
+
   // ループ内で変更される状態変数
   for (let i = 0; currentAge <= params.endAge; i++, currentAge++) {
     const debugInfo: DebugInfo = {
@@ -349,6 +352,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
     };
     cumulativeNisaContribution -= nisaRecycleAmountForNextYear; // NISA枠復活
     let spouseGrossIncome = 0;
+    oneTimeIncomeThisYear = 0; // 年の初めにリセット
     nisaRecycleAmountForNextYear = 0; // 今年のリサイクル額計算のためにリセット
 
     const year = baseYear + i;
@@ -404,11 +408,11 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
 
           if (params.retirementIncome && params.retirementIncome.age === currentAge) {
             const selfRetirementTax = (params.retirementIncome.amountJPY / totalRetirementIncome) * totalTax;
-            savings += params.retirementIncome.amountJPY - selfRetirementTax;
+            oneTimeIncomeThisYear += params.retirementIncome.amountJPY - selfRetirementTax;
           }
           if (params.spouseRetirementIncome && spouseCurrentAge && params.spouseRetirementIncome.age === spouseCurrentAge) {
             const spouseRetirementTax = (params.spouseRetirementIncome.amountJPY / totalRetirementIncome) * totalTax;
-            savings += params.spouseRetirementIncome.amountJPY - spouseRetirementTax;
+            oneTimeIncomeThisYear += params.spouseRetirementIncome.amountJPY - spouseRetirementTax;
           }
         } else {
           savings += idecoAmount;
@@ -420,7 +424,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
     const processRetirementIncome = (ri: RetirementIncomeParams | undefined, targetAge: number) => {
       if (ri && ri.age === targetAge && ri.age !== idecoCashOutAge) {
         const tax = calculateRetirementIncomeTax(ri.amountJPY, ri.yearsOfService);
-        savings += ri.amountJPY - tax;
+        oneTimeIncomeThisYear += ri.amountJPY - tax;
       }
     };
     processRetirementIncome(params.retirementIncome, currentAge);
@@ -431,9 +435,9 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
       if (lumpSums) {
         lumpSums.forEach(p => {
           if ('age' in p && p.age === targetAge) { // OtherLumpSum
-            savings += p.amountJPY;
+            oneTimeIncomeThisYear += p.amountJPY;
           } else if ('startAge' in p && p.startAge === targetAge && p.type === 'lumpSum') { // PersonalPensionPlan
-            savings += p.amountJPY;
+            oneTimeIncomeThisYear += p.amountJPY;
           }
         });
       }
@@ -500,7 +504,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
         idecoDeductionThisYear += (n(p.recurringJPY) + n(p.spotJPY)) * yearFraction;
       });
     }
-    const annualIncome = (computeNetAnnual(selfGrossIncome - idecoDeductionThisYear) + computeNetAnnual(spouseGrossIncome)) * yearFraction + pensionAnnual + personalPensionIncome;
+    const annualIncome = (computeNetAnnual(selfGrossIncome - idecoDeductionThisYear) + computeNetAnnual(spouseGrossIncome)) * yearFraction + pensionAnnual + personalPensionIncome + oneTimeIncomeThisYear;
 
     let childExpense = 0;
     if (params.children) {
