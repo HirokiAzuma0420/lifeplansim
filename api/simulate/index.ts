@@ -329,8 +329,8 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
   let currentSpouseGrossIncome = (n(params.spouseMainJobIncomeGross) ?? 0) + (n(params.spouseSideJobIncomeGross) ?? 0);
 
   // 定年再雇用計算用の59歳時点の年収を保持する変数
-  let selfIncomeAt59: number | null = null;
-  let spouseIncomeAt59: number | null = null;
+  let selfGrossIncomeAt59: number | null = null;
+  let spouseGrossIncomeAt59: number | null = null;
 
   // 一時金収入を計上するための変数を初期化
   let oneTimeIncomeThisYear = 0;
@@ -365,19 +365,19 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
 
     // 59歳時点の年収を記録
     if (currentAge === 59) {
-      selfIncomeAt59 = currentSelfGrossIncome;
+      selfGrossIncomeAt59 = currentSelfGrossIncome;
     }
     if (spouseCurrentAge === 59) {
-      spouseIncomeAt59 = currentSpouseGrossIncome;
+      spouseGrossIncomeAt59 = currentSpouseGrossIncome;
     }
 
     // 収入の更新（昇給または再雇用による減給）
     if (i > 0) {
       // 本人の収入更新
       if (params.reemployment && currentAge >= params.reemployment.startAge && currentAge < params.retirementAge) {
-        // 再雇用期間中: 59歳時点の年収から減給
-        if (selfIncomeAt59 !== null) {
-          currentSelfGrossIncome = selfIncomeAt59 * (1 - params.reemployment.reductionRate);
+        // 再雇用期間中: 59歳時点の額面年収から減給
+        if (selfGrossIncomeAt59 !== null) {
+          currentSelfGrossIncome = selfGrossIncomeAt59 * (1 - params.reemployment.reductionRate);
         }
       } else if (currentAge < params.retirementAge) {
         // 通常の昇給
@@ -386,8 +386,8 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
 
       // 配偶者の収入更新
       if (params.spouseReemployment && spouseCurrentAge !== undefined && spouseCurrentAge >= params.spouseReemployment.startAge && params.spouseRetirementAge && spouseCurrentAge < n(params.spouseRetirementAge)) {
-        if (spouseIncomeAt59 !== null) {
-          currentSpouseGrossIncome = spouseIncomeAt59 * (1 - params.spouseReemployment.reductionRate);
+        if (spouseGrossIncomeAt59 !== null) {
+          currentSpouseGrossIncome = spouseGrossIncomeAt59 * (1 - params.spouseReemployment.reductionRate);
         }
       } else if (spouseCurrentAge !== undefined && params.spouseRetirementAge && spouseCurrentAge < n(params.spouseRetirementAge)) {
         currentSpouseGrossIncome *= (1 + (n(params.spouseIncomeGrowthRate) ?? 0));

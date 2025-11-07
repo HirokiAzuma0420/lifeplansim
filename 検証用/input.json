@@ -1,26 +1,26 @@
 {
   "familyComposition": "既婚",
-  "personAge": 37,
+  "personAge": 38,
   "spouseAge": 46,
   "mainIncome": 680,
   "spouseMainIncome": 280,
   "sideJobIncome": "0",
   "spouseSideJobIncome": "0",
-  "expenseMethod": "簡単",
-  "livingCostSimple": 300000,
+  "expenseMethod": "詳細",
+  "livingCostSimple": "",
   "housingCost": "",
-  "utilitiesCost": "",
-  "communicationCost": "",
+  "utilitiesCost": 20566,
+  "communicationCost": 6583,
   "carCost": "",
-  "insuranceCost": "",
-  "educationCost": "",
+  "insuranceCost": 21451,
+  "educationCost": 0,
   "otherFixedCost": "0",
-  "foodCost": "",
-  "dailyNecessitiesCost": "",
-  "transportationCost": "",
-  "clothingBeautyCost": "",
-  "socializingCost": "",
-  "hobbyEntertainmentCost": "",
+  "foodCost": 67275,
+  "dailyNecessitiesCost": 15917,
+  "transportationCost": 23778,
+  "clothingBeautyCost": 24105,
+  "socializingCost": 17925,
+  "hobbyEntertainmentCost": 78495,
   "otherVariableCost": "0",
   "carPurchasePlan": "yes",
   "carFirstReplacementAfterYears": 10,
@@ -41,7 +41,13 @@
     "loanYears": 10,
     "interestRate": 2
   },
-  "houseRenovationPlans": [],
+  "houseRenovationPlans": [
+    {
+      "age": 61,
+      "cost": 120,
+      "cycleYears": 10
+    }
+  ],
   "housePurchaseAge": "",
   "housePurchasePrice": "",
   "headDownPayment": "",
@@ -75,27 +81,27 @@
   "parentCareAssumption": "はい",
   "parentCarePlans": [
     {
-      "id": 1762483511659,
-      "parentCurrentAge": 73,
+      "id": 1762501340594,
+      "parentCurrentAge": 72,
       "parentCareStartAge": 85,
       "monthly10kJPY": 3,
       "years": 5
     }
   ],
-  "retirementAge": "65",
+  "retirementAge": 65,
   "postRetirementLivingCost": 30,
-  "spouseRetirementAge": "65",
+  "spouseRetirementAge": 55,
   "spousePensionStartAge": "65",
   "spousePensionAmount": 9,
   "pensionStartAge": "65",
   "pensionAmount": "15",
-  "currentSavings": 520,
+  "currentSavings": 486,
   "monthlySavings": 20000,
   "hasInvestment": "",
-  "investmentStocksCurrent": 300,
-  "investmentTrustCurrent": 480,
+  "investmentStocksCurrent": 304,
+  "investmentTrustCurrent": 485,
   "investmentBondsCurrent": "",
-  "investmentIdecoCurrent": 60,
+  "investmentIdecoCurrent": 58,
   "investmentCryptoCurrent": "",
   "investmentOtherCurrent": "",
   "investmentStocksAccountType": "taxable",
@@ -124,7 +130,7 @@
   "simulationPeriodAge": "90",
   "interestRateScenario": "ランダム変動",
   "fixedInterestRate": "5",
-  "emergencyFund": "300",
+  "emergencyFund": 340,
   "stressTestSeed": "",
   "appliances": [
     {
@@ -143,7 +149,7 @@
       "name": "エアコン",
       "cycle": 10,
       "cost": 10,
-      "firstReplacementAfterYears": 14
+      "firstReplacementAfterYears": 13
     },
     {
       "name": "電子レンジ",
@@ -162,14 +168,14 @@
   "spouseAnnualRaiseRate": "0",
   "useSpouseNisa": false,
   "retirementIncome": {
-    "amount": "400",
-    "age": "65",
+    "amount": "300",
+    "age": "60",
     "yearsOfService": "22"
   },
   "spouseRetirementIncome": null,
   "personalPensionPlans": [
     {
-      "id": 1762483599494,
+      "id": 1762501749182,
       "type": "lumpSum",
       "amount": "330",
       "startAge": "65",
@@ -178,14 +184,14 @@
   ],
   "spousePersonalPensionPlans": [
     {
-      "id": 1762483618642,
+      "id": 1762501760778,
       "type": "fixedTerm",
       "amount": "62",
       "startAge": "60",
       "duration": "5"
     },
     {
-      "id": 1762483641129,
+      "id": 1762501772926,
       "type": "fixedTerm",
       "amount": "31",
       "startAge": "65",
@@ -193,5 +199,7 @@
     }
   ],
   "otherLumpSums": [],
-  "spouseOtherLumpSums": []
+  "spouseOtherLumpSums": [],
+  "assumeReemployment": true,
+  "reemploymentReductionRate": 30
 }
