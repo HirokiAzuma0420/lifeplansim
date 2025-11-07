@@ -2,8 +2,8 @@
 type VercelRequest = { method?: string; body?: unknown; query?: Record<string, unknown> };
 type VercelResponse = { status: (code: number) => { json: (data: unknown) => void } };
 import * as FC from '../../src/constants/financial_const';
-import { computeNetAnnual, calculateLoanPayment as calculateLoanPaymentShared } from '../../src/utils/financial';
-import type { InvestmentProduct, SimulationInputParams, AccountBucket, YearlyData, CarePlan } from '../../src/types/simulation-types';
+import { computeNetAnnual, calculateLoanPayment as calculateLoanPaymentShared, calculateRetirementIncomeTax } from '../../src/utils/financial';
+import type { InvestmentProduct, SimulationInputParams, AccountBucket, YearlyData, CarePlan, RetirementIncomeParams } from '../../src/types/simulation-types';
 
 interface Appliance {
   name: string;
@@ -368,16 +368,81 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
     // --- 0. iDeCo現金化 (イベント) ---
     // 収支計算の前に処理し、その年の現金を増やしておく
     if (currentAge === idecoCashOutAge) {
-      let idecoTotalBalance = 0;
+      let idecoAmount = 0;
       productList.forEach((p, index) => {
         if (p.account === 'iDeCo') {
           const productId = `${p.key}-${index}`;
-          idecoTotalBalance += productBalances[productId]?.balance ?? 0;
+          idecoAmount += productBalances[productId]?.balance ?? 0;
           productBalances[productId] = { principal: 0, balance: 0 };
         }
       });
-      savings += idecoTotalBalance;
+
+      if (idecoAmount > 0) {
+        // 同じ年に受け取る退職所得を合算
+        let totalRetirementIncome = idecoAmount;
+        const retirementIncomesOnThisYear: { amount: number, yearsOfService: number, source: 'ideco' | 'self' | 'spouse' }[] = [];
+
+        retirementIncomesOnThisYear.push({ amount: idecoAmount, yearsOfService: params.retirementAge - params.initialAge, source: 'ideco' });
+
+        if (params.retirementIncome && params.retirementIncome.age === currentAge) {
+          totalRetirementIncome += params.retirementIncome.amountJPY;
+          retirementIncomesOnThisYear.push({ amount: params.retirementIncome.amountJPY, yearsOfService: params.retirementIncome.yearsOfService, source: 'self' });
+        }
+        if (params.spouseRetirementIncome && spouseCurrentAge && params.spouseRetirementIncome.age === spouseCurrentAge) {
+          totalRetirementIncome += params.spouseRetirementIncome.amountJPY;
+          retirementIncomesOnThisYear.push({ amount: params.spouseRetirementIncome.amountJPY, yearsOfService: params.spouseRetirementIncome.yearsOfService, source: 'spouse' });
+        }
+
+        // 退職所得控除と税額計算
+        const totalYearsOfService = retirementIncomesOnThisYear.reduce((max, p) => Math.max(max, p.yearsOfService), 0);
+        const totalTax = calculateRetirementIncomeTax(totalRetirementIncome, totalYearsOfService);
+
+        // 税額を按分して手取り額を計算
+        if (totalRetirementIncome > 0) {
+          const idecoTax = (idecoAmount / totalRetirementIncome) * totalTax;
+          savings += idecoAmount - idecoTax;
+
+          if (params.retirementIncome && params.retirementIncome.age === currentAge) {
+            const selfRetirementTax = (params.retirementIncome.amountJPY / totalRetirementIncome) * totalTax;
+            savings += params.retirementIncome.amountJPY - selfRetirementTax;
+          }
+          if (params.spouseRetirementIncome && spouseCurrentAge && params.spouseRetirementIncome.age === spouseCurrentAge) {
+            const spouseRetirementTax = (params.spouseRetirementIncome.amountJPY / totalRetirementIncome) * totalTax;
+            savings += params.spouseRetirementIncome.amountJPY - spouseRetirementTax;
+          }
+        } else {
+          savings += idecoAmount;
+        }
+      }
     }
+
+    // iDeCoとは別の年の退職金
+    const processRetirementIncome = (ri: RetirementIncomeParams | undefined, targetAge: number) => {
+      if (ri && ri.age === targetAge && ri.age !== idecoCashOutAge) {
+        const tax = calculateRetirementIncomeTax(ri.amountJPY, ri.yearsOfService);
+        savings += ri.amountJPY - tax;
+      }
+    };
+    processRetirementIncome(params.retirementIncome, currentAge);
+    if (spouseCurrentAge) processRetirementIncome(params.spouseRetirementIncome, spouseCurrentAge);
+
+    // 個人年金・その他一時金の処理
+    const handleLumpSums = (lumpSums: SimulationInputParams['personalPensionPlans'] | SimulationInputParams['otherLumpSums'], targetAge: number) => {
+      if (lumpSums) {
+        lumpSums.forEach(p => {
+          if ('age' in p && p.age === targetAge) { // OtherLumpSum
+            savings += p.amountJPY;
+          } else if ('startAge' in p && p.startAge === targetAge && p.type === 'lumpSum') { // PersonalPensionPlan
+            savings += p.amountJPY;
+          }
+        });
+      }
+    };
+
+    handleLumpSums(params.personalPensionPlans, currentAge);
+    if (spouseCurrentAge) handleLumpSums(params.spousePersonalPensionPlans, spouseCurrentAge);
+    handleLumpSums(params.otherLumpSums, currentAge);
+    if (spouseCurrentAge) handleLumpSums(params.spouseOtherLumpSums, spouseCurrentAge);
 
     // --- 結婚イベント ---
     if (params.marriage && currentAge === n(params.marriage.age)) {
@@ -411,6 +476,23 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
     if (spouseCurrentAge !== undefined && spouseCurrentAge >= n(params.spousePensionStartAge)) {
       pensionAnnual += n(params.spousePensionMonthly10kJPY) * FC.YEN_PER_MAN * FC.MONTHS_PER_YEAR;
     }
+
+    // 個人年金（年金形式）を収入に加算
+    let personalPensionIncome = 0;
+    const handlePensionPlans = (pensionPlans: SimulationInputParams['personalPensionPlans'], targetAge: number) => {
+      if (pensionPlans) {
+        pensionPlans.forEach(p => {
+          if (p.type === 'fixedTerm' && targetAge >= p.startAge && targetAge < p.startAge + (p.duration || 0)) {
+            personalPensionIncome += p.amountJPY;
+          } else if (p.type === 'lifeTime' && targetAge >= p.startAge) {
+            personalPensionIncome += p.amountJPY;
+          }
+        });
+      }
+    };
+    handlePensionPlans(params.personalPensionPlans, currentAge);
+    if (spouseCurrentAge) handlePensionPlans(params.spousePersonalPensionPlans, spouseCurrentAge);
+
     let idecoDeductionThisYear = 0;
     let investmentIncome = 0; // 投資収益を初期化
     if (currentAge < idecoCashOutAge) {
@@ -418,7 +500,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
         idecoDeductionThisYear += (n(p.recurringJPY) + n(p.spotJPY)) * yearFraction;
       });
     }
-    const annualIncome = (computeNetAnnual(selfGrossIncome - idecoDeductionThisYear) + computeNetAnnual(spouseGrossIncome)) * yearFraction + pensionAnnual;
+    const annualIncome = (computeNetAnnual(selfGrossIncome - idecoDeductionThisYear) + computeNetAnnual(spouseGrossIncome)) * yearFraction + pensionAnnual + personalPensionIncome;
 
     // 1b. 支出
     let livingExpense = 0;

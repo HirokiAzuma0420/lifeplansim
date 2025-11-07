@@ -75,6 +75,27 @@ export interface CarePlan {
   monthly10kJPY: number;
 }
 
+export interface RetirementIncomeParams {
+  amountJPY: number;
+  age: number;
+  yearsOfService: number;
+}
+
+export type PersonalPensionType = 'lumpSum' | 'fixedTerm' | 'lifeTime';
+
+export interface PersonalPensionPlanParams {
+  type: PersonalPensionType;
+  amountJPY: number; // lumpSum: 総額, fixedTerm/lifeTime: 年額
+  startAge: number;
+  duration?: number; // fixedTermの場合
+}
+
+export interface OtherLumpSumParams {
+  name: string;
+  amountJPY: number;
+  age: number;
+}
+
 export interface SimulationInputParams {
   initialAge: number;
   spouseInitialAge?: number;
@@ -151,6 +172,13 @@ export interface SimulationInputParams {
   interestScenario: '固定利回り' | 'ランダム変動';
   emergencyFundJPY: number;
   useSpouseNisa?: boolean;
+
+  retirementIncome?: RetirementIncomeParams;
+  spouseRetirementIncome?: RetirementIncomeParams;
+  personalPensionPlans?: PersonalPensionPlanParams[];
+  spousePersonalPensionPlans?: PersonalPensionPlanParams[];
+  otherLumpSums?: OtherLumpSumParams[];
+  spouseOtherLumpSums?: OtherLumpSumParams[];
 }
 
 export interface SimulationNavigationState {

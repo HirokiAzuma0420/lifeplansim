@@ -1,5 +1,28 @@
 import type { CarePlan, SimulationNavigationState } from './simulation-types';
 
+export interface RetirementIncome {
+  amount: string | number;
+  age: string | number;
+  yearsOfService: string | number;
+}
+
+export type PersonalPensionType = 'lumpSum' | 'fixedTerm' | 'lifeTime';
+
+export interface PersonalPensionPlan {
+  id: number;
+  type: PersonalPensionType;
+  amount: string | number; // lumpSum: 総額, fixedTerm/lifeTime: 年額
+  startAge: string | number;
+  duration?: string | number; // fixedTermの場合
+}
+
+export interface OtherLumpSum {
+  id: number;
+  name: string;
+  amount: string | number;
+  age: string | number;
+}
+
 export type InvestmentAssetKey =
   | 'investmentStocks'
   | 'investmentTrust'
@@ -150,6 +173,18 @@ export interface FormDataState {
   annualRaiseRate: string;
   spouseAnnualRaiseRate: string;
   useSpouseNisa: boolean;
+
+  // 退職金・一時金
+  retirementIncome?: RetirementIncome | null;
+  spouseRetirementIncome?: RetirementIncome | null;
+
+  // 個人年金
+  personalPensionPlans: PersonalPensionPlan[];
+  spousePersonalPensionPlans: PersonalPensionPlan[];
+
+  // その他一時金
+  otherLumpSums: OtherLumpSum[];
+  spouseOtherLumpSums: OtherLumpSum[];
 }
 
 export type FormLocationState = { rawFormData?: FormDataState; sectionIndex?: number };

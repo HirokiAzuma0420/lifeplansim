@@ -14,6 +14,7 @@ import {
   Shield,
   PiggyBank,
   Activity,
+  Wallet,
   User,
   Users,
   Wrench,
@@ -49,6 +50,8 @@ const EventIcon: React.FC<{ iconKey: string }> = ({ iconKey }) => {
     'care': <Users size={20} className="text-purple-500" />,
     'retirement': <Briefcase size={20} className="text-red-500" />,
     'pension': <Landmark size={20} className="text-yellow-600" />,
+    'lump-sum': <Wallet size={20} className="text-cyan-500" />,
+
   };
   return <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-4">{iconMap[iconKey] || <Activity size={20} />}</div>;
 };
@@ -177,6 +180,58 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
         details: [{ label: '月額', value: formatManYen(formData.spousePensionAmount) }],
       });
     }
+
+    // 退職金
+    if (formData.retirementIncome && n(formData.retirementIncome.age) > 0) {
+      allEvents.push({
+        age: n(formData.retirementIncome.age),
+        iconKey: 'retirement',
+        title: 'あなたの退職金受取',
+        details: [
+          { label: '受取額', value: formatManYen(formData.retirementIncome.amount) },
+        ]
+      });
+    }
+    if (formData.spouseRetirementIncome && n(formData.spouseRetirementIncome.age) > 0) {
+      allEvents.push({
+        age: n(formData.spouseRetirementIncome.age),
+        iconKey: 'retirement',
+        title: 'パートナーの退職金受取',
+        details: [
+          { label: '受取額', value: formatManYen(formData.spouseRetirementIncome.amount) },
+        ]
+      });
+    }
+
+    // 個人年金
+    const processPensionPlans = (plans: typeof formData.personalPensionPlans, person: string) => {
+      plans?.forEach(plan => {
+        if (plan.type === 'lumpSum') {
+          allEvents.push({
+            age: n(plan.startAge),
+            iconKey: 'lump-sum',
+            title: `${person}の個人年金（一括）`,
+            details: [{ label: '受取総額', value: formatManYen(plan.amount) }]
+          });
+        }
+      });
+    };
+    processPensionPlans(formData.personalPensionPlans, 'あなた');
+    processPensionPlans(formData.spousePersonalPensionPlans, 'パートナー');
+
+    // その他一時金
+    const processOtherLumpSums = (lumpSums: typeof formData.otherLumpSums, person: string) => {
+      lumpSums?.forEach(item => {
+        allEvents.push({
+          age: n(item.age),
+          iconKey: 'lump-sum',
+          title: `${person}のその他一時金（${item.name || '名称未設定'}）`,
+          details: [{ label: '受取額', value: formatManYen(item.amount) }]
+        });
+      });
+    };
+    processOtherLumpSums(formData.otherLumpSums, 'あなた');
+    processOtherLumpSums(formData.spouseOtherLumpSums, 'パートナー');
 
     return allEvents.sort((a, b) => a.age - b.age);
   }, [rawFormData]);

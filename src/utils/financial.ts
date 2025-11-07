@@ -60,3 +60,51 @@ export function calculateLoanPayment(principal: number, annualInterestRate: numb
 
   return { annualPayment, totalPayment };
 }
+
+/**
+ * 退職所得にかかる税金（所得税・住民税）を計算します。
+ * @param retirementIncomeAmount 退職所得の収入金額（円）
+ * @param yearsOfService 勤続年数
+ * @returns 所得税と住民税の合計額（円）
+ */
+export function calculateRetirementIncomeTax(retirementIncomeAmount: number, yearsOfService: number): number {
+  const income = Number(retirementIncomeAmount) || 0;
+  const years = Math.max(1, Math.floor(Number(yearsOfService) || 1)); // 勤続年数は最低1年
+
+  if (income <= 0) return 0;
+
+  // 1. 退職所得控除額の計算
+  let deduction: number;
+  if (years <= 20) {
+    deduction = 400000 * years;
+  } else {
+    deduction = 8000000 + 700000 * (years - 20);
+  }
+  // 控除額が80万円に満たない場合は、80万円とする
+  if (deduction < 800000) {
+    deduction = 800000;
+  }
+
+  // 2. 課税退職所得金額の計算
+  const taxableRetirementIncome = Math.max(0, (income - deduction) / 2);
+
+  // 3. 所得税の計算
+  let incomeTax = 0;
+  for (const bracket of FC.INCOME_TAX_BRACKETS) {
+    if (taxableRetirementIncome <= bracket[0]) {
+      incomeTax = taxableRetirementIncome * bracket[1] - bracket[2];
+      break;
+    }
+  }
+  // 最後のブラケットを超える場合
+  if (incomeTax === 0 && taxableRetirementIncome > 0) {
+    const lastBracket = FC.INCOME_TAX_BRACKETS[FC.INCOME_TAX_BRACKETS.length - 1];
+    incomeTax = taxableRetirementIncome * lastBracket[1] - lastBracket[2];
+  }
+
+  // 4. 住民税の計算
+  const residentTax = taxableRetirementIncome * FC.RESIDENT_TAX_RATE;
+
+  // 5. 所得税と住民税の合計を返す
+  return Math.max(0, incomeTax + residentTax);
+}

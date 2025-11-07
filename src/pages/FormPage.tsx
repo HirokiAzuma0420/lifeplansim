@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from 'react';
+﻿﻿import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { YearlyData, SimulationInputParams } from '@/types/simulation-types';
 import { createApiParams } from '@/utils/api-adapter';
@@ -18,6 +18,7 @@ import LivingLifeEventSection from '@/components/form/LivingLifeEventSection';
 import ParentCareLifeEventSection from '@/components/form/ParentCareLifeEventSection';
 import RetirementLifeEventSection from '@/components/form/RetirementLifeEventSection';
 import SavingsSection from '@/components/form/SavingsSection';
+import RetirementIncomeSection from '@/components/form/RetirementIncomeSection';
 import InvestmentSection from '@/components/form/InvestmentSection';
 import SimulationSettingsSection from '@/components/form/SimulationSettingsSection';
 import { MASTER_SECTIONS } from '@/constants/financial_const';
@@ -209,6 +210,7 @@ export default function FormPage() {
       'ライフイベント - 子供': <ChildrenLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
       'ライフイベント - 生活': <LivingLifeEventSection formData={formData} handleApplianceChange={handleApplianceChange} addAppliance={addAppliance} handleRemoveAppliance={handleRemoveAppliance} />,
       'ライフイベント - 親の介護': <ParentCareLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} handleCarePlanChange={handleCarePlanChange} addCarePlan={addCarePlan} removeCarePlan={removeCarePlan} totalCareCost={totalCareCost} />,
+      '退職・年金': <RetirementIncomeSection formData={formData} handleInputChange={handleInputChange} setFormData={setFormData} errors={errors} />,
       'ライフイベント - 老後': <RetirementLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
       '貯蓄': <SavingsSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
       '投資': <InvestmentSection formData={formData} handleInputChange={handleInputChange} monthlyInvestmentAmounts={formData.monthlyInvestmentAmounts} />,
@@ -379,6 +381,65 @@ export default function FormPage() {
         }
       });
     }
+
+    // 退職金
+    if (formData.retirementIncome && n(formData.retirementIncome.age) > 0) {
+      events.push({
+        age: n(formData.retirementIncome.age),
+        title: '💼 あなたの退職金受取',
+        details: [
+          { label: '受取額', value: formatManYen(formData.retirementIncome.amount) },
+          { label: '勤続年数', value: `${formData.retirementIncome.yearsOfService} 年` },
+        ]
+      });
+    }
+    if (formData.spouseRetirementIncome && n(formData.spouseRetirementIncome.age) > 0) {
+      events.push({
+        age: n(formData.spouseRetirementIncome.age),
+        title: '💼 パートナーの退職金受取',
+        details: [
+          { label: '受取額', value: formatManYen(formData.spouseRetirementIncome.amount) },
+          { label: '勤続年数', value: `${formData.spouseRetirementIncome.yearsOfService} 年` },
+        ]
+      });
+    }
+
+    // 個人年金
+    const processPensionPlans = (plans: typeof formData.personalPensionPlans, person: string) => {
+      plans?.forEach(plan => {
+        if (plan.type === 'lumpSum') {
+          events.push({
+            age: n(plan.startAge),
+            title: `💰 ${person}の個人年金（一括受取）`,
+            details: [{ label: '受取総額', value: formatManYen(plan.amount) }]
+          });
+        } else {
+          events.push({
+            age: n(plan.startAge),
+            title: `💰 ${person}の個人年金（受給開始）`,
+            details: [
+              { label: '年間受給額', value: formatManYen(plan.amount) },
+              { label: '受給期間', value: plan.type === 'fixedTerm' ? `${plan.duration}年間` : '終身' }
+            ]
+          });
+        }
+      });
+    };
+    processPensionPlans(formData.personalPensionPlans, 'あなた');
+    processPensionPlans(formData.spousePersonalPensionPlans, 'パートナー');
+
+    // その他一時金
+    const processOtherLumpSums = (lumpSums: typeof formData.otherLumpSums, person: string) => {
+      lumpSums?.forEach(item => {
+        events.push({
+          age: n(item.age),
+          title: `💰 ${person}のその他一時金受取（${item.name || '名称未設定'}）`,
+          details: [{ label: '受取額', value: formatManYen(item.amount) }]
+        });
+      });
+    };
+    processOtherLumpSums(formData.otherLumpSums, 'あなた');
+    processOtherLumpSums(formData.spouseOtherLumpSums, 'パートナー');
 
     const retirementAge = n(formData.retirementAge);
     const pensionStartAge = n(formData.pensionStartAge);

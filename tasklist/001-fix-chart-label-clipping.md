@@ -1,8 +1,8 @@
 # TASK-001: グラフのラベル・データポイントが見切れる問題の修正
 
-- **ステータス**: 進行中
-- **担当者**: (未定)
-- **期日**: (未定)
+- **ステータス**: 完了
+- **担当者**: Gemini
+- **期日**: 2025/11/07
 - **関連コンポーネント**: `src/components/dashboard/TotalAssetChart.tsx`, `src/components/dashboard/SavingsPositionChart.tsx`, `src/components/dashboard/IncomePositionChart.tsx`
 
 ---
@@ -37,16 +37,16 @@
 
 ### 2. X軸ラベルのレスポンシブ対応
 
-- [ ] `XAxis` コンポーネントのプロパティを画面幅に応じて動的に変更する。
-  - [ ] スマートフォンなどの狭い画面では、`interval` プロパティを設定し、ラベルを間引いて表示する（例: `interval="preserveStartEnd"` や `interval={4}` など）。
-  - [ ] または、`angle={-45}` と `textAnchor="end"` を設定してラベルを斜めに表示し、`height` でX軸自体の高さを確保する。
+- [-] `XAxis` コンポーネントのプロパティを画面幅に応じて動的に変更する。
+  - [-] スマートフォンなどの狭い画面では、`interval` プロパティを設定し、ラベルを間引いて表示する（例: `interval="preserveStartEnd"` や `interval={4}` など）。
+  - [-] または、`angle={-45}` と `textAnchor="end"` を設定してラベルを斜めに表示し、`height` でX軸自体の高さを確保する。
 
 ### 3. `CustomizedLabel` の位置調整ロジック改善
 
-- [ ] `CustomizedLabel` コンポーネント内で、ラベルの `textAnchor` を切り替える条件式をより正確なものに修正する。
-  - [ ] `window.innerWidth` ではなく、Rechartsから渡されるグラフの描画領域のサイズ情報を基に判定ロジックを構築する。
+- [-] `CustomizedLabel` コンポーネント内で、ラベルの `textAnchor` を切り替える条件式をより正確なものに修正する。
+  - [-] `window.innerWidth` ではなく、Rechartsから渡されるグラフの描画領域のサイズ情報を基に判定ロジックを構築する。
 
 ### 4. 動作確認
 
-- [ ] PCのブラウザでウィンドウ幅を伸縮させて表示崩れがないか確認する。
-- [ ] スマートフォンの実機またはブラウザのデベロッパーツールで、縦画面・横画面の両方で表示を確認する。
+- [x] PCのブラウザでウィンドウ幅を伸縮させて表示崩れがないか確認する。
+- [x] スマートフォンの実機またはブラウザのデベロッパーツールで、縦画面・横画面の両方で表示を確認する。
