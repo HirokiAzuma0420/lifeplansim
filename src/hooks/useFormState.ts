@@ -140,6 +140,14 @@ const createDefaultFormData = (): FormDataState => ({
   annualRaiseRate: String(FC.DEFAULT_ANNUAL_RAISE_RATE_PERCENT),
   spouseAnnualRaiseRate: String(FC.DEFAULT_ANNUAL_RAISE_RATE_PERCENT),
   useSpouseNisa: false,
+
+  // 退職金・一時金
+  retirementIncome: null,
+  spouseRetirementIncome: null,
+  personalPensionPlans: [],
+  spousePersonalPensionPlans: [],
+  otherLumpSums: [],
+  spouseOtherLumpSums: [],
 });
 
 export const useFormState = () => {
