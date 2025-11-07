@@ -237,6 +237,74 @@ export const createApiParams = (formData: FormDataState): SimulationInputParams 
     useSpouseNisa: formData.useSpouseNisa,
   };
 
+  // 退職金・一時金（本人）をパラメータに反映
+  // フォームは万円入力のため、円に変換して設定する
+  if (formData.retirementIncome &&
+      formData.retirementIncome.amount !== undefined &&
+      formData.retirementIncome.age !== undefined &&
+      formData.retirementIncome.yearsOfService !== undefined) {
+    params.retirementIncome = {
+      amountJPY: n(formData.retirementIncome.amount) * FC.YEN_PER_MAN,
+      age: n(formData.retirementIncome.age),
+      yearsOfService: n(formData.retirementIncome.yearsOfService),
+    };
+  }
+
+  // 退職金・一時金（配偶者）をパラメータに反映（配偶者がいる場合のみ）
+  if (formData.spouseRetirementIncome &&
+      (formData.familyComposition === '既婚' || formData.planToMarry === 'する')) {
+    const s = formData.spouseRetirementIncome;
+    if (s.amount !== undefined && s.age !== undefined && s.yearsOfService !== undefined) {
+      params.spouseRetirementIncome = {
+        amountJPY: n(s.amount) * FC.YEN_PER_MAN,
+        age: n(s.age),
+        yearsOfService: n(s.yearsOfService),
+      };
+    }
+  }
+
+  // 個人年金（本人）: 一括受取は oneTime、年金形式は personalPension として扱うためそのまま送る
+  if (Array.isArray(formData.personalPensionPlans)) {
+    params.personalPensionPlans = formData.personalPensionPlans.map(p => ({
+      id: p.id,
+      type: p.type,
+      amountJPY: n(p.amount) * FC.YEN_PER_MAN,
+      startAge: n(p.startAge),
+      duration: p.duration !== undefined ? n(p.duration) : undefined,
+    }));
+  }
+
+  // 個人年金（配偶者）
+  if (Array.isArray(formData.spousePersonalPensionPlans) &&
+      (formData.familyComposition === '既婚' || formData.planToMarry === 'する')) {
+    params.spousePersonalPensionPlans = formData.spousePersonalPensionPlans.map(p => ({
+      id: p.id,
+      type: p.type,
+      amountJPY: n(p.amount) * FC.YEN_PER_MAN,
+      startAge: n(p.startAge),
+      duration: p.duration !== undefined ? n(p.duration) : undefined,
+    }));
+  }
+
+  // その他一時金（本人）
+  if (Array.isArray(formData.otherLumpSums)) {
+    params.otherLumpSums = formData.otherLumpSums.map(p => ({
+      name: String(p.name ?? ''),
+      amountJPY: n(p.amount) * FC.YEN_PER_MAN,
+      age: n(p.age),
+    }));
+  }
+
+  // その他一時金（配偶者）
+  if (Array.isArray(formData.spouseOtherLumpSums) &&
+      (formData.familyComposition === '既婚' || formData.planToMarry === 'する')) {
+    params.spouseOtherLumpSums = formData.spouseOtherLumpSums.map(p => ({
+      name: String(p.name ?? ''),
+      amountJPY: n(p.amount) * FC.YEN_PER_MAN,
+      age: n(p.age),
+    }));
+  }
+
   // 定年再雇用
   if (formData.assumeReemployment) {
     params.reemployment = {
