@@ -3,7 +3,7 @@ type VercelRequest = { method?: string; body?: unknown; query?: Record<string, u
 type VercelResponse = { status: (code: number) => { json: (data: unknown) => void } };
 import * as FC from '../../src/constants/financial_const';
 import { computeNetAnnual, calculateLoanPayment as calculateLoanPaymentShared, calculateRetirementIncomeTax } from '../../src/utils/financial';
-import type { InvestmentProduct, SimulationInputParams, AccountBucket, YearlyData, CarePlan, RetirementIncomeParams } from '../../src/types/simulation-types';
+import type { InvestmentProduct, SimulationInputParams, AccountBucket, YearlyData, CarePlan } from '../../src/types/simulation-types';
 
 interface Appliance {
   name: string;
@@ -369,75 +369,57 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
       }
     }
 
-    // --- 0. iDeCo現金化 (イベント) ---
-    // 収支計算の前に処理し、その年の現金を増やしておく
+    // --- 0. 一時金収入の処理 ---
+    // その年に発生するすべての一時金収入をまず集計する
+    const oneTimeIncomes: { type: 'retirement' | 'lumpSum', amount: number, yearsOfService?: number }[] = [];
+
+    // iDeCo
     if (currentAge === idecoCashOutAge) {
       let idecoAmount = 0;
       productList.forEach((p, index) => {
         if (p.account === 'iDeCo') {
           const productId = `${p.key}-${index}`;
           idecoAmount += productBalances[productId]?.balance ?? 0;
-          productBalances[productId] = { principal: 0, balance: 0 };
+          productBalances[productId] = { principal: 0, balance: 0 }; // 現金化
         }
       });
-
       if (idecoAmount > 0) {
-        // 同じ年に受け取る退職所得を合算
-        let totalRetirementIncome = idecoAmount;
-        const retirementIncomesOnThisYear: { amount: number, yearsOfService: number, source: 'ideco' | 'self' | 'spouse' }[] = [];
-
-        retirementIncomesOnThisYear.push({ amount: idecoAmount, yearsOfService: params.retirementAge - params.initialAge, source: 'ideco' });
-
-        if (params.retirementIncome && params.retirementIncome.age === currentAge) {
-          totalRetirementIncome += params.retirementIncome.amountJPY;
-          retirementIncomesOnThisYear.push({ amount: params.retirementIncome.amountJPY, yearsOfService: params.retirementIncome.yearsOfService, source: 'self' });
-        }
-        if (params.spouseRetirementIncome && spouseCurrentAge && params.spouseRetirementIncome.age === spouseCurrentAge) {
-          totalRetirementIncome += params.spouseRetirementIncome.amountJPY;
-          retirementIncomesOnThisYear.push({ amount: params.spouseRetirementIncome.amountJPY, yearsOfService: params.spouseRetirementIncome.yearsOfService, source: 'spouse' });
-        }
-
-        // 退職所得控除と税額計算
-        const totalYearsOfService = retirementIncomesOnThisYear.reduce((max, p) => Math.max(max, p.yearsOfService), 0);
-        const totalTax = calculateRetirementIncomeTax(totalRetirementIncome, totalYearsOfService);
-
-        // 税額を按分して手取り額を計算
-        if (totalRetirementIncome > 0) {
-          const idecoTax = (idecoAmount / totalRetirementIncome) * totalTax;
-          savings += idecoAmount - idecoTax;
-
-          if (params.retirementIncome && params.retirementIncome.age === currentAge) {
-            const selfRetirementTax = (params.retirementIncome.amountJPY / totalRetirementIncome) * totalTax;
-            savings += params.retirementIncome.amountJPY - selfRetirementTax;
-          }
-          if (params.spouseRetirementIncome && spouseCurrentAge && params.spouseRetirementIncome.age === spouseCurrentAge) {
-            const spouseRetirementTax = (params.spouseRetirementIncome.amountJPY / totalRetirementIncome) * totalTax;
-            oneTimeIncomeThisYear += params.spouseRetirementIncome.amountJPY - spouseRetirementTax;
-          }
-        } else {
-          savings += idecoAmount;
-        }
+        oneTimeIncomes.push({ type: 'retirement', amount: idecoAmount, yearsOfService: params.retirementAge - params.initialAge });
       }
     }
 
-    // iDeCoとは別の年の退職金
-    const processRetirementIncome = (ri: RetirementIncomeParams | undefined, targetAge: number) => {
-      if (ri && ri.age === targetAge && ri.age !== idecoCashOutAge) {
-        const tax = calculateRetirementIncomeTax(ri.amountJPY, ri.yearsOfService);
-        oneTimeIncomeThisYear += ri.amountJPY - tax;
-      }
-    };
-    processRetirementIncome(params.retirementIncome, currentAge);
-    if (spouseCurrentAge) processRetirementIncome(params.spouseRetirementIncome, spouseCurrentAge);
+    // 本人の退職金
+    if (params.retirementIncome && params.retirementIncome.age === currentAge) {
+      oneTimeIncomes.push({ type: 'retirement', amount: params.retirementIncome.amountJPY, yearsOfService: params.retirementIncome.yearsOfService });
+    }
+    // 配偶者の退職金
+    if (spouseCurrentAge && params.spouseRetirementIncome && params.spouseRetirementIncome.age === spouseCurrentAge) {
+      oneTimeIncomes.push({ type: 'retirement', amount: params.spouseRetirementIncome.amountJPY, yearsOfService: params.spouseRetirementIncome.yearsOfService });
+    }
+
+    // 退職所得を合算して税金を計算
+    const retirementIncomes = oneTimeIncomes.filter(income => income.type === 'retirement');
+    if (retirementIncomes.length > 0) {
+      const totalRetirementIncome = retirementIncomes.reduce((sum, income) => sum + income.amount, 0);
+      const maxYearsOfService = retirementIncomes.reduce((max, income) => Math.max(max, income.yearsOfService || 0), 0);
+      const totalTax = calculateRetirementIncomeTax(totalRetirementIncome, maxYearsOfService);
+
+      // 税金を按分し、手取り額を oneTimeIncomeThisYear に加算
+      retirementIncomes.forEach(income => {
+        const taxRatio = totalRetirementIncome > 0 ? income.amount / totalRetirementIncome : 0;
+        const tax = totalTax * taxRatio;
+        oneTimeIncomeThisYear += income.amount - tax;
+      });
+    }
 
     // 個人年金・その他一時金の処理
     const handleLumpSums = (lumpSums: SimulationInputParams['personalPensionPlans'] | SimulationInputParams['otherLumpSums'], targetAge: number) => {
       if (lumpSums) {
         lumpSums.forEach(p => {
           if ('age' in p && p.age === targetAge) { // OtherLumpSum
-            oneTimeIncomeThisYear += p.amountJPY;
+            oneTimeIncomes.push({ type: 'lumpSum', amount: p.amountJPY });
           } else if ('startAge' in p && p.startAge === targetAge && p.type === 'lumpSum') { // PersonalPensionPlan
-            oneTimeIncomeThisYear += p.amountJPY;
+            oneTimeIncomes.push({ type: 'lumpSum', amount: p.amountJPY });
           }
         });
       }
@@ -447,19 +429,11 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
     if (spouseCurrentAge) handleLumpSums(params.spousePersonalPensionPlans, spouseCurrentAge);
     handleLumpSums(params.otherLumpSums, currentAge);
     if (spouseCurrentAge) handleLumpSums(params.spouseOtherLumpSums, spouseCurrentAge);
-
-    // --- 結婚イベント ---
-    if (params.marriage && currentAge === n(params.marriage.age)) {
-      // 配偶者情報を更新
-      if (params.marriage.spouse) {
-        params.spouseInitialAge = params.marriage.spouse.ageAtMarriage;
-        currentSpouseGrossIncome = params.marriage.spouse.incomeGross; // 結婚時点の年収で上書き
-        // Re-evaluate spouseGrossIncome for the current year after marriage
-        if (spouseCurrentAge !== undefined && params.spouseRetirementAge && spouseCurrentAge < n(params.spouseRetirementAge)) {
-          spouseGrossIncome = currentSpouseGrossIncome;
-        }
-      }
-    }
+    
+    // 非課税の一時金を oneTimeIncomeThisYear に加算
+    oneTimeIncomes.filter(income => income.type === 'lumpSum').forEach(income => {
+      oneTimeIncomeThisYear += income.amount;
+    });
 
     // --- 1. 収支計算 (Cash Flow) ---
     // 1a. 収入
