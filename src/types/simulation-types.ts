@@ -17,7 +17,7 @@ export interface DebugInfo {
 }
 
 export type InvestmentProduct = {
-  key: 'stocks' | 'trust' | 'bonds' | 'crypto' | 'other' | 'ideco';
+  key: 'stocks' | 'trust' | 'bonds' | 'crypto' | 'other' | 'ideco' | 'world-stock';
   account: '課税' | '非課税' | 'iDeCo';
   currentJPY: number;
   recurringJPY: number; // 年間つみたて額（円/年）

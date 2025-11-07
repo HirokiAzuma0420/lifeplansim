@@ -1,4 +1,15 @@
 import * as FC from '../../src/constants/financial_const';
+import type { InvestmentProduct } from '../types/simulation-types';
+
+export const VOLATILITY_MAP: Record<InvestmentProduct['key'], number> = {
+  stocks: 0.2,
+  trust: 0.15,
+  bonds: 0.05,
+  crypto: 0.5,
+  ideco: 0.15,
+  other: 0.1,
+  'world-stock': 0.2,
+};
 
 export const n = (v: unknown): number => {
   const num = Number(v);

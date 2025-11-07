@@ -2,7 +2,7 @@
 type VercelRequest = { method?: string; body?: unknown; query?: Record<string, unknown> };
 type VercelResponse = { status: (code: number) => { json: (data: unknown) => void } };
 import * as FC from '../../src/constants/financial_const';
-import { computeNetAnnual, calculateLoanPayment as calculateLoanPaymentShared, calculateRetirementIncomeTax } from '../../src/utils/financial';
+import { computeNetAnnual, calculateLoanPayment as calculateLoanPaymentShared, calculateRetirementIncomeTax, VOLATILITY_MAP } from '../../src/utils/financial';
 import type { InvestmentProduct, SimulationInputParams, AccountBucket, YearlyData, CarePlan } from '../../src/types/simulation-types';
 
 interface Appliance {
@@ -60,7 +60,7 @@ function generateNormalRandom(mean: number, stdDev: number): number {
  * @param years The number of years to generate returns for.
  * @returns An array of annual returns, corrected to match the target mean.
  */
-function generateReturnSeries(
+export function generateReturnSeries(
   averageReturn: number,
   volatility: number,
   years: number
@@ -70,46 +70,46 @@ function generateReturnSeries(
   // 1. 目標とする算術平均を定義 (幾何平均からの変換は行わず、入力値をそのまま目標算術平均とする)
   const targetArithmeticMean = averageReturn; // 幾何平均からの変換は行わず、入力値をそのまま目標算術平均とします
 
-  // 2. ひとまずランダムなリターン系列を生成
-  const returns: number[] = [];
-  for (let i = 0; i < years; i++) {
-    const yearReturn = generateNormalRandom(targetArithmeticMean, volatility);
-    returns.push(yearReturn);
-  }
-
-  // 3. 暴落イベントをランダムに挿入
+  // 2. 暴落イベントをランダムに決定
   const crashYears = new Set<number>();
-  // 最初の暴落は設定値に基づいて設定
   let nextCrashYear = Math.floor(Math.random() * (FC.CRASH_EVENT_CONFIG.FIRST_CRASH_YEAR_MAX - FC.CRASH_EVENT_CONFIG.FIRST_CRASH_YEAR_MIN + 1)) + FC.CRASH_EVENT_CONFIG.FIRST_CRASH_YEAR_MIN;
   while (nextCrashYear < years) {
     crashYears.add(nextCrashYear);
-    // 次の暴落は設定値に基づいて設定
     nextCrashYear += Math.floor(Math.random() * (FC.CRASH_EVENT_CONFIG.SUBSEQUENT_CRASH_YEAR_MAX - FC.CRASH_EVENT_CONFIG.SUBSEQUENT_CRASH_YEAR_MIN + 1)) + FC.CRASH_EVENT_CONFIG.SUBSEQUENT_CRASH_YEAR_MIN;
   }
 
-  crashYears.forEach(yearIndex => {
-    // -30% から -60% の下落をランダムに生成
-    const crashMagnitude = -(Math.random() * 0.3 + 0.3);
-    returns[yearIndex] = crashMagnitude;
-  });
+  // 3. リターン系列を生成
+  const returns: number[] = [];
+  let sumOfCrashReturns = 0;
 
-  // 4. 暴落を含む系列全体の平均が目標値になるように補正
+  for (let i = 0; i < years; i++) {
+    if (crashYears.has(i)) {
+      // -30% から -60% の下落をランダムに生成
+      const crashMagnitude = -(Math.random() * 0.3 + 0.3);
+      returns[i] = crashMagnitude;
+      sumOfCrashReturns += crashMagnitude;
+    } else {
+      returns[i] = generateNormalRandom(targetArithmeticMean, volatility);
+    }
+  }
+
+  // 4. 暴落以外の年のリターンを補正して、系列全体の平均が目標値になるようにする
   const nonCrashYearIndices = returns.map((_, i) => i).filter(i => !crashYears.has(i));
-  const sumOfCrashReturns = Array.from(crashYears).reduce((sum, i) => sum + returns[i], 0);
-  const sumOfNonCrashReturns = nonCrashYearIndices.reduce((sum, i) => sum + returns[i], 0);
+  if (nonCrashYearIndices.length > 0) {
+    const sumOfNonCrashReturns = nonCrashYearIndices.reduce((sum, i) => sum + returns[i], 0);
+    const targetTotalSum = targetArithmeticMean * years; // 全期間での目標合計リターン
+    const targetSumOfNonCrashReturns = targetTotalSum - sumOfCrashReturns; // 暴落以外の年で達成すべき合計リターン
+    const correction = (targetSumOfNonCrashReturns - sumOfNonCrashReturns) / nonCrashYearIndices.length;
 
-  const currentTotalSum = sumOfCrashReturns + sumOfNonCrashReturns;
-  const targetTotalSum = targetArithmeticMean * years;
-  const correction = (targetTotalSum - currentTotalSum) / nonCrashYearIndices.length;
+    for (const i of nonCrashYearIndices) {
+      returns[i] += correction;
+    }
+  }
 
-  const correctedReturns = returns.map((r, i) => {
-    return nonCrashYearIndices.includes(i) ? r + correction : r;
-  });
-
-  return correctedReturns;
+  return returns;
 }
 
-function runMonteCarloSimulation(
+export function runMonteCarloSimulation(
   params: SimulationInputParams,
   numberOfSimulations: number
 ): { yearlyData: YearlyData[]; summary: { bankruptcyRate: number } } {
@@ -170,7 +170,7 @@ function isInputParamsBody(x: unknown): x is { inputParams: SimulationInputParam
   return 'initialAge' in m && 'endAge' in m && 'retirementAge' in m;
 }
 
-function getAnnualChildCost(age: number, pattern: '公立中心' | '公私混合' | '私立中心'): number {
+export function getAnnualChildCost(age: number, pattern: '公立中心' | '公私混合' | '私立中心'): number {
   const costTable = FC.EDUCATION_COST_TABLE[pattern];
   let costInManYen = 0;
 
@@ -192,7 +192,7 @@ function getAnnualChildCost(age: number, pattern: '公立中心' | '公私混合
  * @param productBalances - 各商品の残高情報
  * @returns 更新された現金預金、商品残高、および翌年復活するNISA枠の金額
  */
-function withdrawToCoverShortfall(
+export function withdrawToCoverShortfall(
   shortfall: number,
   savings: number,
   productList: InvestmentProduct[],
@@ -298,8 +298,6 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
   
       const idecoCashOutAge = Math.min(params.retirementAge, FC.IDECO_MAX_CASHOUT_AGE);
   // --- リターン系列の事前生成 ---
-  const stressTestEnabled = params.stressTest?.enabled ?? false;
-  const VOLATILITY_MAP: Record<InvestmentProduct['key'], number> = FC.VOLATILITY_MAP;
   const productReturnSeries = new Map<string, number[]>();
   if (params.interestScenario === '固定利回り' && params.expectedReturn != null) {
     // 固定利回りの場合、全商品の期待リターンを上書き
@@ -307,7 +305,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
       ...p,
       expectedReturn: params.expectedReturn as number,
     }));
-  } else if (params.interestScenario === 'ランダム変動' || stressTestEnabled) {
+  } else if (params.interestScenario === 'ランダム変動' || params.stressTest?.enabled) {
     productList.forEach((p, index) => {
       const productId = `${p.key}-${index}`;
       const volatility = VOLATILITY_MAP[p.key] ?? 0.15;
@@ -709,7 +707,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
       if (productBucket.balance <= 0) return;
 
       let yearlyReturn = 0;
-      if (params.interestScenario === 'ランダム変動' || stressTestEnabled) {
+      if (params.interestScenario === 'ランダム変動' || params.stressTest?.enabled) {
         yearlyReturn = productReturnSeries.get(productId)?.[i] ?? n(p.expectedReturn); // ランダム変動
       } else { // 固定利回り
         yearlyReturn = n(p.expectedReturn);
