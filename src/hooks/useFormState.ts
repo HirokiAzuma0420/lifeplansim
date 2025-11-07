@@ -171,7 +171,7 @@ export const useFormState = () => {
   const effectiveSections = useMemo(() => {
     const allSections = [...FC.MASTER_SECTIONS];
     if (formData.familyComposition === '既婚') {
-      return allSections.filter(section => section !== 'ライフイベント - 結婚' && section !== '退職・年金');
+      return allSections.filter(section => section !== 'ライフイベント - 結婚');
     }
     return allSections;
   }, [formData.familyComposition]);
