@@ -44,6 +44,7 @@ const EventIcon: React.FC<{ iconKey: string }> = ({ iconKey }) => {
     'house': <Home size={20} className="text-green-500" />,
     'renovation': <Wrench size={20} className="text-gray-500" />,
     'car': <Car size={20} className="text-orange-500" />,
+    'reemployment': <Briefcase size={20} className="text-blue-600" />,
     'care': <Users size={20} className="text-purple-500" />,
     'retirement': <Briefcase size={20} className="text-red-500" />,
     'pension': <Landmark size={20} className="text-yellow-600" />,
@@ -138,22 +139,42 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
       });
     }
 
+    // 定年再雇用
+    if (formData.assumeReemployment) {
+      allEvents.push({
+        age: 60,
+        iconKey: 'reemployment',
+        title: 'あなたの定年再雇用 開始',
+        details: [{ label: '給与収入が減少', value: `${formData.reemploymentReductionRate}%減` }],
+      });
+    }
+    if (formData.spouseAssumeReemployment) {
+      const spouseBaseAge = formData.familyComposition === '既婚' ? n(formData.spouseAge) : n(formData.spouseAgeAtMarriage);
+      const ageDiff = 60 - spouseBaseAge;
+      const eventAgeOnPersonTimeline = n(formData.personAge) + ageDiff;
+      allEvents.push({
+        age: eventAgeOnPersonTimeline,
+        iconKey: 'reemployment',
+        title: 'パートナーの定年再雇用 開始',
+        details: [{ label: '給与収入が減少', value: `${formData.spouseReemploymentReductionRate}%減` }],
+      });
+    }
+
     // 退職
     allEvents.push({
       age: n(formData.retirementAge),
       iconKey: 'retirement',
-      title: 'あなたの退職',
+      title: `あなたの${formData.assumeReemployment ? '（完全）' : ''}退職`,
       details: [{ label: '給与収入が停止', value: '' }],
     });
     if (formData.familyComposition === '既婚' || formData.planToMarry === 'する') {
       const spouseBaseAge = formData.familyComposition === '既婚' ? n(formData.spouseAge) : n(formData.spouseAgeAtMarriage);
       const ageDiff = n(formData.spouseRetirementAge) - spouseBaseAge;
       const spouseRetirementAgeOnPersonTimeline = n(formData.personAge) + ageDiff;
-
       allEvents.push({
         age: spouseRetirementAgeOnPersonTimeline,
         iconKey: 'retirement',
-        title: 'パートナーの退職',
+        title: `パートナーの${formData.spouseAssumeReemployment ? '（完全）' : ''}退職`,
         details: [{ label: '給与収入が停止', value: '' }],
       });
     }

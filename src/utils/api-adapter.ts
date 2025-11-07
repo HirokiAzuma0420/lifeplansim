@@ -237,5 +237,19 @@ export const createApiParams = (formData: FormDataState): SimulationInputParams 
     useSpouseNisa: formData.useSpouseNisa,
   };
 
+  // 定年再雇用
+  if (formData.assumeReemployment) {
+    params.reemployment = {
+      startAge: 60,
+      reductionRate: n(formData.reemploymentReductionRate) / 100,
+    };
+  }
+  if (formData.spouseAssumeReemployment) {
+    params.spouseReemployment = {
+      startAge: 60,
+      reductionRate: n(formData.spouseReemploymentReductionRate) / 100,
+    };
+  }
+
   return params;
 };

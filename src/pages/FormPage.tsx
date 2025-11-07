@@ -1,4 +1,4 @@
-﻿﻿import React, { useState, useEffect, useCallback } from 'react';
+﻿﻿﻿﻿import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { YearlyData, SimulationInputParams } from '@/types/simulation-types';
 import { createApiParams } from '@/utils/api-adapter';
@@ -382,6 +382,27 @@ export default function FormPage() {
       });
     }
 
+    // 定年再雇用
+    if (formData.assumeReemployment) {
+      events.push({
+        age: 60,
+        title: '👤 あなたの定年再雇用 開始',
+        details: [{ label: '給与収入が減少', value: `${formData.reemploymentReductionRate}%減` }],
+      });
+    }
+    if (formData.spouseAssumeReemployment) {
+      const personAge = n(formData.personAge);
+      const spouseBaseAge = formData.familyComposition === '既婚' ? n(formData.spouseAge) : n(formData.spouseAgeAtMarriage);
+      const ageDiff = 60 - spouseBaseAge;
+      const eventAgeOnPersonTimeline = personAge + ageDiff;
+      events.push({
+        age: eventAgeOnPersonTimeline,
+        title: '👤 パートナーの定年再雇用 開始',
+        details: [{ label: '給与収入が減少', value: `${formData.spouseReemploymentReductionRate}%減` }],
+      });
+    }
+
+
     // 退職金
     if (formData.retirementIncome && n(formData.retirementIncome.age) > 0) {
       events.push({
@@ -464,7 +485,7 @@ export default function FormPage() {
     if (selfNetIncome > 0) {
       incomeEvents.push({
         age: retirementAge,
-        title: '👤 あなたの退職',
+        title: `👤 あなたの${formData.assumeReemployment ? '（完全）' : ''}退職`,
         details: [{ label: '給与収入が停止', value: `手取り年収が減少します` }],
         incomeChange: -selfNetIncome,
         type: 'self-retire',
@@ -508,7 +529,7 @@ export default function FormPage() {
       if (spouseBaseNetIncome > 0) {
         incomeEvents.push({
           age: spouseRetirementAgeOnPersonTimeline,
-          title: 'パートナーの退職',
+          title: `パートナーの${formData.spouseAssumeReemployment ? '（完全）' : ''}退職`,
           details: [{ label: '給与収入が停止', value: `手取り年収が減少します` }],
           incomeChange: -spouseBaseNetIncome,
           type: 'spouse-retire',
