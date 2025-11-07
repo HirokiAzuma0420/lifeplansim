@@ -83,12 +83,6 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
           title: `${i + 1}人目の子供誕生`,
           details: [{ label: '教育費が発生', value: `〜${birthAge + 22}歳まで` }],
         });
-        allEvents.push({
-          age: birthAge + 22,
-          iconKey: 'education',
-          title: `${i + 1}人目の子供独立`,
-          details: [{ label: '教育費が終了', value: '' }],
-        });
       }
     }
 
@@ -171,8 +165,8 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
     allEvents.push({
       age: n(formData.pensionStartAge),
       iconKey: 'pension',
-      title: 'あなたの年金受給開始',
-      details: [{ label: '月額', value: formatManYen(formData.pensionAmount) }],
+      title: 'あなたの公的年金 受給開始',
+      details: [{ label: '年間受給額', value: formatYen(n(formData.pensionAmount) * 12 * 10000) }],
     });
     if (formData.familyComposition === '既婚' || formData.planToMarry === 'する') {
       const spouseBaseAge = formData.familyComposition === '既婚' ? n(formData.spouseAge) : n(formData.spouseAgeAtMarriage);
@@ -182,8 +176,8 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
       allEvents.push({
         age: spousePensionStartAgeOnPersonTimeline,
         iconKey: 'pension',
-        title: 'パートナーの年金受給開始',
-        details: [{ label: '月額', value: formatManYen(formData.spousePensionAmount) }],
+        title: 'パートナーの公的年金 受給開始',
+        details: [{ label: '年間受給額', value: formatYen(n(formData.spousePensionAmount) * 12 * 10000) }],
       });
     }
 
@@ -192,19 +186,24 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
       allEvents.push({
         age: n(formData.retirementIncome.age),
         iconKey: 'retirement',
-        title: 'あなたの退職金受取',
+        title: 'あなたの退職金',
         details: [
           { label: '受取額', value: formatManYen(formData.retirementIncome.amount) },
+          { label: '勤続年数', value: `${formData.retirementIncome.yearsOfService} 年` },
         ]
       });
     }
     if (formData.spouseRetirementIncome && n(formData.spouseRetirementIncome.age) > 0) {
+      const spouseBaseAge = formData.familyComposition === '既婚' ? n(formData.spouseAge) : n(formData.spouseAgeAtMarriage);
+      const ageDiff = n(formData.spouseRetirementIncome.age) - spouseBaseAge;
+      const eventAgeOnPersonTimeline = n(formData.personAge) + ageDiff;
       allEvents.push({
-        age: n(formData.spouseRetirementIncome.age),
+        age: eventAgeOnPersonTimeline,
         iconKey: 'retirement',
-        title: 'パートナーの退職金受取',
+        title: 'パートナーの退職金',
         details: [
           { label: '受取額', value: formatManYen(formData.spouseRetirementIncome.amount) },
+          { label: '勤続年数', value: `${formData.spouseRetirementIncome.yearsOfService} 年` },
         ]
       });
     }
@@ -225,11 +224,22 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
             title: `${person}の個人年金（一括）`,
             details: [{ label: '受取総額', value: formatManYen(plan.amount) }]
           });
+        } else {
+          const ageDiff = n(plan.startAge) - baseAge;
+          const eventAgeOnPersonTimeline = isSpouse ? personCurrentAge + ageDiff : n(plan.startAge);
+          allEvents.push({
+            age: eventAgeOnPersonTimeline,
+            iconKey: 'pension',
+            title: `${person}の個人年金（受給開始）`,
+            details: [
+              { label: '年間受給額', value: formatManYen(plan.amount) },
+              { label: '受給期間', value: plan.type === 'fixedTerm' ? `${plan.duration}年間` : '終身' }
+            ]
+          });
         }
       });
     };
 
-    // その他一時金
     const processOtherLumpSums = (lumpSums: typeof formData.otherLumpSums, person: string) => {
       const isSpouse = person === 'パートナー';
       const baseAge = isSpouse ? (formData.familyComposition === '既婚' ? n(formData.spouseAge) : n(formData.spouseAgeAtMarriage)) : n(formData.personAge);
@@ -241,7 +251,7 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
         allEvents.push({
           age: eventAgeOnPersonTimeline,
           iconKey: 'lump-sum',
-          title: `${person}のその他一時金（${item.name || '名称未設定'}）`,
+          title: `${person}のその他一時金受取（${item.name || '名称未設定'}）`,
           details: [{ label: '受取額', value: formatManYen(item.amount) }]
         });
       });
@@ -273,15 +283,20 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
 
       {events.map((event, index) => {
         const data = yearlyDataByAge.get(event.age);
-        const balance = data ? data.income - data.expense : 0;
+        const balance = data ? data.income - data.expense : undefined;
+        const isNegativeBalance = balance !== undefined && balance < 0;
 
         return (
           <div key={index} className="relative mb-8">
-            <div className="absolute left-0 top-1.5 -translate-x-1/2 w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center">
-          <div className="w-3 h-3 bg-blue-500 rounded-full" />
+            <div className={`absolute left-0 top-1.5 -translate-x-1/2 w-8 h-8 rounded-full bg-white border-2 flex items-center justify-center transition-colors duration-300 ${
+              isNegativeBalance ? 'border-red-300' : 'border-gray-200'
+            }`}>
+              <div className={`w-3 h-3 rounded-full transition-colors duration-300 ${isNegativeBalance ? 'bg-red-500' : 'bg-blue-500'}`} />
             </div>
             <div className="ml-4">
-              <div className="bg-white rounded-xl shadow p-4 border border-gray-100">
+              <div className={`rounded-xl shadow p-4 border transition-colors duration-300 ${
+                isNegativeBalance ? 'bg-red-50 border-red-200' : 'bg-white border-gray-100'
+              }`}>
                 <div className="flex items-start md:items-center mb-3">
                   <EventIcon iconKey={event.iconKey} />
                   <div>
@@ -291,7 +306,7 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
                     </div>
                   </div>
                 </div>
-                {data && (
+                {data && balance !== undefined && (
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm border-t pt-3 mt-3">
                     <div className="flex items-center gap-2">
                       <TrendingUp size={16} className="text-green-500" />
@@ -308,10 +323,10 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <PiggyBank size={16} className={balance >= 0 ? "text-green-500" : "text-red-500"} />
+                      <PiggyBank size={16} className={isNegativeBalance ? "text-red-500" : "text-green-500"} />
                       <div>
                         <p className="text-xs text-gray-500">年間収支</p>
-                        <p className={`font-semibold ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>{formatYen(balance, true)}</p>
+                        <p className={`font-semibold ${isNegativeBalance ? 'text-red-600' : 'text-green-600'}`}>{formatYen(balance, true)}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
