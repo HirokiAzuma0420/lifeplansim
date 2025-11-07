@@ -169,23 +169,9 @@ export const useFormState = () => {
 
   // `effectiveSections` と `validateSection` をフック内に定義
   const effectiveSections = useMemo(() => {
-    const allSections = [
-      '家族構成',
-      '現在の収入',
-      '現在の支出',
-      'ライフイベント - 車',
-      'ライフイベント - 家',
-      'ライフイベント - 結婚',
-      'ライフイベント - 子供',
-      'ライフイベント - 生活',
-      'ライフイベント - 親の介護',
-      'ライフイベント - 老後',
-      '貯蓄',
-      '投資',
-      'シミュレーション設定',
-    ];
+    const allSections = [...FC.MASTER_SECTIONS];
     if (formData.familyComposition === '既婚') {
-      return allSections.filter(section => section !== 'ライフイベント - 結婚');
+      return allSections.filter(section => section !== 'ライフイベント - 結婚' && section !== '退職・年金');
     }
     return allSections;
   }, [formData.familyComposition]);
