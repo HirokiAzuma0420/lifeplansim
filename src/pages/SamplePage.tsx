@@ -57,7 +57,7 @@ export default function SamplePage() {
           return isFinite(num) ? num : 0;
         };
 
-        const formData: FormDataState = sampleInput as FormDataState; // formData を FormDataState で型付け
+        const formData: FormDataState = sampleInput as unknown as FormDataState; // formData を FormDataState で型付け
 
         const mainJobIncomeGross = n(formData.mainIncome) * 10000;
         const sideJobIncomeGross = n(formData.sideJobIncome) * 10000;
