@@ -168,34 +168,38 @@
   "spouseAnnualRaiseRate": "0",
   "useSpouseNisa": false,
   "retirementIncome": {
-    "amount": "300",
-    "age": "60",
-    "yearsOfService": "22"
+    "amount": 300,
+    "amountJPY": 3000000,
+    "age": 60,
+    "yearsOfService": 22
   },
   "spouseRetirementIncome": null,
   "personalPensionPlans": [
     {
       "id": 1762501749182,
       "type": "lumpSum",
-      "amount": "330",
-      "startAge": "65",
-      "duration": ""
+      "amount": 330,
+      "amountJPY": 3300000,
+      "startAge": 65,
+      "duration": 0
     }
   ],
   "spousePersonalPensionPlans": [
     {
       "id": 1762501760778,
       "type": "fixedTerm",
-      "amount": "62",
-      "startAge": "60",
-      "duration": "5"
+      "amount": 62,
+      "amountJPY": 620000,
+      "startAge": 60,
+      "duration": 5
     },
     {
       "id": 1762501772926,
       "type": "fixedTerm",
-      "amount": "31",
-      "startAge": "65",
-      "duration": "10"
+      "amount": 31,
+      "amountJPY": 310000,
+      "startAge": 65,
+      "duration": 10
     }
   ],
   "otherLumpSums": [],
