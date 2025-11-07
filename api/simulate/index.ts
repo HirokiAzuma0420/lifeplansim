@@ -408,7 +408,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
 
           if (params.retirementIncome && params.retirementIncome.age === currentAge) {
             const selfRetirementTax = (params.retirementIncome.amountJPY / totalRetirementIncome) * totalTax;
-            oneTimeIncomeThisYear += params.retirementIncome.amountJPY - selfRetirementTax;
+            savings += params.retirementIncome.amountJPY - selfRetirementTax;
           }
           if (params.spouseRetirementIncome && spouseCurrentAge && params.spouseRetirementIncome.age === spouseCurrentAge) {
             const spouseRetirementTax = (params.spouseRetirementIncome.amountJPY / totalRetirementIncome) * totalTax;
