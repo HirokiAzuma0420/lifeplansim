@@ -39,6 +39,7 @@ export interface YearlyData {
     self: number;
     spouse: number;
     investment: number;
+    oneTime?: number;
   };
   expense: number;
   expenseDetail: {

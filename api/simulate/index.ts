@@ -503,7 +503,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
         idecoDeductionThisYear += (n(p.recurringJPY) + n(p.spotJPY)) * yearFraction;
       });
     }
-    const annualIncome = (computeNetAnnual(selfGrossIncome - idecoDeductionThisYear) + computeNetAnnual(spouseGrossIncome)) * yearFraction + pensionAnnual + personalPensionIncome + oneTimeIncomeThisYear;
+  const annualIncome = (computeNetAnnual(selfGrossIncome - idecoDeductionThisYear) + computeNetAnnual(spouseGrossIncome)) * yearFraction + pensionAnnual + personalPensionIncome + oneTimeIncomeThisYear;
 
     let childExpense = 0;
     if (params.children) {
@@ -780,6 +780,7 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
         self: Math.round(computeNetAnnual(selfGrossIncome - idecoDeductionThisYear) * yearFraction),
         spouse: Math.round(computeNetAnnual(spouseGrossIncome) * yearFraction),
         investment: Math.round(investmentIncome),
+        oneTime: Math.round(oneTimeIncomeThisYear),
       },
       expense: Math.round(totalExpense),
       expenseDetail: {
