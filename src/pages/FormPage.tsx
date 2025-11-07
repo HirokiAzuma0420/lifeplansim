@@ -210,7 +210,7 @@ export default function FormPage() {
       'ライフイベント - 子供': <ChildrenLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
       'ライフイベント - 生活': <LivingLifeEventSection formData={formData} handleApplianceChange={handleApplianceChange} addAppliance={addAppliance} handleRemoveAppliance={handleRemoveAppliance} />,
       'ライフイベント - 親の介護': <ParentCareLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} handleCarePlanChange={handleCarePlanChange} addCarePlan={addCarePlan} removeCarePlan={removeCarePlan} totalCareCost={totalCareCost} />,
-      '退職・年金': <RetirementIncomeSection formData={formData} handleInputChange={handleInputChange} setFormData={setFormData} errors={errors} />,
+      'ライフイベント - 退職・年金': <RetirementIncomeSection formData={formData} handleInputChange={handleInputChange} setFormData={setFormData} errors={errors} />,
       'ライフイベント - 老後': <RetirementLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
       '貯蓄': <SavingsSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
       '投資': <InvestmentSection formData={formData} handleInputChange={handleInputChange} monthlyInvestmentAmounts={formData.monthlyInvestmentAmounts} />,
