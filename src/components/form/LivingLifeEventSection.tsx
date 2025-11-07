@@ -1,6 +1,7 @@
 import React from 'react';
 import type { FormDataState } from '@/types/form-types';
 import { Trash2 } from "lucide-react";
+import * as FC from '@/constants/financial_const';
 
 interface LivingLifeEventSectionProps {
   formData: FormDataState;
@@ -9,7 +10,23 @@ interface LivingLifeEventSectionProps {
   handleRemoveAppliance: (index: number) => void;
 }
 
+// プリセット家電かどうかを判定
+const isPresetAppliance = (name: string) => {
+  return FC.DEFAULT_APPLIANCES.some(app => app.name === name);
+};
+
 const LivingLifeEventSection: React.FC<LivingLifeEventSectionProps> = ({ formData, handleApplianceChange, addAppliance, handleRemoveAppliance }) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, currentIndex: number) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const nextIndex = currentIndex + 1;
+      if (nextIndex < formData.appliances.length) {
+        const nextInput = document.getElementById(`appliance-${nextIndex}-firstReplacementAfterYears`);
+        nextInput?.focus();
+      }
+    }
+  };
+
   return (
     <div className="p-4">
       {/* Image placeholder */}
@@ -41,41 +58,55 @@ const LivingLifeEventSection: React.FC<LivingLifeEventSectionProps> = ({ formDat
             {formData.appliances.map((appliance, index) => (
               <tr key={index} className="align-middle">
                 <td className="px-1">
-                  <input
-                    type="text"
-                    placeholder="家電名"
-                    value={appliance.name}
-                    onChange={(e) => handleApplianceChange(index, 'name', e.target.value)}
-                    className="shadow border rounded w-full h-10 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
-                  />
+                  {isPresetAppliance(appliance.name) ? (
+                    <div className="flex items-center h-10 px-3 text-gray-800">
+                      {appliance.name}
+                    </div>
+                  ) : (
+                    <input
+                      id={`appliance-${index}-name`}
+                      type="text"
+                      placeholder="家電名"
+                      value={appliance.name}
+                      onChange={(e) => handleApplianceChange(index, 'name', e.target.value)}
+                      onKeyDown={(e) => handleKeyDown(e, index)}
+                      className="shadow border rounded w-full h-10 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
+                    />
+                  )}
                 </td>
                 <td className="px-1">
                   <input
+                    id={`appliance-${index}-cycle`}
                     type="number"
                     placeholder="年数"
                     value={appliance.cycle}
                     min={0}
                     onChange={(e) => handleApplianceChange(index, 'cycle', e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(e, index)}
                     className="shadow border rounded w-full h-10 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
                   />
                 </td>
                 <td className="px-1">
                   <input
+                    id={`appliance-${index}-firstReplacementAfterYears`}
                     type="number"
                     placeholder="年後"
                     value={appliance.firstReplacementAfterYears}
                     min={0}
                     onChange={(e) => handleApplianceChange(index, 'firstReplacementAfterYears', e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(e, index)}
                     className="shadow border rounded w-full h-10 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
                   />
                 </td>
                 <td className="px-1">
                   <input
+                    id={`appliance-${index}-cost`}
                     type="number"
                     placeholder="費用（万円）"
                     value={appliance.cost}
                     min={0}
                     onChange={(e) => handleApplianceChange(index, 'cost', e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(e, index)}
                     className="shadow border rounded w-full h-10 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
                   />
                 </td>
