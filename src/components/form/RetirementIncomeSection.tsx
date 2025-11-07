@@ -208,6 +208,9 @@ export default function RetirementIncomeSection({ formData, setFormData, errors 
 
   return (
     <div className="space-y-6">
+      <div className="w-full h-auto bg-white mb-8 flex items-center justify-center text-gray-500 max-w-[800px] mx-auto">
+        <img src="/form/Q4-retirement_allowance.png" alt="Retirement Allowance" />
+      </div>
       <h2 className="text-xl font-bold">退職・年金</h2>
       <p className="text-sm text-gray-600">
         退職金や個人年金など、老後に受け取る予定の一時金や年金収入について入力してください。
