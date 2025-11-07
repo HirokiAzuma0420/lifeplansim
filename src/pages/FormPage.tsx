@@ -406,16 +406,23 @@ export default function FormPage() {
 
     // 個人年金
     const processPensionPlans = (plans: typeof formData.personalPensionPlans, person: string) => {
+      const isSpouse = person === 'パートナー';
+      const baseAge = isSpouse ? (formData.familyComposition === '既婚' ? n(formData.spouseAge) : n(formData.spouseAgeAtMarriage)) : n(formData.personAge);
+      const personCurrentAge = n(formData.personAge);
+
       plans?.forEach(plan => {
+        const ageDiff = n(plan.startAge) - baseAge;
+        const eventAgeOnPersonTimeline = isSpouse ? personCurrentAge + ageDiff : n(plan.startAge);
+
         if (plan.type === 'lumpSum') {
           events.push({
-            age: n(plan.startAge),
+            age: eventAgeOnPersonTimeline,
             title: `💰 ${person}の個人年金（一括受取）`,
             details: [{ label: '受取総額', value: formatManYen(plan.amount) }]
           });
         } else {
           events.push({
-            age: n(plan.startAge),
+            age: eventAgeOnPersonTimeline,
             title: `💰 ${person}の個人年金（受給開始）`,
             details: [
               { label: '年間受給額', value: formatManYen(plan.amount) },
@@ -425,19 +432,25 @@ export default function FormPage() {
         }
       });
     };
-    processPensionPlans(formData.personalPensionPlans, 'あなた');
-    processPensionPlans(formData.spousePersonalPensionPlans, 'パートナー');
 
     // その他一時金
     const processOtherLumpSums = (lumpSums: typeof formData.otherLumpSums, person: string) => {
+      const isSpouse = person === 'パートナー';
+      const baseAge = isSpouse ? (formData.familyComposition === '既婚' ? n(formData.spouseAge) : n(formData.spouseAgeAtMarriage)) : n(formData.personAge);
+      const personCurrentAge = n(formData.personAge);
+
       lumpSums?.forEach(item => {
+        const ageDiff = n(item.age) - baseAge;
+        const eventAgeOnPersonTimeline = isSpouse ? personCurrentAge + ageDiff : n(item.age);
         events.push({
-          age: n(item.age),
+          age: eventAgeOnPersonTimeline,
           title: `💰 ${person}のその他一時金受取（${item.name || '名称未設定'}）`,
           details: [{ label: '受取額', value: formatManYen(item.amount) }]
         });
       });
     };
+    processPensionPlans(formData.personalPensionPlans, 'あなた');
+    processPensionPlans(formData.spousePersonalPensionPlans, 'パートナー');
     processOtherLumpSums(formData.otherLumpSums, 'あなた');
     processOtherLumpSums(formData.spouseOtherLumpSums, 'パートナー');
 
