@@ -431,28 +431,17 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
       oneTimeIncomeThisYear += netTotalRetirementIncome;
     }
 
-    // 個人年金・その他一時金の処理
+    // 個人年金・その他一時金（一括受取）の処理
     const handleLumpSums = (lumpSums: SimulationInputParams['personalPensionPlans'] | SimulationInputParams['otherLumpSums'], targetAge: number) => {
-      if (lumpSums) {
-        lumpSums.forEach(p => {
-          if ('age' in p && p.age === targetAge) { // OtherLumpSum
-            oneTimeIncomes.push({ type: 'lumpSum', amount: p.amountJPY });
-          } else if ('startAge' in p && p.startAge === targetAge && p.type === 'lumpSum') { // PersonalPensionPlan
-            oneTimeIncomes.push({ type: 'lumpSum', amount: p.amountJPY });
-          }
-        });
-      }
+      lumpSums?.forEach(p => {
+        if ('age' in p && p.age === targetAge) oneTimeIncomeThisYear += p.amountJPY; // OtherLumpSum
+        else if ('startAge' in p && p.startAge === targetAge && p.type === 'lumpSum') oneTimeIncomeThisYear += p.amountJPY; // PersonalPensionPlan
+      });
     };
-
     handleLumpSums(params.personalPensionPlans, currentAge);
     if (spouseCurrentAge) handleLumpSums(params.spousePersonalPensionPlans, spouseCurrentAge);
     handleLumpSums(params.otherLumpSums, currentAge);
     if (spouseCurrentAge) handleLumpSums(params.spouseOtherLumpSums, spouseCurrentAge);
-    
-    // 非課税の一時金を oneTimeIncomeThisYear に加算
-    oneTimeIncomes.filter(income => income.type === 'lumpSum').forEach(income => {
-      oneTimeIncomeThisYear += income.amount;
-    });
 
     // --- 1. 収支計算 (Cash Flow) ---
     // 1a. 収入
