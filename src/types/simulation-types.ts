@@ -192,6 +192,12 @@ export interface SimulationInputParams {
     startAge: number; // 60歳固定
     reductionRate: number; // 0.0 ~ 1.0 の数値 (例: 30%減給なら 0.3)
   };
+
+  // --- For Testing ---
+  _testOverrides?: {
+    income?: { [age: number]: number };
+    expense?: { [age: number]: number };
+  };
 }
 
 export interface SimulationNavigationState {

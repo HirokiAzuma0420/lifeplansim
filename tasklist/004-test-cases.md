@@ -21,15 +21,15 @@
 
 複数のモジュールを連携させ、データフローや相互作用が正しく機能することを確認します。
 
-| テストID | テスト対象 | テスト内容 | 前提条件・入力 | 期待される結果 |
-| :--- | :--- | :--- | :--- | :--- |
-| **IT-001** | フォーム入力 → APIパラメータ変換 (`api-adapter.ts`) | **正常系:** フォームの全項目入力 | `FormPage`で全ての必須項目とライフイベント（車、住宅、子供など）を入力。 | `createApiParams`関数により、全ての入力が円単位の数値や適切なオブジェクト構造に変換された`SimulationInputParams`が生成される。 |
-| **IT-002** | APIパラメータ変換 → シミュレーション実行 (`api/simulate/index.ts`) | **正常系:** 定年再雇用シナリオ | `assumeReemployment: true`, `reemploymentReductionRate: "30"` を含むAPIパラメータを渡す。 | 1. 60歳から退職年齢まで、収入が指定の減給率で減少する。<br>2. 60歳以降は昇給が停止する。<br>3. `yearlyData`の`incomeDetail`に反映される。 |
-| **IT-003** | APIパラメータ変換 → シミュレーション実行 (`api/simulate/index.ts`) | **正常系:** NISA夫婦利用シナリオ | `useSpouseNisa: true` を含むAPIパラメータを渡す。 | NISAの生涯非課税枠の上限が`FC.NISA_LIFETIME_CAP * FC.NISA_COUPLE_MULTIPLIER`（3600万円）で計算される。 |
-| **IT-004** | シミュレーションコアロジック | **複数年:** 資産の年次引き継ぎ | 1年目のシミュレーションを実行し、年末の`totalAssets`が1000万円だったとする。 | 2年目のシミュレーション開始時の資産額が、1年目の年末資産額（1000万円）を正しく引き継いでいる。 |
-| **IT-005** | シミュレーションコアロジック | **条件分岐:** 生活防衛資金の補填ロジック | 年間収支が赤字になり、`savings`が`emergencyFundJPY`を下回るシナリオ。 | 1. `debug.replenishmentTriggered`が`true`になる。<br>2. 投資口座（課税→NISAの順）が取り崩され、`savings`が`emergencyFundJPY`まで回復する。<br>3. `yearlyData`の各資産残高が正しく更新される。 |
-| **IT-006** | シミュレーションコアロジック | **複数年:** NISA売却枠の翌年復活 | 1. ある年にNISA口座を売却（取り崩し）する。<br>2. `nisaRecycleAmountForNextYear`に売却元本額が記録される。 | 翌年のNISA投資可能枠（`cumulativeNisaContribution`の計算）が、売却した元本分だけ回復している。 |
-| **IT-007** | APIエンドポイント (`/api/simulate`) | **異常系:** 不正な入力 | `initialAge`をマイナス値にするなど、不正な`inputParams`でAPIをPOSTする。 | APIがステータスコード400 (Bad Request) とエラーメッセージを返す。 |
+| テストID | テスト対象 | テスト内容 | 前提条件・入力 | 期待される結果 | ステータス |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **IT-001** | フォーム入力 → APIパラメータ変換 (`api-adapter.ts`) | **正常系:** フォームの全項目入力 | `FormPage`で全ての必須項目とライフイベント（車、住宅、子供など）を入力。 | `createApiParams`関数により、全ての入力が円単位の数値や適切なオブジェクト構造に変換された`SimulationInputParams`が生成される。 | ✅ 合格 |
+| **IT-002** | APIパラメータ変換 → シミュレーション実行 (`api/simulate/index.ts`) | **正常系:** 定年再雇用シナリオ | `assumeReemployment: true`, `reemploymentReductionRate: "30"` を含むAPIパラメータを渡す。 | 1. 60歳から退職年齢まで、収入が指定の減給率で減少する。<br>2. 60歳以降は昇給が停止する。<br>3. `yearlyData`の`incomeDetail`に反映される。 | ✅ 合格 |
+| **IT-003** | APIパラメータ変換 → シミュレーション実行 (`api/simulate/index.ts`) | **正常系:** NISA夫婦利用シナリオ | `useSpouseNisa: true` を含むAPIパラメータを渡す。 | NISAの生涯非課税枠の上限が`FC.NISA_LIFETIME_CAP * FC.NISA_COUPLE_MULTIPLIER`（3600万円）で計算される。 | ✅ 合格 |
+| **IT-004** | シミュレーションコアロジック | **複数年:** 資産の年次引き継ぎ | 1年目のシミュレーションを実行し、年末の`totalAssets`が1000万円だったとする。 | 2年目のシミュレーション開始時の資産額が、1年目の年末資産額（1000万円）を正しく引き継いでいる。 | ✅ 合格 |
+| **IT-005** | シミュレーションコアロジック | **条件分岐:** 生活防衛資金の補填ロジック | 年間収支が赤字になり、`savings`が`emergencyFundJPY`を下回るシナリオ。 | 1. `debug.replenishmentTriggered`が`true`になる。<br>2. 投資口座（課税→NISAの順）が取り崩され、`savings`が`emergencyFundJPY`まで回復する。<br>3. `yearlyData`の各資産残高が正しく更新される。 | ✅ 合格 |
+| **IT-006** | シミュレーションコアロジック | **複数年:** NISA売却枠の翌年復活 | 1. ある年にNISA口座を売却（取り崩し）する。<br>2. `nisaRecycleAmountForNextYear`に売却元本額が記録される。 | 翌年のNISA投資可能枠（`cumulativeNisaContribution`の計算）が、売却した元本分だけ回復している。 | ✅ 合格 |
+| **IT-007** | APIエンドポイント (`/api/simulate`) | **異常系:** 不正な入力 | `initialAge`をマイナス値にするなど、不正な`inputParams`でAPIをPOSTする。 | APIがステータスコード400 (Bad Request) とエラーメッセージを返す。 | ✅ 合格 |
 
 ## 3. 総合テスト (System/Comprehensive Tests)
 

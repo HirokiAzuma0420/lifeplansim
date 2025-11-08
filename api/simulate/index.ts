@@ -268,7 +268,12 @@ export function withdrawToCoverShortfall(
   return { newSavings: savings, newProductBalances: productBalances, nisaRecycleAmount: totalNisaRecycled };
 }
 
-function runSimulation(params: SimulationInputParams): YearlyData[] {
+export function runSimulation(params: SimulationInputParams): YearlyData[] {
+  // パラメータのバリデーション
+  if (params.endAge < params.initialAge) {
+    throw new Error('シミュレーション終了年齢は開始年齢より後である必要があります。');
+  }
+
   // NISA夫婦合算枠を考慮した生涯上限額を設定
   const nisaLifetimeCap = params.useSpouseNisa ? FC.NISA_LIFETIME_CAP * FC.NISA_COUPLE_MULTIPLIER : FC.NISA_LIFETIME_CAP;
 
@@ -475,7 +480,12 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
       }
     };
     handlePensionPlans(params.personalPensionPlans, currentAge);
-    if (spouseCurrentAge) handlePensionPlans(params.spousePersonalPensionPlans, spouseCurrentAge);
+    if (spouseCurrentAge) {
+      handlePensionPlans(
+        params.spousePersonalPensionPlans,
+        spouseCurrentAge
+      );
+    }
 
     let idecoDeductionThisYear = 0;
     let investmentIncome = 0; // 投資収益を初期化
@@ -484,7 +494,11 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
         idecoDeductionThisYear += (n(p.recurringJPY) + n(p.spotJPY)) * yearFraction;
       });
     }
-  const annualIncome = (computeNetAnnual(selfGrossIncome - idecoDeductionThisYear) + computeNetAnnual(spouseGrossIncome)) * yearFraction + pensionAnnual + personalPensionIncome + oneTimeIncomeThisYear;
+  let annualIncome = (computeNetAnnual(selfGrossIncome - idecoDeductionThisYear) + computeNetAnnual(spouseGrossIncome)) * yearFraction + pensionAnnual + personalPensionIncome + oneTimeIncomeThisYear;
+    // --- Test Override ---
+    if (params._testOverrides?.income?.[currentAge]) {
+      annualIncome = params._testOverrides.income[currentAge];
+    }
 
     let childExpense = 0;
     if (params.children) {
@@ -628,7 +642,11 @@ function runSimulation(params: SimulationInputParams): YearlyData[] {
         housingExpense = n(params.marriage.newHousingCostAnnual) * yearFraction;
       }
     }
-    const totalExpense = livingExpense + childExpense + careExpense + marriageExpense + applianceExpense + carExpense + housingExpense;
+    let totalExpense = livingExpense + childExpense + careExpense + marriageExpense + applianceExpense + carExpense + housingExpense;
+    // --- Test Override ---
+    if (params._testOverrides?.expense?.[currentAge]) {
+      totalExpense = params._testOverrides.expense[currentAge];
+    }
 
     // 1c. 現金残高の更新
     debugInfo.savings_before_cashFlow = savings;
@@ -817,20 +835,25 @@ export default async function(req: VercelRequest, res: VercelResponse) {
   }
   const params = rawBody.inputParams;
 
-  let result: { yearlyData: YearlyData[]; summary?: { bankruptcyRate: number } };
+  try {
+    let result: { yearlyData: YearlyData[]; summary?: { bankruptcyRate: number } };
 
-  const isDebugRun = req.query?.debug_run === 'true';
+    const isDebugRun = req.query?.debug_run === 'true';
 
-  if (isDebugRun) {
-    result = { yearlyData: runSimulation(params) };
-  } else if (params.interestScenario === '固定利回り') {
-    result = {
-      yearlyData: runSimulation(params),
-      summary: { bankruptcyRate: 0 }, // 固定利回りでは破綻確率は0（または計算しない）
-    };
-  } else {
-    result = runMonteCarloSimulation(params, FC.MONTE_CARLO_SIMULATION_COUNT);
+    if (isDebugRun) {
+      result = { yearlyData: runSimulation(params) };
+    } else if (params.interestScenario === '固定利回り') {
+      result = {
+        yearlyData: runSimulation(params),
+        summary: { bankruptcyRate: 0 }, // 固定利回りでは破綻確率は0（または計算しない）
+      };
+    } else {
+      result = runMonteCarloSimulation(params, FC.MONTE_CARLO_SIMULATION_COUNT);
+    }
+
+    res.status(200).json(result);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'An unknown error occurred';
+    res.status(400).json({ message });
   }
-
-  res.status(200).json(result);
 }
