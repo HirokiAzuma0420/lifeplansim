@@ -212,7 +212,7 @@ describe('useFormState - 状態クリーンアップロジック (UT-009)', () =
 
     act(() => {
       result.current.handleInputChange({
-        target: { name: 'assumeReemployment', type: 'checkbox', checked: false },
+        target: { name: 'assumeReemployment', type: 'checkbox', checked: false, value: 'on' },
       });
     });
 

@@ -175,7 +175,7 @@ export const useFormState = () => {
       return allSections.filter(section => section !== 'ライフイベント - 結婚');
     }
     return allSections;
-  }, [formData.familyComposition]);
+  }, [formData.familyComposition, formData.planToMarry]);
 
   const validateSection = useCallback((sectionIndex: number) => {
     const sectionName = effectiveSections[sectionIndex];
