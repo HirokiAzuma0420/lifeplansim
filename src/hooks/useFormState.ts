@@ -24,7 +24,7 @@ const createDefaultCarePlan = (): Omit<CarePlan, 'id'> & { id: number } => ({
   years: FC.DEFAULT_PARENT_CARE_YEARS,
 });
 
-const createDefaultFormData = (): FormDataState => ({
+export const createDefaultFormData = (): FormDataState => ({
   familyComposition: '',
   personAge: '',
   spouseAge: '',
@@ -166,11 +166,12 @@ export const useFormState = () => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [isReady, setIsReady] = useState(false);
+  const [cacheDisabled, setCacheDisabled] = useState(false); // キャッシュ機能を無効化するフラグ
 
   // `effectiveSections` と `validateSection` をフック内に定義
   const effectiveSections = useMemo(() => {
     const allSections = [...FC.MASTER_SECTIONS];
-    if (formData.familyComposition === '既婚') {
+    if (formData.familyComposition === '既婚' || formData.planToMarry === 'する') {
       return allSections.filter(section => section !== 'ライフイベント - 結婚');
     }
     return allSections;
@@ -208,7 +209,7 @@ export const useFormState = () => {
   }, [effectiveSections, formData]);
 
   useEffect(() => {
-    if (!isReady || initialStateFromLocation) {
+    if (!isReady || initialStateFromLocation || cacheDisabled) {
       return;
     }
     const cacheItem = {
@@ -216,7 +217,7 @@ export const useFormState = () => {
       data: formData,
     };
     localStorage.setItem(LIFE_PLAN_FORM_CACHE_KEY, JSON.stringify(cacheItem));
-  }, [formData, initialStateFromLocation, isReady]);
+  }, [formData, initialStateFromLocation, isReady, cacheDisabled]);
   
   const restoreFormData = useCallback(() => {
     const cachedData = localStorage.getItem(LIFE_PLAN_FORM_CACHE_KEY);
@@ -229,6 +230,7 @@ export const useFormState = () => {
   }, []);
 
   const clearAndReady = useCallback(() => {
+    setCacheDisabled(true); // これ以降、このインスタンスではキャッシュを無効化
     localStorage.removeItem(LIFE_PLAN_FORM_CACHE_KEY);
     setShowRestoreModal(false);
     setFormData(createDefaultFormData());
@@ -269,13 +271,6 @@ export const useFormState = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> | { target: { name: string; type: string; value: string | boolean; checked?: boolean } }
   ) => {
     const { name, type } = e.target;
-    let value: string | number | boolean;
-
-    if (type === 'checkbox') {
-      value = (e.target as HTMLInputElement).checked;
-    } else {
-      value = e.target.value;
-    }
 
     if (name.startsWith('houseRenovationPlans')) {
       const indices = name.match(/\d+/g);
@@ -283,6 +278,7 @@ export const useFormState = () => {
         const index = parseInt(indices[0], 10);
         const field = name.split('.')[1];
         setFormData(prev => {
+            const value = e.target.value;
             const newPlans = [...prev.houseRenovationPlans];
             newPlans[index] = { ...newPlans[index], [field]: value === '' ? '' : Number(value) };
             return { ...prev, houseRenovationPlans: newPlans };
@@ -290,6 +286,7 @@ export const useFormState = () => {
       }
     } else if (name.startsWith('housePurchasePlan')) {
       const field = name.split('.')[1];
+      const value = e.target.value;
       setFormData(prev => ({
         ...prev,
         housePurchasePlan: {
@@ -298,6 +295,7 @@ export const useFormState = () => {
         },
       }));
     } else if (name.startsWith('investment') && name.endsWith('Monthly')) {
+      const value = e.target.value;
       setFormData(prev => ({
         ...prev,
         monthlyInvestmentAmounts: {
@@ -306,16 +304,11 @@ export const useFormState = () => {
         }
       }));
     } else {
-      const isNumericField = type === 'number' && name !== 'stressTestSeed';
-      let valueToSet: string | number | boolean = value; // Explicitly type to allow boolean
-      if (isNumericField) {
-        valueToSet = value === '' ? '' : Number(value);
-      } else if (type === 'radio' && typeof value === 'string' && (value === 'true' || value === 'false')) {
-        valueToSet = value === 'true'; // Convert string 'true'/'false' to boolean
-      }
+      const value = type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
 
       setFormData(prev => {
-        const newState = { ...prev, [name]: valueToSet };
+        const newState = { ...prev, [name]: value };
+
         if (name === 'livingCostAfterMarriage') {
           newState.isLivingCostEdited = true;
         }
@@ -326,6 +319,66 @@ export const useFormState = () => {
         if (name === 'housingType' && value !== '賃貸') {
           newState.housePurchaseIntent = 'no';
           newState.housePurchasePlan = null;
+        }
+
+        // 子供の有無が「なし」に変更された場合、子供関連のデータをリセット
+        if (name === 'hasChildren' && value === 'なし') {
+          const defaultData = createDefaultFormData();
+          newState.numberOfChildren = defaultData.numberOfChildren;
+          newState.firstBornAge = defaultData.firstBornAge;
+          newState.educationPattern = defaultData.educationPattern;
+        }
+
+        // 結婚予定が「しない」に変更された場合、結婚関連のデータをリセット
+        if (name === 'planToMarry' && value === 'しない') {
+          const defaultData = createDefaultFormData();
+          newState.marriageAge = defaultData.marriageAge;
+          newState.spouseAgeAtMarriage = defaultData.spouseAgeAtMarriage;
+          newState.spouseIncomePattern = defaultData.spouseIncomePattern;
+          newState.engagementCost = defaultData.engagementCost;
+          // ... 他の結婚関連費用もリセット
+        }
+
+        // 支出入力方法が「簡単」に変更された場合、詳細支出項目をリセット
+        if (name === 'expenseMethod' && value === '簡単') {
+          const defaultData = createDefaultFormData();
+          newState.housingCost = defaultData.housingCost;
+          newState.utilitiesCost = defaultData.utilitiesCost;
+          newState.communicationCost = defaultData.communicationCost;
+          newState.carCost = defaultData.carCost;
+          newState.insuranceCost = defaultData.insuranceCost;
+          newState.educationCost = defaultData.educationCost;
+          newState.otherFixedCost = defaultData.otherFixedCost;
+          newState.foodCost = defaultData.foodCost;
+          newState.dailyNecessitiesCost = defaultData.dailyNecessitiesCost;
+          newState.transportationCost = defaultData.transportationCost;
+          newState.clothingBeautyCost = defaultData.clothingBeautyCost;
+          newState.socializingCost = defaultData.socializingCost;
+          newState.hobbyEntertainmentCost = defaultData.hobbyEntertainmentCost;
+          newState.otherVariableCost = defaultData.otherVariableCost;
+        }
+
+        // 車の購入予定が「なし」に変更された場合、車関連のデータをリセット
+        if (name === 'carPurchasePlan' && value === 'no') {
+          const defaultData = createDefaultFormData();
+          newState.carPrice = defaultData.carPrice;
+          newState.carFirstReplacementAfterYears = defaultData.carFirstReplacementAfterYears;
+          newState.carReplacementFrequency = defaultData.carReplacementFrequency;
+          newState.carLoanUsage = defaultData.carLoanUsage;
+          newState.carLoanYears = defaultData.carLoanYears;
+          newState.carLoanType = defaultData.carLoanType;
+        }
+
+        // 親の介護想定が「なし」に変更された場合、介護計画をリセット
+        if (name === 'parentCareAssumption' && value === 'なし') {
+          const defaultData = createDefaultFormData();
+          newState.parentCarePlans = defaultData.parentCarePlans;
+        }
+
+        // 定年再雇用を「想定しない」に変更された場合、減給率をリセット
+        if (name === 'assumeReemployment' && value === false) {
+          const defaultData = createDefaultFormData();
+          newState.reemploymentReductionRate = defaultData.reemploymentReductionRate;
         }
 
         return newState;
@@ -443,7 +496,12 @@ export const useFormState = () => {
 
   useEffect(() => {
     if (formData.familyComposition === "独身") {
-      setFormData(prev => ({ ...prev, spouseMainIncome: "0", spouseSideJobIncome: "0" }));
+      const defaultData = createDefaultFormData();
+      setFormData(prev => ({
+        ...prev,
+        spouseMainIncome: defaultData.spouseMainIncome,
+        spouseSideJobIncome: defaultData.spouseSideJobIncome,
+      }));
     }
   }, [formData.familyComposition]);
 

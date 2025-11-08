@@ -20,42 +20,13 @@ async function waitReadyAndDismissRestore(page: Page) {
   await page.locator('input[name="familyComposition"]').first().waitFor({ state: 'visible' });
 }
 
-test.describe('ST-001: 標準ファミリーケース', () => {
-  // テストの前にAPIスタブを設定
-  test.beforeEach(async ({ page }) => {
-    // APIをスタブして成功レスポンスを返す
-    await page.route('**/api/simulate', async (route) => {
-      const fakeResponse = {
-        yearlyData: [
-          {
-            year: 2025,
-            age: 35,
-            income: 8000000,
-            incomeDetail: { self: 5000000, spouse: 3000000, investment: 0 },
-            expense: 3000000,
-            expenseDetail: { living: 2000000, car: 0, housing: 1000000, marriage: 0, children: 0, appliances: 0, care: 0, retirementGap: 0 },
-            savings: 5000000,
-            nisa: { principal: 0, balance: 0 },
-            ideco: { principal: 0, balance: 0 },
-            taxable: { principal: 0, balance: 0 },
-            investmentPrincipal: 0,
-            totalAssets: 10000000,
-            balance: 0,
-            investedAmount: 0,
-            assetAllocation: { cash: 10000000, investment: 0, nisa: 0, ideco: 0 },
-            products: {},
-          },
-          // ... 必要に応じて他の年のデータを追加 ...
-        ],
-        summary: { bankruptcyRate: 0 },
-        percentileData: { p10: [], p90: [] },
-      };
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(fakeResponse) });
-    });
-  });
+test.describe('ST-001: Smoke Test (Happy Path)', () => {
+  // @smoke タグを付けて、これがスモークテストであることを示す
+  test('フォーム入力から結果表示までの一連の流れを検証する @smoke', async ({ page }) => {
+    // このテストではAPIをスタブしない。
+    // 事前にフロントエンドとバックエンドの両方のサーバーが起動している必要がある。
 
-  test('フォーム入力から結果表示までの一連の流れを検証する', async ({ page }) => {
-    // 1) 直接フォームページへ遷移（トップのテキスト依存を避ける）
+    // 1) 直接フォームページへ遷移
     await page.goto('/form');
     await waitReadyAndDismissRestore(page);
 
@@ -109,7 +80,6 @@ test.describe('ST-001: 標準ファミリーケース', () => {
     await clickNext(page);
 
     // 14) 投資（投資信託をNISA、iDeCoは月2に設定）
-    // 各アコーディオンを開いてから入力・選択
     await page.locator('button[aria-controls="accordion-content-investmentTrust"]').click();
     await page.locator('input[name="investmentTrustAccountType"][value="nisa"]').check();
     await page.locator('input[name="investmentTrustCurrent"]').fill('200');
@@ -135,8 +105,8 @@ test.describe('ST-001: 標準ファミリーケース', () => {
 
     // 17) 結果ページ検証（URL と「可視な SVG」が存在することを確認）
     await expect(page).toHaveURL(/.*\/result/);
-    // 先頭のSVGはアイコン等で非表示の場合があるため、可視SVGを対象に検証
+    // 実際のAPIは時間がかかる可能性があるので、タイムアウトを長めに設定
     const visibleSvg = page.locator('svg:visible').first();
-    await expect(visibleSvg).toBeVisible();
+    await expect(visibleSvg).toBeVisible({ timeout: 10000 });
   });
 });
