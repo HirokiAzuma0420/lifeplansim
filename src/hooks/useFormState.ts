@@ -230,16 +230,17 @@ export const useFormState = () => {
   }, []);
 
   const clearAndReady = useCallback(() => {
-    setCacheDisabled(true); // これ以降、このインスタンスではキャッシュを無効化
     localStorage.removeItem(LIFE_PLAN_FORM_CACHE_KEY);
     setShowRestoreModal(false);
     setFormData(createDefaultFormData());
     setIsReady(true);
+    setCacheDisabled(true); // キャッシュをクリアした後は、このセッションではキャッシュを無効化
   }, []);
 
   // NEW useEffect to handle initial loading and cache
   useEffect(() => {
     if (initialStateFromLocation) {
+      // location.stateからデータが渡された場合、キャッシュは使用せず、そのデータで初期化する
       setIsReady(true);
       return;
     }
