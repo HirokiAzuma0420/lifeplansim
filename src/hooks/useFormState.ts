@@ -171,11 +171,11 @@ export const useFormState = () => {
   // `effectiveSections` と `validateSection` をフック内に定義
   const effectiveSections = useMemo(() => {
     const allSections = [...FC.MASTER_SECTIONS];
-    if (formData.familyComposition === '既婚' || formData.planToMarry === 'する') {
+    if (formData.familyComposition === '既婚') {
       return allSections.filter(section => section !== 'ライフイベント - 結婚');
     }
     return allSections;
-  }, [formData.familyComposition, formData.planToMarry]);
+  }, [formData.familyComposition]);
 
   const validateSection = useCallback((sectionIndex: number) => {
     const sectionName = effectiveSections[sectionIndex];
@@ -375,10 +375,16 @@ export const useFormState = () => {
           newState.parentCarePlans = defaultData.parentCarePlans;
         }
 
-        // 定年再雇用を「想定しない」に変更された場合、減給率をリセット
-        if (name === 'assumeReemployment' && value === false) {
+        // 定年再雇用の想定が変更された場合、減給率をリセット
+        if (name === 'assumeReemployment') {
           const defaultData = createDefaultFormData();
-          newState.reemploymentReductionRate = defaultData.reemploymentReductionRate;
+          if (value === true) {
+            // 想定「する」にした場合はデフォルト値を設定
+            newState.reemploymentReductionRate = defaultData.reemploymentReductionRate;
+          } else {
+            // 想定「しない」にした場合は空にする（もしくはデフォルト値）
+            newState.reemploymentReductionRate = defaultData.reemploymentReductionRate;
+          }
         }
 
         return newState;
