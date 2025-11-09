@@ -1,3 +1,5 @@
+import type { FormDataState } from '@/types/form-types';
+
 /**
  * アプリケーション全体で使用される財務関連の定数を定義します。
  * このファイルは、以下のカテゴリに分類されています。
@@ -144,6 +146,7 @@ export const DEFAULT_APPLIANCES = [
   { name: 'テレビ', cycle: 10, cost: 8, firstReplacementAfterYears: '' as number | '' },
   { name: '電子レンジ', cycle: 8, cost: 3, firstReplacementAfterYears: '' as number | '' },
   { name: '掃除機', cycle: 6, cost: 2, firstReplacementAfterYears: '' as number | '' },
+  { name: 'スマホ', cycle: 5, cost: 15, firstReplacementAfterYears: '' as number | '' },
 ];
 
 // =================================================================================
@@ -166,6 +169,23 @@ export const MASTER_SECTIONS = [
   '貯蓄',
   '投資',
   'シミュレーション設定',
+];
+
+/** フォームのセクションとフィールドの対応表 */
+export const SECTION_FIELD_MAP: { section: string; fields: (keyof FormDataState)[] }[] = [
+  { section: '家族構成', fields: ['familyComposition'] as const },
+  { section: '現在の収入', fields: ['personAge', 'spouseAge', 'mainIncome', 'spouseMainIncome', 'sideJobIncome', 'spouseSideJobIncome', 'annualRaiseRate', 'spouseAnnualRaiseRate'] as const },
+  { section: '現在の支出', fields: ['expenseMethod', 'livingCostSimple', 'utilitiesCost', 'communicationCost', 'insuranceCost', 'educationCost', 'otherFixedCost', 'foodCost', 'dailyNecessitiesCost', 'transportationCost', 'clothingBeautyCost', 'socializingCost', 'hobbyEntertainmentCost', 'otherVariableCost'] as const },
+  { section: 'ライフイベント - 結婚', fields: ['planToMarry', 'marriageAge', 'spouseAgeAtMarriage', 'spouseIncomePattern', 'spouseCustomIncome', 'livingCostAfterMarriage', 'housingCostAfterMarriage'] as const },
+  { section: 'ライフイベント - 子ども', fields: ['hasChildren', 'numberOfChildren', 'firstBornAge', 'educationPattern'] as const },
+  { section: 'ライフイベント - 住宅', fields: ['housingType', 'currentRentLoanPayment', 'loanRemainingYears', 'housePurchaseIntent', 'housePurchasePlan'] as const },
+  { section: 'ライフイベント - 車', fields: ['carPurchasePlan', 'carPrice', 'carFirstReplacementAfterYears', 'carReplacementFrequency', 'carLoanUsage', 'carLoanYears'] as const },
+  { section: 'ライフイベント - 介護', fields: ['parentCareAssumption', 'parentCarePlans'] as const },
+  { section: '老後の計画', fields: ['retirementAge', 'spouseRetirementAge', 'postRetirementLivingCost', 'pensionStartAge', 'pensionAmount', 'spousePensionStartAge', 'spousePensionAmount'] as const },
+  { section: '退職・年金', fields: ['retirementIncome', 'spouseRetirementIncome', 'personalPensionPlans', 'spousePersonalPensionPlans', 'otherLumpSums', 'spouseOtherLumpSums', 'assumeReemployment', 'reemploymentReductionRate', 'spouseAssumeReemployment', 'spouseReemploymentReductionRate'] as const },
+  { section: '現在の資産', fields: ['currentSavings', 'emergencyFund', 'hasInvestment', 'investmentStocksCurrent', 'investmentTrustCurrent', 'investmentBondsCurrent', 'investmentIdecoCurrent', 'investmentCryptoCurrent', 'investmentOtherCurrent'] as const },
+  { section: '今後の投資', fields: ['monthlyInvestmentAmounts', 'investmentStocksAnnualSpot', 'investmentTrustAnnualSpot', 'investmentBondsAnnualSpot', 'investmentIdecoAnnualSpot', 'investmentCryptoAnnualSpot', 'investmentOtherAnnualSpot', 'investmentStocksRate', 'investmentTrustRate', 'investmentBondsRate', 'investmentIdecoRate', 'investmentCryptoRate', 'investmentOtherRate', 'useSpouseNisa'] as const },
+  { section: 'その他', fields: ['simulationPeriodAge', 'interestRateScenario', 'fixedInterestRate', 'appliances'] as const },
 ];
 
 // =================================================================================

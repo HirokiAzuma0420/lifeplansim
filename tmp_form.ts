@@ -4,7 +4,6 @@ import type { FormDataState, FormLocationState, InvestmentMonthlyAmounts } from 
 import type { CarePlan } from '@/types/simulation-types';
 import * as FC from '@/constants/financial_const';
 import { computeNetAnnual, calculateLoanPayment, n } from '@/utils/financial';
-import { validationRules, type FieldValidationRules } from '@/utils/validation';
 
 const LIFE_PLAN_FORM_CACHE_KEY = 'lifePlanFormDataCache';
 
@@ -56,7 +55,7 @@ export const createDefaultFormData = (): FormDataState => ({
   carLoanUsage: '',
   carLoanYears: '',
   carLoanType: '',
-  housingType: '' as '賃貸' | '持ち家（ローン中）' | '持ち家（完済）',
+  housingType: '' as '賁E��' | '持ち家�E�ローン中�E�E | '持ち家�E�完済！E,
   carCurrentLoanInPayment: '',
   carCurrentLoanMonthly: '',
   carCurrentLoanRemainingMonths: '',
@@ -137,7 +136,7 @@ export const createDefaultFormData = (): FormDataState => ({
   spouseAnnualRaiseRate: String(FC.DEFAULT_ANNUAL_RAISE_RATE_PERCENT),
   useSpouseNisa: false,
 
-  // 退職金・一時金
+  // 退職金�E一時��
   retirementIncome: null,
   spouseRetirementIncome: null,
   personalPensionPlans: [],
@@ -153,8 +152,7 @@ export const createDefaultFormData = (): FormDataState => ({
 
 export const useFormState = () => {
   const location = useLocation();
-  // location.state の型を安全に扱う
-  const locationState = (location as Location<FormLocationState | null>).state;
+  // location.state の型を安�Eに扱ぁE  const locationState = (location as Location<FormLocationState | null>).state;
   const initialStateFromLocation = locationState?.rawFormData;
 
   const [formData, setFormData] = useState<FormDataState>(() => {
@@ -167,46 +165,44 @@ export const useFormState = () => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [isReady, setIsReady] = useState(false);
-  const [cacheDisabled, setCacheDisabled] = useState(false); // キャッシュ機能を無効化するフラグ
+  const [cacheDisabled, setCacheDisabled] = useState(false); // キャチE��ュ機�Eを無効化するフラグ
 
-  // `effectiveSections` と `validateSection` をフック内に定義
+  // `effectiveSections` と `validateSection` をフチE��冁E��定義
   const effectiveSections = useMemo(() => {
     const allSections = [...FC.MASTER_SECTIONS];
-    if (formData.familyComposition === '既婚') {
-      return allSections.filter(section => section !== 'ライフイベント - 結婚');
+    if (formData.familyComposition === '既婁E) {
+      return allSections.filter(section => section !== 'ライフイベンチE- 結婁E);
     }
     return allSections;
   }, [formData.familyComposition]);
 
-  const getFieldsForSection = (sectionName: string): (keyof FormDataState)[] => {
-    const section = FC.SECTION_FIELD_MAP.find(s => s.section === sectionName);
-    return section ? section.fields : [];
-  };
-
   const validateSection = useCallback((sectionIndex: number) => {
     const sectionName = effectiveSections[sectionIndex];
-    const fieldsToValidate = getFieldsForSection(sectionName);
     const newErrors: { [key: string]: string } = {};
-
-    fieldsToValidate.forEach(field => {
-      const rules = validationRules[field as keyof FieldValidationRules];
-      if (rules) {
-        for (const rule of rules) {
-          if (!rule.isValid(formData[field], formData)) {
-            newErrors[field] = rule.message;
-            break; // 最初のバリデーションエラーで中断
-          }
+    // バリチE�EションロジチE��の実裁E��E    if (sectionName === '家族構�E') {
+      if (!formData.familyComposition) {
+        newErrors.familyComposition = '家族構�Eを選択してください、E;
+      }
+    } else if (sectionName === '現在の収�E') { // New block for Income section validation
+      if (!formData.personAge || n(formData.personAge) < FC.VALIDATION_MIN_AGE || n(formData.personAge) > FC.VALIDATION_MAX_AGE) {
+        newErrors.personAge = `年齢は${FC.VALIDATION_MIN_AGE}歳から${FC.VALIDATION_MAX_AGE}歳の間で入力してください。`;
+      }
+      if (formData.familyComposition === '既婁E) {
+        if (!formData.spouseAge || n(formData.spouseAge) < FC.VALIDATION_MIN_AGE || n(formData.spouseAge) > FC.VALIDATION_MAX_AGE) {
+          newErrors.spouseAge = `配�E老E�E年齢は${FC.VALIDATION_MIN_AGE}歳から${FC.VALIDATION_MAX_AGE}歳の間で入力してください。`;
         }
       }
-    });
+      // Also add validation for mainIncome and spouseMainIncome
+      if (!formData.mainIncome || n(formData.mainIncome) <= 0) {
+        newErrors.mainIncome = '本業年間収入を�E力してください、E;
+      }
+      if (formData.familyComposition === '既婁E && (!formData.spouseMainIncome || n(formData.spouseMainIncome) <= 0)) {
+        newErrors.spouseMainIncome = '配�E老E�E本業年間収入を�E力してください、E;
+      }
+    }
+    // Add validation for other sections here as needed
 
-    // 現在のセクションのエラーのみを更新し、他のセクションのエラーは保持する
-    setErrors(prevErrors => {
-      const updatedErrors = { ...prevErrors };
-      fieldsToValidate.forEach(field => delete updatedErrors[field]);
-      return { ...updatedErrors, ...newErrors };
-    });
-
+    setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }, [effectiveSections, formData]);
 
@@ -236,14 +232,12 @@ export const useFormState = () => {
     setShowRestoreModal(false);
     setFormData(createDefaultFormData());
     setIsReady(true);
-    setCacheDisabled(true); // キャッシュをクリアした後は、このセッションではキャッシュを無効化
-  }, []);
+    setCacheDisabled(true); // キャチE��ュをクリアした後�E、このセチE��ョンではキャチE��ュを無効匁E  }, []);
 
   // NEW useEffect to handle initial loading and cache
   useEffect(() => {
     if (initialStateFromLocation) {
-      // location.stateからデータが渡された場合、キャッシュは使用せず、そのデータで初期化する
-      setIsReady(true);
+      // location.stateからチE�Eタが渡された場合、キャチE��ュは使用せず、そのチE�Eタで初期化すめE      setIsReady(true);
       return;
     }
 
@@ -309,8 +303,7 @@ export const useFormState = () => {
     } else {
       let value: string | boolean;
       if (type === 'checkbox') {
-        // Switchコンポーネントのようにvalueに直接booleanが入る場合と、通常のinput[type=checkbox]のようにcheckedプロパティに入る場合の両方に対応
-        const targetValue = (e.target as HTMLInputElement).value;
+        // Switchコンポ�Eネント�Eようにvalueに直接booleanが�Eる場合と、E��常のinput[type=checkbox]のようにcheckedプロパティに入る場合�E両方に対忁E        const targetValue = (e.target as HTMLInputElement).value;
         value = typeof targetValue === 'boolean' ? targetValue : (e.target as HTMLInputElement).checked;
       } else {
         value = e.target.value;
@@ -318,7 +311,7 @@ export const useFormState = () => {
 
       // assumeReemployment と spouseAssumeReemployment は boolean に変換する
       if (name === 'assumeReemployment' || name === 'spouseAssumeReemployment') {
-        // 文字列の 'true'/'false' を boolean に変換
+        // 斁E���Eの 'true'/'false' めEboolean に変換
         value = value === 'true' || value === true;
       }
 
@@ -331,32 +324,32 @@ export const useFormState = () => {
         if (name === 'housingCostAfterMarriage') {
           newState.isHousingCostEdited = true;
         }
-        // 住居タイプが「賃貸」以外に変更された場合、将来の購入プランをリセット
-        if (name === 'housingType' && value !== '賃貸') {
+        // 住屁E��イプが「賁E��」以外に変更された場合、封E��の購入プランをリセチE��
+        if (name === 'housingType' && value !== '賁E��') {
           newState.housePurchaseIntent = 'no';
           newState.housePurchasePlan = null;
         }
 
-        // 子供の有無が「なし」に変更された場合、子供関連のデータをリセット
-        if (name === 'hasChildren' && value === 'なし') {
+        // 子供�E有無が「なし」に変更された場合、子供関連のチE�EタをリセチE��
+        if (name === 'hasChildren' && value === 'なぁE) {
           const defaultData = createDefaultFormData();
           newState.numberOfChildren = defaultData.numberOfChildren;
           newState.firstBornAge = defaultData.firstBornAge;
           newState.educationPattern = defaultData.educationPattern;
         }
 
-        // 結婚予定が「しない」に変更された場合、結婚関連のデータをリセット
-        if (name === 'planToMarry' && value === 'しない') {
+        // 結婚予定が「しなぁE��に変更された場合、結婚関連のチE�EタをリセチE��
+        if (name === 'planToMarry' && value === 'しなぁE) {
           const defaultData = createDefaultFormData();
           newState.marriageAge = defaultData.marriageAge;
           newState.spouseAgeAtMarriage = defaultData.spouseAgeAtMarriage;
           newState.spouseIncomePattern = defaultData.spouseIncomePattern;
           newState.engagementCost = defaultData.engagementCost;
-          // ... 他の結婚関連費用もリセット
+          // ... 他�E結婚関連費用もリセチE��
         }
 
-        // 支出入力方法が「簡単」に変更された場合、詳細支出項目をリセット
-        if (name === 'expenseMethod' && value === '簡単') {
+        // 支出入力方法が「簡単」に変更された場合、詳細支出頁E��をリセチE��
+        if (name === 'expenseMethod' && value === '簡十E) {
           const defaultData = createDefaultFormData();
           newState.housingCost = defaultData.housingCost;
           newState.utilitiesCost = defaultData.utilitiesCost;
@@ -374,7 +367,7 @@ export const useFormState = () => {
           newState.otherVariableCost = defaultData.otherVariableCost;
         }
 
-        // 車の購入予定が「なし」に変更された場合、車関連のデータをリセット
+        // 車�E購入予定が「なし」に変更された場合、車関連のチE�EタをリセチE��
         if (name === 'carPurchasePlan' && value === 'no') {
           const defaultData = createDefaultFormData();
           newState.carPrice = defaultData.carPrice;
@@ -385,25 +378,23 @@ export const useFormState = () => {
           newState.carLoanType = defaultData.carLoanType;
         }
 
-        // 親の介護想定が「なし」に変更された場合、介護計画をリセット
-        if (name === 'parentCareAssumption' && value === 'なし') {
+        // 親の介護想定が「なし」に変更された場合、介護計画をリセチE��
+        if (name === 'parentCareAssumption' && value === 'なぁE) {
           const defaultData = createDefaultFormData();
           newState.parentCarePlans = defaultData.parentCarePlans;
         }
 
-        // 定年再雇用の想定が変更された場合、減給率をリセット
+        // 定年再雇用の想定が変更された場合、減給玁E��リセチE��
         if (name === 'assumeReemployment') {
           const defaultData = createDefaultFormData();
           if (value === true) {
-            // 想定「する」にした場合はデフォルト値を設定
-            newState.reemploymentReductionRate = defaultData.reemploymentReductionRate;
+            // 想定「する」にした場合�EチE��ォルト値を設宁E            newState.reemploymentReductionRate = defaultData.reemploymentReductionRate;
           } else {
-            // 想定「しない」にした場合は空にする（もしくはデフォルト値）
-            newState.reemploymentReductionRate = defaultData.reemploymentReductionRate;
+            // 想定「しなぁE��にした場合�E空にする�E�もしくはチE��ォルト値�E�E            newState.reemploymentReductionRate = defaultData.reemploymentReductionRate;
           }
         }
 
-        // 住宅リフォームプランのコストが0または空になった場合、そのプランを削除
+        // 住宁E��フォームプランのコストが0また�E空になった場合、そのプランを削除
         if (name.startsWith('houseRenovationPlans') && name.endsWith('.cost') && (value === '' || n(value) === 0)) {
           const indices = name.match(/\d+/g);
           if (indices) {
@@ -412,7 +403,7 @@ export const useFormState = () => {
           }
         }
 
-        // 介護プランのコストが0または空になった場合、そのプランを削除
+        // 介護プランのコストが0また�E空になった場合、そのプランを削除
         if (name.startsWith('parentCarePlans') && name.endsWith('.monthly10kJPY') && (value === '' || n(value) === 0)) {
           const indices = name.match(/\d+/g);
           if (indices) {
@@ -421,7 +412,7 @@ export const useFormState = () => {
           }
         }
 
-        // その他一時金の名称が空になった場合、そのプランを削除
+        // そ�E他一時��の名称が空になった場合、そのプランを削除
         if ((name.startsWith('otherLumpSums') || name.startsWith('spouseOtherLumpSums')) && name.endsWith('.name') && value === '') {
           const planType = name.startsWith('otherLumpSums') ? 'otherLumpSums' : 'spouseOtherLumpSums';
           const indices = name.match(/\d+/g);
@@ -440,14 +431,14 @@ export const useFormState = () => {
           }
         }
 
-        // 個人年金の受け取り有無が変更された場合、プランをリセット
+        // 個人年金�E受け取り有無が変更された場合、�EランをリセチE��
         if (name === 'hasPersonalPension') {
           if (value === false) {
             newState.personalPensionPlans = [];
           }
         }
 
-        // 配偶者の個人年金の受け取り有無が変更された場合、プランをリセット
+        // 配�E老E�E個人年金�E受け取り有無が変更された場合、�EランをリセチE��
         if (name === 'hasSpousePersonalPension') {
           if (value === false) {
             newState.spousePersonalPensionPlans = [];
@@ -550,7 +541,7 @@ export const useFormState = () => {
   useEffect(() => {
     if (formData.planToMarry !== 'する' || formData.isLivingCostEdited) return;
     
-    const singleLivingCost = formData.expenseMethod === '簡単'
+    const singleLivingCost = formData.expenseMethod === '簡十E
       ? Number(formData.livingCostSimple) || 0
       : totalExpenses;
 
@@ -583,8 +574,8 @@ export const useFormState = () => {
   const totalNetAnnualIncome = useMemo(() => {
     const mainJobIncomeGross = (Number(formData.mainIncome) || 0) * FC.YEN_PER_MAN;
     const sideJobIncomeGross = (Number(formData.sideJobIncome) || 0) * FC.YEN_PER_MAN;
-    const spouseMainJobIncomeGross = (formData.familyComposition === '既婚' ? (Number(formData.spouseMainIncome) || 0) : 0) * FC.YEN_PER_MAN;
-    const spouseSideJobIncomeGross = (formData.familyComposition === '既婚' ? (Number(formData.spouseSideJobIncome) || 0) : 0) * FC.YEN_PER_MAN;
+    const spouseMainJobIncomeGross = (formData.familyComposition === '既婁E ? (Number(formData.spouseMainIncome) || 0) : 0) * FC.YEN_PER_MAN;
+    const spouseSideJobIncomeGross = (formData.familyComposition === '既婁E ? (Number(formData.spouseSideJobIncome) || 0) : 0) * FC.YEN_PER_MAN;
     const selfNetAnnual = computeNetAnnual(mainJobIncomeGross) + computeNetAnnual(sideJobIncomeGross);
     const spouseNetAnnual = computeNetAnnual(spouseMainJobIncomeGross) + computeNetAnnual(spouseSideJobIncomeGross);
     return selfNetAnnual + spouseNetAnnual;
@@ -602,20 +593,20 @@ export const useFormState = () => {
     return (Number(formData.engagementCost || 0) + Number(formData.weddingCost || 0) + Number(formData.honeymoonCost || 0) + (Number(formData.newHomeMovingCost) || 0)) * FC.YEN_PER_MAN;
   }, [formData.planToMarry, formData.engagementCost, formData.weddingCost, formData.honeymoonCost, formData.newHomeMovingCost]);
   const totalCareCost = useMemo(() => {
-    if (formData.parentCareAssumption !== 'はい' || !formData.parentCarePlans) return 0;
+    if (formData.parentCareAssumption !== 'はぁE || !formData.parentCarePlans) return 0;
     return formData.parentCarePlans.reduce((total, plan) => total + ((Number(plan.monthly10kJPY) || 0) * (Number(plan.years) || 0) * FC.MONTHS_PER_YEAR), 0);
   }, [formData.parentCareAssumption, formData.parentCarePlans]);
   const totalRetirementMonthly = useMemo(() => {
-    const spousePension = (formData.familyComposition === '既婚' || formData.planToMarry === 'する') ? (Number(formData.spousePensionAmount) || 0) : 0;
+    const spousePension = (formData.familyComposition === '既婁E || formData.planToMarry === 'する') ? (Number(formData.spousePensionAmount) || 0) : 0;
     return ((Number(formData.postRetirementLivingCost) || 0) - ((Number(formData.pensionAmount) || 0) + spousePension));
   }, [formData.postRetirementLivingCost, formData.pensionAmount, formData.spousePensionAmount, formData.familyComposition, formData.planToMarry]);
   const totalCarLoanCost = useMemo(() => {
-    if (formData.carLoanUsage !== 'はい') return 0;
+    if (formData.carLoanUsage !== 'はぁE) return 0;
     const principal = Number(formData.carPrice) * FC.YEN_PER_MAN || 0;
     const years = Number(formData.carLoanYears) || 0;
     let annualRatePercent = FC.DEFAULT_LOAN_RATES.CAR_GENERAL * 100;
     if (formData.carLoanType === '銀行ローン') annualRatePercent = FC.DEFAULT_LOAN_RATES.CAR_BANK * 100;
-    else if (formData.carLoanType === 'ディーラーローン') annualRatePercent = FC.DEFAULT_LOAN_RATES.CAR_DEALER * 100;
+    else if (formData.carLoanType === 'チE��ーラーローン') annualRatePercent = FC.DEFAULT_LOAN_RATES.CAR_DEALER * 100;
     const { totalPayment } = calculateLoanPayment(principal, annualRatePercent, years);
     return Math.ceil(totalPayment);
   }, [formData.carPrice, formData.carLoanUsage, formData.carLoanYears, formData.carLoanType]);
@@ -627,9 +618,9 @@ export const useFormState = () => {
     const housingLoanStatus = formData.housingLoanStatus;
     let annualPayment = 0;
     let totalPayment = 0;
-    const isFutureBuyer = formData.housingType === '賃貸' && formData.housePurchasePlan !== null;
-    const isCurrentLoanHolder = formData.housingType === '持ち家（ローン中）' && Number(formData.loanMonthlyPayment) > 0 && Number(formData.loanRemainingYears) > 0;
-    if (housingLoanStatus === 'これから借りる' || isFutureBuyer) {
+    const isFutureBuyer = formData.housingType === '賁E��' && formData.housePurchasePlan !== null;
+    const isCurrentLoanHolder = formData.housingType === '持ち家�E�ローン中�E�E && Number(formData.loanMonthlyPayment) > 0 && Number(formData.loanRemainingYears) > 0;
+    if (housingLoanStatus === 'これから借りめE || isFutureBuyer) {
       const price = (isFutureBuyer ? formData.housePurchasePlan?.price : Number(formData.housePurchasePrice)) || 0;
       const downPayment = (isFutureBuyer ? formData.housePurchasePlan?.downPayment : Number(formData.headDownPayment)) || 0;
       const years = (isFutureBuyer ? formData.housePurchasePlan?.loanYears : Number(formData.housingLoanYears)) || 0;
@@ -638,7 +629,7 @@ export const useFormState = () => {
       if (price > 0 && years > 0 && interestRateType) {
         const principal = (price - downPayment) * FC.YEN_PER_MAN;
         let interestRate = FC.DEFAULT_LOAN_RATES.HOUSING_GENERAL * 100;
-        if (interestRateType === '指定') {
+        if (interestRateType === '持E��E) {
           interestRate = customInterestRate;
         }
         const calculated = calculateLoanPayment(principal, interestRate, years);
@@ -689,7 +680,6 @@ export const useFormState = () => {
     estimatedAnnualLoanPayment,
     estimatedTotalLoanPayment,
     initialStateFromLocation,
-    effectiveSections, // FormPage に渡す
-    validateSection    // FormPage に渡す
-  };
+    effectiveSections, // FormPage に渡ぁE    validateSection    // FormPage に渡ぁE  };
 };
+
