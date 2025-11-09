@@ -381,7 +381,7 @@ export function runSimulation(params: SimulationInputParams): YearlyData[] {
     // 収入の更新（昇給または再雇用による減給）
     if (i > 0) {
       // 本人の収入更新
-      if (params.reemployment && currentAge > params.reemployment.startAge && currentAge < params.retirementAge) {
+      if (params.reemployment && currentAge >= params.reemployment.startAge && currentAge < params.retirementAge) {
         // 再雇用期間中: 59歳時点の額面年収から減給
         if (selfGrossIncomeAt59 !== null) {
           currentSelfGrossIncome = selfGrossIncomeAt59 * (1 - params.reemployment.reductionRate);
@@ -394,9 +394,7 @@ export function runSimulation(params: SimulationInputParams): YearlyData[] {
       if (currentAge === 59) {
         selfGrossIncomeAt59 = currentSelfGrossIncome;
         // 60歳から再雇用の場合、このタイミングで減給を適用
-        if (params.reemployment && params.reemployment.startAge === 60) {
-          currentSelfGrossIncome = selfGrossIncomeAt59 * (1 - params.reemployment.reductionRate);
-        }
+        // 減給の適用は開始年齢に到達した年（例:60歳）に行う
       }
 
       // 配偶者の収入更新
