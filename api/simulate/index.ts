@@ -392,7 +392,11 @@ export function runSimulation(params: SimulationInputParams): YearlyData[] {
         if (spouseGrossIncomeAt59 !== null) {
           currentSpouseGrossIncome = spouseGrossIncomeAt59 * (1 - params.spouseReemployment.reductionRate);
         }
-      } else if (spouseCurrentAge !== undefined && params.spouseRetirementAge && spouseCurrentAge < n(params.spouseRetirementAge)) {
+      } else if (params.marriage && currentAge === n(params.marriage.age)) {
+        // 結婚した年に配偶者の収入を初期設定 (ネストされた spouse オブジェクトから取得)
+        currentSpouseGrossIncome = n(params.marriage.spouse?.customIncomeJPY);
+      } else if (spouseCurrentAge !== undefined && params.spouseRetirementAge && spouseCurrentAge < n(params.spouseRetirementAge) && currentSpouseGrossIncome > 0) {
+        // 結婚後、退職前まで昇給
         currentSpouseGrossIncome *= (1 + (n(params.spouseIncomeGrowthRate) ?? 0));
       }
     }
@@ -462,8 +466,8 @@ export function runSimulation(params: SimulationInputParams): YearlyData[] {
       spouseGrossIncome = currentSpouseGrossIncome;
     }
     let pensionAnnual = currentAge >= params.pensionStartAge ? n(params.pensionMonthly10kJPY) * FC.YEN_PER_MAN * FC.MONTHS_PER_YEAR : 0;
-    if (spouseCurrentAge !== undefined && spouseCurrentAge >= n(params.spousePensionStartAge)) {
-      pensionAnnual += n(params.spousePensionMonthly10kJPY) * FC.YEN_PER_MAN * FC.MONTHS_PER_YEAR;
+    if (spouseCurrentAge !== undefined && n(params.spousePensionStartAge) > 0 && spouseCurrentAge >= n(params.spousePensionStartAge)) {
+      pensionAnnual += n(params.spousePensionAmount) * FC.YEN_PER_MAN * FC.MONTHS_PER_YEAR;
     }
 
     // 個人年金（年金形式）を収入に加算

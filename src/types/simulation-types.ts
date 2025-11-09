@@ -152,7 +152,11 @@ export interface SimulationInputParams {
     weddingJPY: number;
     honeymoonJPY: number;
     movingJPY: number;
-    spouse?: { ageAtMarriage: number; incomeGross: number };
+    spouse?: {
+      ageAtMarriage: number;
+      incomeGross: number;
+      customIncomeJPY?: number; // 追加
+    };
     newLivingCostAnnual?: number;
     newHousingCostAnnual?: number;
   };
@@ -162,7 +166,7 @@ export interface SimulationInputParams {
 
   postRetirementLiving10kJPY: number;
   pensionMonthly10kJPY: number;
-  spousePensionMonthly10kJPY?: number;
+  spousePensionAmount?: number; // spousePensionMonthly10kJPY から変更
 
   currentSavingsJPY: number;
   monthlySavingsJPY: number;
