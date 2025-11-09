@@ -495,14 +495,16 @@ export const useFormState = () => {
 
   useEffect(() => {
     if (formData.planToMarry !== 'する' || formData.isLivingCostEdited) return;
+    
     const singleLivingCost = formData.expenseMethod === '簡単'
       ? Number(formData.livingCostSimple) || 0
-      : totalExpenses / FC.YEN_PER_MAN;
-    if (singleLivingCost > 0 && !formData.isLivingCostEdited) {
+      : totalExpenses;
+
+    if (singleLivingCost > 0) {
       const recommendedCost = Math.round(singleLivingCost * FC.POST_MARRIAGE_COST_INCREASE_RATE.LIVING);
       setFormData(prev => ({ ...prev, livingCostAfterMarriage: String(recommendedCost) }));
     }
-  }, [formData.livingCostSimple, formData.expenseMethod, formData.planToMarry, formData.isLivingCostEdited, totalExpenses]);
+  }, [formData.livingCostSimple, totalExpenses, formData.expenseMethod, formData.planToMarry, formData.isLivingCostEdited]);
 
   useEffect(() => {
     if (formData.planToMarry !== 'する' || formData.isHousingCostEdited) return;
