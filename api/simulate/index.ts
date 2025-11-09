@@ -600,6 +600,8 @@ export function runSimulation(params: SimulationInputParams): YearlyData[] {
                 else if (params.car.loan?.type === 'ディーラーローン') annualRate = FC.DEFAULT_LOAN_RATES.CAR_DEALER;
                 const annualPayment = calculateLoanPaymentShared(n(params.car.priceJPY), annualRate * 100, loanYears).annualPayment;
                 activeCarLoans.push({ endAge: currentAge + loanYears, annualPayment });
+                // ローン購入初年度の返済額を計上
+                carRecurring += annualPayment * yearFraction;
               }
             }
           }
@@ -609,7 +611,8 @@ export function runSimulation(params: SimulationInputParams): YearlyData[] {
       // アクティブなローンからの返済額を計上
       activeCarLoans.forEach((loan: { endAge: number; annualPayment: number }) => {
         if (currentAge < loan.endAge) {
-          carRecurring += loan.annualPayment * yearFraction;
+          // 初年度分は上で計上済みのため、ここでは何もしない。
+          // carRecurring += loan.annualPayment * yearFraction;
         }
       });
       // 終了したローンをリストから削除 (endAgeになったら削除)

@@ -7,7 +7,7 @@
   "sideJobIncome": "0",
   "spouseSideJobIncome": "0",
   "expenseMethod": "簡単",
-  "livingCostSimple": "275000",
+  "livingCostSimple": "300000",
   "housingCost": "",
   "utilitiesCost": "",
   "communicationCost": "",
@@ -181,6 +181,13 @@
   "spousePersonalPensionPlans": [
     {
       "id": 1762683244192,
+      "type": "fixedTerm",
+      "amount": "62",
+      "startAge": "60",
+      "duration": "5"
+    },
+    {
+      "id": 1762687747200,
       "type": "fixedTerm",
       "amount": "31",
       "startAge": "65",
