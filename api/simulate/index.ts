@@ -202,7 +202,7 @@ export function withdrawToCoverShortfall(
   let totalNisaRecycled = 0;
 
   for (const accountType of withdrawalOrder) {
-    if (shortfall <= 0) break;
+    if (shortfall <= 0) break; // shortfallが0以下になったらループを抜ける
 
     const productsInAccount = productList.filter(p => p.account === accountType);
     if (productsInAccount.length === 0) continue;
@@ -216,6 +216,7 @@ export function withdrawToCoverShortfall(
 
     if (totalBalanceInAccount <= 0) continue;
 
+    // 課税口座からの取り崩し
     if (accountType === '課税') {
       let totalPrincipalInAccount = 0;
       productsInAccount.forEach(p => {
@@ -224,11 +225,13 @@ export function withdrawToCoverShortfall(
         totalPrincipalInAccount += productBalances[productId]?.principal ?? 0;
       });
       const gainRatio = totalBalanceInAccount > 0 ? Math.max(0, (totalBalanceInAccount - totalPrincipalInAccount) / totalBalanceInAccount) : 0;
-      const requiredGross = shortfall / (1 - gainRatio * FC.SPECIFIC_ACCOUNT_TAX_RATE);
+      // 税金を考慮して、手取りでshortfallを得るために必要な売却額を計算
+      const requiredGross = (gainRatio > 0 && gainRatio < 1) ? shortfall / (1 - gainRatio * FC.SPECIFIC_ACCOUNT_TAX_RATE) : shortfall;
       const grossWithdrawal = Math.min(totalBalanceInAccount, requiredGross);
       const tax = grossWithdrawal * gainRatio * FC.SPECIFIC_ACCOUNT_TAX_RATE;
       const netProceeds = grossWithdrawal - tax;
 
+      // 各商品から按分して取り崩し
       productsInAccount.forEach(p => {
         const originalIndex = productList.indexOf(p);
         const productId = `${p.key}-${originalIndex}`;
@@ -245,7 +248,8 @@ export function withdrawToCoverShortfall(
       savings += netProceeds;
       shortfall -= netProceeds;
 
-    } else { // 非課税
+    } else { // 非課税口座からの取り崩し
+      // NISAは非課税なので、税金計算は不要
       const withdrawalAmount = Math.min(totalBalanceInAccount, shortfall);
       productsInAccount.forEach(p => {
         const originalIndex = productList.indexOf(p);
@@ -257,7 +261,7 @@ export function withdrawToCoverShortfall(
         const principalRatio = productBucket.balance > 0 ? productBucket.principal / productBucket.balance : 1;
         const principalWithdrawn = amountToWithdraw * principalRatio;
         productBucket.principal -= principalWithdrawn;
-        productBucket.balance -= amountToWithdraw;
+        productBucket.balance -= amountToWithdraw; // ★ 評価額から売却額を引く
         totalNisaRecycled += principalWithdrawn;
       });
       savings += withdrawalAmount;
@@ -265,6 +269,7 @@ export function withdrawToCoverShortfall(
     }
   }
 
+  // 更新された残高とリサイクル額を返す
   return { newSavings: savings, newProductBalances: productBalances, nisaRecycleAmount: totalNisaRecycled };
 }
 
@@ -726,6 +731,7 @@ export function runSimulation(params: SimulationInputParams): YearlyData[] {
       debugInfo.shortfall = shortfall;
 
       const result = withdrawToCoverShortfall(shortfall, savings, productList, productBalances);
+      // ★ 修正: 取り崩し後の商品残高を正しく反映させる
       savings = result.newSavings;
       debugInfo.savings_after = savings;
       debugInfo.savings_after_withdrawToCoverShortfall = savings;
