@@ -313,6 +313,12 @@ export const useFormState = () => {
         value = e.target.value;
       }
 
+      // assumeReemployment と spouseAssumeReemployment は boolean に変換する
+      if (name === 'assumeReemployment' || name === 'spouseAssumeReemployment') {
+        // 文字列の 'true'/'false' を boolean に変換
+        value = value === 'true' || value === true;
+      }
+
       setFormData(prev => {
         const newState = { ...prev, [name]: value };
 
