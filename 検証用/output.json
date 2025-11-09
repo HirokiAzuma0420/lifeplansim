@@ -2,10 +2,10 @@
   {
     "year": 2025,
     "age": 27,
-    "income": 486208,
+    "income": 947083,
     "incomeDetail": {
       "self": 486208,
-      "spouse": 0,
+      "spouse": 460875,
       "investment": 0,
       "oneTime": 0,
       "publicPension": 0,
@@ -22,7 +22,7 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": 1596208,
+    "savings": 2057083,
     "nisa": {
       "principal": 0,
       "balance": 0
@@ -36,11 +36,11 @@
       "balance": 0
     },
     "investmentPrincipal": 0,
-    "balance": 96208,
-    "totalAssets": 1596208,
+    "balance": 557083,
+    "totalAssets": 2057083,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": 1596208,
+      "cash": 2057083,
       "investment": 0,
       "nisa": 0,
       "ideco": 0
@@ -54,29 +54,29 @@
     "debug": {
       "replenishmentTriggered": true,
       "savings_before_cashFlow": 1000000,
-      "savings_after_cashFlow": 1096208.3333333333,
-      "savings_before_withdrawToCoverShortfall": 1096208.3333333333,
-      "savings_before": 1096208.3333333333,
-      "shortfall": 1903791.6666666667,
-      "savings_after": 1596208.3333333333,
-      "savings_after_withdrawToCoverShortfall": 1596208.3333333333,
-      "savings_before_investment_reduction": 1096208.3333333333,
-      "savings_after_investment_reduction": 1096208.3333333333,
-      "savings_before_asset_growth": 1596208.3333333333,
-      "savings_after_asset_growth": 1596208.3333333333,
+      "savings_after_cashFlow": 1557083.3333333333,
+      "savings_before_withdrawToCoverShortfall": 1557083.3333333333,
+      "savings_before": 1557083.3333333333,
+      "shortfall": 1442916.6666666667,
+      "savings_after": 2057083.3333333333,
+      "savings_after_withdrawToCoverShortfall": 2057083.3333333333,
+      "savings_before_investment_reduction": 1557083.3333333333,
+      "savings_after_investment_reduction": 1557083.3333333333,
+      "savings_before_asset_growth": 2057083.3333333333,
+      "savings_after_asset_growth": 2057083.3333333333,
       "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": 1596208.3333333333,
-      "savings_at_yearlyData_push_assignment": 1596208.3333333333
+      "savings_before_yearlyData_push": 2057083.3333333333,
+      "savings_at_yearlyData_push_assignment": 2057083.3333333333
     }
   },
   {
     "year": 2026,
     "age": 28,
-    "income": 2953445,
+    "income": 5753616,
     "incomeDetail": {
       "self": 2953445,
-      "spouse": 0,
-      "investment": 0,
+      "spouse": 2800171,
+      "investment": 11422,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -92,150 +92,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": 2209654,
-    "nisa": {
-      "principal": 0,
-      "balance": 0
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 0,
-    "balance": 613445,
-    "totalAssets": 2209654,
-    "investedAmount": 0,
-    "assetAllocation": {
-      "cash": 2209654,
-      "investment": 0,
-      "nisa": 0,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 0,
-        "balance": 0
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": 1596208.3333333333,
-      "savings_after_cashFlow": 2209653.583333333,
-      "savings_before_withdrawToCoverShortfall": 2209653.583333333,
-      "savings_before": 2209653.583333333,
-      "shortfall": 790346.416666667,
-      "savings_after": 2209653.583333333,
-      "savings_after_withdrawToCoverShortfall": 2209653.583333333,
-      "savings_before_investment_reduction": 2209653.583333333,
-      "savings_after_investment_reduction": 2209653.583333333,
-      "savings_before_asset_growth": 2209653.583333333,
-      "savings_after_asset_growth": 2209653.583333333,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": 2209653.583333333,
-      "savings_at_yearlyData_push_assignment": 2209653.583333333
-    }
-  },
-  {
-    "year": 2027,
-    "age": 29,
-    "income": 2990111,
-    "incomeDetail": {
-      "self": 2990111,
-      "spouse": 0,
-      "investment": 0,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 2340000,
-    "expenseDetail": {
-      "living": 1440000,
-      "car": 0,
-      "housing": 900000,
-      "marriage": 0,
-      "children": 0,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 2859765,
-    "nisa": {
-      "principal": 0,
-      "balance": 0
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 0,
-    "balance": 650111,
-    "totalAssets": 2859765,
-    "investedAmount": 0,
-    "assetAllocation": {
-      "cash": 2859765,
-      "investment": 0,
-      "nisa": 0,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 0,
-        "balance": 0
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": 2209653.583333333,
-      "savings_after_cashFlow": 2859764.621583333,
-      "savings_before_withdrawToCoverShortfall": 2859764.621583333,
-      "savings_before": 2859764.621583333,
-      "shortfall": 140235.37841666723,
-      "savings_after": 2859764.621583333,
-      "savings_after_withdrawToCoverShortfall": 2859764.621583333,
-      "savings_before_investment_reduction": 2859764.621583333,
-      "savings_after_investment_reduction": 2859764.621583333,
-      "savings_before_asset_growth": 2859764.621583333,
-      "savings_after_asset_growth": 2859764.621583333,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": 2859764.621583333,
-      "savings_at_yearlyData_push_assignment": 2859764.621583333
-    }
-  },
-  {
-    "year": 2028,
-    "age": 30,
-    "income": 3027253,
-    "incomeDetail": {
-      "self": 3027253,
-      "spouse": 0,
-      "investment": 5534,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 2340000,
-    "expenseDetail": {
-      "living": 1440000,
-      "car": 0,
-      "housing": 900000,
-      "marriage": 0,
-      "children": 0,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 3367018,
+    "savings": 5290700,
     "nisa": {
       "principal": 180000,
-      "balance": 185534
+      "balance": 191422
     },
     "ideco": {
       "principal": 0,
@@ -246,42 +106,42 @@
       "balance": 0
     },
     "investmentPrincipal": 180000,
-    "balance": 507253,
-    "totalAssets": 3552552,
+    "balance": 3233616,
+    "totalAssets": 5482122,
     "investedAmount": 180000,
     "assetAllocation": {
-      "cash": 3367018,
+      "cash": 5290700,
       "investment": 0,
-      "nisa": 185534,
+      "nisa": 191422,
       "ideco": 0
     },
     "products": {
       "trust-0": {
         "principal": 180000,
-        "balance": 185534
+        "balance": 191422
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 2859764.621583333,
-      "savings_after_cashFlow": 3547018.103330582,
-      "savings_before_investment_reduction": 3547018.103330582,
-      "savings_after_investment_reduction": 3367018.103330582,
-      "savings_before_asset_growth": 3367018.103330582,
-      "savings_after_asset_growth": 3367018.103330582,
+      "savings_before_cashFlow": 2057083.3333333333,
+      "savings_after_cashFlow": 5470699.833333332,
+      "savings_before_investment_reduction": 5470699.833333332,
+      "savings_after_investment_reduction": 5290699.833333332,
+      "savings_before_asset_growth": 5290699.833333332,
+      "savings_after_asset_growth": 5290699.833333332,
       "totalInvestmentPrincipal_before_push": 180000,
-      "savings_before_yearlyData_push": 3367018.103330582,
-      "savings_at_yearlyData_push_assignment": 3367018.103330582
+      "savings_before_yearlyData_push": 5290699.833333332,
+      "savings_at_yearlyData_push_assignment": 5290699.833333332
     }
   },
   {
-    "year": 2029,
-    "age": 31,
-    "income": 3064879,
+    "year": 2027,
+    "age": 29,
+    "income": 5825658,
     "incomeDetail": {
-      "self": 3064879,
-      "spouse": 0,
-      "investment": -200720,
+      "self": 2990111,
+      "spouse": 2835546,
+      "investment": 128266,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -297,10 +157,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": 3911897,
+    "savings": 8596357,
     "nisa": {
       "principal": 360000,
-      "balance": 164814
+      "balance": 499688
     },
     "ideco": {
       "principal": 0,
@@ -311,61 +171,61 @@
       "balance": 0
     },
     "investmentPrincipal": 360000,
-    "balance": 544879,
-    "totalAssets": 4076711,
+    "balance": 3305658,
+    "totalAssets": 9096045,
     "investedAmount": 180000,
     "assetAllocation": {
-      "cash": 3911897,
+      "cash": 8596357,
       "investment": 0,
-      "nisa": 164814,
+      "nisa": 499688,
       "ideco": 0
     },
     "products": {
       "trust-0": {
         "principal": 360000,
-        "balance": 164814
+        "balance": 499688
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 3367018.103330582,
-      "savings_after_cashFlow": 4091896.880340545,
-      "savings_before_investment_reduction": 4091896.880340545,
-      "savings_after_investment_reduction": 3911896.880340545,
-      "savings_before_asset_growth": 3911896.880340545,
-      "savings_after_asset_growth": 3911896.880340545,
+      "savings_before_cashFlow": 5290699.833333332,
+      "savings_after_cashFlow": 8776357.347833332,
+      "savings_before_investment_reduction": 8776357.347833332,
+      "savings_after_investment_reduction": 8596357.347833332,
+      "savings_before_asset_growth": 8596357.347833332,
+      "savings_after_asset_growth": 8596357.347833332,
       "totalInvestmentPrincipal_before_push": 360000,
-      "savings_before_yearlyData_push": 3911896.880340545,
-      "savings_at_yearlyData_push_assignment": 3911896.880340545
+      "savings_before_yearlyData_push": 8596357.347833332,
+      "savings_at_yearlyData_push_assignment": 8596357.347833332
     }
   },
   {
-    "year": 2030,
-    "age": 32,
-    "income": 3102993,
+    "year": 2028,
+    "age": 30,
+    "income": 5898061,
     "incomeDetail": {
-      "self": 3102993,
-      "spouse": 0,
-      "investment": 74046,
+      "self": 3027253,
+      "spouse": 2870807,
+      "investment": 84271,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
     },
-    "expense": 3830000,
+    "expense": 2340000,
     "expenseDetail": {
-      "living": 2160000,
+      "living": 1440000,
       "car": 0,
-      "housing": 1170000,
-      "marriage": 500000,
+      "housing": 900000,
+      "marriage": 0,
       "children": 0,
       "appliances": 0,
       "care": 0,
       "retirementGap": 0
     },
-    "savings": 3004890,
+    "savings": 11974418,
     "nisa": {
       "principal": 540000,
-      "balance": 418860
+      "balance": 763959
     },
     "ideco": {
       "principal": 0,
@@ -376,42 +236,172 @@
       "balance": 0
     },
     "investmentPrincipal": 540000,
-    "balance": -907007,
-    "totalAssets": 3423750,
+    "balance": 3378061,
+    "totalAssets": 12738377,
     "investedAmount": 180000,
     "assetAllocation": {
-      "cash": 3004890,
+      "cash": 11974418,
       "investment": 0,
-      "nisa": 418860,
+      "nisa": 763959,
       "ideco": 0
     },
     "products": {
       "trust-0": {
         "principal": 540000,
-        "balance": 418860
+        "balance": 763959
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 3911896.880340545,
-      "savings_after_cashFlow": 3184890.081451637,
-      "savings_before_investment_reduction": 3184890.081451637,
-      "savings_after_investment_reduction": 3004890.081451637,
-      "savings_before_asset_growth": 3004890.081451637,
-      "savings_after_asset_growth": 3004890.081451637,
+      "savings_before_cashFlow": 8596357.347833332,
+      "savings_after_cashFlow": 12154418.17717933,
+      "savings_before_investment_reduction": 12154418.17717933,
+      "savings_after_investment_reduction": 11974418.17717933,
+      "savings_before_asset_growth": 11974418.17717933,
+      "savings_after_asset_growth": 11974418.17717933,
       "totalInvestmentPrincipal_before_push": 540000,
-      "savings_before_yearlyData_push": 3004890.081451637,
-      "savings_at_yearlyData_push_assignment": 3004890.081451637
+      "savings_before_yearlyData_push": 11974418.17717933,
+      "savings_at_yearlyData_push_assignment": 11974418.17717933
+    }
+  },
+  {
+    "year": 2029,
+    "age": 31,
+    "income": 5971278,
+    "incomeDetail": {
+      "self": 3064879,
+      "spouse": 2906399,
+      "investment": -316679,
+      "oneTime": 0,
+      "publicPension": 0,
+      "personalPension": 0
+    },
+    "expense": 2340000,
+    "expenseDetail": {
+      "living": 1440000,
+      "car": 0,
+      "housing": 900000,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 0,
+      "care": 0,
+      "retirementGap": 0
+    },
+    "savings": 15425696,
+    "nisa": {
+      "principal": 720000,
+      "balance": 627280
+    },
+    "ideco": {
+      "principal": 0,
+      "balance": 0
+    },
+    "taxable": {
+      "principal": 0,
+      "balance": 0
+    },
+    "investmentPrincipal": 720000,
+    "balance": 3451278,
+    "totalAssets": 16052976,
+    "investedAmount": 180000,
+    "assetAllocation": {
+      "cash": 15425696,
+      "investment": 0,
+      "nisa": 627280,
+      "ideco": 0
+    },
+    "products": {
+      "trust-0": {
+        "principal": 720000,
+        "balance": 627280
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 11974418.17717933,
+      "savings_after_cashFlow": 15605695.797306824,
+      "savings_before_investment_reduction": 15605695.797306824,
+      "savings_after_investment_reduction": 15425695.797306824,
+      "savings_before_asset_growth": 15425695.797306824,
+      "savings_after_asset_growth": 15425695.797306824,
+      "totalInvestmentPrincipal_before_push": 720000,
+      "savings_before_yearlyData_push": 15425695.797306824,
+      "savings_at_yearlyData_push_assignment": 15425695.797306824
+    }
+  },
+  {
+    "year": 2030,
+    "age": 32,
+    "income": 5868243,
+    "incomeDetail": {
+      "self": 3102993,
+      "spouse": 2765250,
+      "investment": 78184,
+      "oneTime": 0,
+      "publicPension": 0,
+      "personalPension": 0
+    },
+    "expense": 9330000,
+    "expenseDetail": {
+      "living": 2160000,
+      "car": 0,
+      "housing": 1170000,
+      "marriage": 6000000,
+      "children": 0,
+      "appliances": 0,
+      "care": 0,
+      "retirementGap": 0
+    },
+    "savings": 11783939,
+    "nisa": {
+      "principal": 900000,
+      "balance": 885464
+    },
+    "ideco": {
+      "principal": 0,
+      "balance": 0
+    },
+    "taxable": {
+      "principal": 0,
+      "balance": 0
+    },
+    "investmentPrincipal": 900000,
+    "balance": -3641757,
+    "totalAssets": 12669403,
+    "investedAmount": 180000,
+    "assetAllocation": {
+      "cash": 11783939,
+      "investment": 0,
+      "nisa": 885464,
+      "ideco": 0
+    },
+    "products": {
+      "trust-0": {
+        "principal": 900000,
+        "balance": 885464
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 15425695.797306824,
+      "savings_after_cashFlow": 11963938.998417918,
+      "savings_before_investment_reduction": 11963938.998417918,
+      "savings_after_investment_reduction": 11783938.998417918,
+      "savings_before_asset_growth": 11783938.998417918,
+      "savings_after_asset_growth": 11783938.998417918,
+      "totalInvestmentPrincipal_before_push": 900000,
+      "savings_before_yearlyData_push": 11783938.998417918,
+      "savings_at_yearlyData_push_assignment": 11783938.998417918
     }
   },
   {
     "year": 2031,
     "age": 33,
-    "income": 3141603,
+    "income": 5941774,
     "incomeDetail": {
       "self": 3141603,
-      "spouse": 0,
-      "investment": 44581,
+      "spouse": 2800171,
+      "investment": 271089,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -427,10 +417,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": 3000000,
+    "savings": 14215713,
     "nisa": {
-      "principal": 303421,
-      "balance": 279934
+      "principal": 1080000,
+      "balance": 1336553
     },
     "ideco": {
       "principal": 0,
@@ -440,48 +430,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 303421,
-    "balance": -188397,
-    "totalAssets": 3279934,
-    "investedAmount": 0,
+    "investmentPrincipal": 1080000,
+    "balance": 2431774,
+    "totalAssets": 15552266,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": 3000000,
+      "cash": 14215713,
       "investment": 0,
-      "nisa": 279934,
+      "nisa": 1336553,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 303421,
-        "balance": 279934
+        "principal": 1080000,
+        "balance": 1336553
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": 3004890.081451637,
-      "savings_after_cashFlow": 2816493.194177174,
-      "savings_before_withdrawToCoverShortfall": 2816493.194177174,
-      "savings_before": 2816493.194177174,
-      "shortfall": 183506.805822826,
-      "savings_after": 3000000,
-      "savings_after_withdrawToCoverShortfall": 3000000,
-      "savings_before_investment_reduction": 2816493.194177174,
-      "savings_after_investment_reduction": 2816493.194177174,
-      "savings_before_asset_growth": 3000000,
-      "savings_after_asset_growth": 3000000,
-      "totalInvestmentPrincipal_before_push": 303420.6587692506,
-      "savings_before_yearlyData_push": 3000000,
-      "savings_at_yearlyData_push_assignment": 3000000
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 11783938.998417918,
+      "savings_after_cashFlow": 14395713.361143455,
+      "savings_before_investment_reduction": 14395713.361143455,
+      "savings_after_investment_reduction": 14215713.361143455,
+      "savings_before_asset_growth": 14215713.361143455,
+      "savings_after_asset_growth": 14215713.361143455,
+      "totalInvestmentPrincipal_before_push": 1080000,
+      "savings_before_yearlyData_push": 14215713.361143455,
+      "savings_at_yearlyData_push_assignment": 14215713.361143455
     }
   },
   {
     "year": 2032,
     "age": 34,
-    "income": 3180715,
+    "income": 6016261,
     "incomeDetail": {
       "self": 3180715,
-      "spouse": 0,
-      "investment": -23196,
+      "spouse": 2835546,
+      "investment": 163593,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -497,10 +482,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": 3000000,
+    "savings": 16721975,
     "nisa": {
-      "principal": 141611,
-      "balance": 107454
+      "principal": 1260000,
+      "balance": 1680146
     },
     "ideco": {
       "principal": 0,
@@ -510,48 +495,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 141611,
-    "balance": -149285,
-    "totalAssets": 3107454,
-    "investedAmount": 0,
+    "investmentPrincipal": 1260000,
+    "balance": 2506261,
+    "totalAssets": 18402120,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": 3000000,
+      "cash": 16721975,
       "investment": 0,
-      "nisa": 107454,
+      "nisa": 1680146,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 141611,
-        "balance": 107454
+        "principal": 1260000,
+        "balance": 1680146
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": 3000000,
-      "savings_after_cashFlow": 2850714.9531909684,
-      "savings_before_withdrawToCoverShortfall": 2850714.9531909684,
-      "savings_before": 2850714.9531909684,
-      "shortfall": 149285.04680903163,
-      "savings_after": 3000000,
-      "savings_after_withdrawToCoverShortfall": 3000000,
-      "savings_before_investment_reduction": 2850714.9531909684,
-      "savings_after_investment_reduction": 2850714.9531909684,
-      "savings_before_asset_growth": 3000000,
-      "savings_after_asset_growth": 3000000,
-      "totalInvestmentPrincipal_before_push": 141610.73237960308,
-      "savings_before_yearlyData_push": 3000000,
-      "savings_at_yearlyData_push_assignment": 3000000
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 14215713.361143455,
+      "savings_after_cashFlow": 16901974.790584423,
+      "savings_before_investment_reduction": 16901974.790584423,
+      "savings_after_investment_reduction": 16721974.790584423,
+      "savings_before_asset_growth": 16721974.790584423,
+      "savings_after_asset_growth": 16721974.790584423,
+      "totalInvestmentPrincipal_before_push": 1260000,
+      "savings_before_yearlyData_push": 16721974.790584423,
+      "savings_at_yearlyData_push_assignment": 16721974.790584423
     }
   },
   {
     "year": 2033,
     "age": 35,
-    "income": 3220335,
+    "income": 6091143,
     "incomeDetail": {
       "self": 3220335,
-      "spouse": 0,
-      "investment": 0,
+      "spouse": 2870807,
+      "investment": 769334,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -567,10 +547,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": 2319205,
+    "savings": 18624534,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 1440000,
+      "balance": 2629479
     },
     "ideco": {
       "principal": 0,
@@ -580,48 +560,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -788249,
-    "totalAssets": 2319205,
-    "investedAmount": 0,
+    "investmentPrincipal": 1440000,
+    "balance": 1902559,
+    "totalAssets": 21254013,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": 2319205,
+      "cash": 18624534,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 2629479,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 1440000,
+        "balance": 2629479
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": 3000000,
-      "savings_after_cashFlow": 2211751.476482588,
-      "savings_before_withdrawToCoverShortfall": 2211751.476482588,
-      "savings_before": 2211751.476482588,
-      "shortfall": 788248.5235174121,
-      "savings_after": 2319205.1132069016,
-      "savings_after_withdrawToCoverShortfall": 2319205.1132069016,
-      "savings_before_investment_reduction": 2211751.476482588,
-      "savings_after_investment_reduction": 2211751.476482588,
-      "savings_before_asset_growth": 2319205.1132069016,
-      "savings_after_asset_growth": 2319205.1132069016,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": 2319205.1132069016,
-      "savings_at_yearlyData_push_assignment": 2319205.1132069016
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 16721974.790584423,
+      "savings_after_cashFlow": 18804533.61466576,
+      "savings_before_investment_reduction": 18804533.61466576,
+      "savings_after_investment_reduction": 18624533.61466576,
+      "savings_before_asset_growth": 18624533.61466576,
+      "savings_after_asset_growth": 18624533.61466576,
+      "totalInvestmentPrincipal_before_push": 1440000,
+      "savings_before_yearlyData_push": 18624533.61466576,
+      "savings_at_yearlyData_push_assignment": 18624533.61466576
     }
   },
   {
     "year": 2034,
     "age": 36,
-    "income": 3260471,
+    "income": 6166869,
     "incomeDetail": {
       "self": 3260471,
-      "spouse": 0,
-      "investment": 0,
+      "spouse": 2906399,
+      "investment": 285219,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -637,10 +612,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": 1851092,
+    "savings": 20882819,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 1620000,
+      "balance": 3094698
     },
     "ideco": {
       "principal": 0,
@@ -650,48 +625,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -468113,
-    "totalAssets": 1851092,
-    "investedAmount": 0,
+    "investmentPrincipal": 1620000,
+    "balance": 2258286,
+    "totalAssets": 23977517,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": 1851092,
+      "cash": 20882819,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 3094698,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 1620000,
+        "balance": 3094698
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": 2319205.1132069016,
-      "savings_after_cashFlow": 1851091.947908061,
-      "savings_before_withdrawToCoverShortfall": 1851091.947908061,
-      "savings_before": 1851091.947908061,
-      "shortfall": 1148908.052091939,
-      "savings_after": 1851091.947908061,
-      "savings_after_withdrawToCoverShortfall": 1851091.947908061,
-      "savings_before_investment_reduction": 1851091.947908061,
-      "savings_after_investment_reduction": 1851091.947908061,
-      "savings_before_asset_growth": 1851091.947908061,
-      "savings_after_asset_growth": 1851091.947908061,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": 1851091.947908061,
-      "savings_at_yearlyData_push_assignment": 1851091.947908061
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 18624533.61466576,
+      "savings_after_cashFlow": 21062819.292484455,
+      "savings_before_investment_reduction": 21062819.292484455,
+      "savings_after_investment_reduction": 20882819.292484455,
+      "savings_before_asset_growth": 20882819.292484455,
+      "savings_after_asset_growth": 20882819.292484455,
+      "totalInvestmentPrincipal_before_push": 1620000,
+      "savings_before_yearlyData_push": 20882819.292484455,
+      "savings_at_yearlyData_push_assignment": 20882819.292484455
     }
   },
   {
     "year": 2035,
     "age": 37,
-    "income": 3301128,
+    "income": 6243581,
     "incomeDetail": {
       "self": 3301128,
-      "spouse": 0,
-      "investment": 0,
+      "spouse": 2942453,
+      "investment": 211811,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -707,10 +677,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": 1423636,
+    "savings": 23217816,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 1800000,
+      "balance": 3486509
     },
     "ideco": {
       "principal": 0,
@@ -720,48 +690,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -427456,
-    "totalAssets": 1423636,
-    "investedAmount": 0,
+    "investmentPrincipal": 1800000,
+    "balance": 2334997,
+    "totalAssets": 26704325,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": 1423636,
+      "cash": 23217816,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 3486509,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 1800000,
+        "balance": 3486509
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": 1851091.947908061,
-      "savings_after_cashFlow": 1423635.9004846332,
-      "savings_before_withdrawToCoverShortfall": 1423635.9004846332,
-      "savings_before": 1423635.9004846332,
-      "shortfall": 1576364.0995153668,
-      "savings_after": 1423635.9004846332,
-      "savings_after_withdrawToCoverShortfall": 1423635.9004846332,
-      "savings_before_investment_reduction": 1423635.9004846332,
-      "savings_after_investment_reduction": 1423635.9004846332,
-      "savings_before_asset_growth": 1423635.9004846332,
-      "savings_after_asset_growth": 1423635.9004846332,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": 1423635.9004846332,
-      "savings_at_yearlyData_push_assignment": 1423635.9004846332
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 20882819.292484455,
+      "savings_after_cashFlow": 23397816.273139086,
+      "savings_before_investment_reduction": 23397816.273139086,
+      "savings_after_investment_reduction": 23217816.273139086,
+      "savings_before_asset_growth": 23217816.273139086,
+      "savings_after_asset_growth": 23217816.273139086,
+      "totalInvestmentPrincipal_before_push": 1800000,
+      "savings_before_yearlyData_push": 23217816.273139086,
+      "savings_at_yearlyData_push_assignment": 23217816.273139086
     }
   },
   {
     "year": 2036,
     "age": 38,
-    "income": 3342313,
+    "income": 6321289,
     "incomeDetail": {
       "self": 3342313,
-      "spouse": 0,
-      "investment": 0,
+      "spouse": 2978976,
+      "investment": 915852,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -777,10 +742,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": 1037366,
+    "savings": 25630522,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 1980000,
+      "balance": 4582361
     },
     "ideco": {
       "principal": 0,
@@ -790,48 +755,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -386270,
-    "totalAssets": 1037366,
-    "investedAmount": 0,
+    "investmentPrincipal": 1980000,
+    "balance": 2412706,
+    "totalAssets": 30212882,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": 1037366,
+      "cash": 25630522,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 4582361,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 1980000,
+        "balance": 4582361
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": 1423635.9004846332,
-      "savings_after_cashFlow": 1037365.513468999,
-      "savings_before_withdrawToCoverShortfall": 1037365.513468999,
-      "savings_before": 1037365.513468999,
-      "shortfall": 1962634.486531001,
-      "savings_after": 1037365.513468999,
-      "savings_after_withdrawToCoverShortfall": 1037365.513468999,
-      "savings_before_investment_reduction": 1037365.513468999,
-      "savings_after_investment_reduction": 1037365.513468999,
-      "savings_before_asset_growth": 1037365.513468999,
-      "savings_after_asset_growth": 1037365.513468999,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": 1037365.513468999,
-      "savings_at_yearlyData_push_assignment": 1037365.513468999
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 23217816.273139086,
+      "savings_after_cashFlow": 25810521.803566527,
+      "savings_before_investment_reduction": 25810521.803566527,
+      "savings_after_investment_reduction": 25630521.803566527,
+      "savings_before_asset_growth": 25630521.803566527,
+      "savings_after_asset_growth": 25630521.803566527,
+      "totalInvestmentPrincipal_before_push": 1980000,
+      "savings_before_yearlyData_push": 25630521.803566527,
+      "savings_at_yearlyData_push_assignment": 25630521.803566527
     }
   },
   {
     "year": 2037,
     "age": 39,
-    "income": 3384034,
+    "income": 6400008,
     "incomeDetail": {
       "self": 3384034,
-      "spouse": 0,
-      "investment": 0,
+      "spouse": 3015974,
+      "investment": -1845116,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -847,10 +807,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": 692816,
+    "savings": 28121946,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 2160000,
+      "balance": 2917245
     },
     "ideco": {
       "principal": 0,
@@ -860,48 +820,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -344549,
-    "totalAssets": 692816,
-    "investedAmount": 0,
+    "investmentPrincipal": 2160000,
+    "balance": 2491424,
+    "totalAssets": 31039191,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": 692816,
+      "cash": 28121946,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 2917245,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 2160000,
+        "balance": 2917245
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": 1037365.513468999,
-      "savings_after_cashFlow": 692816.2004464595,
-      "savings_before_withdrawToCoverShortfall": 692816.2004464595,
-      "savings_before": 692816.2004464595,
-      "shortfall": 2307183.7995535405,
-      "savings_after": 692816.2004464595,
-      "savings_after_withdrawToCoverShortfall": 692816.2004464595,
-      "savings_before_investment_reduction": 692816.2004464595,
-      "savings_after_investment_reduction": 692816.2004464595,
-      "savings_before_asset_growth": 692816.2004464595,
-      "savings_after_asset_growth": 692816.2004464595,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": 692816.2004464595,
-      "savings_at_yearlyData_push_assignment": 692816.2004464595
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 25630521.803566527,
+      "savings_after_cashFlow": 28301946.09491382,
+      "savings_before_investment_reduction": 28301946.09491382,
+      "savings_after_investment_reduction": 28121946.09491382,
+      "savings_before_asset_growth": 28121946.09491382,
+      "savings_after_asset_growth": 28121946.09491382,
+      "totalInvestmentPrincipal_before_push": 2160000,
+      "savings_before_yearlyData_push": 28121946.09491382,
+      "savings_at_yearlyData_push_assignment": 28121946.09491382
     }
   },
   {
     "year": 2038,
     "age": 40,
-    "income": 3426298,
+    "income": 6479750,
     "incomeDetail": {
       "self": 3426298,
-      "spouse": 0,
-      "investment": 0,
+      "spouse": 3053452,
+      "investment": 293389,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -917,10 +872,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": 390530,
+    "savings": 30693112,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 2340000,
+      "balance": 3390635
     },
     "ideco": {
       "principal": 0,
@@ -930,48 +885,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -302286,
-    "totalAssets": 390530,
-    "investedAmount": 0,
+    "investmentPrincipal": 2340000,
+    "balance": 2571166,
+    "totalAssets": 34083747,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": 390530,
+      "cash": 30693112,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 3390635,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 2340000,
+        "balance": 3390635
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": 692816.2004464595,
-      "savings_after_cashFlow": 390530.3353789244,
-      "savings_before_withdrawToCoverShortfall": 390530.3353789244,
-      "savings_before": 390530.3353789244,
-      "shortfall": 2609469.6646210756,
-      "savings_after": 390530.3353789244,
-      "savings_after_withdrawToCoverShortfall": 390530.3353789244,
-      "savings_before_investment_reduction": 390530.3353789244,
-      "savings_after_investment_reduction": 390530.3353789244,
-      "savings_before_asset_growth": 390530.3353789244,
-      "savings_after_asset_growth": 390530.3353789244,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": 390530.3353789244,
-      "savings_at_yearlyData_push_assignment": 390530.3353789244
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 28121946.09491382,
+      "savings_after_cashFlow": 30873112.49107293,
+      "savings_before_investment_reduction": 30873112.49107293,
+      "savings_after_investment_reduction": 30693112.49107293,
+      "savings_before_asset_growth": 30693112.49107293,
+      "savings_after_asset_growth": 30693112.49107293,
+      "totalInvestmentPrincipal_before_push": 2340000,
+      "savings_before_yearlyData_push": 30693112.49107293,
+      "savings_at_yearlyData_push_assignment": 30693112.49107293
     }
   },
   {
     "year": 2039,
     "age": 41,
-    "income": 3468526,
+    "income": 6559944,
     "incomeDetail": {
       "self": 3468526,
-      "spouse": 0,
-      "investment": 0,
+      "spouse": 3091418,
+      "investment": 964516,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -987,10 +937,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": 110473,
+    "savings": 33324473,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 2520000,
+      "balance": 4535151
     },
     "ideco": {
       "principal": 0,
@@ -1000,48 +950,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -280058,
-    "totalAssets": 110473,
-    "investedAmount": 0,
+    "investmentPrincipal": 2520000,
+    "balance": 2631361,
+    "totalAssets": 37859624,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": 110473,
+      "cash": 33324473,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 4535151,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 2520000,
+        "balance": 4535151
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": 390530.3353789244,
-      "savings_after_cashFlow": 110472.82440363104,
-      "savings_before_withdrawToCoverShortfall": 110472.82440363104,
-      "savings_before": 110472.82440363104,
-      "shortfall": 2889527.175596369,
-      "savings_after": 110472.82440363104,
-      "savings_after_withdrawToCoverShortfall": 110472.82440363104,
-      "savings_before_investment_reduction": 110472.82440363104,
-      "savings_after_investment_reduction": 110472.82440363104,
-      "savings_before_asset_growth": 110472.82440363104,
-      "savings_after_asset_growth": 110472.82440363104,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": 110472.82440363104,
-      "savings_at_yearlyData_push_assignment": 110472.82440363104
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 30693112.49107293,
+      "savings_after_cashFlow": 33504473.120720226,
+      "savings_before_investment_reduction": 33504473.120720226,
+      "savings_after_investment_reduction": 33324473.120720226,
+      "savings_before_asset_growth": 33324473.120720226,
+      "savings_after_asset_growth": 33324473.120720226,
+      "totalInvestmentPrincipal_before_push": 2520000,
+      "savings_before_yearlyData_push": 33324473.120720226,
+      "savings_at_yearlyData_push_assignment": 33324473.120720226
     }
   },
   {
     "year": 2040,
     "age": 42,
-    "income": 3510023,
+    "income": 6639900,
     "incomeDetail": {
       "self": 3510023,
-      "spouse": 0,
-      "investment": 0,
+      "spouse": 3129878,
+      "investment": -207287,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -1057,10 +1002,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": -108088,
+    "savings": 36055790,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 2700000,
+      "balance": 4507863
     },
     "ideco": {
       "principal": 0,
@@ -1070,48 +1015,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -218561,
-    "totalAssets": -108088,
-    "investedAmount": 0,
+    "investmentPrincipal": 2700000,
+    "balance": 2731316,
+    "totalAssets": 40563653,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": -108088,
+      "cash": 36055790,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 4507863,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 2700000,
+        "balance": 4507863
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": 110472.82440363104,
-      "savings_after_cashFlow": -108088.34519004403,
-      "savings_before_withdrawToCoverShortfall": -108088.34519004403,
-      "savings_before": -108088.34519004403,
-      "shortfall": 3108088.345190044,
-      "savings_after": -108088.34519004403,
-      "savings_after_withdrawToCoverShortfall": -108088.34519004403,
-      "savings_before_investment_reduction": -108088.34519004403,
-      "savings_after_investment_reduction": -108088.34519004403,
-      "savings_before_asset_growth": -108088.34519004403,
-      "savings_after_asset_growth": -108088.34519004403,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -108088.34519004403,
-      "savings_at_yearlyData_push_assignment": -108088.34519004403
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 33324473.120720226,
+      "savings_after_cashFlow": 36235789.52757724,
+      "savings_before_investment_reduction": 36235789.52757724,
+      "savings_after_investment_reduction": 36055789.52757724,
+      "savings_before_asset_growth": 36055789.52757724,
+      "savings_after_asset_growth": 36055789.52757724,
+      "totalInvestmentPrincipal_before_push": 2700000,
+      "savings_before_yearlyData_push": 36055789.52757724,
+      "savings_at_yearlyData_push_assignment": 36055789.52757724
     }
   },
   {
     "year": 2041,
     "age": 43,
-    "income": 3552058,
+    "income": 6720895,
     "incomeDetail": {
       "self": 3552058,
-      "spouse": 0,
-      "investment": 0,
+      "spouse": 3168837,
+      "investment": 898933,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -1127,10 +1067,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": -544614,
+    "savings": 38608101,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 2880000,
+      "balance": 5586796
     },
     "ideco": {
       "principal": 0,
@@ -1140,48 +1080,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -436525,
-    "totalAssets": -544614,
-    "investedAmount": 0,
+    "investmentPrincipal": 2880000,
+    "balance": 2552312,
+    "totalAssets": 44194897,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": -544614,
+      "cash": 38608101,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 5586796,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 2880000,
+        "balance": 5586796
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -108088.34519004403,
-      "savings_after_cashFlow": -544613.7209641389,
-      "savings_before_withdrawToCoverShortfall": -544613.7209641389,
-      "savings_before": -544613.7209641389,
-      "shortfall": 3544613.720964139,
-      "savings_after": -544613.7209641389,
-      "savings_after_withdrawToCoverShortfall": -544613.7209641389,
-      "savings_before_investment_reduction": -544613.7209641389,
-      "savings_after_investment_reduction": -544613.7209641389,
-      "savings_before_asset_growth": -544613.7209641389,
-      "savings_after_asset_growth": -544613.7209641389,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -544613.7209641389,
-      "savings_at_yearlyData_push_assignment": -544613.7209641389
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 36055789.52757724,
+      "savings_after_cashFlow": 38788101.13674768,
+      "savings_before_investment_reduction": 38788101.13674768,
+      "savings_after_investment_reduction": 38608101.13674768,
+      "savings_before_asset_growth": 38608101.13674768,
+      "savings_after_asset_growth": 38608101.13674768,
+      "totalInvestmentPrincipal_before_push": 2880000,
+      "savings_before_yearlyData_push": 38608101.13674768,
+      "savings_at_yearlyData_push_assignment": 38608101.13674768
     }
   },
   {
     "year": 2042,
     "age": 44,
-    "income": 3594641,
+    "income": 6802944,
     "incomeDetail": {
       "self": 3594641,
-      "spouse": 0,
-      "investment": 0,
+      "spouse": 3208303,
+      "investment": 1291375,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -1197,10 +1132,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": -788557,
+    "savings": 41392461,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3060000,
+      "balance": 7058172
     },
     "ideco": {
       "principal": 0,
@@ -1210,48 +1145,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -243943,
-    "totalAssets": -788557,
-    "investedAmount": 0,
+    "investmentPrincipal": 3060000,
+    "balance": 2784360,
+    "totalAssets": 48450632,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": -788557,
+      "cash": 41392461,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 7058172,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 3060000,
+        "balance": 7058172
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -544613.7209641389,
-      "savings_after_cashFlow": -788556.837599,
-      "savings_before_withdrawToCoverShortfall": -788556.837599,
-      "savings_before": -788556.837599,
-      "shortfall": 3788556.837599,
-      "savings_after": -788556.837599,
-      "savings_after_withdrawToCoverShortfall": -788556.837599,
-      "savings_before_investment_reduction": -788556.837599,
-      "savings_after_investment_reduction": -788556.837599,
-      "savings_before_asset_growth": -788556.837599,
-      "savings_after_asset_growth": -788556.837599,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -788556.837599,
-      "savings_at_yearlyData_push_assignment": -788556.837599
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 38608101.13674768,
+      "savings_after_cashFlow": 41572460.885861635,
+      "savings_before_investment_reduction": 41572460.885861635,
+      "savings_after_investment_reduction": 41392460.885861635,
+      "savings_before_asset_growth": 41392460.885861635,
+      "savings_after_asset_growth": 41392460.885861635,
+      "totalInvestmentPrincipal_before_push": 3060000,
+      "savings_before_yearlyData_push": 41392460.885861635,
+      "savings_at_yearlyData_push_assignment": 41392460.885861635
     }
   },
   {
     "year": 2043,
     "age": 45,
-    "income": 3637776,
+    "income": 6886058,
     "incomeDetail": {
       "self": 3637776,
-      "spouse": 0,
-      "investment": 0,
+      "spouse": 3248282,
+      "investment": 251357,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -1267,10 +1197,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": -1319364,
+    "savings": 43929935,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3240000,
+      "balance": 7489528
     },
     "ideco": {
       "principal": 0,
@@ -1280,48 +1210,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -530807,
-    "totalAssets": -1319364,
-    "investedAmount": 0,
+    "investmentPrincipal": 3240000,
+    "balance": 2537475,
+    "totalAssets": 51419464,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": -1319364,
+      "cash": 43929935,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 7489528,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 3240000,
+        "balance": 7489528
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -788556.837599,
-      "savings_after_cashFlow": -1319364.125725816,
-      "savings_before_withdrawToCoverShortfall": -1319364.125725816,
-      "savings_before": -1319364.125725816,
-      "shortfall": 4319364.125725816,
-      "savings_after": -1319364.125725816,
-      "savings_after_withdrawToCoverShortfall": -1319364.125725816,
-      "savings_before_investment_reduction": -1319364.125725816,
-      "savings_after_investment_reduction": -1319364.125725816,
-      "savings_before_asset_growth": -1319364.125725816,
-      "savings_after_asset_growth": -1319364.125725816,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -1319364.125725816,
-      "savings_at_yearlyData_push_assignment": -1319364.125725816
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 41392460.885861635,
+      "savings_after_cashFlow": 44109935.40073837,
+      "savings_before_investment_reduction": 44109935.40073837,
+      "savings_after_investment_reduction": 43929935.40073837,
+      "savings_before_asset_growth": 43929935.40073837,
+      "savings_after_asset_growth": 43929935.40073837,
+      "totalInvestmentPrincipal_before_push": 3240000,
+      "savings_before_yearlyData_push": 43929935.40073837,
+      "savings_at_yearlyData_push_assignment": 43929935.40073837
     }
   },
   {
     "year": 2044,
     "age": 46,
-    "income": 3681473,
+    "income": 6970254,
     "incomeDetail": {
       "self": 3681473,
-      "spouse": 0,
-      "investment": 0,
+      "spouse": 3288780,
+      "investment": -362866,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -1337,10 +1262,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": -1476475,
+    "savings": 46881605,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3420000,
+      "balance": 7306662
     },
     "ideco": {
       "principal": 0,
@@ -1350,48 +1275,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -157111,
-    "totalAssets": -1476475,
-    "investedAmount": 0,
+    "investmentPrincipal": 3420000,
+    "balance": 2951670,
+    "totalAssets": 54188268,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": -1476475,
+      "cash": 46881605,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 7306662,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 3420000,
+        "balance": 7306662
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -1319364.125725816,
-      "savings_after_cashFlow": -1476474.8195739826,
-      "savings_before_withdrawToCoverShortfall": -1476474.8195739826,
-      "savings_before": -1476474.8195739826,
-      "shortfall": 4476474.819573983,
-      "savings_after": -1476474.8195739826,
-      "savings_after_withdrawToCoverShortfall": -1476474.8195739826,
-      "savings_before_investment_reduction": -1476474.8195739826,
-      "savings_after_investment_reduction": -1476474.8195739826,
-      "savings_before_asset_growth": -1476474.8195739826,
-      "savings_after_asset_growth": -1476474.8195739826,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -1476474.8195739826,
-      "savings_at_yearlyData_push_assignment": -1476474.8195739826
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 43929935.40073837,
+      "savings_after_cashFlow": 47061605.1733328,
+      "savings_before_investment_reduction": 47061605.1733328,
+      "savings_after_investment_reduction": 46881605.1733328,
+      "savings_before_asset_growth": 46881605.1733328,
+      "savings_after_asset_growth": 46881605.1733328,
+      "totalInvestmentPrincipal_before_push": 3420000,
+      "savings_before_yearlyData_push": 46881605.1733328,
+      "savings_at_yearlyData_push_assignment": 46881605.1733328
     }
   },
   {
     "year": 2045,
     "age": 47,
-    "income": 3725738,
+    "income": 7055543,
     "incomeDetail": {
       "self": 3725738,
-      "spouse": 0,
-      "investment": 0,
+      "spouse": 3329806,
+      "investment": 322332,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -1407,10 +1327,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": -1609321,
+    "savings": 49898565,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3600000,
+      "balance": 7808994
     },
     "ideco": {
       "principal": 0,
@@ -1420,48 +1340,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -132846,
-    "totalAssets": -1609321,
-    "investedAmount": 0,
+    "investmentPrincipal": 3600000,
+    "balance": 3016960,
+    "totalAssets": 57707559,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": -1609321,
+      "cash": 49898565,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 7808994,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 3600000,
+        "balance": 7808994
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -1476474.8195739826,
-      "savings_after_cashFlow": -1609320.8634178778,
-      "savings_before_withdrawToCoverShortfall": -1609320.8634178778,
-      "savings_before": -1609320.8634178778,
-      "shortfall": 4609320.863417878,
-      "savings_after": -1609320.8634178778,
-      "savings_after_withdrawToCoverShortfall": -1609320.8634178778,
-      "savings_before_investment_reduction": -1609320.8634178778,
-      "savings_after_investment_reduction": -1609320.8634178778,
-      "savings_before_asset_growth": -1609320.8634178778,
-      "savings_after_asset_growth": -1609320.8634178778,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -1609320.8634178778,
-      "savings_at_yearlyData_push_assignment": -1609320.8634178778
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 46881605.1733328,
+      "savings_after_cashFlow": 50078564.74199526,
+      "savings_before_investment_reduction": 50078564.74199526,
+      "savings_after_investment_reduction": 49898564.74199526,
+      "savings_before_asset_growth": 49898564.74199526,
+      "savings_after_asset_growth": 49898564.74199526,
+      "totalInvestmentPrincipal_before_push": 3600000,
+      "savings_before_yearlyData_push": 49898564.74199526,
+      "savings_at_yearlyData_push_assignment": 49898564.74199526
     }
   },
   {
     "year": 2046,
     "age": 48,
-    "income": 3770578,
+    "income": 7141942,
     "incomeDetail": {
       "self": 3770578,
-      "spouse": 0,
-      "investment": 0,
+      "spouse": 3371364,
+      "investment": -4568459,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -1477,10 +1392,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": -1677327,
+    "savings": 53021923,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3780000,
+      "balance": 3420536
     },
     "ideco": {
       "principal": 0,
@@ -1490,48 +1405,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -68006,
-    "totalAssets": -1677327,
-    "investedAmount": 0,
+    "investmentPrincipal": 3780000,
+    "balance": 3123358,
+    "totalAssets": 56442459,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": -1677327,
+      "cash": 53021923,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 3420536,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 3780000,
+        "balance": 3420536
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -1609320.8634178778,
-      "savings_after_cashFlow": -1677326.8168074451,
-      "savings_before_withdrawToCoverShortfall": -1677326.8168074451,
-      "savings_before": -1677326.8168074451,
-      "shortfall": 4677326.816807445,
-      "savings_after": -1677326.8168074451,
-      "savings_after_withdrawToCoverShortfall": -1677326.8168074451,
-      "savings_before_investment_reduction": -1677326.8168074451,
-      "savings_after_investment_reduction": -1677326.8168074451,
-      "savings_before_asset_growth": -1677326.8168074451,
-      "savings_after_asset_growth": -1677326.8168074451,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -1677326.8168074451,
-      "savings_at_yearlyData_push_assignment": -1677326.8168074451
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 49898564.74199526,
+      "savings_after_cashFlow": 53201922.87407463,
+      "savings_before_investment_reduction": 53201922.87407463,
+      "savings_after_investment_reduction": 53021922.87407463,
+      "savings_before_asset_growth": 53021922.87407463,
+      "savings_after_asset_growth": 53021922.87407463,
+      "totalInvestmentPrincipal_before_push": 3780000,
+      "savings_before_yearlyData_push": 53021922.87407463,
+      "savings_at_yearlyData_push_assignment": 53021922.87407463
     }
   },
   {
     "year": 2047,
     "age": 49,
-    "income": 3816001,
+    "income": 7229464,
     "incomeDetail": {
       "self": 3816001,
-      "spouse": 0,
-      "investment": 0,
+      "spouse": 3413463,
+      "investment": -576728,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -1547,10 +1457,10 @@
       "care": 600000,
       "retirementGap": 0
     },
-    "savings": -2409910,
+    "savings": 55522803,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3960000,
+      "balance": 3023808
     },
     "ideco": {
       "principal": 0,
@@ -1560,48 +1470,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -732583,
-    "totalAssets": -2409910,
-    "investedAmount": 0,
+    "investmentPrincipal": 3960000,
+    "balance": 2500880,
+    "totalAssets": 58546610,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": -2409910,
+      "cash": 55522803,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 3023808,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 3960000,
+        "balance": 3023808
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -1677326.8168074451,
-      "savings_after_cashFlow": -2409909.758566779,
-      "savings_before_withdrawToCoverShortfall": -2409909.758566779,
-      "savings_before": -2409909.758566779,
-      "shortfall": 5409909.758566779,
-      "savings_after": -2409909.758566779,
-      "savings_after_withdrawToCoverShortfall": -2409909.758566779,
-      "savings_before_investment_reduction": -2409909.758566779,
-      "savings_after_investment_reduction": -2409909.758566779,
-      "savings_before_asset_growth": -2409909.758566779,
-      "savings_after_asset_growth": -2409909.758566779,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -2409909.758566779,
-      "savings_at_yearlyData_push_assignment": -2409909.758566779
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 53021922.87407463,
+      "savings_after_cashFlow": 55702802.75089533,
+      "savings_before_investment_reduction": 55702802.75089533,
+      "savings_after_investment_reduction": 55522802.75089533,
+      "savings_before_asset_growth": 55522802.75089533,
+      "savings_after_asset_growth": 55522802.75089533,
+      "totalInvestmentPrincipal_before_push": 3960000,
+      "savings_before_yearlyData_push": 55522802.75089533,
+      "savings_at_yearlyData_push_assignment": 55522802.75089533
     }
   },
   {
     "year": 2048,
     "age": 50,
-    "income": 3862014,
+    "income": 7318100,
     "incomeDetail": {
       "self": 3862014,
-      "spouse": 0,
-      "investment": 0,
+      "spouse": 3456086,
+      "investment": 874798,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -1617,10 +1522,10 @@
       "care": 600000,
       "retirementGap": 0
     },
-    "savings": -3096479,
+    "savings": 58112319,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 4140000,
+      "balance": 4078605
     },
     "ideco": {
       "principal": 0,
@@ -1630,48 +1535,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -686569,
-    "totalAssets": -3096479,
-    "investedAmount": 0,
+    "investmentPrincipal": 4140000,
+    "balance": 2589516,
+    "totalAssets": 62190924,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": -3096479,
+      "cash": 58112319,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 4078605,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 4140000,
+        "balance": 4078605
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -2409909.758566779,
-      "savings_after_cashFlow": -3096479.189544687,
-      "savings_before_withdrawToCoverShortfall": -3096479.189544687,
-      "savings_before": -3096479.189544687,
-      "shortfall": 6096479.189544687,
-      "savings_after": -3096479.189544687,
-      "savings_after_withdrawToCoverShortfall": -3096479.189544687,
-      "savings_before_investment_reduction": -3096479.189544687,
-      "savings_after_investment_reduction": -3096479.189544687,
-      "savings_before_asset_growth": -3096479.189544687,
-      "savings_after_asset_growth": -3096479.189544687,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -3096479.189544687,
-      "savings_at_yearlyData_push_assignment": -3096479.189544687
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 55522802.75089533,
+      "savings_after_cashFlow": 58292319.182189226,
+      "savings_before_investment_reduction": 58292319.182189226,
+      "savings_after_investment_reduction": 58112319.182189226,
+      "savings_before_asset_growth": 58112319.182189226,
+      "savings_after_asset_growth": 58112319.182189226,
+      "totalInvestmentPrincipal_before_push": 4140000,
+      "savings_before_yearlyData_push": 58112319.182189226,
+      "savings_at_yearlyData_push_assignment": 58112319.182189226
     }
   },
   {
     "year": 2049,
     "age": 51,
-    "income": 3908626,
+    "income": 7406047,
     "incomeDetail": {
       "self": 3908626,
-      "spouse": 0,
-      "investment": 0,
+      "spouse": 3497420,
+      "investment": 139924,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -1687,10 +1587,10 @@
       "care": 600000,
       "retirementGap": 0
     },
-    "savings": -3886437,
+    "savings": 60639782,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 4320000,
+      "balance": 4398529
     },
     "ideco": {
       "principal": 0,
@@ -1700,48 +1600,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -789958,
-    "totalAssets": -3886437,
-    "investedAmount": 0,
+    "investmentPrincipal": 4320000,
+    "balance": 2527463,
+    "totalAssets": 65038311,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": -3886437,
+      "cash": 60639782,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 4398529,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 4320000,
+        "balance": 4398529
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -3096479.189544687,
-      "savings_after_cashFlow": -3886436.9341010097,
-      "savings_before_withdrawToCoverShortfall": -3886436.9341010097,
-      "savings_before": -3886436.9341010097,
-      "shortfall": 6886436.93410101,
-      "savings_after": -3886436.9341010097,
-      "savings_after_withdrawToCoverShortfall": -3886436.9341010097,
-      "savings_before_investment_reduction": -3886436.9341010097,
-      "savings_after_investment_reduction": -3886436.9341010097,
-      "savings_before_asset_growth": -3886436.9341010097,
-      "savings_after_asset_growth": -3886436.9341010097,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -3886436.9341010097,
-      "savings_at_yearlyData_push_assignment": -3886436.9341010097
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 58112319.182189226,
+      "savings_after_cashFlow": 60819781.91611424,
+      "savings_before_investment_reduction": 60819781.91611424,
+      "savings_after_investment_reduction": 60639781.91611424,
+      "savings_before_asset_growth": 60639781.91611424,
+      "savings_after_asset_growth": 60639781.91611424,
+      "totalInvestmentPrincipal_before_push": 4320000,
+      "savings_before_yearlyData_push": 60639781.91611424,
+      "savings_at_yearlyData_push_assignment": 60639781.91611424
     }
   },
   {
     "year": 2050,
     "age": 52,
-    "income": 3955844,
+    "income": 7495136,
     "incomeDetail": {
       "self": 3955844,
-      "spouse": 0,
-      "investment": 0,
+      "spouse": 3539292,
+      "investment": -326853,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -1757,10 +1652,10 @@
       "care": 600000,
       "retirementGap": 0
     },
-    "savings": -4589177,
+    "savings": 63296334,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 4500000,
+      "balance": 4251676
     },
     "ideco": {
       "principal": 0,
@@ -1770,48 +1665,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -702740,
-    "totalAssets": -4589177,
-    "investedAmount": 0,
+    "investmentPrincipal": 4500000,
+    "balance": 2656552,
+    "totalAssets": 67548010,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": -4589177,
+      "cash": 63296334,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 4251676,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 4500000,
+        "balance": 4251676
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -3886436.9341010097,
-      "savings_after_cashFlow": -4589177.040312266,
-      "savings_before_withdrawToCoverShortfall": -4589177.040312266,
-      "savings_before": -4589177.040312266,
-      "shortfall": 7589177.040312266,
-      "savings_after": -4589177.040312266,
-      "savings_after_withdrawToCoverShortfall": -4589177.040312266,
-      "savings_before_investment_reduction": -4589177.040312266,
-      "savings_after_investment_reduction": -4589177.040312266,
-      "savings_before_asset_growth": -4589177.040312266,
-      "savings_after_asset_growth": -4589177.040312266,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -4589177.040312266,
-      "savings_at_yearlyData_push_assignment": -4589177.040312266
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 60639781.91611424,
+      "savings_after_cashFlow": 63476334.25460458,
+      "savings_before_investment_reduction": 63476334.25460458,
+      "savings_after_investment_reduction": 63296334.25460458,
+      "savings_before_asset_growth": 63296334.25460458,
+      "savings_after_asset_growth": 63296334.25460458,
+      "totalInvestmentPrincipal_before_push": 4500000,
+      "savings_before_yearlyData_push": 63296334.25460458,
+      "savings_at_yearlyData_push_assignment": 63296334.25460458
     }
   },
   {
     "year": 2051,
     "age": 53,
-    "income": 4003675,
+    "income": 7585384,
     "incomeDetail": {
       "self": 4003675,
-      "spouse": 0,
-      "investment": 0,
+      "spouse": 3581709,
+      "investment": 400101,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -1827,10 +1717,10 @@
       "care": 600000,
       "retirementGap": 0
     },
-    "savings": -6264086,
+    "savings": 65023134,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 4680000,
+      "balance": 4831777
     },
     "ideco": {
       "principal": 0,
@@ -1840,48 +1730,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -1674909,
-    "totalAssets": -6264086,
-    "investedAmount": 0,
+    "investmentPrincipal": 4680000,
+    "balance": 1726800,
+    "totalAssets": 69854911,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": -6264086,
+      "cash": 65023134,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 4831777,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 4680000,
+        "balance": 4831777
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -4589177.040312266,
-      "savings_after_cashFlow": -6264085.678879971,
-      "savings_before_withdrawToCoverShortfall": -6264085.678879971,
-      "savings_before": -6264085.678879971,
-      "shortfall": 9264085.67887997,
-      "savings_after": -6264085.678879971,
-      "savings_after_withdrawToCoverShortfall": -6264085.678879971,
-      "savings_before_investment_reduction": -6264085.678879971,
-      "savings_after_investment_reduction": -6264085.678879971,
-      "savings_before_asset_growth": -6264085.678879971,
-      "savings_after_asset_growth": -6264085.678879971,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -6264085.678879971,
-      "savings_at_yearlyData_push_assignment": -6264085.678879971
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 63296334.25460458,
+      "savings_after_cashFlow": 65203134.362519585,
+      "savings_before_investment_reduction": 65203134.362519585,
+      "savings_after_investment_reduction": 65023134.362519585,
+      "savings_before_asset_growth": 65023134.362519585,
+      "savings_after_asset_growth": 65023134.362519585,
+      "totalInvestmentPrincipal_before_push": 4680000,
+      "savings_before_yearlyData_push": 65023134.362519585,
+      "savings_at_yearlyData_push_assignment": 65023134.362519585
     }
   },
   {
     "year": 2052,
     "age": 54,
-    "income": 4052128,
+    "income": 7676805,
     "incomeDetail": {
       "self": 4052128,
-      "spouse": 0,
-      "investment": 0,
+      "spouse": 3624676,
+      "investment": -180484,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -1897,10 +1782,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": -6270541,
+    "savings": 68461355,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 4860000,
+      "balance": 4831292
     },
     "ideco": {
       "principal": 0,
@@ -1910,48 +1795,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -6455,
-    "totalAssets": -6270541,
-    "investedAmount": 0,
+    "investmentPrincipal": 4860000,
+    "balance": 3438221,
+    "totalAssets": 73292648,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": -6270541,
+      "cash": 68461355,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 4831292,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 4860000,
+        "balance": 4831292
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -6264085.678879971,
-      "savings_after_cashFlow": -6270541.040724758,
-      "savings_before_withdrawToCoverShortfall": -6270541.040724758,
-      "savings_before": -6270541.040724758,
-      "shortfall": 9270541.040724758,
-      "savings_after": -6270541.040724758,
-      "savings_after_withdrawToCoverShortfall": -6270541.040724758,
-      "savings_before_investment_reduction": -6270541.040724758,
-      "savings_after_investment_reduction": -6270541.040724758,
-      "savings_before_asset_growth": -6270541.040724758,
-      "savings_after_asset_growth": -6270541.040724758,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -6270541.040724758,
-      "savings_at_yearlyData_push_assignment": -6270541.040724758
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 65023134.362519585,
+      "savings_after_cashFlow": 68641355.46086179,
+      "savings_before_investment_reduction": 68641355.46086179,
+      "savings_after_investment_reduction": 68461355.46086179,
+      "savings_before_asset_growth": 68461355.46086179,
+      "savings_after_asset_growth": 68461355.46086179,
+      "totalInvestmentPrincipal_before_push": 4860000,
+      "savings_before_yearlyData_push": 68461355.46086179,
+      "savings_at_yearlyData_push_assignment": 68461355.46086179
     }
   },
   {
     "year": 2053,
     "age": 55,
-    "income": 4101212,
+    "income": 7769414,
     "incomeDetail": {
       "self": 4101212,
-      "spouse": 0,
-      "investment": 0,
+      "spouse": 3668203,
+      "investment": 99730,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -1967,10 +1847,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": -6887913,
+    "savings": 71332186,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 5040000,
+      "balance": 5111022
     },
     "ideco": {
       "principal": 0,
@@ -1980,38 +1860,33 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -617372,
-    "totalAssets": -6887913,
-    "investedAmount": 0,
+    "investmentPrincipal": 5040000,
+    "balance": 2870831,
+    "totalAssets": 76443208,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": -6887913,
+      "cash": 71332186,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 5111022,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 5040000,
+        "balance": 5111022
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -6270541.040724758,
-      "savings_after_cashFlow": -6887913.23324923,
-      "savings_before_withdrawToCoverShortfall": -6887913.23324923,
-      "savings_before": -6887913.23324923,
-      "shortfall": 9887913.23324923,
-      "savings_after": -6887913.23324923,
-      "savings_after_withdrawToCoverShortfall": -6887913.23324923,
-      "savings_before_investment_reduction": -6887913.23324923,
-      "savings_after_investment_reduction": -6887913.23324923,
-      "savings_before_asset_growth": -6887913.23324923,
-      "savings_after_asset_growth": -6887913.23324923,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -6887913.23324923,
-      "savings_at_yearlyData_push_assignment": -6887913.23324923
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 68461355.46086179,
+      "savings_after_cashFlow": 71512186.02250673,
+      "savings_before_investment_reduction": 71512186.02250673,
+      "savings_after_investment_reduction": 71332186.02250673,
+      "savings_before_asset_growth": 71332186.02250673,
+      "savings_after_asset_growth": 71332186.02250673,
+      "totalInvestmentPrincipal_before_push": 5040000,
+      "savings_before_yearlyData_push": 71332186.02250673,
+      "savings_at_yearlyData_push_assignment": 71332186.02250673
     }
   },
   {
@@ -2021,7 +1896,7 @@
     "incomeDetail": {
       "self": 4150933,
       "spouse": 0,
-      "investment": 0,
+      "investment": 935181,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -2037,10 +1912,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": -7125564,
+    "savings": 70914535,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 5220000,
+      "balance": 6226203
     },
     "ideco": {
       "principal": 0,
@@ -2050,38 +1925,33 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -237651,
-    "totalAssets": -7125564,
-    "investedAmount": 0,
+    "investmentPrincipal": 5220000,
+    "balance": -417651,
+    "totalAssets": 77140738,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": -7125564,
+      "cash": 70914535,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 6226203,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 5220000,
+        "balance": 6226203
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -6887913.23324923,
-      "savings_after_cashFlow": -7125564.175252222,
-      "savings_before_withdrawToCoverShortfall": -7125564.175252222,
-      "savings_before": -7125564.175252222,
-      "shortfall": 10125564.175252222,
-      "savings_after": -7125564.175252222,
-      "savings_after_withdrawToCoverShortfall": -7125564.175252222,
-      "savings_before_investment_reduction": -7125564.175252222,
-      "savings_after_investment_reduction": -7125564.175252222,
-      "savings_before_asset_growth": -7125564.175252222,
-      "savings_after_asset_growth": -7125564.175252222,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -7125564.175252222,
-      "savings_at_yearlyData_push_assignment": -7125564.175252222
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 71332186.02250673,
+      "savings_after_cashFlow": 71094535.08050373,
+      "savings_before_investment_reduction": 71094535.08050373,
+      "savings_after_investment_reduction": 70914535.08050373,
+      "savings_before_asset_growth": 70914535.08050373,
+      "savings_after_asset_growth": 70914535.08050373,
+      "totalInvestmentPrincipal_before_push": 5220000,
+      "savings_before_yearlyData_push": 70914535.08050373,
+      "savings_at_yearlyData_push_assignment": 70914535.08050373
     }
   },
   {
@@ -2091,7 +1961,7 @@
     "incomeDetail": {
       "self": 4201300,
       "spouse": 0,
-      "investment": 0,
+      "investment": -2372283,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -2107,10 +1977,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": -7312847,
+    "savings": 70547252,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 5400000,
+      "balance": 4033920
     },
     "ideco": {
       "principal": 0,
@@ -2120,38 +1990,33 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -187283,
-    "totalAssets": -7312847,
-    "investedAmount": 0,
+    "investmentPrincipal": 5400000,
+    "balance": -367283,
+    "totalAssets": 74581172,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": -7312847,
+      "cash": 70547252,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 4033920,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 5400000,
+        "balance": 4033920
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -7125564.175252222,
-      "savings_after_cashFlow": -7312847.490476956,
-      "savings_before_withdrawToCoverShortfall": -7312847.490476956,
-      "savings_before": -7312847.490476956,
-      "shortfall": 10312847.490476955,
-      "savings_after": -7312847.490476956,
-      "savings_after_withdrawToCoverShortfall": -7312847.490476956,
-      "savings_before_investment_reduction": -7312847.490476956,
-      "savings_after_investment_reduction": -7312847.490476956,
-      "savings_before_asset_growth": -7312847.490476956,
-      "savings_after_asset_growth": -7312847.490476956,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -7312847.490476956,
-      "savings_at_yearlyData_push_assignment": -7312847.490476956
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 70914535.08050373,
+      "savings_after_cashFlow": 70727251.765279,
+      "savings_before_investment_reduction": 70727251.765279,
+      "savings_after_investment_reduction": 70547251.765279,
+      "savings_before_asset_growth": 70547251.765279,
+      "savings_after_asset_growth": 70547251.765279,
+      "totalInvestmentPrincipal_before_push": 5400000,
+      "savings_before_yearlyData_push": 70547251.765279,
+      "savings_at_yearlyData_push_assignment": 70547251.765279
     }
   },
   {
@@ -2161,7 +2026,7 @@
     "incomeDetail": {
       "self": 4252323,
       "spouse": 0,
-      "investment": 0,
+      "investment": 683067,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -2177,10 +2042,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": -7449108,
+    "savings": 70230991,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 5580000,
+      "balance": 4896986
     },
     "ideco": {
       "principal": 0,
@@ -2190,38 +2055,33 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -136261,
-    "totalAssets": -7449108,
-    "investedAmount": 0,
+    "investmentPrincipal": 5580000,
+    "balance": -316261,
+    "totalAssets": 75127977,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": -7449108,
+      "cash": 70230991,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 4896986,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 5580000,
+        "balance": 4896986
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -7312847.490476956,
-      "savings_after_cashFlow": -7449108.399775311,
-      "savings_before_withdrawToCoverShortfall": -7449108.399775311,
-      "savings_before": -7449108.399775311,
-      "shortfall": 10449108.399775311,
-      "savings_after": -7449108.399775311,
-      "savings_after_withdrawToCoverShortfall": -7449108.399775311,
-      "savings_before_investment_reduction": -7449108.399775311,
-      "savings_after_investment_reduction": -7449108.399775311,
-      "savings_before_asset_growth": -7449108.399775311,
-      "savings_after_asset_growth": -7449108.399775311,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -7449108.399775311,
-      "savings_at_yearlyData_push_assignment": -7449108.399775311
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 70547251.765279,
+      "savings_after_cashFlow": 70410990.85598063,
+      "savings_before_investment_reduction": 70410990.85598063,
+      "savings_after_investment_reduction": 70230990.85598063,
+      "savings_before_asset_growth": 70230990.85598063,
+      "savings_after_asset_growth": 70230990.85598063,
+      "totalInvestmentPrincipal_before_push": 5580000,
+      "savings_before_yearlyData_push": 70230990.85598063,
+      "savings_at_yearlyData_push_assignment": 70230990.85598063
     }
   },
   {
@@ -2231,7 +2091,7 @@
     "incomeDetail": {
       "self": 4304009,
       "spouse": 0,
-      "investment": 0,
+      "investment": 402143,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
@@ -2247,10 +2107,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": -6823684,
+    "savings": 70676416,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 5760000,
+      "balance": 5479129
     },
     "ideco": {
       "principal": 0,
@@ -2260,38 +2120,33 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": 625425,
-    "totalAssets": -6823684,
-    "investedAmount": 0,
+    "investmentPrincipal": 5760000,
+    "balance": 445425,
+    "totalAssets": 76155545,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": -6823684,
+      "cash": 70676416,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 5479129,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 5760000,
+        "balance": 5479129
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -7449108.399775311,
-      "savings_after_cashFlow": -6823683.611870249,
-      "savings_before_withdrawToCoverShortfall": -6823683.611870249,
-      "savings_before": -6823683.611870249,
-      "shortfall": 9823683.611870248,
-      "savings_after": -6823683.611870249,
-      "savings_after_withdrawToCoverShortfall": -6823683.611870249,
-      "savings_before_investment_reduction": -6823683.611870249,
-      "savings_after_investment_reduction": -6823683.611870249,
-      "savings_before_asset_growth": -6823683.611870249,
-      "savings_after_asset_growth": -6823683.611870249,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -6823683.611870249,
-      "savings_at_yearlyData_push_assignment": -6823683.611870249
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 70230990.85598063,
+      "savings_after_cashFlow": 70856415.6438857,
+      "savings_before_investment_reduction": 70856415.6438857,
+      "savings_after_investment_reduction": 70676415.6438857,
+      "savings_before_asset_growth": 70676415.6438857,
+      "savings_after_asset_growth": 70676415.6438857,
+      "totalInvestmentPrincipal_before_push": 5760000,
+      "savings_before_yearlyData_push": 70676415.6438857,
+      "savings_at_yearlyData_push_assignment": 70676415.6438857
     }
   },
   {
@@ -2301,7 +2156,7 @@
     "incomeDetail": {
       "self": 3041701,
       "spouse": 0,
-      "investment": 0,
+      "investment": 2071686,
       "oneTime": 5000000,
       "publicPension": 0,
       "personalPension": 0
@@ -2317,10 +2172,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": -2290566,
+    "savings": 75029533,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 5940000,
+      "balance": 7730815
     },
     "ideco": {
       "principal": 0,
@@ -2330,50 +2185,45 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": 4533117,
-    "totalAssets": -2290566,
-    "investedAmount": 0,
+    "investmentPrincipal": 5940000,
+    "balance": 4353117,
+    "totalAssets": 82760348,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": -2290566,
+      "cash": 75029533,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 7730815,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 5940000,
+        "balance": 7730815
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -6823683.611870249,
-      "savings_after_cashFlow": -2290566.4212285243,
-      "savings_before_withdrawToCoverShortfall": -2290566.4212285243,
-      "savings_before": -2290566.4212285243,
-      "shortfall": 5290566.421228524,
-      "savings_after": -2290566.4212285243,
-      "savings_after_withdrawToCoverShortfall": -2290566.4212285243,
-      "savings_before_investment_reduction": -2290566.4212285243,
-      "savings_after_investment_reduction": -2290566.4212285243,
-      "savings_before_asset_growth": -2290566.4212285243,
-      "savings_after_asset_growth": -2290566.4212285243,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -2290566.4212285243,
-      "savings_at_yearlyData_push_assignment": -2290566.4212285243
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 70676415.6438857,
+      "savings_after_cashFlow": 75209532.83452743,
+      "savings_before_investment_reduction": 75209532.83452743,
+      "savings_after_investment_reduction": 75029532.83452743,
+      "savings_before_asset_growth": 75029532.83452743,
+      "savings_after_asset_growth": 75029532.83452743,
+      "totalInvestmentPrincipal_before_push": 5940000,
+      "savings_before_yearlyData_push": 75029532.83452743,
+      "savings_at_yearlyData_push_assignment": 75029532.83452743
     }
   },
   {
     "year": 2059,
     "age": 61,
-    "income": 3041701,
+    "income": 4121701,
     "incomeDetail": {
       "self": 3041701,
       "spouse": 0,
-      "investment": 0,
+      "investment": 868933,
       "oneTime": 0,
-      "publicPension": 0,
+      "publicPension": 1080000,
       "personalPension": 0
     },
     "expense": 3508584,
@@ -2387,10 +2237,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": -2757449,
+    "savings": 75462650,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6120000,
+      "balance": 8779748
     },
     "ideco": {
       "principal": 0,
@@ -2400,50 +2250,45 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -466883,
-    "totalAssets": -2757449,
-    "investedAmount": 0,
+    "investmentPrincipal": 6120000,
+    "balance": 433117,
+    "totalAssets": 84242398,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": -2757449,
+      "cash": 75462650,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 8779748,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6120000,
+        "balance": 8779748
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -2290566.4212285243,
-      "savings_after_cashFlow": -2757449.2305867993,
-      "savings_before_withdrawToCoverShortfall": -2757449.2305867993,
-      "savings_before": -2757449.2305867993,
-      "shortfall": 5757449.230586799,
-      "savings_after": -2757449.2305867993,
-      "savings_after_withdrawToCoverShortfall": -2757449.2305867993,
-      "savings_before_investment_reduction": -2757449.2305867993,
-      "savings_after_investment_reduction": -2757449.2305867993,
-      "savings_before_asset_growth": -2757449.2305867993,
-      "savings_after_asset_growth": -2757449.2305867993,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -2757449.2305867993,
-      "savings_at_yearlyData_push_assignment": -2757449.2305867993
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 75029532.83452743,
+      "savings_after_cashFlow": 75642650.02516916,
+      "savings_before_investment_reduction": 75642650.02516916,
+      "savings_after_investment_reduction": 75462650.02516916,
+      "savings_before_asset_growth": 75462650.02516916,
+      "savings_after_asset_growth": 75462650.02516916,
+      "totalInvestmentPrincipal_before_push": 6120000,
+      "savings_before_yearlyData_push": 75462650.02516916,
+      "savings_at_yearlyData_push_assignment": 75462650.02516916
     }
   },
   {
     "year": 2060,
     "age": 62,
-    "income": 3041701,
+    "income": 4121701,
     "incomeDetail": {
       "self": 3041701,
       "spouse": 0,
-      "investment": 0,
+      "investment": 556871,
       "oneTime": 0,
-      "publicPension": 0,
+      "publicPension": 1080000,
       "personalPension": 0
     },
     "expense": 3508584,
@@ -2457,10 +2302,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": -3224332,
+    "savings": 75895767,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6300000,
+      "balance": 9516619
     },
     "ideco": {
       "principal": 0,
@@ -2470,50 +2315,45 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -466883,
-    "totalAssets": -3224332,
-    "investedAmount": 0,
+    "investmentPrincipal": 6300000,
+    "balance": 433117,
+    "totalAssets": 85412386,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": -3224332,
+      "cash": 75895767,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 9516619,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6300000,
+        "balance": 9516619
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -2757449.2305867993,
-      "savings_after_cashFlow": -3224332.0399450744,
-      "savings_before_withdrawToCoverShortfall": -3224332.0399450744,
-      "savings_before": -3224332.0399450744,
-      "shortfall": 6224332.039945074,
-      "savings_after": -3224332.0399450744,
-      "savings_after_withdrawToCoverShortfall": -3224332.0399450744,
-      "savings_before_investment_reduction": -3224332.0399450744,
-      "savings_after_investment_reduction": -3224332.0399450744,
-      "savings_before_asset_growth": -3224332.0399450744,
-      "savings_after_asset_growth": -3224332.0399450744,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -3224332.0399450744,
-      "savings_at_yearlyData_push_assignment": -3224332.0399450744
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 75462650.02516916,
+      "savings_after_cashFlow": 76075767.2158109,
+      "savings_before_investment_reduction": 76075767.2158109,
+      "savings_after_investment_reduction": 75895767.2158109,
+      "savings_before_asset_growth": 75895767.2158109,
+      "savings_after_asset_growth": 75895767.2158109,
+      "totalInvestmentPrincipal_before_push": 6300000,
+      "savings_before_yearlyData_push": 75895767.2158109,
+      "savings_at_yearlyData_push_assignment": 75895767.2158109
     }
   },
   {
     "year": 2061,
     "age": 63,
-    "income": 3041701,
+    "income": 4121701,
     "incomeDetail": {
       "self": 3041701,
       "spouse": 0,
-      "investment": 0,
+      "investment": -171811,
       "oneTime": 0,
-      "publicPension": 0,
+      "publicPension": 1080000,
       "personalPension": 0
     },
     "expense": 3508584,
@@ -2527,10 +2367,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": -3691215,
+    "savings": 76328884,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6480000,
+      "balance": 9524809
     },
     "ideco": {
       "principal": 0,
@@ -2540,50 +2380,45 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -466883,
-    "totalAssets": -3691215,
-    "investedAmount": 0,
+    "investmentPrincipal": 6480000,
+    "balance": 433117,
+    "totalAssets": 85853693,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": -3691215,
+      "cash": 76328884,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 9524809,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6480000,
+        "balance": 9524809
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -3224332.0399450744,
-      "savings_after_cashFlow": -3691214.8493033494,
-      "savings_before_withdrawToCoverShortfall": -3691214.8493033494,
-      "savings_before": -3691214.8493033494,
-      "shortfall": 6691214.84930335,
-      "savings_after": -3691214.8493033494,
-      "savings_after_withdrawToCoverShortfall": -3691214.8493033494,
-      "savings_before_investment_reduction": -3691214.8493033494,
-      "savings_after_investment_reduction": -3691214.8493033494,
-      "savings_before_asset_growth": -3691214.8493033494,
-      "savings_after_asset_growth": -3691214.8493033494,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -3691214.8493033494,
-      "savings_at_yearlyData_push_assignment": -3691214.8493033494
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 75895767.2158109,
+      "savings_after_cashFlow": 76508884.40645263,
+      "savings_before_investment_reduction": 76508884.40645263,
+      "savings_after_investment_reduction": 76328884.40645263,
+      "savings_before_asset_growth": 76328884.40645263,
+      "savings_after_asset_growth": 76328884.40645263,
+      "totalInvestmentPrincipal_before_push": 6480000,
+      "savings_before_yearlyData_push": 76328884.40645263,
+      "savings_at_yearlyData_push_assignment": 76328884.40645263
     }
   },
   {
     "year": 2062,
     "age": 64,
-    "income": 3041701,
+    "income": 4121701,
     "incomeDetail": {
       "self": 3041701,
       "spouse": 0,
-      "investment": 0,
+      "investment": 5208540,
       "oneTime": 0,
-      "publicPension": 0,
+      "publicPension": 1080000,
       "personalPension": 0
     },
     "expense": 3508584,
@@ -2597,10 +2432,10 @@
       "care": 0,
       "retirementGap": 0
     },
-    "savings": -4158098,
+    "savings": 76762002,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 14913349
     },
     "ideco": {
       "principal": 0,
@@ -2610,50 +2445,45 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -466883,
-    "totalAssets": -4158098,
-    "investedAmount": 0,
+    "investmentPrincipal": 6660000,
+    "balance": 433117,
+    "totalAssets": 91675351,
+    "investedAmount": 180000,
     "assetAllocation": {
-      "cash": -4158098,
+      "cash": 76762002,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 14913349,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 14913349
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -3691214.8493033494,
-      "savings_after_cashFlow": -4158097.6586616244,
-      "savings_before_withdrawToCoverShortfall": -4158097.6586616244,
-      "savings_before": -4158097.6586616244,
-      "shortfall": 7158097.658661624,
-      "savings_after": -4158097.6586616244,
-      "savings_after_withdrawToCoverShortfall": -4158097.6586616244,
-      "savings_before_investment_reduction": -4158097.6586616244,
-      "savings_after_investment_reduction": -4158097.6586616244,
-      "savings_before_asset_growth": -4158097.6586616244,
-      "savings_after_asset_growth": -4158097.6586616244,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -4158097.6586616244,
-      "savings_at_yearlyData_push_assignment": -4158097.6586616244
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 76328884.40645263,
+      "savings_after_cashFlow": 76942001.59709436,
+      "savings_before_investment_reduction": 76942001.59709436,
+      "savings_after_investment_reduction": 76762001.59709436,
+      "savings_before_asset_growth": 76762001.59709436,
+      "savings_after_asset_growth": 76762001.59709436,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 76762001.59709436,
+      "savings_at_yearlyData_push_assignment": 76762001.59709436
     }
   },
   {
     "year": 2063,
     "age": 65,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": -5660148,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 5698584,
@@ -2665,12 +2495,12 @@
       "children": 0,
       "appliances": 350000,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -8056681,
+    "savings": 73943418,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 9253201
     },
     "ideco": {
       "principal": 0,
@@ -2680,48 +2510,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -3898584,
-    "totalAssets": -8056681,
+    "investmentPrincipal": 6660000,
+    "balance": -2818584,
+    "totalAssets": 83196619,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -8056681,
+      "cash": 73943418,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 9253201,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 9253201
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -4158097.6586616244,
-      "savings_after_cashFlow": -8056681.429761487,
-      "savings_before_withdrawToCoverShortfall": -8056681.429761487,
-      "savings_before": -8056681.429761487,
-      "shortfall": 11056681.429761488,
-      "savings_after": -8056681.429761487,
-      "savings_after_withdrawToCoverShortfall": -8056681.429761487,
-      "savings_before_asset_growth": -8056681.429761487,
-      "savings_after_asset_growth": -8056681.429761487,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -8056681.429761487,
-      "savings_at_yearlyData_push_assignment": -8056681.429761487
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 76762001.59709436,
+      "savings_after_cashFlow": 73943417.82599449,
+      "savings_before_asset_growth": 73943417.82599449,
+      "savings_after_asset_growth": 73943417.82599449,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 73943417.82599449,
+      "savings_at_yearlyData_push_assignment": 73943417.82599449
     }
   },
   {
     "year": 2064,
     "age": 66,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": 432618,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 4348584,
@@ -2733,12 +2558,12 @@
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -10605265,
+    "savings": 72474834,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 9685819
     },
     "ideco": {
       "principal": 0,
@@ -2748,48 +2573,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -2548584,
-    "totalAssets": -10605265,
+    "investmentPrincipal": 6660000,
+    "balance": -1468584,
+    "totalAssets": 82160653,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -10605265,
+      "cash": 72474834,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 9685819,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 9685819
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -8056681.429761487,
-      "savings_after_cashFlow": -10605265.20086135,
-      "savings_before_withdrawToCoverShortfall": -10605265.20086135,
-      "savings_before": -10605265.20086135,
-      "shortfall": 13605265.20086135,
-      "savings_after": -10605265.20086135,
-      "savings_after_withdrawToCoverShortfall": -10605265.20086135,
-      "savings_before_asset_growth": -10605265.20086135,
-      "savings_after_asset_growth": -10605265.20086135,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -10605265.20086135,
-      "savings_at_yearlyData_push_assignment": -10605265.20086135
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 73943417.82599449,
+      "savings_after_cashFlow": 72474834.05489463,
+      "savings_before_asset_growth": 72474834.05489463,
+      "savings_after_asset_growth": 72474834.05489463,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 72474834.05489463,
+      "savings_at_yearlyData_push_assignment": 72474834.05489463
     }
   },
   {
     "year": 2065,
     "age": 67,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": 224808,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 4498584,
@@ -2801,12 +2621,12 @@
       "children": 0,
       "appliances": 150000,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -13303849,
+    "savings": 70856250,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 9910628
     },
     "ideco": {
       "principal": 0,
@@ -2816,48 +2636,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -2698584,
-    "totalAssets": -13303849,
+    "investmentPrincipal": 6660000,
+    "balance": -1618584,
+    "totalAssets": 80766878,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -13303849,
+      "cash": 70856250,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 9910628,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 9910628
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -10605265.20086135,
-      "savings_after_cashFlow": -13303848.971961211,
-      "savings_before_withdrawToCoverShortfall": -13303848.971961211,
-      "savings_before": -13303848.971961211,
-      "shortfall": 16303848.971961211,
-      "savings_after": -13303848.971961211,
-      "savings_after_withdrawToCoverShortfall": -13303848.971961211,
-      "savings_before_asset_growth": -13303848.971961211,
-      "savings_after_asset_growth": -13303848.971961211,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -13303848.971961211,
-      "savings_at_yearlyData_push_assignment": -13303848.971961211
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 72474834.05489463,
+      "savings_after_cashFlow": 70856250.28379476,
+      "savings_before_asset_growth": 70856250.28379476,
+      "savings_after_asset_growth": 70856250.28379476,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 70856250.28379476,
+      "savings_at_yearlyData_push_assignment": 70856250.28379476
     }
   },
   {
     "year": 2066,
     "age": 68,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": 1597434,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 4348584,
@@ -2869,12 +2684,12 @@
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -15852433,
+    "savings": 69387667,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 11508062
     },
     "ideco": {
       "principal": 0,
@@ -2884,48 +2699,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -2548584,
-    "totalAssets": -15852433,
+    "investmentPrincipal": 6660000,
+    "balance": -1468584,
+    "totalAssets": 80895728,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -15852433,
+      "cash": 69387667,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 11508062,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 11508062
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -13303848.971961211,
-      "savings_after_cashFlow": -15852432.743061073,
-      "savings_before_withdrawToCoverShortfall": -15852432.743061073,
-      "savings_before": -15852432.743061073,
-      "shortfall": 18852432.743061073,
-      "savings_after": -15852432.743061073,
-      "savings_after_withdrawToCoverShortfall": -15852432.743061073,
-      "savings_before_asset_growth": -15852432.743061073,
-      "savings_after_asset_growth": -15852432.743061073,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -15852432.743061073,
-      "savings_at_yearlyData_push_assignment": -15852432.743061073
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 70856250.28379476,
+      "savings_after_cashFlow": 69387666.5126949,
+      "savings_before_asset_growth": 69387666.5126949,
+      "savings_after_asset_growth": 69387666.5126949,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 69387666.5126949,
+      "savings_at_yearlyData_push_assignment": 69387666.5126949
     }
   },
   {
     "year": 2067,
     "age": 69,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": 1172216,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 4348584,
@@ -2937,12 +2747,12 @@
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -18401017,
+    "savings": 67919083,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 12680277
     },
     "ideco": {
       "principal": 0,
@@ -2952,48 +2762,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -2548584,
-    "totalAssets": -18401017,
+    "investmentPrincipal": 6660000,
+    "balance": -1468584,
+    "totalAssets": 80599360,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -18401017,
+      "cash": 67919083,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 12680277,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 12680277
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -15852432.743061073,
-      "savings_after_cashFlow": -18401016.514160935,
-      "savings_before_withdrawToCoverShortfall": -18401016.514160935,
-      "savings_before": -18401016.514160935,
-      "shortfall": 21401016.514160935,
-      "savings_after": -18401016.514160935,
-      "savings_after_withdrawToCoverShortfall": -18401016.514160935,
-      "savings_before_asset_growth": -18401016.514160935,
-      "savings_after_asset_growth": -18401016.514160935,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -18401016.514160935,
-      "savings_at_yearlyData_push_assignment": -18401016.514160935
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 69387666.5126949,
+      "savings_after_cashFlow": 67919082.74159503,
+      "savings_before_asset_growth": 67919082.74159503,
+      "savings_after_asset_growth": 67919082.74159503,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 67919082.74159503,
+      "savings_at_yearlyData_push_assignment": 67919082.74159503
     }
   },
   {
     "year": 2068,
     "age": 70,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": -1302269,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 3000000,
@@ -3005,12 +2810,12 @@
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -19601017,
+    "savings": 67799083,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 11378008
     },
     "ideco": {
       "principal": 0,
@@ -3020,48 +2825,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -1200000,
-    "totalAssets": -19601017,
+    "investmentPrincipal": 6660000,
+    "balance": -120000,
+    "totalAssets": 79177091,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -19601017,
+      "cash": 67799083,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 11378008,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 11378008
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -18401016.514160935,
-      "savings_after_cashFlow": -19601016.514160935,
-      "savings_before_withdrawToCoverShortfall": -19601016.514160935,
-      "savings_before": -19601016.514160935,
-      "shortfall": 22601016.514160935,
-      "savings_after": -19601016.514160935,
-      "savings_after_withdrawToCoverShortfall": -19601016.514160935,
-      "savings_before_asset_growth": -19601016.514160935,
-      "savings_after_asset_growth": -19601016.514160935,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -19601016.514160935,
-      "savings_at_yearlyData_push_assignment": -19601016.514160935
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 67919082.74159503,
+      "savings_after_cashFlow": 67799082.74159503,
+      "savings_before_asset_growth": 67799082.74159503,
+      "savings_after_asset_growth": 67799082.74159503,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 67799082.74159503,
+      "savings_at_yearlyData_push_assignment": 67799082.74159503
     }
   },
   {
     "year": 2069,
     "age": 71,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": 783430,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 3020000,
@@ -3073,12 +2873,12 @@
       "children": 0,
       "appliances": 20000,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -20821017,
+    "savings": 67659083,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 12161438
     },
     "ideco": {
       "principal": 0,
@@ -3088,48 +2888,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -1220000,
-    "totalAssets": -20821017,
+    "investmentPrincipal": 6660000,
+    "balance": -140000,
+    "totalAssets": 79820521,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -20821017,
+      "cash": 67659083,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 12161438,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 12161438
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -19601016.514160935,
-      "savings_after_cashFlow": -20821016.514160935,
-      "savings_before_withdrawToCoverShortfall": -20821016.514160935,
-      "savings_before": -20821016.514160935,
-      "shortfall": 23821016.514160935,
-      "savings_after": -20821016.514160935,
-      "savings_after_withdrawToCoverShortfall": -20821016.514160935,
-      "savings_before_asset_growth": -20821016.514160935,
-      "savings_after_asset_growth": -20821016.514160935,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -20821016.514160935,
-      "savings_at_yearlyData_push_assignment": -20821016.514160935
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 67799082.74159503,
+      "savings_after_cashFlow": 67659082.74159503,
+      "savings_before_asset_growth": 67659082.74159503,
+      "savings_after_asset_growth": 67659082.74159503,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 67659082.74159503,
+      "savings_at_yearlyData_push_assignment": 67659082.74159503
     }
   },
   {
     "year": 2070,
     "age": 72,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": -1982924,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 3000000,
@@ -3141,12 +2936,12 @@
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -22021017,
+    "savings": 67539083,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 10178514
     },
     "ideco": {
       "principal": 0,
@@ -3156,48 +2951,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -1200000,
-    "totalAssets": -22021017,
+    "investmentPrincipal": 6660000,
+    "balance": -120000,
+    "totalAssets": 77717597,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -22021017,
+      "cash": 67539083,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 10178514,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 10178514
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -20821016.514160935,
-      "savings_after_cashFlow": -22021016.514160935,
-      "savings_before_withdrawToCoverShortfall": -22021016.514160935,
-      "savings_before": -22021016.514160935,
-      "shortfall": 25021016.514160935,
-      "savings_after": -22021016.514160935,
-      "savings_after_withdrawToCoverShortfall": -22021016.514160935,
-      "savings_before_asset_growth": -22021016.514160935,
-      "savings_after_asset_growth": -22021016.514160935,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -22021016.514160935,
-      "savings_at_yearlyData_push_assignment": -22021016.514160935
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 67659082.74159503,
+      "savings_after_cashFlow": 67539082.74159503,
+      "savings_before_asset_growth": 67539082.74159503,
+      "savings_after_asset_growth": 67539082.74159503,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 67539082.74159503,
+      "savings_at_yearlyData_push_assignment": 67539082.74159503
     }
   },
   {
     "year": 2071,
     "age": 73,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": 1854713,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 3000000,
@@ -3209,12 +2999,12 @@
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -23221017,
+    "savings": 67419083,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 12033227
     },
     "ideco": {
       "principal": 0,
@@ -3224,48 +3014,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -1200000,
-    "totalAssets": -23221017,
+    "investmentPrincipal": 6660000,
+    "balance": -120000,
+    "totalAssets": 79452310,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -23221017,
+      "cash": 67419083,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 12033227,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 12033227
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -22021016.514160935,
-      "savings_after_cashFlow": -23221016.514160935,
-      "savings_before_withdrawToCoverShortfall": -23221016.514160935,
-      "savings_before": -23221016.514160935,
-      "shortfall": 26221016.514160935,
-      "savings_after": -23221016.514160935,
-      "savings_after_withdrawToCoverShortfall": -23221016.514160935,
-      "savings_before_asset_growth": -23221016.514160935,
-      "savings_after_asset_growth": -23221016.514160935,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -23221016.514160935,
-      "savings_at_yearlyData_push_assignment": -23221016.514160935
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 67539082.74159503,
+      "savings_after_cashFlow": 67419082.74159503,
+      "savings_before_asset_growth": 67419082.74159503,
+      "savings_after_asset_growth": 67419082.74159503,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 67419082.74159503,
+      "savings_at_yearlyData_push_assignment": 67419082.74159503
     }
   },
   {
     "year": 2072,
     "age": 74,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": 1657783,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 3000000,
@@ -3277,12 +3062,12 @@
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -24421017,
+    "savings": 67299083,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 13691010
     },
     "ideco": {
       "principal": 0,
@@ -3292,48 +3077,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -1200000,
-    "totalAssets": -24421017,
+    "investmentPrincipal": 6660000,
+    "balance": -120000,
+    "totalAssets": 80990093,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -24421017,
+      "cash": 67299083,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 13691010,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 13691010
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -23221016.514160935,
-      "savings_after_cashFlow": -24421016.514160935,
-      "savings_before_withdrawToCoverShortfall": -24421016.514160935,
-      "savings_before": -24421016.514160935,
-      "shortfall": 27421016.514160935,
-      "savings_after": -24421016.514160935,
-      "savings_after_withdrawToCoverShortfall": -24421016.514160935,
-      "savings_before_asset_growth": -24421016.514160935,
-      "savings_after_asset_growth": -24421016.514160935,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -24421016.514160935,
-      "savings_at_yearlyData_push_assignment": -24421016.514160935
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 67419082.74159503,
+      "savings_after_cashFlow": 67299082.74159503,
+      "savings_before_asset_growth": 67299082.74159503,
+      "savings_after_asset_growth": 67299082.74159503,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 67299082.74159503,
+      "savings_at_yearlyData_push_assignment": 67299082.74159503
     }
   },
   {
     "year": 2073,
     "age": 75,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": -5191216,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 3480000,
@@ -3345,12 +3125,12 @@
       "children": 0,
       "appliances": 480000,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -26101017,
+    "savings": 66699083,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 8499794
     },
     "ideco": {
       "principal": 0,
@@ -3360,48 +3140,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -1680000,
-    "totalAssets": -26101017,
+    "investmentPrincipal": 6660000,
+    "balance": -600000,
+    "totalAssets": 75198877,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -26101017,
+      "cash": 66699083,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 8499794,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 8499794
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -24421016.514160935,
-      "savings_after_cashFlow": -26101016.514160935,
-      "savings_before_withdrawToCoverShortfall": -26101016.514160935,
-      "savings_before": -26101016.514160935,
-      "shortfall": 29101016.514160935,
-      "savings_after": -26101016.514160935,
-      "savings_after_withdrawToCoverShortfall": -26101016.514160935,
-      "savings_before_asset_growth": -26101016.514160935,
-      "savings_after_asset_growth": -26101016.514160935,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -26101016.514160935,
-      "savings_at_yearlyData_push_assignment": -26101016.514160935
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 67299082.74159503,
+      "savings_after_cashFlow": 66699082.74159503,
+      "savings_before_asset_growth": 66699082.74159503,
+      "savings_after_asset_growth": 66699082.74159503,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 66699082.74159503,
+      "savings_at_yearlyData_push_assignment": 66699082.74159503
     }
   },
   {
     "year": 2074,
     "age": 76,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": 1826068,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 3000000,
@@ -3413,12 +3188,12 @@
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -27301017,
+    "savings": 66579083,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 10325862
     },
     "ideco": {
       "principal": 0,
@@ -3428,48 +3203,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -1200000,
-    "totalAssets": -27301017,
+    "investmentPrincipal": 6660000,
+    "balance": -120000,
+    "totalAssets": 76904945,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -27301017,
+      "cash": 66579083,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 10325862,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 10325862
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -26101016.514160935,
-      "savings_after_cashFlow": -27301016.514160935,
-      "savings_before_withdrawToCoverShortfall": -27301016.514160935,
-      "savings_before": -27301016.514160935,
-      "shortfall": 30301016.514160935,
-      "savings_after": -27301016.514160935,
-      "savings_after_withdrawToCoverShortfall": -27301016.514160935,
-      "savings_before_asset_growth": -27301016.514160935,
-      "savings_after_asset_growth": -27301016.514160935,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -27301016.514160935,
-      "savings_at_yearlyData_push_assignment": -27301016.514160935
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 66699082.74159503,
+      "savings_after_cashFlow": 66579082.74159503,
+      "savings_before_asset_growth": 66579082.74159503,
+      "savings_after_asset_growth": 66579082.74159503,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 66579082.74159503,
+      "savings_at_yearlyData_push_assignment": 66579082.74159503
     }
   },
   {
     "year": 2075,
     "age": 77,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": 2556501,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 4020000,
@@ -3481,12 +3251,12 @@
       "children": 0,
       "appliances": 20000,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -29521017,
+    "savings": 65439083,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 12882363
     },
     "ideco": {
       "principal": 0,
@@ -3496,48 +3266,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -2220000,
-    "totalAssets": -29521017,
+    "investmentPrincipal": 6660000,
+    "balance": -1140000,
+    "totalAssets": 78321446,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -29521017,
+      "cash": 65439083,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 12882363,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 12882363
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -27301016.514160935,
-      "savings_after_cashFlow": -29521016.514160935,
-      "savings_before_withdrawToCoverShortfall": -29521016.514160935,
-      "savings_before": -29521016.514160935,
-      "shortfall": 32521016.514160935,
-      "savings_after": -29521016.514160935,
-      "savings_after_withdrawToCoverShortfall": -29521016.514160935,
-      "savings_before_asset_growth": -29521016.514160935,
-      "savings_after_asset_growth": -29521016.514160935,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -29521016.514160935,
-      "savings_at_yearlyData_push_assignment": -29521016.514160935
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 66579082.74159503,
+      "savings_after_cashFlow": 65439082.74159503,
+      "savings_before_asset_growth": 65439082.74159503,
+      "savings_after_asset_growth": 65439082.74159503,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 65439082.74159503,
+      "savings_at_yearlyData_push_assignment": 65439082.74159503
     }
   },
   {
     "year": 2076,
     "age": 78,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": 2244925,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 3000000,
@@ -3549,12 +3314,12 @@
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -30721017,
+    "savings": 65319083,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 15127288
     },
     "ideco": {
       "principal": 0,
@@ -3564,48 +3329,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -1200000,
-    "totalAssets": -30721017,
+    "investmentPrincipal": 6660000,
+    "balance": -120000,
+    "totalAssets": 80446371,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -30721017,
+      "cash": 65319083,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 15127288,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 15127288
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -29521016.514160935,
-      "savings_after_cashFlow": -30721016.514160935,
-      "savings_before_withdrawToCoverShortfall": -30721016.514160935,
-      "savings_before": -30721016.514160935,
-      "shortfall": 33721016.51416093,
-      "savings_after": -30721016.514160935,
-      "savings_after_withdrawToCoverShortfall": -30721016.514160935,
-      "savings_before_asset_growth": -30721016.514160935,
-      "savings_after_asset_growth": -30721016.514160935,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -30721016.514160935,
-      "savings_at_yearlyData_push_assignment": -30721016.514160935
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 65439082.74159503,
+      "savings_after_cashFlow": 65319082.74159503,
+      "savings_before_asset_growth": 65319082.74159503,
+      "savings_after_asset_growth": 65319082.74159503,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 65319082.74159503,
+      "savings_at_yearlyData_push_assignment": 65319082.74159503
     }
   },
   {
     "year": 2077,
     "age": 79,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": 722781,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 3000000,
@@ -3617,12 +3377,12 @@
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -31921017,
+    "savings": 65199083,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 15850069
     },
     "ideco": {
       "principal": 0,
@@ -3632,48 +3392,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -1200000,
-    "totalAssets": -31921017,
+    "investmentPrincipal": 6660000,
+    "balance": -120000,
+    "totalAssets": 81049152,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -31921017,
+      "cash": 65199083,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 15850069,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 15850069
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -30721016.514160935,
-      "savings_after_cashFlow": -31921016.514160935,
-      "savings_before_withdrawToCoverShortfall": -31921016.514160935,
-      "savings_before": -31921016.514160935,
-      "shortfall": 34921016.51416093,
-      "savings_after": -31921016.514160935,
-      "savings_after_withdrawToCoverShortfall": -31921016.514160935,
-      "savings_before_asset_growth": -31921016.514160935,
-      "savings_after_asset_growth": -31921016.514160935,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -31921016.514160935,
-      "savings_at_yearlyData_push_assignment": -31921016.514160935
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 65319082.74159503,
+      "savings_after_cashFlow": 65199082.74159503,
+      "savings_before_asset_growth": 65199082.74159503,
+      "savings_after_asset_growth": 65199082.74159503,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 65199082.74159503,
+      "savings_at_yearlyData_push_assignment": 65199082.74159503
     }
   },
   {
     "year": 2078,
     "age": 80,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": 2570274,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 3000000,
@@ -3685,12 +3440,12 @@
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -33121017,
+    "savings": 65079083,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 18420344
     },
     "ideco": {
       "principal": 0,
@@ -3700,48 +3455,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -1200000,
-    "totalAssets": -33121017,
+    "investmentPrincipal": 6660000,
+    "balance": -120000,
+    "totalAssets": 83499426,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -33121017,
+      "cash": 65079083,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 18420344,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 18420344
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -31921016.514160935,
-      "savings_after_cashFlow": -33121016.514160935,
-      "savings_before_withdrawToCoverShortfall": -33121016.514160935,
-      "savings_before": -33121016.514160935,
-      "shortfall": 36121016.51416093,
-      "savings_after": -33121016.514160935,
-      "savings_after_withdrawToCoverShortfall": -33121016.514160935,
-      "savings_before_asset_growth": -33121016.514160935,
-      "savings_after_asset_growth": -33121016.514160935,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -33121016.514160935,
-      "savings_at_yearlyData_push_assignment": -33121016.514160935
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 65199082.74159503,
+      "savings_after_cashFlow": 65079082.74159503,
+      "savings_before_asset_growth": 65079082.74159503,
+      "savings_after_asset_growth": 65079082.74159503,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 65079082.74159503,
+      "savings_at_yearlyData_push_assignment": 65079082.74159503
     }
   },
   {
     "year": 2079,
     "age": 81,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": -564768,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 3000000,
@@ -3753,12 +3503,12 @@
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -34321017,
+    "savings": 64959083,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 17855576
     },
     "ideco": {
       "principal": 0,
@@ -3768,48 +3518,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -1200000,
-    "totalAssets": -34321017,
+    "investmentPrincipal": 6660000,
+    "balance": -120000,
+    "totalAssets": 82814658,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -34321017,
+      "cash": 64959083,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 17855576,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 17855576
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -33121016.514160935,
-      "savings_after_cashFlow": -34321016.51416093,
-      "savings_before_withdrawToCoverShortfall": -34321016.51416093,
-      "savings_before": -34321016.51416093,
-      "shortfall": 37321016.51416093,
-      "savings_after": -34321016.51416093,
-      "savings_after_withdrawToCoverShortfall": -34321016.51416093,
-      "savings_before_asset_growth": -34321016.51416093,
-      "savings_after_asset_growth": -34321016.51416093,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -34321016.51416093,
-      "savings_at_yearlyData_push_assignment": -34321016.51416093
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 65079082.74159503,
+      "savings_after_cashFlow": 64959082.74159503,
+      "savings_before_asset_growth": 64959082.74159503,
+      "savings_after_asset_growth": 64959082.74159503,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 64959082.74159503,
+      "savings_at_yearlyData_push_assignment": 64959082.74159503
     }
   },
   {
     "year": 2080,
     "age": 82,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": 542888,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 3000000,
@@ -3821,12 +3566,12 @@
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -35521017,
+    "savings": 64839083,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 18398464
     },
     "ideco": {
       "principal": 0,
@@ -3836,48 +3581,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -1200000,
-    "totalAssets": -35521017,
+    "investmentPrincipal": 6660000,
+    "balance": -120000,
+    "totalAssets": 83237547,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -35521017,
+      "cash": 64839083,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 18398464,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 18398464
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -34321016.51416093,
-      "savings_after_cashFlow": -35521016.51416093,
-      "savings_before_withdrawToCoverShortfall": -35521016.51416093,
-      "savings_before": -35521016.51416093,
-      "shortfall": 38521016.51416093,
-      "savings_after": -35521016.51416093,
-      "savings_after_withdrawToCoverShortfall": -35521016.51416093,
-      "savings_before_asset_growth": -35521016.51416093,
-      "savings_after_asset_growth": -35521016.51416093,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -35521016.51416093,
-      "savings_at_yearlyData_push_assignment": -35521016.51416093
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 64959082.74159503,
+      "savings_after_cashFlow": 64839082.74159503,
+      "savings_before_asset_growth": 64839082.74159503,
+      "savings_after_asset_growth": 64839082.74159503,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 64839082.74159503,
+      "savings_at_yearlyData_push_assignment": 64839082.74159503
     }
   },
   {
     "year": 2081,
     "age": 83,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": 1731964,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 3170000,
@@ -3889,12 +3629,12 @@
       "children": 0,
       "appliances": 170000,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -36891017,
+    "savings": 64549083,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 20130428
     },
     "ideco": {
       "principal": 0,
@@ -3904,48 +3644,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -1370000,
-    "totalAssets": -36891017,
+    "investmentPrincipal": 6660000,
+    "balance": -290000,
+    "totalAssets": 84679511,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -36891017,
+      "cash": 64549083,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 20130428,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 20130428
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -35521016.51416093,
-      "savings_after_cashFlow": -36891016.51416093,
-      "savings_before_withdrawToCoverShortfall": -36891016.51416093,
-      "savings_before": -36891016.51416093,
-      "shortfall": 39891016.51416093,
-      "savings_after": -36891016.51416093,
-      "savings_after_withdrawToCoverShortfall": -36891016.51416093,
-      "savings_before_asset_growth": -36891016.51416093,
-      "savings_after_asset_growth": -36891016.51416093,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -36891016.51416093,
-      "savings_at_yearlyData_push_assignment": -36891016.51416093
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 64839082.74159503,
+      "savings_after_cashFlow": 64549082.74159503,
+      "savings_before_asset_growth": 64549082.74159503,
+      "savings_after_asset_growth": 64549082.74159503,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 64549082.74159503,
+      "savings_at_yearlyData_push_assignment": 64549082.74159503
     }
   },
   {
     "year": 2082,
     "age": 84,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": 536632,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 3000000,
@@ -3957,12 +3692,12 @@
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -38091017,
+    "savings": 64429083,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 20667060
     },
     "ideco": {
       "principal": 0,
@@ -3972,48 +3707,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -1200000,
-    "totalAssets": -38091017,
+    "investmentPrincipal": 6660000,
+    "balance": -120000,
+    "totalAssets": 85096142,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -38091017,
+      "cash": 64429083,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 20667060,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 20667060
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -36891016.51416093,
-      "savings_after_cashFlow": -38091016.51416093,
-      "savings_before_withdrawToCoverShortfall": -38091016.51416093,
-      "savings_before": -38091016.51416093,
-      "shortfall": 41091016.51416093,
-      "savings_after": -38091016.51416093,
-      "savings_after_withdrawToCoverShortfall": -38091016.51416093,
-      "savings_before_asset_growth": -38091016.51416093,
-      "savings_after_asset_growth": -38091016.51416093,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -38091016.51416093,
-      "savings_at_yearlyData_push_assignment": -38091016.51416093
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 64549082.74159503,
+      "savings_after_cashFlow": 64429082.74159503,
+      "savings_before_asset_growth": 64429082.74159503,
+      "savings_after_asset_growth": 64429082.74159503,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 64429082.74159503,
+      "savings_at_yearlyData_push_assignment": 64429082.74159503
     }
   },
   {
     "year": 2083,
     "age": 85,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": -6686612,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 3330000,
@@ -4025,12 +3755,12 @@
       "children": 0,
       "appliances": 330000,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -39621017,
+    "savings": 63979083,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 13980447
     },
     "ideco": {
       "principal": 0,
@@ -4040,48 +3770,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -1530000,
-    "totalAssets": -39621017,
+    "investmentPrincipal": 6660000,
+    "balance": -450000,
+    "totalAssets": 77959530,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -39621017,
+      "cash": 63979083,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 13980447,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 13980447
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -38091016.51416093,
-      "savings_after_cashFlow": -39621016.51416093,
-      "savings_before_withdrawToCoverShortfall": -39621016.51416093,
-      "savings_before": -39621016.51416093,
-      "shortfall": 42621016.51416093,
-      "savings_after": -39621016.51416093,
-      "savings_after_withdrawToCoverShortfall": -39621016.51416093,
-      "savings_before_asset_growth": -39621016.51416093,
-      "savings_after_asset_growth": -39621016.51416093,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -39621016.51416093,
-      "savings_at_yearlyData_push_assignment": -39621016.51416093
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 64429082.74159503,
+      "savings_after_cashFlow": 63979082.74159503,
+      "savings_before_asset_growth": 63979082.74159503,
+      "savings_after_asset_growth": 63979082.74159503,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 63979082.74159503,
+      "savings_at_yearlyData_push_assignment": 63979082.74159503
     }
   },
   {
     "year": 2084,
     "age": 86,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": -2019729,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 3000000,
@@ -4093,12 +3818,12 @@
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -40821017,
+    "savings": 63859083,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 11960718
     },
     "ideco": {
       "principal": 0,
@@ -4108,48 +3833,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -1200000,
-    "totalAssets": -40821017,
+    "investmentPrincipal": 6660000,
+    "balance": -120000,
+    "totalAssets": 75819801,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -40821017,
+      "cash": 63859083,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 11960718,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 11960718
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -39621016.51416093,
-      "savings_after_cashFlow": -40821016.51416093,
-      "savings_before_withdrawToCoverShortfall": -40821016.51416093,
-      "savings_before": -40821016.51416093,
-      "shortfall": 43821016.51416093,
-      "savings_after": -40821016.51416093,
-      "savings_after_withdrawToCoverShortfall": -40821016.51416093,
-      "savings_before_asset_growth": -40821016.51416093,
-      "savings_after_asset_growth": -40821016.51416093,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -40821016.51416093,
-      "savings_at_yearlyData_push_assignment": -40821016.51416093
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 63979082.74159503,
+      "savings_after_cashFlow": 63859082.74159503,
+      "savings_before_asset_growth": 63859082.74159503,
+      "savings_after_asset_growth": 63859082.74159503,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 63859082.74159503,
+      "savings_at_yearlyData_push_assignment": 63859082.74159503
     }
   },
   {
     "year": 2085,
     "age": 87,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": 4480445,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 3000000,
@@ -4161,12 +3881,12 @@
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -42021017,
+    "savings": 63739083,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 16441164
     },
     "ideco": {
       "principal": 0,
@@ -4176,48 +3896,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -1200000,
-    "totalAssets": -42021017,
+    "investmentPrincipal": 6660000,
+    "balance": -120000,
+    "totalAssets": 80180246,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -42021017,
+      "cash": 63739083,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 16441164,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 16441164
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -40821016.51416093,
-      "savings_after_cashFlow": -42021016.51416093,
-      "savings_before_withdrawToCoverShortfall": -42021016.51416093,
-      "savings_before": -42021016.51416093,
-      "shortfall": 45021016.51416093,
-      "savings_after": -42021016.51416093,
-      "savings_after_withdrawToCoverShortfall": -42021016.51416093,
-      "savings_before_asset_growth": -42021016.51416093,
-      "savings_after_asset_growth": -42021016.51416093,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -42021016.51416093,
-      "savings_at_yearlyData_push_assignment": -42021016.51416093
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 63859082.74159503,
+      "savings_after_cashFlow": 63739082.74159503,
+      "savings_before_asset_growth": 63739082.74159503,
+      "savings_after_asset_growth": 63739082.74159503,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 63739082.74159503,
+      "savings_at_yearlyData_push_assignment": 63739082.74159503
     }
   },
   {
     "year": 2086,
     "age": 88,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": 1270030,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 3000000,
@@ -4229,12 +3944,12 @@
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -43221017,
+    "savings": 63619083,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 17711194
     },
     "ideco": {
       "principal": 0,
@@ -4244,48 +3959,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -1200000,
-    "totalAssets": -43221017,
+    "investmentPrincipal": 6660000,
+    "balance": -120000,
+    "totalAssets": 81330277,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -43221017,
+      "cash": 63619083,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 17711194,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 17711194
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -42021016.51416093,
-      "savings_after_cashFlow": -43221016.51416093,
-      "savings_before_withdrawToCoverShortfall": -43221016.51416093,
-      "savings_before": -43221016.51416093,
-      "shortfall": 46221016.51416093,
-      "savings_after": -43221016.51416093,
-      "savings_after_withdrawToCoverShortfall": -43221016.51416093,
-      "savings_before_asset_growth": -43221016.51416093,
-      "savings_after_asset_growth": -43221016.51416093,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -43221016.51416093,
-      "savings_at_yearlyData_push_assignment": -43221016.51416093
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 63739082.74159503,
+      "savings_after_cashFlow": 63619082.74159503,
+      "savings_before_asset_growth": 63619082.74159503,
+      "savings_after_asset_growth": 63619082.74159503,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 63619082.74159503,
+      "savings_at_yearlyData_push_assignment": 63619082.74159503
     }
   },
   {
     "year": 2087,
     "age": 89,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": -2678053,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 4020000,
@@ -4297,12 +4007,12 @@
       "children": 0,
       "appliances": 20000,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -45441017,
+    "savings": 62479083,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 15033141
     },
     "ideco": {
       "principal": 0,
@@ -4312,48 +4022,43 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -2220000,
-    "totalAssets": -45441017,
+    "investmentPrincipal": 6660000,
+    "balance": -1140000,
+    "totalAssets": 77512223,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -45441017,
+      "cash": 62479083,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 15033141,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 15033141
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -43221016.51416093,
-      "savings_after_cashFlow": -45441016.51416093,
-      "savings_before_withdrawToCoverShortfall": -45441016.51416093,
-      "savings_before": -45441016.51416093,
-      "shortfall": 48441016.51416093,
-      "savings_after": -45441016.51416093,
-      "savings_after_withdrawToCoverShortfall": -45441016.51416093,
-      "savings_before_asset_growth": -45441016.51416093,
-      "savings_after_asset_growth": -45441016.51416093,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -45441016.51416093,
-      "savings_at_yearlyData_push_assignment": -45441016.51416093
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 63619082.74159503,
+      "savings_after_cashFlow": 62479082.74159503,
+      "savings_before_asset_growth": 62479082.74159503,
+      "savings_after_asset_growth": 62479082.74159503,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 62479082.74159503,
+      "savings_at_yearlyData_push_assignment": 62479082.74159503
     }
   },
   {
     "year": 2088,
     "age": 90,
-    "income": 1800000,
+    "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 0,
+      "investment": 2000625,
       "oneTime": 0,
-      "publicPension": 1800000,
+      "publicPension": 2880000,
       "personalPension": 0
     },
     "expense": 3000000,
@@ -4365,12 +4070,12 @@
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 1200000
+      "retirementGap": 120000
     },
-    "savings": -46641017,
+    "savings": 62359083,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 6660000,
+      "balance": 17033765
     },
     "ideco": {
       "principal": 0,
@@ -4380,36 +4085,31 @@
       "principal": 0,
       "balance": 0
     },
-    "investmentPrincipal": 0,
-    "balance": -1200000,
-    "totalAssets": -46641017,
+    "investmentPrincipal": 6660000,
+    "balance": -120000,
+    "totalAssets": 79392848,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": -46641017,
+      "cash": 62359083,
       "investment": 0,
-      "nisa": 0,
+      "nisa": 17033765,
       "ideco": 0
     },
     "products": {
       "trust-0": {
-        "principal": 0,
-        "balance": 0
+        "principal": 6660000,
+        "balance": 17033765
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": -45441016.51416093,
-      "savings_after_cashFlow": -46641016.51416093,
-      "savings_before_withdrawToCoverShortfall": -46641016.51416093,
-      "savings_before": -46641016.51416093,
-      "shortfall": 49641016.51416093,
-      "savings_after": -46641016.51416093,
-      "savings_after_withdrawToCoverShortfall": -46641016.51416093,
-      "savings_before_asset_growth": -46641016.51416093,
-      "savings_after_asset_growth": -46641016.51416093,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": -46641016.51416093,
-      "savings_at_yearlyData_push_assignment": -46641016.51416093
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 62479082.74159503,
+      "savings_after_cashFlow": 62359082.74159503,
+      "savings_before_asset_growth": 62359082.74159503,
+      "savings_after_asset_growth": 62359082.74159503,
+      "totalInvestmentPrincipal_before_push": 6660000,
+      "savings_before_yearlyData_push": 62359082.74159503,
+      "savings_at_yearlyData_push_assignment": 62359082.74159503
     }
   }
 ]

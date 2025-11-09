@@ -6,7 +6,7 @@ import { n } from './financial';
 export const createApiParams = (formData: FormDataState): SimulationInputParams => {
   const mainJobIncomeGross = n(formData.mainIncome) * FC.YEN_PER_MAN;
   const sideJobIncomeGross = n(formData.sideJobIncome) * FC.YEN_PER_MAN;
-  let spouseMainJobIncomeGross = (formData.familyComposition === '既婚' ? n(formData.spouseMainIncome) : 0) * FC.YEN_PER_MAN;
+  const spouseMainJobIncomeGross = (formData.familyComposition === '既婚' ? n(formData.spouseMainIncome) : 0) * FC.YEN_PER_MAN;
   const spouseSideJobIncomeGross = (formData.familyComposition === '既婚' ? n(formData.spouseSideJobIncome) : 0) * FC.YEN_PER_MAN;
 
   let spouseIncomeForSim = 0;
@@ -18,7 +18,6 @@ export const createApiParams = (formData: FormDataState): SimulationInputParams 
     } else if (formData.spouseIncomePattern === 'カスタム') {
       spouseIncomeForSim = n(formData.spouseCustomIncome) * FC.YEN_PER_MAN;
     }
-    spouseMainJobIncomeGross = spouseIncomeForSim;
   }
 
   const monthlyFixedExpense =
