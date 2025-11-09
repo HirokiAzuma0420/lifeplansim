@@ -335,6 +335,12 @@ export function runSimulation(params: SimulationInputParams): YearlyData[] {
   let selfGrossIncomeAt59: number | null = null;
   let spouseGrossIncomeAt59: number | null = null;
 
+  // ★ 追加: 結婚する場合の年齢差を計算
+  const ageDiff = (params.marriage && params.marriage.spouse)
+    ? params.initialAge - params.marriage.spouse.ageAtMarriage
+    : params.spouseInitialAge ? params.initialAge - params.spouseInitialAge : undefined;
+
+
   // 一時金収入を計上するための変数を初期化
   let oneTimeIncomeThisYear = 0;
 
@@ -362,9 +368,10 @@ export function runSimulation(params: SimulationInputParams): YearlyData[] {
     oneTimeIncomeThisYear = 0; // 年の初めにリセット
     nisaRecycleAmountForNextYear = 0; // 今年のリサイクル額計算のためにリセット
 
-    const year = baseYear + i;
-    const yearFraction = (i === 0) ? firstYearRemainingMonths / FC.MONTHS_PER_YEAR : 1;
-    const spouseCurrentAge = params.spouseInitialAge ? params.initialAge + i + (params.spouseInitialAge - params.initialAge) : undefined;
+    const year = baseYear + i; // シミュレーション対象年
+    const yearFraction = (i === 0) ? firstYearRemainingMonths / FC.MONTHS_PER_YEAR : 1; // 初年度の経過月割合
+    // ★ 修正: 将来結婚する場合も考慮して配偶者の年齢を計算
+    const spouseCurrentAge = (ageDiff !== undefined) ? currentAge - ageDiff : undefined;
 
     // 59歳時点の年収を記録
     if (currentAge === 59) {
@@ -394,7 +401,7 @@ export function runSimulation(params: SimulationInputParams): YearlyData[] {
         }
       } else if (params.marriage && currentAge === n(params.marriage.age)) {
         // 結婚した年に配偶者の収入を初期設定 (ネストされた spouse オブジェクトから取得)
-        currentSpouseGrossIncome = n(params.marriage.spouse?.customIncomeJPY);
+        currentSpouseGrossIncome = n(params.marriage.spouse?.customIncomeJPY); // 修正済み
       } else if (spouseCurrentAge !== undefined && params.spouseRetirementAge && spouseCurrentAge < n(params.spouseRetirementAge) && currentSpouseGrossIncome > 0) {
         // 結婚後、退職前まで昇給
         currentSpouseGrossIncome *= (1 + (n(params.spouseIncomeGrowthRate) ?? 0));

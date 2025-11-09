@@ -185,6 +185,7 @@ export const createApiParams = (formData: FormDataState): SimulationInputParams 
       spouse: {
         ageAtMarriage: n(formData.spouseAgeAtMarriage),
         incomeGross: spouseIncomeForSim,
+        customIncomeJPY: spouseIncomeForSim, // ★ 追加: 結婚後のカスタム収入をJPYで渡す
       },
       newLivingCostAnnual: n(formData.livingCostAfterMarriage) * FC.MONTHS_PER_YEAR,
       newHousingCostAnnual: n(formData.housingCostAfterMarriage) * FC.MONTHS_PER_YEAR,
