@@ -304,7 +304,14 @@ export const useFormState = () => {
         }
       }));
     } else {
-      const value = type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
+      let value: string | boolean;
+      if (type === 'checkbox') {
+        // Switchコンポーネントのようにvalueに直接booleanが入る場合と、通常のinput[type=checkbox]のようにcheckedプロパティに入る場合の両方に対応
+        const targetValue = (e.target as HTMLInputElement).value;
+        value = typeof targetValue === 'boolean' ? targetValue : (e.target as HTMLInputElement).checked;
+      } else {
+        value = e.target.value;
+      }
 
       setFormData(prev => {
         const newState = { ...prev, [name]: value };
