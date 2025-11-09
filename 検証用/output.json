@@ -1,4125 +1,3892 @@
 [
   {
     "year": 2025,
-    "age": 27,
-    "income": 486208,
+    "age": 37,
+    "income": 1224917,
     "incomeDetail": {
-      "self": 486208,
-      "spouse": 0,
-      "investment": 0,
+      "self": 853583,
+      "spouse": 371333,
+      "investment": 331465,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
     },
-    "expense": 390000,
+    "expense": 731200,
     "expenseDetail": {
-      "living": 240000,
-      "car": 0,
-      "housing": 150000,
+      "living": 550000,
+      "car": 59200,
+      "housing": 122000,
       "marriage": 0,
       "children": 0,
       "appliances": 0,
       "care": 0,
       "retirementGap": 0
     },
-    "savings": 1596208,
+    "savings": 4923717,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 5030000,
+      "balance": 5278703
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 610000,
+      "balance": 634362
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 3022561
     },
-    "investmentPrincipal": 0,
-    "balance": 96208,
-    "totalAssets": 1596208,
-    "investedAmount": 0,
+    "investmentPrincipal": 8640000,
+    "balance": 123717,
+    "totalAssets": 13859342,
+    "investedAmount": 370000,
     "assetAllocation": {
-      "cash": 1596208,
-      "investment": 0,
-      "nisa": 0,
-      "ideco": 0
+      "cash": 4923717,
+      "investment": 3022561,
+      "nisa": 5278703,
+      "ideco": 634362
     },
     "products": {
-      "trust-0": {
-        "principal": 0,
-        "balance": 0
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 3022561
+      },
+      "trust-1": {
+        "principal": 5030000,
+        "balance": 5278703
+      },
+      "ideco-2": {
+        "principal": 610000,
+        "balance": 634362
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": 1000000,
-      "savings_after_cashFlow": 1096208.3333333333,
-      "savings_before_withdrawToCoverShortfall": 1096208.3333333333,
-      "savings_before": 1096208.3333333333,
-      "shortfall": 1903791.6666666667,
-      "savings_after": 1596208.3333333333,
-      "savings_after_withdrawToCoverShortfall": 1596208.3333333333,
-      "savings_before_investment_reduction": 1096208.3333333333,
-      "savings_after_investment_reduction": 1096208.3333333333,
-      "savings_before_asset_growth": 1596208.3333333333,
-      "savings_after_asset_growth": 1596208.3333333333,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": 1596208.3333333333,
-      "savings_at_yearlyData_push_assignment": 1596208.3333333333
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 4800000,
+      "savings_after_cashFlow": 5293716.666666666,
+      "savings_before_investment_reduction": 5293716.666666666,
+      "savings_after_investment_reduction": 4923716.666666666,
+      "savings_before_asset_growth": 4923716.666666666,
+      "savings_after_asset_growth": 4923716.666666666,
+      "totalInvestmentPrincipal_before_push": 8640000,
+      "savings_before_yearlyData_push": 4923716.666666666,
+      "savings_at_yearlyData_push_assignment": 4923716.666666666
     }
   },
   {
     "year": 2026,
-    "age": 28,
-    "income": 2953445,
+    "age": 38,
+    "income": 7258500,
     "incomeDetail": {
-      "self": 2953445,
-      "spouse": 0,
-      "investment": 0,
+      "self": 5030500,
+      "spouse": 2228000,
+      "investment": 723425,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
     },
-    "expense": 2340000,
+    "expense": 4387200,
     "expenseDetail": {
-      "living": 1440000,
-      "car": 0,
-      "housing": 900000,
+      "living": 3300000,
+      "car": 355200,
+      "housing": 732000,
       "marriage": 0,
       "children": 0,
       "appliances": 0,
       "care": 0,
       "retirementGap": 0
     },
-    "savings": 2209654,
+    "savings": 5575017,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 7010000,
+      "balance": 6892229
     },
     "ideco": {
-      "principal": 0,
-      "balance": 0
+      "principal": 850000,
+      "balance": 863839
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 4122982
     },
-    "investmentPrincipal": 0,
-    "balance": 613445,
-    "totalAssets": 2209654,
-    "investedAmount": 0,
+    "investmentPrincipal": 10860000,
+    "balance": 651300,
+    "totalAssets": 17454067,
+    "investedAmount": 2220000,
     "assetAllocation": {
-      "cash": 2209654,
-      "investment": 0,
-      "nisa": 0,
-      "ideco": 0
+      "cash": 5575017,
+      "investment": 4122982,
+      "nisa": 6892229,
+      "ideco": 863839
     },
     "products": {
-      "trust-0": {
-        "principal": 0,
-        "balance": 0
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 4122982
+      },
+      "trust-1": {
+        "principal": 7010000,
+        "balance": 6892229
+      },
+      "ideco-2": {
+        "principal": 850000,
+        "balance": 863839
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": 1596208.3333333333,
-      "savings_after_cashFlow": 2209653.583333333,
-      "savings_before_withdrawToCoverShortfall": 2209653.583333333,
-      "savings_before": 2209653.583333333,
-      "shortfall": 790346.416666667,
-      "savings_after": 2209653.583333333,
-      "savings_after_withdrawToCoverShortfall": 2209653.583333333,
-      "savings_before_investment_reduction": 2209653.583333333,
-      "savings_after_investment_reduction": 2209653.583333333,
-      "savings_before_asset_growth": 2209653.583333333,
-      "savings_after_asset_growth": 2209653.583333333,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": 2209653.583333333,
-      "savings_at_yearlyData_push_assignment": 2209653.583333333
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 4923716.666666666,
+      "savings_after_cashFlow": 7795016.666666666,
+      "savings_before_investment_reduction": 7795016.666666666,
+      "savings_after_investment_reduction": 5575016.666666666,
+      "savings_before_asset_growth": 5575016.666666666,
+      "savings_after_asset_growth": 5575016.666666666,
+      "totalInvestmentPrincipal_before_push": 10860000,
+      "savings_before_yearlyData_push": 5575016.666666666,
+      "savings_at_yearlyData_push_assignment": 5575016.666666666
     }
   },
   {
     "year": 2027,
-    "age": 29,
-    "income": 2990111,
+    "age": 39,
+    "income": 7292772,
     "incomeDetail": {
-      "self": 2990111,
-      "spouse": 0,
-      "investment": 0,
+      "self": 5064772,
+      "spouse": 2228000,
+      "investment": -9610,
       "oneTime": 0,
       "publicPension": 0,
       "personalPension": 0
     },
-    "expense": 2340000,
+    "expense": 4418800,
     "expenseDetail": {
-      "living": 1440000,
+      "living": 3300000,
+      "car": 236800,
+      "housing": 732000,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 150000,
+      "care": 0,
+      "retirementGap": 0
+    },
+    "savings": 6228989,
+    "nisa": {
+      "principal": 8990000,
+      "balance": 8629698
+    },
+    "ideco": {
+      "principal": 1090000,
+      "balance": 1090207
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 4369535
+    },
+    "investmentPrincipal": 13080000,
+    "balance": 653972,
+    "totalAssets": 20318429,
+    "investedAmount": 2220000,
+    "assetAllocation": {
+      "cash": 6228989,
+      "investment": 4369535,
+      "nisa": 8629698,
+      "ideco": 1090207
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 4369535
+      },
+      "trust-1": {
+        "principal": 8990000,
+        "balance": 8629698
+      },
+      "ideco-2": {
+        "principal": 1090000,
+        "balance": 1090207
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 5575016.666666666,
+      "savings_after_cashFlow": 8448988.666666666,
+      "savings_before_investment_reduction": 8448988.666666666,
+      "savings_after_investment_reduction": 6228988.666666666,
+      "savings_before_asset_growth": 6228988.666666666,
+      "savings_after_asset_growth": 6228988.666666666,
+      "totalInvestmentPrincipal_before_push": 13080000,
+      "savings_before_yearlyData_push": 6228988.666666666,
+      "savings_at_yearlyData_push_assignment": 6228988.666666666
+    }
+  },
+  {
+    "year": 2028,
+    "age": 40,
+    "income": 7327318,
+    "incomeDetail": {
+      "self": 5099318,
+      "spouse": 2228000,
+      "investment": -455888,
+      "oneTime": 0,
+      "publicPension": 0,
+      "personalPension": 0
+    },
+    "expense": 4152000,
+    "expenseDetail": {
+      "living": 3300000,
       "car": 0,
-      "housing": 900000,
+      "housing": 732000,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 120000,
+      "care": 0,
+      "retirementGap": 0
+    },
+    "savings": 7184307,
+    "nisa": {
+      "principal": 10970000,
+      "balance": 12715778
+    },
+    "ideco": {
+      "principal": 1330000,
+      "balance": 1377155
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 1760620
+    },
+    "investmentPrincipal": 15300000,
+    "balance": 955318,
+    "totalAssets": 23037860,
+    "investedAmount": 2220000,
+    "assetAllocation": {
+      "cash": 7184307,
+      "investment": 1760620,
+      "nisa": 12715778,
+      "ideco": 1377155
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 1760620
+      },
+      "trust-1": {
+        "principal": 10970000,
+        "balance": 12715778
+      },
+      "ideco-2": {
+        "principal": 1330000,
+        "balance": 1377155
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 6228988.666666666,
+      "savings_after_cashFlow": 9404306.842666667,
+      "savings_before_investment_reduction": 9404306.842666667,
+      "savings_after_investment_reduction": 7184306.842666667,
+      "savings_before_asset_growth": 7184306.842666667,
+      "savings_after_asset_growth": 7184306.842666667,
+      "totalInvestmentPrincipal_before_push": 15300000,
+      "savings_before_yearlyData_push": 7184306.842666667,
+      "savings_at_yearlyData_push_assignment": 7184306.842666667
+    }
+  },
+  {
+    "year": 2029,
+    "age": 41,
+    "income": 7362141,
+    "incomeDetail": {
+      "self": 5134141,
+      "spouse": 2228000,
+      "investment": 2321944,
+      "oneTime": 0,
+      "publicPension": 0,
+      "personalPension": 0
+    },
+    "expense": 4062000,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 732000,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 30000,
+      "care": 0,
+      "retirementGap": 0
+    },
+    "savings": 8264448,
+    "nisa": {
+      "principal": 12950000,
+      "balance": 15771101
+    },
+    "ideco": {
+      "principal": 1570000,
+      "balance": 1687142
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 2937253
+    },
+    "investmentPrincipal": 17520000,
+    "balance": 1080141,
+    "totalAssets": 28659944,
+    "investedAmount": 2220000,
+    "assetAllocation": {
+      "cash": 8264448,
+      "investment": 2937253,
+      "nisa": 15771101,
+      "ideco": 1687142
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 2937253
+      },
+      "trust-1": {
+        "principal": 12950000,
+        "balance": 15771101
+      },
+      "ideco-2": {
+        "principal": 1570000,
+        "balance": 1687142
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 7184306.842666667,
+      "savings_after_cashFlow": 10484447.564074669,
+      "savings_before_investment_reduction": 10484447.564074669,
+      "savings_after_investment_reduction": 8264447.564074669,
+      "savings_before_asset_growth": 8264447.564074669,
+      "savings_after_asset_growth": 8264447.564074669,
+      "totalInvestmentPrincipal_before_push": 17520000,
+      "savings_before_yearlyData_push": 8264447.564074669,
+      "savings_at_yearlyData_push_assignment": 8264447.564074669
+    }
+  },
+  {
+    "year": 2030,
+    "age": 42,
+    "income": 7397242,
+    "incomeDetail": {
+      "self": 5169242,
+      "spouse": 2228000,
+      "investment": -5629461,
+      "oneTime": 0,
+      "publicPension": 0,
+      "personalPension": 0
+    },
+    "expense": 4032000,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 732000,
       "marriage": 0,
       "children": 0,
       "appliances": 0,
       "care": 0,
       "retirementGap": 0
     },
-    "savings": 2859765,
+    "savings": 9409689,
     "nisa": {
-      "principal": 0,
-      "balance": 0
+      "principal": 14930000,
+      "balance": 11571822
+    },
+    "ideco": {
+      "principal": 1810000,
+      "balance": 828049
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 4586164
+    },
+    "investmentPrincipal": 19740000,
+    "balance": 1145242,
+    "totalAssets": 26395725,
+    "investedAmount": 2220000,
+    "assetAllocation": {
+      "cash": 9409689,
+      "investment": 4586164,
+      "nisa": 11571822,
+      "ideco": 828049
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 4586164
+      },
+      "trust-1": {
+        "principal": 14930000,
+        "balance": 11571822
+      },
+      "ideco-2": {
+        "principal": 1810000,
+        "balance": 828049
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 8264447.564074669,
+      "savings_after_cashFlow": 11629689.411253933,
+      "savings_before_investment_reduction": 11629689.411253933,
+      "savings_after_investment_reduction": 9409689.411253933,
+      "savings_before_asset_growth": 9409689.411253933,
+      "savings_after_asset_growth": 9409689.411253933,
+      "totalInvestmentPrincipal_before_push": 19740000,
+      "savings_before_yearlyData_push": 9409689.411253933,
+      "savings_at_yearlyData_push_assignment": 9409689.411253933
+    }
+  },
+  {
+    "year": 2031,
+    "age": 43,
+    "income": 7432624,
+    "incomeDetail": {
+      "self": 5204624,
+      "spouse": 2228000,
+      "investment": 4383088,
+      "oneTime": 0,
+      "publicPension": 0,
+      "personalPension": 0
+    },
+    "expense": 4052000,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 732000,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 20000,
+      "care": 0,
+      "retirementGap": 0
+    },
+    "savings": 10570313,
+    "nisa": {
+      "principal": 16910000,
+      "balance": 15936283
+    },
+    "ideco": {
+      "principal": 2050000,
+      "balance": 1197489
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 6455351
+    },
+    "investmentPrincipal": 21960000,
+    "balance": 1160624,
+    "totalAssets": 34159436,
+    "investedAmount": 2220000,
+    "assetAllocation": {
+      "cash": 10570313,
+      "investment": 6455351,
+      "nisa": 15936283,
+      "ideco": 1197489
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 6455351
+      },
+      "trust-1": {
+        "principal": 16910000,
+        "balance": 15936283
+      },
+      "ideco-2": {
+        "principal": 2050000,
+        "balance": 1197489
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 9409689.411253933,
+      "savings_after_cashFlow": 12790313.193210632,
+      "savings_before_investment_reduction": 12790313.193210632,
+      "savings_after_investment_reduction": 10570313.193210632,
+      "savings_before_asset_growth": 10570313.193210632,
+      "savings_after_asset_growth": 10570313.193210632,
+      "totalInvestmentPrincipal_before_push": 21960000,
+      "savings_before_yearlyData_push": 10570313.193210632,
+      "savings_at_yearlyData_push_assignment": 10570313.193210632
+    }
+  },
+  {
+    "year": 2032,
+    "age": 44,
+    "income": 7468289,
+    "incomeDetail": {
+      "self": 5240289,
+      "spouse": 2228000,
+      "investment": 689154,
+      "oneTime": 0,
+      "publicPension": 0,
+      "personalPension": 0
+    },
+    "expense": 4032000,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 732000,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 0,
+      "care": 0,
+      "retirementGap": 0
+    },
+    "savings": 12676602,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 16477672
+    },
+    "ideco": {
+      "principal": 2290000,
+      "balance": 1794361
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 7336243
+    },
+    "investmentPrincipal": 23290000,
+    "balance": 2106289,
+    "totalAssets": 38284879,
+    "investedAmount": 1330000,
+    "assetAllocation": {
+      "cash": 12676602,
+      "investment": 7336243,
+      "nisa": 16477672,
+      "ideco": 1794361
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 7336243
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 16477672
+      },
+      "ideco-2": {
+        "principal": 2290000,
+        "balance": 1794361
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 10570313.193210632,
+      "savings_after_cashFlow": 14006601.965422984,
+      "savings_before_investment_reduction": 14006601.965422984,
+      "savings_after_investment_reduction": 12676601.965422984,
+      "savings_before_asset_growth": 12676601.965422984,
+      "savings_after_asset_growth": 12676601.965422984,
+      "totalInvestmentPrincipal_before_push": 23290000,
+      "savings_before_yearlyData_push": 12676601.965422984,
+      "savings_at_yearlyData_push_assignment": 12676601.965422984
+    }
+  },
+  {
+    "year": 2033,
+    "age": 45,
+    "income": 7504239,
+    "incomeDetail": {
+      "self": 5276239,
+      "spouse": 2228000,
+      "investment": -3578764,
+      "oneTime": 0,
+      "publicPension": 0,
+      "personalPension": 0
+    },
+    "expense": 4032000,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 732000,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 0,
+      "care": 0,
+      "retirementGap": 0
+    },
+    "savings": 15908841,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 14293686
+    },
+    "ideco": {
+      "principal": 2530000,
+      "balance": 2120228
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 5855599
+    },
+    "investmentPrincipal": 23530000,
+    "balance": 3232239,
+    "totalAssets": 38178354,
+    "investedAmount": 240000,
+    "assetAllocation": {
+      "cash": 15908841,
+      "investment": 5855599,
+      "nisa": 14293686,
+      "ideco": 2120228
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 5855599
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 14293686
+      },
+      "ideco-2": {
+        "principal": 2530000,
+        "balance": 2120228
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 12676601.965422984,
+      "savings_after_cashFlow": 16148841.047813036,
+      "savings_before_investment_reduction": 16148841.047813036,
+      "savings_after_investment_reduction": 15908841.047813036,
+      "savings_before_asset_growth": 15908841.047813036,
+      "savings_after_asset_growth": 15908841.047813036,
+      "totalInvestmentPrincipal_before_push": 23530000,
+      "savings_before_yearlyData_push": 15908841.047813036,
+      "savings_at_yearlyData_push_assignment": 15908841.047813036
+    }
+  },
+  {
+    "year": 2034,
+    "age": 46,
+    "income": 5312477,
+    "incomeDetail": {
+      "self": 5312477,
+      "spouse": 0,
+      "investment": 5709295,
+      "oneTime": 0,
+      "publicPension": 0,
+      "personalPension": 0
+    },
+    "expense": 4032000,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 732000,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 0,
+      "care": 0,
+      "retirementGap": 0
+    },
+    "savings": 16949318,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 18340083
+    },
+    "ideco": {
+      "principal": 2770000,
+      "balance": 3290863
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 6587863
+    },
+    "investmentPrincipal": 23770000,
+    "balance": 1040477,
+    "totalAssets": 45168126,
+    "investedAmount": 240000,
+    "assetAllocation": {
+      "cash": 16949318,
+      "investment": 6587863,
+      "nisa": 18340083,
+      "ideco": 3290863
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 6587863
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 18340083
+      },
+      "ideco-2": {
+        "principal": 2770000,
+        "balance": 3290863
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 15908841.047813036,
+      "savings_after_cashFlow": 17189318.042862207,
+      "savings_before_investment_reduction": 17189318.042862207,
+      "savings_after_investment_reduction": 16949318.042862207,
+      "savings_before_asset_growth": 16949318.042862207,
+      "savings_after_asset_growth": 16949318.042862207,
+      "totalInvestmentPrincipal_before_push": 23770000,
+      "savings_before_yearlyData_push": 16949318.042862207,
+      "savings_at_yearlyData_push_assignment": 16949318.042862207
+    }
+  },
+  {
+    "year": 2035,
+    "age": 47,
+    "income": 5349005,
+    "incomeDetail": {
+      "self": 5349005,
+      "spouse": 0,
+      "investment": 1717722,
+      "oneTime": 0,
+      "publicPension": 0,
+      "personalPension": 0
+    },
+    "expense": 4032000,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 732000,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 0,
+      "care": 0,
+      "retirementGap": 0
+    },
+    "savings": 18026323,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 22241555
+    },
+    "ideco": {
+      "principal": 3010000,
+      "balance": 2517320
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 5417655
+    },
+    "investmentPrincipal": 24010000,
+    "balance": 1077005,
+    "totalAssets": 48202853,
+    "investedAmount": 240000,
+    "assetAllocation": {
+      "cash": 18026323,
+      "investment": 5417655,
+      "nisa": 22241555,
+      "ideco": 2517320
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 5417655
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 22241555
+      },
+      "ideco-2": {
+        "principal": 3010000,
+        "balance": 2517320
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 16949318.042862207,
+      "savings_after_cashFlow": 18266322.85387177,
+      "savings_before_investment_reduction": 18266322.85387177,
+      "savings_after_investment_reduction": 18026322.85387177,
+      "savings_before_asset_growth": 18026322.85387177,
+      "savings_after_asset_growth": 18026322.85387177,
+      "totalInvestmentPrincipal_before_push": 24010000,
+      "savings_before_yearlyData_push": 18026322.85387177,
+      "savings_at_yearlyData_push_assignment": 18026322.85387177
+    }
+  },
+  {
+    "year": 2036,
+    "age": 48,
+    "income": 5385825,
+    "incomeDetail": {
+      "self": 5385825,
+      "spouse": 0,
+      "investment": 1221454,
+      "oneTime": 0,
+      "publicPension": 0,
+      "personalPension": 0
+    },
+    "expense": 4152000,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 732000,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 120000,
+      "care": 0,
+      "retirementGap": 0
+    },
+    "savings": 19020148,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 24358889
+    },
+    "ideco": {
+      "principal": 3250000,
+      "balance": 3773970
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 3505126
+    },
+    "investmentPrincipal": 24250000,
+    "balance": 993825,
+    "totalAssets": 50658132,
+    "investedAmount": 240000,
+    "assetAllocation": {
+      "cash": 19020148,
+      "investment": 3505126,
+      "nisa": 24358889,
+      "ideco": 3773970
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 3505126
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 24358889
+      },
+      "ideco-2": {
+        "principal": 3250000,
+        "balance": 3773970
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 18026322.85387177,
+      "savings_after_cashFlow": 19260147.703369413,
+      "savings_before_investment_reduction": 19260147.703369413,
+      "savings_after_investment_reduction": 19020147.703369413,
+      "savings_before_asset_growth": 19020147.703369413,
+      "savings_after_asset_growth": 19020147.703369413,
+      "totalInvestmentPrincipal_before_push": 24250000,
+      "savings_before_yearlyData_push": 19020147.703369413,
+      "savings_at_yearlyData_push_assignment": 19020147.703369413
+    }
+  },
+  {
+    "year": 2037,
+    "age": 49,
+    "income": 5422939,
+    "incomeDetail": {
+      "self": 5422939,
+      "spouse": 0,
+      "investment": 10517707,
+      "oneTime": 0,
+      "publicPension": 0,
+      "personalPension": 0
+    },
+    "expense": 4232000,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 732000,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 200000,
+      "care": 0,
+      "retirementGap": 0
+    },
+    "savings": 19971087,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 33479497
+    },
+    "ideco": {
+      "principal": 3490000,
+      "balance": 4151570
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 4764624
+    },
+    "investmentPrincipal": 24490000,
+    "balance": 950939,
+    "totalAssets": 62366779,
+    "investedAmount": 240000,
+    "assetAllocation": {
+      "cash": 19971087,
+      "investment": 4764624,
+      "nisa": 33479497,
+      "ideco": 4151570
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 4764624
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 33479497
+      },
+      "ideco-2": {
+        "principal": 3490000,
+        "balance": 4151570
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 19020147.703369413,
+      "savings_after_cashFlow": 20211087.151663035,
+      "savings_before_investment_reduction": 20211087.151663035,
+      "savings_after_investment_reduction": 19971087.151663035,
+      "savings_before_asset_growth": 19971087.151663035,
+      "savings_after_asset_growth": 19971087.151663035,
+      "totalInvestmentPrincipal_before_push": 24490000,
+      "savings_before_yearlyData_push": 19971087.151663035,
+      "savings_at_yearlyData_push_assignment": 19971087.151663035
+    }
+  },
+  {
+    "year": 2038,
+    "age": 50,
+    "income": 5460351,
+    "incomeDetail": {
+      "self": 5460351,
+      "spouse": 0,
+      "investment": -3040806,
+      "oneTime": 0,
+      "publicPension": 0,
+      "personalPension": 0
+    },
+    "expense": 4492000,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 732000,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 100000,
+      "care": 360000,
+      "retirementGap": 0
+    },
+    "savings": 20699438,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 34026347
+    },
+    "ideco": {
+      "principal": 3730000,
+      "balance": 2160679
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 3407859
+    },
+    "investmentPrincipal": 24730000,
+    "balance": 728351,
+    "totalAssets": 60294323,
+    "investedAmount": 240000,
+    "assetAllocation": {
+      "cash": 20699438,
+      "investment": 3407859,
+      "nisa": 34026347,
+      "ideco": 2160679
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 3407859
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 34026347
+      },
+      "ideco-2": {
+        "principal": 3730000,
+        "balance": 2160679
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 19971087.151663035,
+      "savings_after_cashFlow": 20939438.115543008,
+      "savings_before_investment_reduction": 20939438.115543008,
+      "savings_after_investment_reduction": 20699438.115543008,
+      "savings_before_asset_growth": 20699438.115543008,
+      "savings_after_asset_growth": 20699438.115543008,
+      "totalInvestmentPrincipal_before_push": 24730000,
+      "savings_before_yearlyData_push": 20699438.115543008,
+      "savings_at_yearlyData_push_assignment": 20699438.115543008
+    }
+  },
+  {
+    "year": 2039,
+    "age": 51,
+    "income": 6118062,
+    "incomeDetail": {
+      "self": 5498062,
+      "spouse": 0,
+      "investment": -2454448,
+      "oneTime": 0,
+      "publicPension": 0,
+      "personalPension": 620000
+    },
+    "expense": 10081480,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 6421480,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 0,
+      "care": 360000,
+      "retirementGap": 0
+    },
+    "savings": 16496020,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 29935251
+    },
+    "ideco": {
+      "principal": 3970000,
+      "balance": 3074155
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 4371031
+    },
+    "investmentPrincipal": 24970000,
+    "balance": -4203418,
+    "totalAssets": 53876456,
+    "investedAmount": 240000,
+    "assetAllocation": {
+      "cash": 16496020,
+      "investment": 4371031,
+      "nisa": 29935251,
+      "ideco": 3074155
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 4371031
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 29935251
+      },
+      "ideco-2": {
+        "principal": 3970000,
+        "balance": 3074155
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 20699438.115543008,
+      "savings_after_cashFlow": 16736019.650259169,
+      "savings_before_investment_reduction": 16736019.650259169,
+      "savings_after_investment_reduction": 16496019.650259169,
+      "savings_before_asset_growth": 16496019.650259169,
+      "savings_after_asset_growth": 16496019.650259169,
+      "totalInvestmentPrincipal_before_push": 24970000,
+      "savings_before_yearlyData_push": 16496019.650259169,
+      "savings_at_yearlyData_push_assignment": 16496019.650259169
+    }
+  },
+  {
+    "year": 2040,
+    "age": 52,
+    "income": 6156074,
+    "incomeDetail": {
+      "self": 5536074,
+      "spouse": 0,
+      "investment": -11185361,
+      "oneTime": 0,
+      "publicPension": 0,
+      "personalPension": 620000
+    },
+    "expense": 5081480,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 1421480,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 0,
+      "care": 360000,
+      "retirementGap": 0
+    },
+    "savings": 17330614,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 17657311
+    },
+    "ideco": {
+      "principal": 4210000,
+      "balance": 3513195
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 5264570
+    },
+    "investmentPrincipal": 25210000,
+    "balance": 834594,
+    "totalAssets": 43765689,
+    "investedAmount": 240000,
+    "assetAllocation": {
+      "cash": 17330614,
+      "investment": 5264570,
+      "nisa": 17657311,
+      "ideco": 3513195
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 5264570
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 17657311
+      },
+      "ideco-2": {
+        "principal": 4210000,
+        "balance": 3513195
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 16496019.650259169,
+      "savings_after_cashFlow": 17570613.679148056,
+      "savings_before_investment_reduction": 17570613.679148056,
+      "savings_after_investment_reduction": 17330613.679148056,
+      "savings_before_asset_growth": 17330613.679148056,
+      "savings_after_asset_growth": 17330613.679148056,
+      "totalInvestmentPrincipal_before_push": 25210000,
+      "savings_before_yearlyData_push": 17330613.679148056,
+      "savings_at_yearlyData_push_assignment": 17330613.679148056
+    }
+  },
+  {
+    "year": 2041,
+    "age": 53,
+    "income": 6194391,
+    "incomeDetail": {
+      "self": 5574391,
+      "spouse": 0,
+      "investment": 6547389,
+      "oneTime": 0,
+      "publicPension": 0,
+      "personalPension": 620000
+    },
+    "expense": 5081480,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 1421480,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 0,
+      "care": 360000,
+      "retirementGap": 0
+    },
+    "savings": 18203524,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 22763249
+    },
+    "ideco": {
+      "principal": 4450000,
+      "balance": 4163381
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 6295835
+    },
+    "investmentPrincipal": 25450000,
+    "balance": 872911,
+    "totalAssets": 51425989,
+    "investedAmount": 240000,
+    "assetAllocation": {
+      "cash": 18203524,
+      "investment": 6295835,
+      "nisa": 22763249,
+      "ideco": 4163381
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 6295835
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 22763249
+      },
+      "ideco-2": {
+        "principal": 4450000,
+        "balance": 4163381
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 17330613.679148056,
+      "savings_after_cashFlow": 18443524.302163053,
+      "savings_before_investment_reduction": 18443524.302163053,
+      "savings_after_investment_reduction": 18203524.302163053,
+      "savings_before_asset_growth": 18203524.302163053,
+      "savings_after_asset_growth": 18203524.302163053,
+      "totalInvestmentPrincipal_before_push": 25450000,
+      "savings_before_yearlyData_push": 18203524.302163053,
+      "savings_at_yearlyData_push_assignment": 18203524.302163053
+    }
+  },
+  {
+    "year": 2042,
+    "age": 54,
+    "income": 6233014,
+    "incomeDetail": {
+      "self": 5613014,
+      "spouse": 0,
+      "investment": 6963251,
+      "oneTime": 0,
+      "publicPension": 0,
+      "personalPension": 620000
+    },
+    "expense": 5081480,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 1421480,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 0,
+      "care": 360000,
+      "retirementGap": 0
+    },
+    "savings": 19115058,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 28748460
+    },
+    "ideco": {
+      "principal": 4690000,
+      "balance": 5486675
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 6190581
+    },
+    "investmentPrincipal": 25690000,
+    "balance": 911534,
+    "totalAssets": 59540773,
+    "investedAmount": 240000,
+    "assetAllocation": {
+      "cash": 19115058,
+      "investment": 6190581,
+      "nisa": 28748460,
+      "ideco": 5486675
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 6190581
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 28748460
+      },
+      "ideco-2": {
+        "principal": 4690000,
+        "balance": 5486675
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 18203524.302163053,
+      "savings_after_cashFlow": 19355058.05205717,
+      "savings_before_investment_reduction": 19355058.05205717,
+      "savings_after_investment_reduction": 19115058.05205717,
+      "savings_before_asset_growth": 19115058.05205717,
+      "savings_after_asset_growth": 19115058.05205717,
+      "totalInvestmentPrincipal_before_push": 25690000,
+      "savings_before_yearlyData_push": 19115058.05205717,
+      "savings_at_yearlyData_push_assignment": 19115058.05205717
+    }
+  },
+  {
+    "year": 2043,
+    "age": 55,
+    "income": 6271946,
+    "incomeDetail": {
+      "self": 5651946,
+      "spouse": 0,
+      "investment": 3444902,
+      "oneTime": 0,
+      "publicPension": 0,
+      "personalPension": 620000
+    },
+    "expense": 4741480,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 1421480,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 20000,
+      "care": 0,
+      "retirementGap": 0
+    },
+    "savings": 20405524,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 29437466
+    },
+    "ideco": {
+      "principal": 4930000,
+      "balance": 6333056
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 8340095
+    },
+    "investmentPrincipal": 25930000,
+    "balance": 1290466,
+    "totalAssets": 64516141,
+    "investedAmount": 240000,
+    "assetAllocation": {
+      "cash": 20405524,
+      "investment": 8340095,
+      "nisa": 29437466,
+      "ideco": 6333056
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 8340095
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 29437466
+      },
+      "ideco-2": {
+        "principal": 4930000,
+        "balance": 6333056
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 19115058.05205717,
+      "savings_after_cashFlow": 20645523.91384544,
+      "savings_before_investment_reduction": 20645523.91384544,
+      "savings_after_investment_reduction": 20405523.91384544,
+      "savings_before_asset_growth": 20405523.91384544,
+      "savings_after_asset_growth": 20405523.91384544,
+      "totalInvestmentPrincipal_before_push": 25930000,
+      "savings_before_yearlyData_push": 20405523.91384544,
+      "savings_at_yearlyData_push_assignment": 20405523.91384544
+    }
+  },
+  {
+    "year": 2044,
+    "age": 56,
+    "income": 7081190,
+    "incomeDetail": {
+      "self": 5691190,
+      "spouse": 0,
+      "investment": 5660091,
+      "oneTime": 0,
+      "publicPension": 1080000,
+      "personalPension": 310000
+    },
+    "expense": 4841480,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 1421480,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 120000,
+      "care": 0,
+      "retirementGap": 0
+    },
+    "savings": 22405233,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 33156891
+    },
+    "ideco": {
+      "principal": 5170000,
+      "balance": 7427999
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 9425818
+    },
+    "investmentPrincipal": 26170000,
+    "balance": 1999709,
+    "totalAssets": 72415942,
+    "investedAmount": 240000,
+    "assetAllocation": {
+      "cash": 22405233,
+      "investment": 9425818,
+      "nisa": 33156891,
+      "ideco": 7427999
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 9425818
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 33156891
+      },
+      "ideco-2": {
+        "principal": 5170000,
+        "balance": 7427999
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 20405523.91384544,
+      "savings_after_cashFlow": 22645233.34442301,
+      "savings_before_investment_reduction": 22645233.34442301,
+      "savings_after_investment_reduction": 22405233.34442301,
+      "savings_before_asset_growth": 22405233.34442301,
+      "savings_after_asset_growth": 22405233.34442301,
+      "totalInvestmentPrincipal_before_push": 26170000,
+      "savings_before_yearlyData_push": 22405233.34442301,
+      "savings_at_yearlyData_push_assignment": 22405233.34442301
+    }
+  },
+  {
+    "year": 2045,
+    "age": 57,
+    "income": 7120747,
+    "incomeDetail": {
+      "self": 5730747,
+      "spouse": 0,
+      "investment": -276377,
+      "oneTime": 0,
+      "publicPension": 1080000,
+      "personalPension": 310000
+    },
+    "expense": 4751480,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 1421480,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 30000,
+      "care": 0,
+      "retirementGap": 0
+    },
+    "savings": 24534500,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 35573102
+    },
+    "ideco": {
+      "principal": 5410000,
+      "balance": 8381690
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 6019539
+    },
+    "investmentPrincipal": 26410000,
+    "balance": 2129267,
+    "totalAssets": 74508832,
+    "investedAmount": 240000,
+    "assetAllocation": {
+      "cash": 24534500,
+      "investment": 6019539,
+      "nisa": 35573102,
+      "ideco": 8381690
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 6019539
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 35573102
+      },
+      "ideco-2": {
+        "principal": 5410000,
+        "balance": 8381690
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 22405233.34442301,
+      "savings_after_cashFlow": 24774500.292340204,
+      "savings_before_investment_reduction": 24774500.292340204,
+      "savings_after_investment_reduction": 24534500.292340204,
+      "savings_before_asset_growth": 24534500.292340204,
+      "savings_after_asset_growth": 24534500.292340204,
+      "totalInvestmentPrincipal_before_push": 26410000,
+      "savings_before_yearlyData_push": 24534500.292340204,
+      "savings_at_yearlyData_push_assignment": 24534500.292340204
+    }
+  },
+  {
+    "year": 2046,
+    "age": 58,
+    "income": 7160621,
+    "incomeDetail": {
+      "self": 5770621,
+      "spouse": 0,
+      "investment": 3933020,
+      "oneTime": 0,
+      "publicPension": 1080000,
+      "personalPension": 310000
+    },
+    "expense": 4721480,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 1421480,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 0,
+      "care": 0,
+      "retirementGap": 0
+    },
+    "savings": 26733641,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 41856319
+    },
+    "ideco": {
+      "principal": 5650000,
+      "balance": 8720772
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 3570260
+    },
+    "investmentPrincipal": 26650000,
+    "balance": 2199141,
+    "totalAssets": 80880993,
+    "investedAmount": 240000,
+    "assetAllocation": {
+      "cash": 26733641,
+      "investment": 3570260,
+      "nisa": 41856319,
+      "ideco": 8720772
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 3570260
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 41856319
+      },
+      "ideco-2": {
+        "principal": 5650000,
+        "balance": 8720772
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 24534500.292340204,
+      "savings_after_cashFlow": 26973641.217735734,
+      "savings_before_investment_reduction": 26973641.217735734,
+      "savings_after_investment_reduction": 26733641.217735734,
+      "savings_before_asset_growth": 26733641.217735734,
+      "savings_after_asset_growth": 26733641.217735734,
+      "totalInvestmentPrincipal_before_push": 26650000,
+      "savings_before_yearlyData_push": 26733641.217735734,
+      "savings_at_yearlyData_push_assignment": 26733641.217735734
+    }
+  },
+  {
+    "year": 2047,
+    "age": 59,
+    "income": 5577563,
+    "incomeDetail": {
+      "self": 4187563,
+      "spouse": 0,
+      "investment": 7864955,
+      "oneTime": 0,
+      "publicPension": 1080000,
+      "personalPension": 310000
+    },
+    "expense": 4871480,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 1421480,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 150000,
+      "care": 0,
+      "retirementGap": 0
+    },
+    "savings": 27199724,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 53485220
+    },
+    "ideco": {
+      "principal": 5890000,
+      "balance": 4568963
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 4198124
+    },
+    "investmentPrincipal": 26890000,
+    "balance": 466083,
+    "totalAssets": 89452030,
+    "investedAmount": 240000,
+    "assetAllocation": {
+      "cash": 27199724,
+      "investment": 4198124,
+      "nisa": 53485220,
+      "ideco": 4568963
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 4198124
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 53485220
+      },
+      "ideco-2": {
+        "principal": 5890000,
+        "balance": 4568963
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 26733641.217735734,
+      "savings_after_cashFlow": 27439723.896557756,
+      "savings_before_investment_reduction": 27439723.896557756,
+      "savings_after_investment_reduction": 27199723.896557756,
+      "savings_before_asset_growth": 27199723.896557756,
+      "savings_after_asset_growth": 27199723.896557756,
+      "totalInvestmentPrincipal_before_push": 26890000,
+      "savings_before_yearlyData_push": 27199723.896557756,
+      "savings_at_yearlyData_push_assignment": 27199723.896557756
+    }
+  },
+  {
+    "year": 2048,
+    "age": 60,
+    "income": 5610234,
+    "incomeDetail": {
+      "self": 4220234,
+      "spouse": 0,
+      "investment": -24761824,
+      "oneTime": 0,
+      "publicPension": 1080000,
+      "personalPension": 310000
+    },
+    "expense": 4821480,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 1421480,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 100000,
+      "care": 0,
+      "retirementGap": 0
+    },
+    "savings": 27988477,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 29891380
+    },
+    "ideco": {
+      "principal": 5890000,
+      "balance": 4762914
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 2836187
+    },
+    "investmentPrincipal": 26890000,
+    "balance": 788754,
+    "totalAssets": 65478959,
+    "investedAmount": 0,
+    "assetAllocation": {
+      "cash": 27988477,
+      "investment": 2836187,
+      "nisa": 29891380,
+      "ideco": 4762914
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 2836187
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 29891380
+      },
+      "ideco-2": {
+        "principal": 5890000,
+        "balance": 4762914
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 27199723.896557756,
+      "savings_after_cashFlow": 27988477.478705354,
+      "savings_before_investment_reduction": 27988477.478705354,
+      "savings_after_investment_reduction": 27988477.478705354,
+      "savings_before_asset_growth": 27988477.478705354,
+      "savings_after_asset_growth": 27988477.478705354,
+      "totalInvestmentPrincipal_before_push": 26890000,
+      "savings_before_yearlyData_push": 27988477.478705354,
+      "savings_at_yearlyData_push_assignment": 27988477.478705354
+    }
+  },
+  {
+    "year": 2049,
+    "age": 61,
+    "income": 5577563,
+    "incomeDetail": {
+      "self": 4187563,
+      "spouse": 0,
+      "investment": 3435023,
+      "oneTime": 0,
+      "publicPension": 1080000,
+      "personalPension": 310000
+    },
+    "expense": 4320000,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 1000000,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 20000,
+      "care": 0,
+      "retirementGap": 0
+    },
+    "savings": 29246040,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 32470794
+    },
+    "ideco": {
+      "principal": 5890000,
+      "balance": 5665703
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 2789008
+    },
+    "investmentPrincipal": 26890000,
+    "balance": 1257563,
+    "totalAssets": 70171545,
+    "investedAmount": 0,
+    "assetAllocation": {
+      "cash": 29246040,
+      "investment": 2789008,
+      "nisa": 32470794,
+      "ideco": 5665703
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 2789008
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 32470794
+      },
+      "ideco-2": {
+        "principal": 5890000,
+        "balance": 5665703
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 27988477.478705354,
+      "savings_after_cashFlow": 29246040.39440223,
+      "savings_before_investment_reduction": 29246040.39440223,
+      "savings_after_investment_reduction": 29246040.39440223,
+      "savings_before_asset_growth": 29246040.39440223,
+      "savings_after_asset_growth": 29246040.39440223,
+      "totalInvestmentPrincipal_before_push": 26890000,
+      "savings_before_yearlyData_push": 29246040.39440223,
+      "savings_at_yearlyData_push_assignment": 29246040.39440223
+    }
+  },
+  {
+    "year": 2050,
+    "age": 62,
+    "income": 5577563,
+    "incomeDetail": {
+      "self": 4187563,
+      "spouse": 0,
+      "investment": 2575469,
+      "oneTime": 0,
+      "publicPension": 1080000,
+      "personalPension": 310000
+    },
+    "expense": 3300000,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 0,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 0,
+      "care": 0,
+      "retirementGap": 0
+    },
+    "savings": 31523603,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 34747113
+    },
+    "ideco": {
+      "principal": 5890000,
+      "balance": 6222194
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 2531667
+    },
+    "investmentPrincipal": 26890000,
+    "balance": 2277563,
+    "totalAssets": 75024577,
+    "investedAmount": 0,
+    "assetAllocation": {
+      "cash": 31523603,
+      "investment": 2531667,
+      "nisa": 34747113,
+      "ideco": 6222194
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 2531667
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 34747113
+      },
+      "ideco-2": {
+        "principal": 5890000,
+        "balance": 6222194
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 29246040.39440223,
+      "savings_after_cashFlow": 31523603.310099103,
+      "savings_before_investment_reduction": 31523603.310099103,
+      "savings_after_investment_reduction": 31523603.310099103,
+      "savings_before_asset_growth": 31523603.310099103,
+      "savings_after_asset_growth": 31523603.310099103,
+      "totalInvestmentPrincipal_before_push": 26890000,
+      "savings_before_yearlyData_push": 31523603.310099103,
+      "savings_at_yearlyData_push_assignment": 31523603.310099103
+    }
+  },
+  {
+    "year": 2051,
+    "age": 63,
+    "income": 5577563,
+    "incomeDetail": {
+      "self": 4187563,
+      "spouse": 0,
+      "investment": 2951534,
+      "oneTime": 0,
+      "publicPension": 1080000,
+      "personalPension": 310000
+    },
+    "expense": 3300000,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 0,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 0,
+      "care": 0,
+      "retirementGap": 0
+    },
+    "savings": 33801166,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 37214206
+    },
+    "ideco": {
+      "principal": 5890000,
+      "balance": 6360478
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 2877825
+    },
+    "investmentPrincipal": 26890000,
+    "balance": 2277563,
+    "totalAssets": 80253675,
+    "investedAmount": 0,
+    "assetAllocation": {
+      "cash": 33801166,
+      "investment": 2877825,
+      "nisa": 37214206,
+      "ideco": 6360478
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 2877825
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 37214206
+      },
+      "ideco-2": {
+        "principal": 5890000,
+        "balance": 6360478
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 31523603.310099103,
+      "savings_after_cashFlow": 33801166.22579598,
+      "savings_before_investment_reduction": 33801166.22579598,
+      "savings_after_investment_reduction": 33801166.22579598,
+      "savings_before_asset_growth": 33801166.22579598,
+      "savings_after_asset_growth": 33801166.22579598,
+      "totalInvestmentPrincipal_before_push": 26890000,
+      "savings_before_yearlyData_push": 33801166.22579598,
+      "savings_at_yearlyData_push_assignment": 33801166.22579598
+    }
+  },
+  {
+    "year": 2052,
+    "age": 64,
+    "income": 5577563,
+    "incomeDetail": {
+      "self": 4187563,
+      "spouse": 0,
+      "investment": 2136032,
+      "oneTime": 0,
+      "publicPension": 1080000,
+      "personalPension": 310000
+    },
+    "expense": 3420000,
+    "expenseDetail": {
+      "living": 3300000,
+      "car": 0,
+      "housing": 0,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 120000,
+      "care": 0,
+      "retirementGap": 0
+    },
+    "savings": 35958729,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 37351791
+    },
+    "ideco": {
+      "principal": 5890000,
+      "balance": 8033271
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 3203478
+    },
+    "investmentPrincipal": 26890000,
+    "balance": 2157563,
+    "totalAssets": 84547270,
+    "investedAmount": 0,
+    "assetAllocation": {
+      "cash": 35958729,
+      "investment": 3203478,
+      "nisa": 37351791,
+      "ideco": 8033271
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 3203478
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 37351791
+      },
+      "ideco-2": {
+        "principal": 5890000,
+        "balance": 8033271
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 33801166.22579598,
+      "savings_after_cashFlow": 35958729.14149285,
+      "savings_before_investment_reduction": 35958729.14149285,
+      "savings_after_investment_reduction": 35958729.14149285,
+      "savings_before_asset_growth": 35958729.14149285,
+      "savings_after_asset_growth": 35958729.14149285,
+      "totalInvestmentPrincipal_before_push": 26890000,
+      "savings_before_yearlyData_push": 35958729.14149285,
+      "savings_at_yearlyData_push_assignment": 35958729.14149285
+    }
+  },
+  {
+    "year": 2053,
+    "age": 65,
+    "income": 14523271,
+    "incomeDetail": {
+      "self": 0,
+      "spouse": 0,
+      "investment": 3643356,
+      "oneTime": 11333271,
+      "publicPension": 2880000,
+      "personalPension": 310000
+    },
+    "expense": 3630000,
+    "expenseDetail": {
+      "living": 3600000,
+      "car": 0,
+      "housing": 0,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 30000,
+      "care": 0,
+      "retirementGap": 720000
+    },
+    "savings": 46852000,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 40396125
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 3802501
     },
-    "investmentPrincipal": 0,
-    "balance": 650111,
-    "totalAssets": 2859765,
+    "investmentPrincipal": 21000000,
+    "balance": 10893271,
+    "totalAssets": 91050626,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": 2859765,
-      "investment": 0,
-      "nisa": 0,
+      "cash": 46852000,
+      "investment": 3802501,
+      "nisa": 40396125,
       "ideco": 0
     },
     "products": {
-      "trust-0": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 3802501
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 40396125
+      },
+      "ideco-2": {
         "principal": 0,
         "balance": 0
       }
     },
     "debug": {
-      "replenishmentTriggered": true,
-      "savings_before_cashFlow": 2209653.583333333,
-      "savings_after_cashFlow": 2859764.621583333,
-      "savings_before_withdrawToCoverShortfall": 2859764.621583333,
-      "savings_before": 2859764.621583333,
-      "shortfall": 140235.37841666723,
-      "savings_after": 2859764.621583333,
-      "savings_after_withdrawToCoverShortfall": 2859764.621583333,
-      "savings_before_investment_reduction": 2859764.621583333,
-      "savings_after_investment_reduction": 2859764.621583333,
-      "savings_before_asset_growth": 2859764.621583333,
-      "savings_after_asset_growth": 2859764.621583333,
-      "totalInvestmentPrincipal_before_push": 0,
-      "savings_before_yearlyData_push": 2859764.621583333,
-      "savings_at_yearlyData_push_assignment": 2859764.621583333
-    }
-  },
-  {
-    "year": 2028,
-    "age": 30,
-    "income": 3027253,
-    "incomeDetail": {
-      "self": 3027253,
-      "spouse": 0,
-      "investment": 60789,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 2340000,
-    "expenseDetail": {
-      "living": 1440000,
-      "car": 0,
-      "housing": 900000,
-      "marriage": 0,
-      "children": 0,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 3367018,
-    "nisa": {
-      "principal": 180000,
-      "balance": 240789
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 180000,
-    "balance": 507253,
-    "totalAssets": 3607807,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 3367018,
-      "investment": 0,
-      "nisa": 240789,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 180000,
-        "balance": 240789
-      }
-    },
-    "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 2859764.621583333,
-      "savings_after_cashFlow": 3547018.103330582,
-      "savings_before_investment_reduction": 3547018.103330582,
-      "savings_after_investment_reduction": 3367018.103330582,
-      "savings_before_asset_growth": 3367018.103330582,
-      "savings_after_asset_growth": 3367018.103330582,
-      "totalInvestmentPrincipal_before_push": 180000,
-      "savings_before_yearlyData_push": 3367018.103330582,
-      "savings_at_yearlyData_push_assignment": 3367018.103330582
-    }
-  },
-  {
-    "year": 2029,
-    "age": 31,
-    "income": 3064879,
-    "incomeDetail": {
-      "self": 3064879,
-      "spouse": 0,
-      "investment": -162082,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 2340000,
-    "expenseDetail": {
-      "living": 1440000,
-      "car": 0,
-      "housing": 900000,
-      "marriage": 0,
-      "children": 0,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 3911897,
-    "nisa": {
-      "principal": 360000,
-      "balance": 258707
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 360000,
-    "balance": 544879,
-    "totalAssets": 4170604,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 3911897,
-      "investment": 0,
-      "nisa": 258707,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 360000,
-        "balance": 258707
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 3367018.103330582,
-      "savings_after_cashFlow": 4091896.880340545,
-      "savings_before_investment_reduction": 4091896.880340545,
-      "savings_after_investment_reduction": 3911896.880340545,
-      "savings_before_asset_growth": 3911896.880340545,
-      "savings_after_asset_growth": 3911896.880340545,
-      "totalInvestmentPrincipal_before_push": 360000,
-      "savings_before_yearlyData_push": 3911896.880340545,
-      "savings_at_yearlyData_push_assignment": 3911896.880340545
-    }
-  },
-  {
-    "year": 2030,
-    "age": 32,
-    "income": 5868243,
-    "incomeDetail": {
-      "self": 3102993,
-      "spouse": 2765250,
-      "investment": 213576,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 4190000,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1170000,
-      "marriage": 500000,
-      "children": 0,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 5410140,
-    "nisa": {
-      "principal": 540000,
-      "balance": 652283
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 540000,
-    "balance": 1498243,
-    "totalAssets": 6062423,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 5410140,
-      "investment": 0,
-      "nisa": 652283,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 540000,
-        "balance": 652283
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 3911896.880340545,
-      "savings_after_cashFlow": 5590140.081451638,
-      "savings_before_investment_reduction": 5590140.081451638,
-      "savings_after_investment_reduction": 5410140.081451638,
-      "savings_before_asset_growth": 5410140.081451638,
-      "savings_after_asset_growth": 5410140.081451638,
-      "totalInvestmentPrincipal_before_push": 540000,
-      "savings_before_yearlyData_push": 5410140.081451638,
-      "savings_at_yearlyData_push_assignment": 5410140.081451638
-    }
-  },
-  {
-    "year": 2031,
-    "age": 33,
-    "income": 5941774,
-    "incomeDetail": {
-      "self": 3141603,
-      "spouse": 2800171,
-      "investment": -90458,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 3690000,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1170000,
-      "marriage": 0,
-      "children": 0,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 7481914,
-    "nisa": {
-      "principal": 720000,
-      "balance": 741825
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 720000,
-    "balance": 2071774,
-    "totalAssets": 8223740,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 7481914,
-      "investment": 0,
-      "nisa": 741825,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 720000,
-        "balance": 741825
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 5410140.081451638,
-      "savings_after_cashFlow": 7661914.444177174,
-      "savings_before_investment_reduction": 7661914.444177174,
-      "savings_after_investment_reduction": 7481914.444177174,
-      "savings_before_asset_growth": 7481914.444177174,
-      "savings_after_asset_growth": 7481914.444177174,
-      "totalInvestmentPrincipal_before_push": 720000,
-      "savings_before_yearlyData_push": 7481914.444177174,
-      "savings_at_yearlyData_push_assignment": 7481914.444177174
-    }
-  },
-  {
-    "year": 2032,
-    "age": 34,
-    "income": 6016261,
-    "incomeDetail": {
-      "self": 3180715,
-      "spouse": 2835546,
-      "investment": 86434,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 3690000,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1170000,
-      "marriage": 0,
-      "children": 0,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 9628176,
-    "nisa": {
-      "principal": 900000,
-      "balance": 1008259
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 900000,
-    "balance": 2146261,
-    "totalAssets": 10636435,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 9628176,
-      "investment": 0,
-      "nisa": 1008259,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 900000,
-        "balance": 1008259
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 7481914.444177174,
-      "savings_after_cashFlow": 9808175.87361814,
-      "savings_before_investment_reduction": 9808175.87361814,
-      "savings_after_investment_reduction": 9628175.87361814,
-      "savings_before_asset_growth": 9628175.87361814,
-      "savings_after_asset_growth": 9628175.87361814,
-      "totalInvestmentPrincipal_before_push": 900000,
-      "savings_before_yearlyData_push": 9628175.87361814,
-      "savings_at_yearlyData_push_assignment": 9628175.87361814
-    }
-  },
-  {
-    "year": 2033,
-    "age": 35,
-    "income": 6091143,
-    "incomeDetail": {
-      "self": 3220335,
-      "spouse": 2870807,
-      "investment": -287978,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 4368584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 0,
-      "appliances": 500000,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 11170735,
-    "nisa": {
-      "principal": 1080000,
-      "balance": 900281
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 1080000,
-    "balance": 1542559,
-    "totalAssets": 12071016,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 11170735,
-      "investment": 0,
-      "nisa": 900281,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 1080000,
-        "balance": 900281
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 9628175.87361814,
-      "savings_after_cashFlow": 11350734.697699478,
-      "savings_before_investment_reduction": 11350734.697699478,
-      "savings_after_investment_reduction": 11170734.697699478,
-      "savings_before_asset_growth": 11170734.697699478,
-      "savings_after_asset_growth": 11170734.697699478,
-      "totalInvestmentPrincipal_before_push": 1080000,
-      "savings_before_yearlyData_push": 11170734.697699478,
-      "savings_at_yearlyData_push_assignment": 11170734.697699478
-    }
-  },
-  {
-    "year": 2034,
-    "age": 36,
-    "income": 6166869,
-    "incomeDetail": {
-      "self": 3260471,
-      "spouse": 2906399,
-      "investment": -96097,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 4088584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 220000,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 13069020,
-    "nisa": {
-      "principal": 1260000,
-      "balance": 984184
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 1260000,
-    "balance": 1898286,
-    "totalAssets": 14053204,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 13069020,
-      "investment": 0,
-      "nisa": 984184,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 1260000,
-        "balance": 984184
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 11170734.697699478,
-      "savings_after_cashFlow": 13249020.37551817,
-      "savings_before_investment_reduction": 13249020.37551817,
-      "savings_after_investment_reduction": 13069020.37551817,
-      "savings_before_asset_growth": 13069020.37551817,
-      "savings_after_asset_growth": 13069020.37551817,
-      "totalInvestmentPrincipal_before_push": 1260000,
-      "savings_before_yearlyData_push": 13069020.37551817,
-      "savings_at_yearlyData_push_assignment": 13069020.37551817
-    }
-  },
-  {
-    "year": 2035,
-    "age": 37,
-    "income": 6243581,
-    "incomeDetail": {
-      "self": 3301128,
-      "spouse": 2942453,
-      "investment": -201932,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 4088584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 220000,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 15044017,
-    "nisa": {
-      "principal": 1440000,
-      "balance": 962252
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 1440000,
-    "balance": 1974997,
-    "totalAssets": 16006269,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 15044017,
-      "investment": 0,
-      "nisa": 962252,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 1440000,
-        "balance": 962252
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 13069020.37551817,
-      "savings_after_cashFlow": 15224017.3561728,
-      "savings_before_investment_reduction": 15224017.3561728,
-      "savings_after_investment_reduction": 15044017.3561728,
-      "savings_before_asset_growth": 15044017.3561728,
-      "savings_after_asset_growth": 15044017.3561728,
-      "totalInvestmentPrincipal_before_push": 1440000,
-      "savings_before_yearlyData_push": 15044017.3561728,
-      "savings_at_yearlyData_push_assignment": 15044017.3561728
-    }
-  },
-  {
-    "year": 2036,
-    "age": 38,
-    "income": 6321289,
-    "incomeDetail": {
-      "self": 3342313,
-      "spouse": 2978976,
-      "investment": 317776,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 4088584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 220000,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 17096723,
-    "nisa": {
-      "principal": 1620000,
-      "balance": 1460028
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 1620000,
-    "balance": 2052706,
-    "totalAssets": 18556751,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 17096723,
-      "investment": 0,
-      "nisa": 1460028,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 1620000,
-        "balance": 1460028
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 15044017.3561728,
-      "savings_after_cashFlow": 17276722.88660024,
-      "savings_before_investment_reduction": 17276722.88660024,
-      "savings_after_investment_reduction": 17096722.88660024,
-      "savings_before_asset_growth": 17096722.88660024,
-      "savings_after_asset_growth": 17096722.88660024,
-      "totalInvestmentPrincipal_before_push": 1620000,
-      "savings_before_yearlyData_push": 17096722.88660024,
-      "savings_at_yearlyData_push_assignment": 17096722.88660024
-    }
-  },
-  {
-    "year": 2037,
-    "age": 39,
-    "income": 6400008,
-    "incomeDetail": {
-      "self": 3384034,
-      "spouse": 3015974,
-      "investment": -33959,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 4088584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 220000,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 19228147,
-    "nisa": {
-      "principal": 1800000,
-      "balance": 1606069
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 1800000,
-    "balance": 2131424,
-    "totalAssets": 20834216,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 19228147,
-      "investment": 0,
-      "nisa": 1606069,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 1800000,
-        "balance": 1606069
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 17096722.88660024,
-      "savings_after_cashFlow": 19408147.177947536,
-      "savings_before_investment_reduction": 19408147.177947536,
-      "savings_after_investment_reduction": 19228147.177947536,
-      "savings_before_asset_growth": 19228147.177947536,
-      "savings_after_asset_growth": 19228147.177947536,
-      "totalInvestmentPrincipal_before_push": 1800000,
-      "savings_before_yearlyData_push": 19228147.177947536,
-      "savings_at_yearlyData_push_assignment": 19228147.177947536
-    }
-  },
-  {
-    "year": 2038,
-    "age": 40,
-    "income": 6479750,
-    "incomeDetail": {
-      "self": 3426298,
-      "spouse": 3053452,
-      "investment": 114187,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 4088584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 220000,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 21439314,
-    "nisa": {
-      "principal": 1980000,
-      "balance": 1900256
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 1980000,
-    "balance": 2211166,
-    "totalAssets": 23339570,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 21439314,
-      "investment": 0,
-      "nisa": 1900256,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 1980000,
-        "balance": 1900256
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 19228147.177947536,
-      "savings_after_cashFlow": 21619313.574106645,
-      "savings_before_investment_reduction": 21619313.574106645,
-      "savings_after_investment_reduction": 21439313.574106645,
-      "savings_before_asset_growth": 21439313.574106645,
-      "savings_after_asset_growth": 21439313.574106645,
-      "totalInvestmentPrincipal_before_push": 1980000,
-      "savings_before_yearlyData_push": 21439313.574106645,
-      "savings_at_yearlyData_push_assignment": 21439313.574106645
-    }
-  },
-  {
-    "year": 2039,
-    "age": 41,
-    "income": 6559944,
-    "incomeDetail": {
-      "self": 3468526,
-      "spouse": 3091418,
-      "investment": -1183835,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 4108584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 220000,
-      "appliances": 20000,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 23710674,
-    "nisa": {
-      "principal": 2160000,
-      "balance": 896421
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 2160000,
-    "balance": 2271361,
-    "totalAssets": 24607095,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 23710674,
-      "investment": 0,
-      "nisa": 896421,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 2160000,
-        "balance": 896421
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 21439313.574106645,
-      "savings_after_cashFlow": 23890674.20375394,
-      "savings_before_investment_reduction": 23890674.20375394,
-      "savings_after_investment_reduction": 23710674.20375394,
-      "savings_before_asset_growth": 23710674.20375394,
-      "savings_after_asset_growth": 23710674.20375394,
-      "totalInvestmentPrincipal_before_push": 2160000,
-      "savings_before_yearlyData_push": 23710674.20375394,
-      "savings_at_yearlyData_push_assignment": 23710674.20375394
-    }
-  },
-  {
-    "year": 2040,
-    "age": 42,
-    "income": 6639900,
-    "incomeDetail": {
-      "self": 3510023,
-      "spouse": 3129878,
-      "investment": 174914,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 4088584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 220000,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 26081991,
-    "nisa": {
-      "principal": 2340000,
-      "balance": 1251335
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 2340000,
-    "balance": 2371316,
-    "totalAssets": 27333325,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 26081991,
-      "investment": 0,
-      "nisa": 1251335,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 2340000,
-        "balance": 1251335
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 23710674.20375394,
-      "savings_after_cashFlow": 26261990.610610947,
-      "savings_before_investment_reduction": 26261990.610610947,
-      "savings_after_investment_reduction": 26081990.610610947,
-      "savings_before_asset_growth": 26081990.610610947,
-      "savings_after_asset_growth": 26081990.610610947,
-      "totalInvestmentPrincipal_before_push": 2340000,
-      "savings_before_yearlyData_push": 26081990.610610947,
-      "savings_at_yearlyData_push_assignment": 26081990.610610947
-    }
-  },
-  {
-    "year": 2041,
-    "age": 43,
-    "income": 6720895,
-    "incomeDetail": {
-      "self": 3552058,
-      "spouse": 3168837,
-      "investment": -3133,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 4348584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 330000,
-      "appliances": 150000,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 28274302,
-    "nisa": {
-      "principal": 2520000,
-      "balance": 1428202
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 2520000,
-    "balance": 2192312,
-    "totalAssets": 29702504,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 28274302,
-      "investment": 0,
-      "nisa": 1428202,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 2520000,
-        "balance": 1428202
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 26081990.610610947,
-      "savings_after_cashFlow": 28454302.21978139,
-      "savings_before_investment_reduction": 28454302.21978139,
-      "savings_after_investment_reduction": 28274302.21978139,
-      "savings_before_asset_growth": 28274302.21978139,
-      "savings_after_asset_growth": 28274302.21978139,
-      "totalInvestmentPrincipal_before_push": 2520000,
-      "savings_before_yearlyData_push": 28274302.21978139,
-      "savings_at_yearlyData_push_assignment": 28274302.21978139
-    }
-  },
-  {
-    "year": 2042,
-    "age": 44,
-    "income": 6802944,
-    "incomeDetail": {
-      "self": 3594641,
-      "spouse": 3208303,
-      "investment": 376697,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 4198584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 330000,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 30698662,
-    "nisa": {
-      "principal": 2700000,
-      "balance": 1984899
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 2700000,
-    "balance": 2424360,
-    "totalAssets": 32683561,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 30698662,
-      "investment": 0,
-      "nisa": 1984899,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 2700000,
-        "balance": 1984899
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 28274302.21978139,
-      "savings_after_cashFlow": 30878661.96889535,
-      "savings_before_investment_reduction": 30878661.96889535,
-      "savings_after_investment_reduction": 30698661.96889535,
-      "savings_before_asset_growth": 30698661.96889535,
-      "savings_after_asset_growth": 30698661.96889535,
-      "totalInvestmentPrincipal_before_push": 2700000,
-      "savings_before_yearlyData_push": 30698661.96889535,
-      "savings_at_yearlyData_push_assignment": 30698661.96889535
-    }
-  },
-  {
-    "year": 2043,
-    "age": 45,
-    "income": 6886058,
-    "incomeDetail": {
-      "self": 3637776,
-      "spouse": 3248282,
-      "investment": 873267,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 4528584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 330000,
-      "appliances": 330000,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 32876136,
-    "nisa": {
-      "principal": 2880000,
-      "balance": 3038166
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 2880000,
-    "balance": 2177475,
-    "totalAssets": 35914302,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 32876136,
-      "investment": 0,
-      "nisa": 3038166,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 2880000,
-        "balance": 3038166
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 30698661.96889535,
-      "savings_after_cashFlow": 33056136.483772088,
-      "savings_before_investment_reduction": 33056136.483772088,
-      "savings_after_investment_reduction": 32876136.483772088,
-      "savings_before_asset_growth": 32876136.483772088,
-      "savings_after_asset_growth": 32876136.483772088,
-      "totalInvestmentPrincipal_before_push": 2880000,
-      "savings_before_yearlyData_push": 32876136.483772088,
-      "savings_at_yearlyData_push_assignment": 32876136.483772088
-    }
-  },
-  {
-    "year": 2044,
-    "age": 46,
-    "income": 6970254,
-    "incomeDetail": {
-      "self": 3681473,
-      "spouse": 3288780,
-      "investment": 807684,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 4198584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 330000,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 35467806,
-    "nisa": {
-      "principal": 3060000,
-      "balance": 4025850
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 3060000,
-    "balance": 2591670,
-    "totalAssets": 39493656,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 35467806,
-      "investment": 0,
-      "nisa": 4025850,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 3060000,
-        "balance": 4025850
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 32876136.483772088,
-      "savings_after_cashFlow": 35647806.25636652,
-      "savings_before_investment_reduction": 35647806.25636652,
-      "savings_after_investment_reduction": 35467806.25636652,
-      "savings_before_asset_growth": 35467806.25636652,
-      "savings_after_asset_growth": 35467806.25636652,
-      "totalInvestmentPrincipal_before_push": 3060000,
-      "savings_before_yearlyData_push": 35467806.25636652,
-      "savings_at_yearlyData_push_assignment": 35467806.25636652
-    }
-  },
-  {
-    "year": 2045,
-    "age": 47,
-    "income": 7055543,
-    "incomeDetail": {
-      "self": 3725738,
-      "spouse": 3329806,
-      "investment": 258448,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 4218584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 330000,
-      "appliances": 20000,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 38124766,
-    "nisa": {
-      "principal": 3240000,
-      "balance": 4464298
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 3240000,
-    "balance": 2656960,
-    "totalAssets": 42589064,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 38124766,
-      "investment": 0,
-      "nisa": 4464298,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 3240000,
-        "balance": 4464298
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 35467806.25636652,
-      "savings_after_cashFlow": 38304765.82502898,
-      "savings_before_investment_reduction": 38304765.82502898,
-      "savings_after_investment_reduction": 38124765.82502898,
-      "savings_before_asset_growth": 38124765.82502898,
-      "savings_after_asset_growth": 38124765.82502898,
-      "totalInvestmentPrincipal_before_push": 3240000,
-      "savings_before_yearlyData_push": 38124765.82502898,
-      "savings_at_yearlyData_push_assignment": 38124765.82502898
-    }
-  },
-  {
-    "year": 2046,
-    "age": 48,
-    "income": 7141942,
-    "incomeDetail": {
-      "self": 3770578,
-      "spouse": 3371364,
-      "investment": 973398,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 4198584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 330000,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 40888124,
-    "nisa": {
-      "principal": 3420000,
-      "balance": 5617696
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 3420000,
-    "balance": 2763358,
-    "totalAssets": 46505820,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 40888124,
-      "investment": 0,
-      "nisa": 5617696,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 3420000,
-        "balance": 5617696
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 38124765.82502898,
-      "savings_after_cashFlow": 41068123.95710835,
-      "savings_before_investment_reduction": 41068123.95710835,
-      "savings_after_investment_reduction": 40888123.95710835,
-      "savings_before_asset_growth": 40888123.95710835,
-      "savings_after_asset_growth": 40888123.95710835,
-      "totalInvestmentPrincipal_before_push": 3420000,
-      "savings_before_yearlyData_push": 40888123.95710835,
-      "savings_at_yearlyData_push_assignment": 40888123.95710835
-    }
-  },
-  {
-    "year": 2047,
-    "age": 49,
-    "income": 7229464,
-    "incomeDetail": {
-      "self": 3816001,
-      "spouse": 3413463,
-      "investment": -2556662,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 4908584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 440000,
-      "appliances": 0,
-      "care": 600000,
-      "retirementGap": 0
-    },
-    "savings": 43029004,
-    "nisa": {
-      "principal": 3600000,
-      "balance": 3241034
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 3600000,
-    "balance": 2140880,
-    "totalAssets": 46270038,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 43029004,
-      "investment": 0,
-      "nisa": 3241034,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 3600000,
-        "balance": 3241034
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 40888123.95710835,
-      "savings_after_cashFlow": 43209003.83392905,
-      "savings_before_investment_reduction": 43209003.83392905,
-      "savings_after_investment_reduction": 43029003.83392905,
-      "savings_before_asset_growth": 43029003.83392905,
-      "savings_after_asset_growth": 43029003.83392905,
-      "totalInvestmentPrincipal_before_push": 3600000,
-      "savings_before_yearlyData_push": 43029003.83392905,
-      "savings_at_yearlyData_push_assignment": 43029003.83392905
-    }
-  },
-  {
-    "year": 2048,
-    "age": 50,
-    "income": 7318100,
-    "incomeDetail": {
-      "self": 3862014,
-      "spouse": 3456086,
-      "investment": -72416,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 4908584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 440000,
-      "appliances": 0,
-      "care": 600000,
-      "retirementGap": 0
-    },
-    "savings": 45258520,
-    "nisa": {
-      "principal": 3780000,
-      "balance": 3348618
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 3780000,
-    "balance": 2229516,
-    "totalAssets": 48607138,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 45258520,
-      "investment": 0,
-      "nisa": 3348618,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 3780000,
-        "balance": 3348618
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 43029003.83392905,
-      "savings_after_cashFlow": 45438520.265222944,
-      "savings_before_investment_reduction": 45438520.265222944,
-      "savings_after_investment_reduction": 45258520.265222944,
-      "savings_before_asset_growth": 45258520.265222944,
-      "savings_after_asset_growth": 45258520.265222944,
-      "totalInvestmentPrincipal_before_push": 3780000,
-      "savings_before_yearlyData_push": 45258520.265222944,
-      "savings_at_yearlyData_push_assignment": 45258520.265222944
-    }
-  },
-  {
-    "year": 2049,
-    "age": 51,
-    "income": 7406047,
-    "incomeDetail": {
-      "self": 3908626,
-      "spouse": 3497420,
-      "investment": 881828,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 5058584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 440000,
-      "appliances": 150000,
-      "care": 600000,
-      "retirementGap": 0
-    },
-    "savings": 47425983,
-    "nisa": {
-      "principal": 3960000,
-      "balance": 4410446
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 3960000,
-    "balance": 2167463,
-    "totalAssets": 51836429,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 47425983,
-      "investment": 0,
-      "nisa": 4410446,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 3960000,
-        "balance": 4410446
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 45258520.265222944,
-      "savings_after_cashFlow": 47605982.99914796,
-      "savings_before_investment_reduction": 47605982.99914796,
-      "savings_after_investment_reduction": 47425982.99914796,
-      "savings_before_asset_growth": 47425982.99914796,
-      "savings_after_asset_growth": 47425982.99914796,
-      "totalInvestmentPrincipal_before_push": 3960000,
-      "savings_before_yearlyData_push": 47425982.99914796,
-      "savings_at_yearlyData_push_assignment": 47425982.99914796
-    }
-  },
-  {
-    "year": 2050,
-    "age": 52,
-    "income": 7495136,
-    "incomeDetail": {
-      "self": 3955844,
-      "spouse": 3539292,
-      "investment": 778634,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 5018584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 550000,
-      "appliances": 0,
-      "care": 600000,
-      "retirementGap": 0
-    },
-    "savings": 49722535,
-    "nisa": {
-      "principal": 4140000,
-      "balance": 5369080
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 4140000,
-    "balance": 2296552,
-    "totalAssets": 55091615,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 49722535,
-      "investment": 0,
-      "nisa": 5369080,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 4140000,
-        "balance": 5369080
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 47425982.99914796,
-      "savings_after_cashFlow": 49902535.337638296,
-      "savings_before_investment_reduction": 49902535.337638296,
-      "savings_after_investment_reduction": 49722535.337638296,
-      "savings_before_asset_growth": 49722535.337638296,
-      "savings_after_asset_growth": 49722535.337638296,
-      "totalInvestmentPrincipal_before_push": 4140000,
-      "savings_before_yearlyData_push": 49722535.337638296,
-      "savings_at_yearlyData_push_assignment": 49722535.337638296
-    }
-  },
-  {
-    "year": 2051,
-    "age": 53,
-    "income": 7585384,
-    "incomeDetail": {
-      "self": 4003675,
-      "spouse": 3581709,
-      "investment": 943359,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 6038584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 2348584,
-      "marriage": 0,
-      "children": 550000,
-      "appliances": 20000,
-      "care": 600000,
-      "retirementGap": 0
-    },
-    "savings": 51089335,
-    "nisa": {
-      "principal": 4320000,
-      "balance": 6492439
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 4320000,
-    "balance": 1366800,
-    "totalAssets": 57581775,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 51089335,
-      "investment": 0,
-      "nisa": 6492439,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 4320000,
-        "balance": 6492439
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 49722535.337638296,
-      "savings_after_cashFlow": 51269335.4455533,
-      "savings_before_investment_reduction": 51269335.4455533,
-      "savings_after_investment_reduction": 51089335.4455533,
-      "savings_before_asset_growth": 51089335.4455533,
-      "savings_after_asset_growth": 51089335.4455533,
-      "totalInvestmentPrincipal_before_push": 4320000,
-      "savings_before_yearlyData_push": 51089335.4455533,
-      "savings_at_yearlyData_push_assignment": 51089335.4455533
-    }
-  },
-  {
-    "year": 2052,
-    "age": 54,
-    "income": 7676805,
-    "incomeDetail": {
-      "self": 4052128,
-      "spouse": 3624676,
-      "investment": 1606545,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 4418584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 550000,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 54167557,
-    "nisa": {
-      "principal": 4500000,
-      "balance": 8278984
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 4500000,
-    "balance": 3078221,
-    "totalAssets": 62446541,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 54167557,
-      "investment": 0,
-      "nisa": 8278984,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 4500000,
-        "balance": 8278984
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 51089335.4455533,
-      "savings_after_cashFlow": 54347556.543895505,
-      "savings_before_investment_reduction": 54347556.543895505,
-      "savings_after_investment_reduction": 54167556.543895505,
-      "savings_before_asset_growth": 54167556.543895505,
-      "savings_after_asset_growth": 54167556.543895505,
-      "totalInvestmentPrincipal_before_push": 4500000,
-      "savings_before_yearlyData_push": 54167556.543895505,
-      "savings_at_yearlyData_push_assignment": 54167556.543895505
-    }
-  },
-  {
-    "year": 2053,
-    "age": 55,
-    "income": 7769414,
-    "incomeDetail": {
-      "self": 4101212,
-      "spouse": 3668203,
-      "investment": -686534,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 5078584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 880000,
-      "appliances": 330000,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 56678387,
-    "nisa": {
-      "principal": 4680000,
-      "balance": 7772450
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 4680000,
-    "balance": 2510831,
-    "totalAssets": 64450837,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 56678387,
-      "investment": 0,
-      "nisa": 7772450,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 4680000,
-        "balance": 7772450
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 54167556.543895505,
-      "savings_after_cashFlow": 56858387.105540454,
-      "savings_before_investment_reduction": 56858387.105540454,
-      "savings_after_investment_reduction": 56678387.105540454,
-      "savings_before_asset_growth": 56678387.105540454,
-      "savings_after_asset_growth": 56678387.105540454,
-      "totalInvestmentPrincipal_before_push": 4680000,
-      "savings_before_yearlyData_push": 56678387.105540454,
-      "savings_at_yearlyData_push_assignment": 56678387.105540454
+      "savings_before_cashFlow": 35958729.14149285,
+      "savings_after_cashFlow": 46852000.1272786,
+      "savings_before_asset_growth": 46852000.1272786,
+      "savings_after_asset_growth": 46852000.1272786,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 46852000.1272786,
+      "savings_at_yearlyData_push_assignment": 46852000.1272786
     }
   },
   {
     "year": 2054,
-    "age": 56,
-    "income": 4150933,
-    "incomeDetail": {
-      "self": 4150933,
-      "spouse": 0,
-      "investment": 1706260,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 4748584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 880000,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 55900736,
-    "nisa": {
-      "principal": 4860000,
-      "balance": 9658710
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 4860000,
-    "balance": -777651,
-    "totalAssets": 65559446,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 55900736,
-      "investment": 0,
-      "nisa": 9658710,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 4860000,
-        "balance": 9658710
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 56678387.105540454,
-      "savings_after_cashFlow": 56080736.163537465,
-      "savings_before_investment_reduction": 56080736.163537465,
-      "savings_after_investment_reduction": 55900736.163537465,
-      "savings_before_asset_growth": 55900736.163537465,
-      "savings_after_asset_growth": 55900736.163537465,
-      "totalInvestmentPrincipal_before_push": 4860000,
-      "savings_before_yearlyData_push": 55900736.163537465,
-      "savings_at_yearlyData_push_assignment": 55900736.163537465
-    }
-  },
-  {
-    "year": 2055,
-    "age": 57,
-    "income": 4201300,
-    "incomeDetail": {
-      "self": 4201300,
-      "spouse": 0,
-      "investment": -4115489,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 4748584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 880000,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 55173453,
-    "nisa": {
-      "principal": 5040000,
-      "balance": 5723220
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 5040000,
-    "balance": -727283,
-    "totalAssets": 60896673,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 55173453,
-      "investment": 0,
-      "nisa": 5723220,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 5040000,
-        "balance": 5723220
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 55900736.163537465,
-      "savings_after_cashFlow": 55353452.848312736,
-      "savings_before_investment_reduction": 55353452.848312736,
-      "savings_after_investment_reduction": 55173452.848312736,
-      "savings_before_asset_growth": 55173452.848312736,
-      "savings_after_asset_growth": 55173452.848312736,
-      "totalInvestmentPrincipal_before_push": 5040000,
-      "savings_before_yearlyData_push": 55173452.848312736,
-      "savings_at_yearlyData_push_assignment": 55173452.848312736
-    }
-  },
-  {
-    "year": 2056,
-    "age": 58,
-    "income": 4252323,
-    "incomeDetail": {
-      "self": 4252323,
-      "spouse": 0,
-      "investment": 1441096,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 4748584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 880000,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 54497192,
-    "nisa": {
-      "principal": 5220000,
-      "balance": 7344316
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 5220000,
-    "balance": -676261,
-    "totalAssets": 61841508,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 54497192,
-      "investment": 0,
-      "nisa": 7344316,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 5220000,
-        "balance": 7344316
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 55173452.848312736,
-      "savings_after_cashFlow": 54677191.93901438,
-      "savings_before_investment_reduction": 54677191.93901438,
-      "savings_after_investment_reduction": 54497191.93901438,
-      "savings_before_asset_growth": 54497191.93901438,
-      "savings_after_asset_growth": 54497191.93901438,
-      "totalInvestmentPrincipal_before_push": 5220000,
-      "savings_before_yearlyData_push": 54497191.93901438,
-      "savings_at_yearlyData_push_assignment": 54497191.93901438
-    }
-  },
-  {
-    "year": 2057,
-    "age": 59,
-    "income": 4304009,
-    "incomeDetail": {
-      "self": 4304009,
-      "spouse": 0,
-      "investment": 569137,
-      "oneTime": 0,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 4038584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 0,
-      "appliances": 170000,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 54582617,
-    "nisa": {
-      "principal": 5400000,
-      "balance": 8093453
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 5400000,
-    "balance": 85425,
-    "totalAssets": 62676070,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 54582617,
-      "investment": 0,
-      "nisa": 8093453,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 5400000,
-        "balance": 8093453
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 54497191.93901438,
-      "savings_after_cashFlow": 54762616.72691944,
-      "savings_before_investment_reduction": 54762616.72691944,
-      "savings_after_investment_reduction": 54582616.72691944,
-      "savings_before_asset_growth": 54582616.72691944,
-      "savings_after_asset_growth": 54582616.72691944,
-      "totalInvestmentPrincipal_before_push": 5400000,
-      "savings_before_yearlyData_push": 54582616.72691944,
-      "savings_at_yearlyData_push_assignment": 54582616.72691944
-    }
-  },
-  {
-    "year": 2058,
-    "age": 60,
-    "income": 8041701,
-    "incomeDetail": {
-      "self": 3041701,
-      "spouse": 0,
-      "investment": 328781,
-      "oneTime": 5000000,
-      "publicPension": 0,
-      "personalPension": 0
-    },
-    "expense": 3868584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 0,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 58575734,
-    "nisa": {
-      "principal": 5580000,
-      "balance": 8602234
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 5580000,
-    "balance": 3993117,
-    "totalAssets": 67177968,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 58575734,
-      "investment": 0,
-      "nisa": 8602234,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 5580000,
-        "balance": 8602234
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 54582616.72691944,
-      "savings_after_cashFlow": 58755733.917561166,
-      "savings_before_investment_reduction": 58755733.917561166,
-      "savings_after_investment_reduction": 58575733.917561166,
-      "savings_before_asset_growth": 58575733.917561166,
-      "savings_after_asset_growth": 58575733.917561166,
-      "totalInvestmentPrincipal_before_push": 5580000,
-      "savings_before_yearlyData_push": 58575733.917561166,
-      "savings_at_yearlyData_push_assignment": 58575733.917561166
-    }
-  },
-  {
-    "year": 2059,
-    "age": 61,
-    "income": 4121701,
-    "incomeDetail": {
-      "self": 3041701,
-      "spouse": 0,
-      "investment": 2906598,
-      "oneTime": 0,
-      "publicPension": 1080000,
-      "personalPension": 0
-    },
-    "expense": 3868584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 0,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 58648851,
-    "nisa": {
-      "principal": 5760000,
-      "balance": 11688833
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 5760000,
-    "balance": 73117,
-    "totalAssets": 70337684,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 58648851,
-      "investment": 0,
-      "nisa": 11688833,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 5760000,
-        "balance": 11688833
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 58575733.917561166,
-      "savings_after_cashFlow": 58828851.10820289,
-      "savings_before_investment_reduction": 58828851.10820289,
-      "savings_after_investment_reduction": 58648851.10820289,
-      "savings_before_asset_growth": 58648851.10820289,
-      "savings_after_asset_growth": 58648851.10820289,
-      "totalInvestmentPrincipal_before_push": 5760000,
-      "savings_before_yearlyData_push": 58648851.10820289,
-      "savings_at_yearlyData_push_assignment": 58648851.10820289
-    }
-  },
-  {
-    "year": 2060,
-    "age": 62,
-    "income": 4121701,
-    "incomeDetail": {
-      "self": 3041701,
-      "spouse": 0,
-      "investment": 513512,
-      "oneTime": 0,
-      "publicPension": 1080000,
-      "personalPension": 0
-    },
-    "expense": 3868584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 0,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 58721968,
-    "nisa": {
-      "principal": 5940000,
-      "balance": 12382344
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 5940000,
-    "balance": 73117,
-    "totalAssets": 71104313,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 58721968,
-      "investment": 0,
-      "nisa": 12382344,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 5940000,
-        "balance": 12382344
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 58648851.10820289,
-      "savings_after_cashFlow": 58901968.29884461,
-      "savings_before_investment_reduction": 58901968.29884461,
-      "savings_after_investment_reduction": 58721968.29884461,
-      "savings_before_asset_growth": 58721968.29884461,
-      "savings_after_asset_growth": 58721968.29884461,
-      "totalInvestmentPrincipal_before_push": 5940000,
-      "savings_before_yearlyData_push": 58721968.29884461,
-      "savings_at_yearlyData_push_assignment": 58721968.29884461
-    }
-  },
-  {
-    "year": 2061,
-    "age": 63,
-    "income": 4121701,
-    "incomeDetail": {
-      "self": 3041701,
-      "spouse": 0,
-      "investment": 2305271,
-      "oneTime": 0,
-      "publicPension": 1080000,
-      "personalPension": 0
-    },
-    "expense": 3868584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 0,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 58795085,
-    "nisa": {
-      "principal": 6120000,
-      "balance": 14867616
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 6120000,
-    "balance": 73117,
-    "totalAssets": 73662701,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 58795085,
-      "investment": 0,
-      "nisa": 14867616,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 6120000,
-        "balance": 14867616
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 58721968.29884461,
-      "savings_after_cashFlow": 58975085.48948634,
-      "savings_before_investment_reduction": 58975085.48948634,
-      "savings_after_investment_reduction": 58795085.48948634,
-      "savings_before_asset_growth": 58795085.48948634,
-      "savings_after_asset_growth": 58795085.48948634,
-      "totalInvestmentPrincipal_before_push": 6120000,
-      "savings_before_yearlyData_push": 58795085.48948634,
-      "savings_at_yearlyData_push_assignment": 58795085.48948634
-    }
-  },
-  {
-    "year": 2062,
-    "age": 64,
-    "income": 4121701,
-    "incomeDetail": {
-      "self": 3041701,
-      "spouse": 0,
-      "investment": 59631,
-      "oneTime": 0,
-      "publicPension": 1080000,
-      "personalPension": 0
-    },
-    "expense": 3868584,
-    "expenseDetail": {
-      "living": 2520000,
-      "car": 0,
-      "housing": 1348584,
-      "marriage": 0,
-      "children": 0,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 0
-    },
-    "savings": 58868203,
-    "nisa": {
-      "principal": 6300000,
-      "balance": 15107246
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 6300000,
-    "balance": 73117,
-    "totalAssets": 73975449,
-    "investedAmount": 180000,
-    "assetAllocation": {
-      "cash": 58868203,
-      "investment": 0,
-      "nisa": 15107246,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 15107246
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 58795085.48948634,
-      "savings_after_cashFlow": 59048202.68012806,
-      "savings_before_investment_reduction": 59048202.68012806,
-      "savings_after_investment_reduction": 58868202.68012806,
-      "savings_before_asset_growth": 58868202.68012806,
-      "savings_after_asset_growth": 58868202.68012806,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 58868202.68012806,
-      "savings_at_yearlyData_push_assignment": 58868202.68012806
-    }
-  },
-  {
-    "year": 2063,
-    "age": 65,
-    "income": 2880000,
-    "incomeDetail": {
-      "self": 0,
-      "spouse": 0,
-      "investment": -5170549,
-      "oneTime": 0,
-      "publicPension": 2880000,
-      "personalPension": 0
-    },
-    "expense": 5698584,
-    "expenseDetail": {
-      "living": 3000000,
-      "car": 0,
-      "housing": 2348584,
-      "marriage": 0,
-      "children": 0,
-      "appliances": 350000,
-      "care": 0,
-      "retirementGap": 120000
-    },
-    "savings": 56049619,
-    "nisa": {
-      "principal": 6300000,
-      "balance": 9936698
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 6300000,
-    "balance": -2818584,
-    "totalAssets": 65986316,
-    "investedAmount": 0,
-    "assetAllocation": {
-      "cash": 56049619,
-      "investment": 0,
-      "nisa": 9936698,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 9936698
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 58868202.68012806,
-      "savings_after_cashFlow": 56049618.909028195,
-      "savings_before_asset_growth": 56049618.909028195,
-      "savings_after_asset_growth": 56049618.909028195,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 56049618.909028195,
-      "savings_at_yearlyData_push_assignment": 56049618.909028195
-    }
-  },
-  {
-    "year": 2064,
     "age": 66,
     "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 896747,
+      "investment": 9687176,
       "oneTime": 0,
       "publicPension": 2880000,
       "personalPension": 0
     },
-    "expense": 4348584,
+    "expense": 3600000,
     "expenseDetail": {
-      "living": 3000000,
+      "living": 3600000,
       "car": 0,
-      "housing": 1348584,
+      "housing": 0,
       "marriage": 0,
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 120000
+      "retirementGap": 720000
     },
-    "savings": 54581035,
+    "savings": 46132000,
     "nisa": {
-      "principal": 6300000,
-      "balance": 10833444
+      "principal": 18000000,
+      "balance": 50360053
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 3525748
     },
-    "investmentPrincipal": 6300000,
-    "balance": -1468584,
-    "totalAssets": 65414479,
+    "investmentPrincipal": 21000000,
+    "balance": -720000,
+    "totalAssets": 100017801,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": 54581035,
-      "investment": 0,
-      "nisa": 10833444,
+      "cash": 46132000,
+      "investment": 3525748,
+      "nisa": 50360053,
       "ideco": 0
     },
     "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 10833444
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 3525748
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 50360053
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 56049618.909028195,
-      "savings_after_cashFlow": 54581035.13792833,
-      "savings_before_asset_growth": 54581035.13792833,
-      "savings_after_asset_growth": 54581035.13792833,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 54581035.13792833,
-      "savings_at_yearlyData_push_assignment": 54581035.13792833
+      "savings_before_cashFlow": 46852000.1272786,
+      "savings_after_cashFlow": 46132000.1272786,
+      "savings_before_asset_growth": 46132000.1272786,
+      "savings_after_asset_growth": 46132000.1272786,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 46132000.1272786,
+      "savings_at_yearlyData_push_assignment": 46132000.1272786
     }
   },
   {
-    "year": 2065,
+    "year": 2055,
     "age": 67,
     "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": -1615531,
+      "investment": -4038470,
       "oneTime": 0,
       "publicPension": 2880000,
       "personalPension": 0
     },
-    "expense": 4498584,
+    "expense": 3620000,
     "expenseDetail": {
-      "living": 3000000,
+      "living": 3600000,
       "car": 0,
-      "housing": 1348584,
+      "housing": 0,
       "marriage": 0,
       "children": 0,
-      "appliances": 150000,
+      "appliances": 20000,
       "care": 0,
-      "retirementGap": 120000
+      "retirementGap": 720000
     },
-    "savings": 52962451,
+    "savings": 45392000,
     "nisa": {
-      "principal": 6300000,
-      "balance": 9217913
+      "principal": 18000000,
+      "balance": 45627587
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 4219745
     },
-    "investmentPrincipal": 6300000,
-    "balance": -1618584,
-    "totalAssets": 62180365,
+    "investmentPrincipal": 21000000,
+    "balance": -740000,
+    "totalAssets": 95239332,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": 52962451,
-      "investment": 0,
-      "nisa": 9217913,
+      "cash": 45392000,
+      "investment": 4219745,
+      "nisa": 45627587,
       "ideco": 0
     },
     "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 9217913
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 4219745
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 45627587
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 54581035.13792833,
-      "savings_after_cashFlow": 52962451.366828464,
-      "savings_before_asset_growth": 52962451.366828464,
-      "savings_after_asset_growth": 52962451.366828464,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 52962451.366828464,
-      "savings_at_yearlyData_push_assignment": 52962451.366828464
+      "savings_before_cashFlow": 46132000.1272786,
+      "savings_after_cashFlow": 45392000.1272786,
+      "savings_before_asset_growth": 45392000.1272786,
+      "savings_after_asset_growth": 45392000.1272786,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 45392000.1272786,
+      "savings_at_yearlyData_push_assignment": 45392000.1272786
     }
   },
   {
-    "year": 2066,
+    "year": 2056,
     "age": 68,
     "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 2818115,
+      "investment": 2825917,
       "oneTime": 0,
       "publicPension": 2880000,
       "personalPension": 0
     },
-    "expense": 4348584,
+    "expense": 3600000,
     "expenseDetail": {
-      "living": 3000000,
+      "living": 3600000,
       "car": 0,
-      "housing": 1348584,
+      "housing": 0,
       "marriage": 0,
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 120000
+      "retirementGap": 720000
     },
-    "savings": 51493868,
+    "savings": 44672000,
     "nisa": {
-      "principal": 6300000,
-      "balance": 12036029
+      "principal": 18000000,
+      "balance": 50068617
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 2604631
     },
-    "investmentPrincipal": 6300000,
-    "balance": -1468584,
-    "totalAssets": 63529896,
+    "investmentPrincipal": 21000000,
+    "balance": -720000,
+    "totalAssets": 97345248,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": 51493868,
-      "investment": 0,
-      "nisa": 12036029,
+      "cash": 44672000,
+      "investment": 2604631,
+      "nisa": 50068617,
       "ideco": 0
     },
     "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 12036029
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 2604631
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 50068617
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 52962451.366828464,
-      "savings_after_cashFlow": 51493867.5957286,
-      "savings_before_asset_growth": 51493867.5957286,
-      "savings_after_asset_growth": 51493867.5957286,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 51493867.5957286,
-      "savings_at_yearlyData_push_assignment": 51493867.5957286
+      "savings_before_cashFlow": 45392000.1272786,
+      "savings_after_cashFlow": 44672000.1272786,
+      "savings_before_asset_growth": 44672000.1272786,
+      "savings_after_asset_growth": 44672000.1272786,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 44672000.1272786,
+      "savings_at_yearlyData_push_assignment": 44672000.1272786
     }
   },
   {
-    "year": 2067,
+    "year": 2057,
     "age": 69,
     "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 4093965,
+      "investment": -22151117,
       "oneTime": 0,
       "publicPension": 2880000,
       "personalPension": 0
     },
-    "expense": 4348584,
+    "expense": 3750000,
     "expenseDetail": {
-      "living": 3000000,
+      "living": 3600000,
       "car": 0,
-      "housing": 1348584,
+      "housing": 0,
       "marriage": 0,
       "children": 0,
-      "appliances": 0,
+      "appliances": 150000,
       "care": 0,
-      "retirementGap": 120000
+      "retirementGap": 720000
     },
-    "savings": 50025284,
+    "savings": 43802000,
     "nisa": {
-      "principal": 6300000,
-      "balance": 16129993
+      "principal": 18000000,
+      "balance": 27857199
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 2664933
     },
-    "investmentPrincipal": 6300000,
-    "balance": -1468584,
-    "totalAssets": 66155277,
+    "investmentPrincipal": 21000000,
+    "balance": -870000,
+    "totalAssets": 74324132,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": 50025284,
-      "investment": 0,
-      "nisa": 16129993,
+      "cash": 43802000,
+      "investment": 2664933,
+      "nisa": 27857199,
       "ideco": 0
     },
     "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 16129993
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 2664933
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 27857199
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 51493867.5957286,
-      "savings_after_cashFlow": 50025283.82462873,
-      "savings_before_asset_growth": 50025283.82462873,
-      "savings_after_asset_growth": 50025283.82462873,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 50025283.82462873,
-      "savings_at_yearlyData_push_assignment": 50025283.82462873
+      "savings_before_cashFlow": 44672000.1272786,
+      "savings_after_cashFlow": 43802000.1272786,
+      "savings_before_asset_growth": 43802000.1272786,
+      "savings_after_asset_growth": 43802000.1272786,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 43802000.1272786,
+      "savings_at_yearlyData_push_assignment": 43802000.1272786
     }
   },
   {
-    "year": 2068,
+    "year": 2058,
     "age": 70,
     "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": -381105,
+      "investment": 7068795,
       "oneTime": 0,
       "publicPension": 2880000,
       "personalPension": 0
     },
-    "expense": 3000000,
+    "expense": 3700000,
     "expenseDetail": {
-      "living": 3000000,
+      "living": 3600000,
       "car": 0,
       "housing": 0,
       "marriage": 0,
       "children": 0,
-      "appliances": 0,
+      "appliances": 100000,
       "care": 0,
-      "retirementGap": 120000
+      "retirementGap": 720000
     },
-    "savings": 49905284,
+    "savings": 42982000,
     "nisa": {
-      "principal": 6300000,
-      "balance": 15748888
+      "principal": 18000000,
+      "balance": 34491877
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 3099050
     },
-    "investmentPrincipal": 6300000,
-    "balance": -120000,
-    "totalAssets": 65654172,
+    "investmentPrincipal": 21000000,
+    "balance": -820000,
+    "totalAssets": 80572927,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": 49905284,
-      "investment": 0,
-      "nisa": 15748888,
+      "cash": 42982000,
+      "investment": 3099050,
+      "nisa": 34491877,
       "ideco": 0
     },
     "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 15748888
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 3099050
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 34491877
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 50025283.82462873,
-      "savings_after_cashFlow": 49905283.82462873,
-      "savings_before_asset_growth": 49905283.82462873,
-      "savings_after_asset_growth": 49905283.82462873,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 49905283.82462873,
-      "savings_at_yearlyData_push_assignment": 49905283.82462873
+      "savings_before_cashFlow": 43802000.1272786,
+      "savings_after_cashFlow": 42982000.1272786,
+      "savings_before_asset_growth": 42982000.1272786,
+      "savings_after_asset_growth": 42982000.1272786,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 42982000.1272786,
+      "savings_at_yearlyData_push_assignment": 42982000.1272786
     }
   },
   {
-    "year": 2069,
+    "year": 2059,
     "age": 71,
     "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 2112838,
+      "investment": 8468677,
       "oneTime": 0,
       "publicPension": 2880000,
       "personalPension": 0
     },
-    "expense": 3020000,
+    "expense": 4600000,
     "expenseDetail": {
-      "living": 3000000,
+      "living": 3600000,
       "car": 0,
-      "housing": 0,
+      "housing": 1000000,
       "marriage": 0,
       "children": 0,
-      "appliances": 20000,
+      "appliances": 0,
       "care": 0,
-      "retirementGap": 120000
+      "retirementGap": 720000
     },
-    "savings": 49765284,
+    "savings": 41262000,
     "nisa": {
-      "principal": 6300000,
-      "balance": 17861726
+      "principal": 18000000,
+      "balance": 42528832
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 3530772
     },
-    "investmentPrincipal": 6300000,
-    "balance": -140000,
-    "totalAssets": 67627009,
+    "investmentPrincipal": 21000000,
+    "balance": -1720000,
+    "totalAssets": 87321605,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": 49765284,
-      "investment": 0,
-      "nisa": 17861726,
+      "cash": 41262000,
+      "investment": 3530772,
+      "nisa": 42528832,
       "ideco": 0
     },
     "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 17861726
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 3530772
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 42528832
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 49905283.82462873,
-      "savings_after_cashFlow": 49765283.82462873,
-      "savings_before_asset_growth": 49765283.82462873,
-      "savings_after_asset_growth": 49765283.82462873,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 49765283.82462873,
-      "savings_at_yearlyData_push_assignment": 49765283.82462873
+      "savings_before_cashFlow": 42982000.1272786,
+      "savings_after_cashFlow": 41262000.1272786,
+      "savings_before_asset_growth": 41262000.1272786,
+      "savings_after_asset_growth": 41262000.1272786,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 41262000.1272786,
+      "savings_at_yearlyData_push_assignment": 41262000.1272786
     }
   },
   {
-    "year": 2070,
+    "year": 2060,
     "age": 72,
     "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 6756447,
+      "investment": 5301777,
       "oneTime": 0,
       "publicPension": 2880000,
       "personalPension": 0
     },
-    "expense": 3000000,
+    "expense": 3720000,
     "expenseDetail": {
-      "living": 3000000,
+      "living": 3600000,
       "car": 0,
       "housing": 0,
       "marriage": 0,
       "children": 0,
-      "appliances": 0,
+      "appliances": 120000,
       "care": 0,
-      "retirementGap": 120000
+      "retirementGap": 720000
     },
-    "savings": 49645284,
+    "savings": 40422000,
     "nisa": {
-      "principal": 6300000,
-      "balance": 24618172
+      "principal": 18000000,
+      "balance": 47068235
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 4293146
     },
-    "investmentPrincipal": 6300000,
-    "balance": -120000,
-    "totalAssets": 74263456,
+    "investmentPrincipal": 21000000,
+    "balance": -840000,
+    "totalAssets": 91783382,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": 49645284,
-      "investment": 0,
-      "nisa": 24618172,
+      "cash": 40422000,
+      "investment": 4293146,
+      "nisa": 47068235,
       "ideco": 0
     },
     "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 24618172
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 4293146
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 47068235
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 49765283.82462873,
-      "savings_after_cashFlow": 49645283.82462873,
-      "savings_before_asset_growth": 49645283.82462873,
-      "savings_after_asset_growth": 49645283.82462873,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 49645283.82462873,
-      "savings_at_yearlyData_push_assignment": 49645283.82462873
+      "savings_before_cashFlow": 41262000.1272786,
+      "savings_after_cashFlow": 40422000.1272786,
+      "savings_before_asset_growth": 40422000.1272786,
+      "savings_after_asset_growth": 40422000.1272786,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 40422000.1272786,
+      "savings_at_yearlyData_push_assignment": 40422000.1272786
     }
   },
   {
-    "year": 2071,
+    "year": 2061,
     "age": 73,
     "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": -767938,
+      "investment": 2687534,
       "oneTime": 0,
       "publicPension": 2880000,
       "personalPension": 0
     },
-    "expense": 3000000,
+    "expense": 3650000,
     "expenseDetail": {
-      "living": 3000000,
+      "living": 3600000,
       "car": 0,
       "housing": 0,
       "marriage": 0,
       "children": 0,
-      "appliances": 0,
+      "appliances": 50000,
       "care": 0,
-      "retirementGap": 120000
+      "retirementGap": 720000
     },
-    "savings": 49525284,
+    "savings": 39652000,
     "nisa": {
-      "principal": 6300000,
-      "balance": 23850235
+      "principal": 18000000,
+      "balance": 49392761
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 4656155
     },
-    "investmentPrincipal": 6300000,
-    "balance": -120000,
-    "totalAssets": 73375518,
+    "investmentPrincipal": 21000000,
+    "balance": -770000,
+    "totalAssets": 93700916,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": 49525284,
-      "investment": 0,
-      "nisa": 23850235,
+      "cash": 39652000,
+      "investment": 4656155,
+      "nisa": 49392761,
       "ideco": 0
     },
     "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 23850235
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 4656155
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 49392761
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 49645283.82462873,
-      "savings_after_cashFlow": 49525283.82462873,
-      "savings_before_asset_growth": 49525283.82462873,
-      "savings_after_asset_growth": 49525283.82462873,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 49525283.82462873,
-      "savings_at_yearlyData_push_assignment": 49525283.82462873
+      "savings_before_cashFlow": 40422000.1272786,
+      "savings_after_cashFlow": 39652000.1272786,
+      "savings_before_asset_growth": 39652000.1272786,
+      "savings_after_asset_growth": 39652000.1272786,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 39652000.1272786,
+      "savings_at_yearlyData_push_assignment": 39652000.1272786
     }
   },
   {
-    "year": 2072,
+    "year": 2062,
     "age": 74,
     "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": -10786648,
+      "investment": -1470107,
       "oneTime": 0,
       "publicPension": 2880000,
       "personalPension": 0
     },
-    "expense": 3000000,
+    "expense": 3600000,
     "expenseDetail": {
-      "living": 3000000,
+      "living": 3600000,
       "car": 0,
       "housing": 0,
       "marriage": 0,
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 120000
+      "retirementGap": 720000
     },
-    "savings": 49405284,
+    "savings": 38932000,
     "nisa": {
-      "principal": 6300000,
-      "balance": 13063587
+      "principal": 18000000,
+      "balance": 46109400
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 6469408
     },
-    "investmentPrincipal": 6300000,
-    "balance": -120000,
-    "totalAssets": 62468870,
+    "investmentPrincipal": 21000000,
+    "balance": -720000,
+    "totalAssets": 91510808,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": 49405284,
-      "investment": 0,
-      "nisa": 13063587,
+      "cash": 38932000,
+      "investment": 6469408,
+      "nisa": 46109400,
       "ideco": 0
     },
     "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 13063587
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 6469408
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 46109400
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 49525283.82462873,
-      "savings_after_cashFlow": 49405283.82462873,
-      "savings_before_asset_growth": 49405283.82462873,
-      "savings_after_asset_growth": 49405283.82462873,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 49405283.82462873,
-      "savings_at_yearlyData_push_assignment": 49405283.82462873
+      "savings_before_cashFlow": 39652000.1272786,
+      "savings_after_cashFlow": 38932000.1272786,
+      "savings_before_asset_growth": 38932000.1272786,
+      "savings_after_asset_growth": 38932000.1272786,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 38932000.1272786,
+      "savings_at_yearlyData_push_assignment": 38932000.1272786
     }
   },
   {
-    "year": 2073,
+    "year": 2063,
     "age": 75,
     "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 1841932,
+      "investment": 2894577,
       "oneTime": 0,
       "publicPension": 2880000,
       "personalPension": 0
     },
-    "expense": 3480000,
+    "expense": 3600000,
     "expenseDetail": {
-      "living": 3000000,
+      "living": 3600000,
       "car": 0,
       "housing": 0,
       "marriage": 0,
       "children": 0,
-      "appliances": 480000,
+      "appliances": 0,
       "care": 0,
-      "retirementGap": 120000
+      "retirementGap": 720000
     },
-    "savings": 48805284,
+    "savings": 38212000,
     "nisa": {
-      "principal": 6300000,
-      "balance": 14905518
+      "principal": 18000000,
+      "balance": 47768232
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 7705153
     },
-    "investmentPrincipal": 6300000,
-    "balance": -600000,
-    "totalAssets": 63710802,
+    "investmentPrincipal": 21000000,
+    "balance": -720000,
+    "totalAssets": 93685385,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": 48805284,
-      "investment": 0,
-      "nisa": 14905518,
+      "cash": 38212000,
+      "investment": 7705153,
+      "nisa": 47768232,
       "ideco": 0
     },
     "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 14905518
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 7705153
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 47768232
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 49405283.82462873,
-      "savings_after_cashFlow": 48805283.82462873,
-      "savings_before_asset_growth": 48805283.82462873,
-      "savings_after_asset_growth": 48805283.82462873,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 48805283.82462873,
-      "savings_at_yearlyData_push_assignment": 48805283.82462873
+      "savings_before_cashFlow": 38932000.1272786,
+      "savings_after_cashFlow": 38212000.1272786,
+      "savings_before_asset_growth": 38212000.1272786,
+      "savings_after_asset_growth": 38212000.1272786,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 38212000.1272786,
+      "savings_at_yearlyData_push_assignment": 38212000.1272786
     }
   },
   {
-    "year": 2074,
+    "year": 2064,
     "age": 76,
     "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 5215339,
+      "investment": 1298261,
       "oneTime": 0,
       "publicPension": 2880000,
       "personalPension": 0
     },
-    "expense": 3000000,
+    "expense": 3600000,
     "expenseDetail": {
-      "living": 3000000,
+      "living": 3600000,
       "car": 0,
       "housing": 0,
       "marriage": 0,
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 120000
+      "retirementGap": 720000
     },
-    "savings": 48685284,
+    "savings": 37492000,
     "nisa": {
-      "principal": 6300000,
-      "balance": 20120858
+      "principal": 18000000,
+      "balance": 49623097
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 7148549
     },
-    "investmentPrincipal": 6300000,
-    "balance": -120000,
-    "totalAssets": 68806141,
+    "investmentPrincipal": 21000000,
+    "balance": -720000,
+    "totalAssets": 94263646,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": 48685284,
-      "investment": 0,
-      "nisa": 20120858,
+      "cash": 37492000,
+      "investment": 7148549,
+      "nisa": 49623097,
       "ideco": 0
     },
     "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 20120858
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 7148549
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 49623097
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 48805283.82462873,
-      "savings_after_cashFlow": 48685283.82462873,
-      "savings_before_asset_growth": 48685283.82462873,
-      "savings_after_asset_growth": 48685283.82462873,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 48685283.82462873,
-      "savings_at_yearlyData_push_assignment": 48685283.82462873
+      "savings_before_cashFlow": 38212000.1272786,
+      "savings_after_cashFlow": 37492000.1272786,
+      "savings_before_asset_growth": 37492000.1272786,
+      "savings_after_asset_growth": 37492000.1272786,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 37492000.1272786,
+      "savings_at_yearlyData_push_assignment": 37492000.1272786
     }
   },
   {
-    "year": 2075,
+    "year": 2065,
     "age": 77,
     "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 3790409,
+      "investment": -9309925,
       "oneTime": 0,
       "publicPension": 2880000,
       "personalPension": 0
     },
-    "expense": 4020000,
+    "expense": 3600000,
     "expenseDetail": {
-      "living": 3000000,
+      "living": 3600000,
       "car": 0,
-      "housing": 1000000,
+      "housing": 0,
       "marriage": 0,
       "children": 0,
-      "appliances": 20000,
+      "appliances": 0,
       "care": 0,
-      "retirementGap": 120000
+      "retirementGap": 720000
     },
-    "savings": 47545284,
+    "savings": 36772000,
     "nisa": {
-      "principal": 6300000,
-      "balance": 23911267
+      "principal": 18000000,
+      "balance": 43329953
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 4131768
     },
-    "investmentPrincipal": 6300000,
-    "balance": -1140000,
-    "totalAssets": 71456551,
+    "investmentPrincipal": 21000000,
+    "balance": -720000,
+    "totalAssets": 84233721,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": 47545284,
-      "investment": 0,
-      "nisa": 23911267,
+      "cash": 36772000,
+      "investment": 4131768,
+      "nisa": 43329953,
       "ideco": 0
     },
     "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 23911267
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 4131768
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 43329953
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 48685283.82462873,
-      "savings_after_cashFlow": 47545283.82462873,
-      "savings_before_asset_growth": 47545283.82462873,
-      "savings_after_asset_growth": 47545283.82462873,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 47545283.82462873,
-      "savings_at_yearlyData_push_assignment": 47545283.82462873
+      "savings_before_cashFlow": 37492000.1272786,
+      "savings_after_cashFlow": 36772000.1272786,
+      "savings_before_asset_growth": 36772000.1272786,
+      "savings_after_asset_growth": 36772000.1272786,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 36772000.1272786,
+      "savings_at_yearlyData_push_assignment": 36772000.1272786
     }
   },
   {
-    "year": 2076,
+    "year": 2066,
     "age": 78,
     "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": -1503076,
+      "investment": -19275136,
       "oneTime": 0,
       "publicPension": 2880000,
       "personalPension": 0
     },
-    "expense": 3000000,
+    "expense": 3600000,
     "expenseDetail": {
-      "living": 3000000,
+      "living": 3600000,
       "car": 0,
       "housing": 0,
       "marriage": 0,
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 120000
+      "retirementGap": 720000
     },
-    "savings": 47425284,
+    "savings": 36052000,
     "nisa": {
-      "principal": 6300000,
-      "balance": 22408190
+      "principal": 18000000,
+      "balance": 21640038
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 6546547
     },
-    "investmentPrincipal": 6300000,
-    "balance": -120000,
-    "totalAssets": 69833474,
+    "investmentPrincipal": 21000000,
+    "balance": -720000,
+    "totalAssets": 64238585,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": 47425284,
-      "investment": 0,
-      "nisa": 22408190,
+      "cash": 36052000,
+      "investment": 6546547,
+      "nisa": 21640038,
       "ideco": 0
     },
     "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 22408190
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 6546547
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 21640038
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 47545283.82462873,
-      "savings_after_cashFlow": 47425283.82462873,
-      "savings_before_asset_growth": 47425283.82462873,
-      "savings_after_asset_growth": 47425283.82462873,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 47425283.82462873,
-      "savings_at_yearlyData_push_assignment": 47425283.82462873
+      "savings_before_cashFlow": 36772000.1272786,
+      "savings_after_cashFlow": 36052000.1272786,
+      "savings_before_asset_growth": 36052000.1272786,
+      "savings_after_asset_growth": 36052000.1272786,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 36052000.1272786,
+      "savings_at_yearlyData_push_assignment": 36052000.1272786
     }
   },
   {
-    "year": 2077,
+    "year": 2067,
     "age": 79,
     "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 5381634,
+      "investment": 8483302,
       "oneTime": 0,
       "publicPension": 2880000,
       "personalPension": 0
     },
-    "expense": 3000000,
+    "expense": 3770000,
     "expenseDetail": {
-      "living": 3000000,
-      "car": 0,
-      "housing": 0,
-      "marriage": 0,
-      "children": 0,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 120000
-    },
-    "savings": 47305284,
-    "nisa": {
-      "principal": 6300000,
-      "balance": 27789825
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 6300000,
-    "balance": -120000,
-    "totalAssets": 75095109,
-    "investedAmount": 0,
-    "assetAllocation": {
-      "cash": 47305284,
-      "investment": 0,
-      "nisa": 27789825,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 27789825
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 47425283.82462873,
-      "savings_after_cashFlow": 47305283.82462873,
-      "savings_before_asset_growth": 47305283.82462873,
-      "savings_after_asset_growth": 47305283.82462873,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 47305283.82462873,
-      "savings_at_yearlyData_push_assignment": 47305283.82462873
-    }
-  },
-  {
-    "year": 2078,
-    "age": 80,
-    "income": 2880000,
-    "incomeDetail": {
-      "self": 0,
-      "spouse": 0,
-      "investment": -1908620,
-      "oneTime": 0,
-      "publicPension": 2880000,
-      "personalPension": 0
-    },
-    "expense": 3000000,
-    "expenseDetail": {
-      "living": 3000000,
-      "car": 0,
-      "housing": 0,
-      "marriage": 0,
-      "children": 0,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 120000
-    },
-    "savings": 47185284,
-    "nisa": {
-      "principal": 6300000,
-      "balance": 25881204
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 6300000,
-    "balance": -120000,
-    "totalAssets": 73066488,
-    "investedAmount": 0,
-    "assetAllocation": {
-      "cash": 47185284,
-      "investment": 0,
-      "nisa": 25881204,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 25881204
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 47305283.82462873,
-      "savings_after_cashFlow": 47185283.82462873,
-      "savings_before_asset_growth": 47185283.82462873,
-      "savings_after_asset_growth": 47185283.82462873,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 47185283.82462873,
-      "savings_at_yearlyData_push_assignment": 47185283.82462873
-    }
-  },
-  {
-    "year": 2079,
-    "age": 81,
-    "income": 2880000,
-    "incomeDetail": {
-      "self": 0,
-      "spouse": 0,
-      "investment": 1063492,
-      "oneTime": 0,
-      "publicPension": 2880000,
-      "personalPension": 0
-    },
-    "expense": 3000000,
-    "expenseDetail": {
-      "living": 3000000,
-      "car": 0,
-      "housing": 0,
-      "marriage": 0,
-      "children": 0,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 120000
-    },
-    "savings": 47065284,
-    "nisa": {
-      "principal": 6300000,
-      "balance": 26944697
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 6300000,
-    "balance": -120000,
-    "totalAssets": 74009981,
-    "investedAmount": 0,
-    "assetAllocation": {
-      "cash": 47065284,
-      "investment": 0,
-      "nisa": 26944697,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 26944697
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 47185283.82462873,
-      "savings_after_cashFlow": 47065283.82462873,
-      "savings_before_asset_growth": 47065283.82462873,
-      "savings_after_asset_growth": 47065283.82462873,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 47065283.82462873,
-      "savings_at_yearlyData_push_assignment": 47065283.82462873
-    }
-  },
-  {
-    "year": 2080,
-    "age": 82,
-    "income": 2880000,
-    "incomeDetail": {
-      "self": 0,
-      "spouse": 0,
-      "investment": -15439667,
-      "oneTime": 0,
-      "publicPension": 2880000,
-      "personalPension": 0
-    },
-    "expense": 3000000,
-    "expenseDetail": {
-      "living": 3000000,
-      "car": 0,
-      "housing": 0,
-      "marriage": 0,
-      "children": 0,
-      "appliances": 0,
-      "care": 0,
-      "retirementGap": 120000
-    },
-    "savings": 46945284,
-    "nisa": {
-      "principal": 6300000,
-      "balance": 11505030
-    },
-    "ideco": {
-      "principal": 0,
-      "balance": 0
-    },
-    "taxable": {
-      "principal": 0,
-      "balance": 0
-    },
-    "investmentPrincipal": 6300000,
-    "balance": -120000,
-    "totalAssets": 58450314,
-    "investedAmount": 0,
-    "assetAllocation": {
-      "cash": 46945284,
-      "investment": 0,
-      "nisa": 11505030,
-      "ideco": 0
-    },
-    "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 11505030
-      }
-    },
-    "debug": {
-      "replenishmentTriggered": false,
-      "savings_before_cashFlow": 47065283.82462873,
-      "savings_after_cashFlow": 46945283.82462873,
-      "savings_before_asset_growth": 46945283.82462873,
-      "savings_after_asset_growth": 46945283.82462873,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 46945283.82462873,
-      "savings_at_yearlyData_push_assignment": 46945283.82462873
-    }
-  },
-  {
-    "year": 2081,
-    "age": 83,
-    "income": 2880000,
-    "incomeDetail": {
-      "self": 0,
-      "spouse": 0,
-      "investment": 669835,
-      "oneTime": 0,
-      "publicPension": 2880000,
-      "personalPension": 0
-    },
-    "expense": 3170000,
-    "expenseDetail": {
-      "living": 3000000,
+      "living": 3600000,
       "car": 0,
       "housing": 0,
       "marriage": 0,
       "children": 0,
       "appliances": 170000,
       "care": 0,
-      "retirementGap": 120000
+      "retirementGap": 720000
     },
-    "savings": 46655284,
+    "savings": 35162000,
     "nisa": {
-      "principal": 6300000,
-      "balance": 12174865
+      "principal": 18000000,
+      "balance": 30025717
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 6644170
     },
-    "investmentPrincipal": 6300000,
-    "balance": -290000,
-    "totalAssets": 58830149,
+    "investmentPrincipal": 21000000,
+    "balance": -890000,
+    "totalAssets": 71831887,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": 46655284,
-      "investment": 0,
-      "nisa": 12174865,
+      "cash": 35162000,
+      "investment": 6644170,
+      "nisa": 30025717,
       "ideco": 0
     },
     "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 12174865
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 6644170
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 30025717
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 46945283.82462873,
-      "savings_after_cashFlow": 46655283.82462873,
-      "savings_before_asset_growth": 46655283.82462873,
-      "savings_after_asset_growth": 46655283.82462873,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 46655283.82462873,
-      "savings_at_yearlyData_push_assignment": 46655283.82462873
+      "savings_before_cashFlow": 36052000.1272786,
+      "savings_after_cashFlow": 35162000.1272786,
+      "savings_before_asset_growth": 35162000.1272786,
+      "savings_after_asset_growth": 35162000.1272786,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 35162000.1272786,
+      "savings_at_yearlyData_push_assignment": 35162000.1272786
     }
   },
   {
-    "year": 2082,
+    "year": 2068,
+    "age": 80,
+    "income": 2880000,
+    "incomeDetail": {
+      "self": 0,
+      "spouse": 0,
+      "investment": 4043327,
+      "oneTime": 0,
+      "publicPension": 2880000,
+      "personalPension": 0
+    },
+    "expense": 3820000,
+    "expenseDetail": {
+      "living": 3600000,
+      "car": 0,
+      "housing": 0,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 220000,
+      "care": 0,
+      "retirementGap": 720000
+    },
+    "savings": 34222000,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 35356147
+    },
+    "ideco": {
+      "principal": 0,
+      "balance": 0
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 5357067
+    },
+    "investmentPrincipal": 21000000,
+    "balance": -940000,
+    "totalAssets": 74935214,
+    "investedAmount": 0,
+    "assetAllocation": {
+      "cash": 34222000,
+      "investment": 5357067,
+      "nisa": 35356147,
+      "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 5357067
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 35356147
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 35162000.1272786,
+      "savings_after_cashFlow": 34222000.1272786,
+      "savings_before_asset_growth": 34222000.1272786,
+      "savings_after_asset_growth": 34222000.1272786,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 34222000.1272786,
+      "savings_at_yearlyData_push_assignment": 34222000.1272786
+    }
+  },
+  {
+    "year": 2069,
+    "age": 81,
+    "income": 2880000,
+    "incomeDetail": {
+      "self": 0,
+      "spouse": 0,
+      "investment": 5923737,
+      "oneTime": 0,
+      "publicPension": 2880000,
+      "personalPension": 0
+    },
+    "expense": 4630000,
+    "expenseDetail": {
+      "living": 3600000,
+      "car": 0,
+      "housing": 1000000,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 30000,
+      "care": 0,
+      "retirementGap": 720000
+    },
+    "savings": 32472000,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 39299991
+    },
+    "ideco": {
+      "principal": 0,
+      "balance": 0
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 7336960
+    },
+    "investmentPrincipal": 21000000,
+    "balance": -1750000,
+    "totalAssets": 79108951,
+    "investedAmount": 0,
+    "assetAllocation": {
+      "cash": 32472000,
+      "investment": 7336960,
+      "nisa": 39299991,
+      "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 7336960
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 39299991
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 34222000.1272786,
+      "savings_after_cashFlow": 32472000.127278604,
+      "savings_before_asset_growth": 32472000.127278604,
+      "savings_after_asset_growth": 32472000.127278604,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 32472000.127278604,
+      "savings_at_yearlyData_push_assignment": 32472000.127278604
+    }
+  },
+  {
+    "year": 2070,
+    "age": 82,
+    "income": 2880000,
+    "incomeDetail": {
+      "self": 0,
+      "spouse": 0,
+      "investment": 10801498,
+      "oneTime": 0,
+      "publicPension": 2880000,
+      "personalPension": 0
+    },
+    "expense": 3600000,
+    "expenseDetail": {
+      "living": 3600000,
+      "car": 0,
+      "housing": 0,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 0,
+      "care": 0,
+      "retirementGap": 720000
+    },
+    "savings": 31752000,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 48587457
+    },
+    "ideco": {
+      "principal": 0,
+      "balance": 0
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 8850992
+    },
+    "investmentPrincipal": 21000000,
+    "balance": -720000,
+    "totalAssets": 89190449,
+    "investedAmount": 0,
+    "assetAllocation": {
+      "cash": 31752000,
+      "investment": 8850992,
+      "nisa": 48587457,
+      "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 8850992
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 48587457
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 32472000.127278604,
+      "savings_after_cashFlow": 31752000.127278604,
+      "savings_before_asset_growth": 31752000.127278604,
+      "savings_after_asset_growth": 31752000.127278604,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 31752000.127278604,
+      "savings_at_yearlyData_push_assignment": 31752000.127278604
+    }
+  },
+  {
+    "year": 2071,
+    "age": 83,
+    "income": 2880000,
+    "incomeDetail": {
+      "self": 0,
+      "spouse": 0,
+      "investment": 2268240,
+      "oneTime": 0,
+      "publicPension": 2880000,
+      "personalPension": 0
+    },
+    "expense": 3600000,
+    "expenseDetail": {
+      "living": 3600000,
+      "car": 0,
+      "housing": 0,
+      "marriage": 0,
+      "children": 0,
+      "appliances": 0,
+      "care": 0,
+      "retirementGap": 720000
+    },
+    "savings": 31032000,
+    "nisa": {
+      "principal": 18000000,
+      "balance": 50203912
+    },
+    "ideco": {
+      "principal": 0,
+      "balance": 0
+    },
+    "taxable": {
+      "principal": 3000000,
+      "balance": 9502778
+    },
+    "investmentPrincipal": 21000000,
+    "balance": -720000,
+    "totalAssets": 90738690,
+    "investedAmount": 0,
+    "assetAllocation": {
+      "cash": 31032000,
+      "investment": 9502778,
+      "nisa": 50203912,
+      "ideco": 0
+    },
+    "products": {
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 9502778
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 50203912
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
+      }
+    },
+    "debug": {
+      "replenishmentTriggered": false,
+      "savings_before_cashFlow": 31752000.127278604,
+      "savings_after_cashFlow": 31032000.127278604,
+      "savings_before_asset_growth": 31032000.127278604,
+      "savings_after_asset_growth": 31032000.127278604,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 31032000.127278604,
+      "savings_at_yearlyData_push_assignment": 31032000.127278604
+    }
+  },
+  {
+    "year": 2072,
     "age": 84,
     "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 3003984,
+      "investment": 9758622,
       "oneTime": 0,
       "publicPension": 2880000,
       "personalPension": 0
     },
-    "expense": 3000000,
+    "expense": 3600000,
     "expenseDetail": {
-      "living": 3000000,
+      "living": 3600000,
       "car": 0,
       "housing": 0,
       "marriage": 0,
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 120000
+      "retirementGap": 720000
     },
-    "savings": 46535284,
+    "savings": 30312000,
     "nisa": {
-      "principal": 6300000,
-      "balance": 15178849
+      "principal": 18000000,
+      "balance": 60190831
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 9274480
     },
-    "investmentPrincipal": 6300000,
-    "balance": -120000,
-    "totalAssets": 61714133,
+    "investmentPrincipal": 21000000,
+    "balance": -720000,
+    "totalAssets": 99777312,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": 46535284,
-      "investment": 0,
-      "nisa": 15178849,
+      "cash": 30312000,
+      "investment": 9274480,
+      "nisa": 60190831,
       "ideco": 0
     },
     "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 15178849
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 9274480
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 60190831
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 46655283.82462873,
-      "savings_after_cashFlow": 46535283.82462873,
-      "savings_before_asset_growth": 46535283.82462873,
-      "savings_after_asset_growth": 46535283.82462873,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 46535283.82462873,
-      "savings_at_yearlyData_push_assignment": 46535283.82462873
+      "savings_before_cashFlow": 31032000.127278604,
+      "savings_after_cashFlow": 30312000.127278604,
+      "savings_before_asset_growth": 30312000.127278604,
+      "savings_after_asset_growth": 30312000.127278604,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 30312000.127278604,
+      "savings_at_yearlyData_push_assignment": 30312000.127278604
     }
   },
   {
-    "year": 2083,
+    "year": 2073,
     "age": 85,
     "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 3568216,
+      "investment": 8044136,
       "oneTime": 0,
       "publicPension": 2880000,
       "personalPension": 0
     },
-    "expense": 3330000,
+    "expense": 3620000,
     "expenseDetail": {
-      "living": 3000000,
+      "living": 3600000,
       "car": 0,
       "housing": 0,
       "marriage": 0,
       "children": 0,
-      "appliances": 330000,
+      "appliances": 20000,
       "care": 0,
-      "retirementGap": 120000
+      "retirementGap": 720000
     },
-    "savings": 46085284,
+    "savings": 29572000,
     "nisa": {
-      "principal": 6300000,
-      "balance": 18747065
+      "principal": 18000000,
+      "balance": 65240810
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 12268637
     },
-    "investmentPrincipal": 6300000,
-    "balance": -450000,
-    "totalAssets": 64832349,
+    "investmentPrincipal": 21000000,
+    "balance": -740000,
+    "totalAssets": 107081448,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": 46085284,
-      "investment": 0,
-      "nisa": 18747065,
+      "cash": 29572000,
+      "investment": 12268637,
+      "nisa": 65240810,
       "ideco": 0
     },
     "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 18747065
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 12268637
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 65240810
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 46535283.82462873,
-      "savings_after_cashFlow": 46085283.82462873,
-      "savings_before_asset_growth": 46085283.82462873,
-      "savings_after_asset_growth": 46085283.82462873,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 46085283.82462873,
-      "savings_at_yearlyData_push_assignment": 46085283.82462873
+      "savings_before_cashFlow": 30312000.127278604,
+      "savings_after_cashFlow": 29572000.127278604,
+      "savings_before_asset_growth": 29572000.127278604,
+      "savings_after_asset_growth": 29572000.127278604,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 29572000.127278604,
+      "savings_at_yearlyData_push_assignment": 29572000.127278604
     }
   },
   {
-    "year": 2084,
+    "year": 2074,
     "age": 86,
     "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": -1103959,
+      "investment": 13265770,
       "oneTime": 0,
       "publicPension": 2880000,
       "personalPension": 0
     },
-    "expense": 3000000,
+    "expense": 3600000,
     "expenseDetail": {
-      "living": 3000000,
+      "living": 3600000,
       "car": 0,
       "housing": 0,
       "marriage": 0,
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 120000
+      "retirementGap": 720000
     },
-    "savings": 45965284,
+    "savings": 28852000,
     "nisa": {
-      "principal": 6300000,
-      "balance": 17643106
+      "principal": 18000000,
+      "balance": 85775123
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 5000095
     },
-    "investmentPrincipal": 6300000,
-    "balance": -120000,
-    "totalAssets": 63608389,
+    "investmentPrincipal": 21000000,
+    "balance": -720000,
+    "totalAssets": 119627218,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": 45965284,
-      "investment": 0,
-      "nisa": 17643106,
+      "cash": 28852000,
+      "investment": 5000095,
+      "nisa": 85775123,
       "ideco": 0
     },
     "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 17643106
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 5000095
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 85775123
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 46085283.82462873,
-      "savings_after_cashFlow": 45965283.82462873,
-      "savings_before_asset_growth": 45965283.82462873,
-      "savings_after_asset_growth": 45965283.82462873,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 45965283.82462873,
-      "savings_at_yearlyData_push_assignment": 45965283.82462873
+      "savings_before_cashFlow": 29572000.127278604,
+      "savings_after_cashFlow": 28852000.127278604,
+      "savings_before_asset_growth": 28852000.127278604,
+      "savings_after_asset_growth": 28852000.127278604,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 28852000.127278604,
+      "savings_at_yearlyData_push_assignment": 28852000.127278604
     }
   },
   {
-    "year": 2085,
+    "year": 2075,
     "age": 87,
     "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": -49523,
+      "investment": 3888848,
       "oneTime": 0,
       "publicPension": 2880000,
       "personalPension": 0
     },
-    "expense": 3000000,
+    "expense": 3600000,
     "expenseDetail": {
-      "living": 3000000,
+      "living": 3600000,
       "car": 0,
       "housing": 0,
       "marriage": 0,
       "children": 0,
       "appliances": 0,
       "care": 0,
-      "retirementGap": 120000
+      "retirementGap": 720000
     },
-    "savings": 45845284,
+    "savings": 28132000,
     "nisa": {
-      "principal": 6300000,
-      "balance": 17593583
+      "principal": 18000000,
+      "balance": 89005432
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 5658633
     },
-    "investmentPrincipal": 6300000,
-    "balance": -120000,
-    "totalAssets": 63438867,
+    "investmentPrincipal": 21000000,
+    "balance": -720000,
+    "totalAssets": 122796066,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": 45845284,
-      "investment": 0,
-      "nisa": 17593583,
+      "cash": 28132000,
+      "investment": 5658633,
+      "nisa": 89005432,
       "ideco": 0
     },
     "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 17593583
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 5658633
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 89005432
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 45965283.82462873,
-      "savings_after_cashFlow": 45845283.82462873,
-      "savings_before_asset_growth": 45845283.82462873,
-      "savings_after_asset_growth": 45845283.82462873,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 45845283.82462873,
-      "savings_at_yearlyData_push_assignment": 45845283.82462873
+      "savings_before_cashFlow": 28852000.127278604,
+      "savings_after_cashFlow": 28132000.127278604,
+      "savings_before_asset_growth": 28132000.127278604,
+      "savings_after_asset_growth": 28132000.127278604,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 28132000.127278604,
+      "savings_at_yearlyData_push_assignment": 28132000.127278604
     }
   },
   {
-    "year": 2086,
+    "year": 2076,
     "age": 88,
     "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": -95797,
+      "investment": -39361022,
       "oneTime": 0,
       "publicPension": 2880000,
       "personalPension": 0
     },
-    "expense": 3000000,
+    "expense": 3720000,
     "expenseDetail": {
-      "living": 3000000,
+      "living": 3600000,
       "car": 0,
       "housing": 0,
       "marriage": 0,
       "children": 0,
-      "appliances": 0,
+      "appliances": 120000,
       "care": 0,
-      "retirementGap": 120000
+      "retirementGap": 720000
     },
-    "savings": 45725284,
+    "savings": 27292000,
     "nisa": {
-      "principal": 6300000,
-      "balance": 17497786
+      "principal": 18000000,
+      "balance": 51278782
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 4024262
     },
-    "investmentPrincipal": 6300000,
-    "balance": -120000,
-    "totalAssets": 63223070,
+    "investmentPrincipal": 21000000,
+    "balance": -840000,
+    "totalAssets": 82595044,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": 45725284,
-      "investment": 0,
-      "nisa": 17497786,
+      "cash": 27292000,
+      "investment": 4024262,
+      "nisa": 51278782,
       "ideco": 0
     },
     "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 17497786
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 4024262
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 51278782
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 45845283.82462873,
-      "savings_after_cashFlow": 45725283.82462873,
-      "savings_before_asset_growth": 45725283.82462873,
-      "savings_after_asset_growth": 45725283.82462873,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 45725283.82462873,
-      "savings_at_yearlyData_push_assignment": 45725283.82462873
+      "savings_before_cashFlow": 28132000.127278604,
+      "savings_after_cashFlow": 27292000.127278604,
+      "savings_before_asset_growth": 27292000.127278604,
+      "savings_after_asset_growth": 27292000.127278604,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 27292000.127278604,
+      "savings_at_yearlyData_push_assignment": 27292000.127278604
     }
   },
   {
-    "year": 2087,
+    "year": 2077,
     "age": 89,
     "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": -2446363,
+      "investment": 3220022,
       "oneTime": 0,
       "publicPension": 2880000,
       "personalPension": 0
     },
-    "expense": 4020000,
+    "expense": 3780000,
     "expenseDetail": {
-      "living": 3000000,
+      "living": 3600000,
       "car": 0,
-      "housing": 1000000,
+      "housing": 0,
       "marriage": 0,
       "children": 0,
-      "appliances": 20000,
+      "appliances": 180000,
       "care": 0,
-      "retirementGap": 120000
+      "retirementGap": 720000
     },
-    "savings": 44585284,
+    "savings": 26392000,
     "nisa": {
-      "principal": 6300000,
-      "balance": 15051423
+      "principal": 18000000,
+      "balance": 53253480
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 5269585
     },
-    "investmentPrincipal": 6300000,
-    "balance": -1140000,
-    "totalAssets": 59636707,
+    "investmentPrincipal": 21000000,
+    "balance": -900000,
+    "totalAssets": 84915066,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": 44585284,
-      "investment": 0,
-      "nisa": 15051423,
+      "cash": 26392000,
+      "investment": 5269585,
+      "nisa": 53253480,
       "ideco": 0
     },
     "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 15051423
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 5269585
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 53253480
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 45725283.82462873,
-      "savings_after_cashFlow": 44585283.82462873,
-      "savings_before_asset_growth": 44585283.82462873,
-      "savings_after_asset_growth": 44585283.82462873,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 44585283.82462873,
-      "savings_at_yearlyData_push_assignment": 44585283.82462873
+      "savings_before_cashFlow": 27292000.127278604,
+      "savings_after_cashFlow": 26392000.127278604,
+      "savings_before_asset_growth": 26392000.127278604,
+      "savings_after_asset_growth": 26392000.127278604,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 26392000.127278604,
+      "savings_at_yearlyData_push_assignment": 26392000.127278604
     }
   },
   {
-    "year": 2088,
+    "year": 2078,
     "age": 90,
     "income": 2880000,
     "incomeDetail": {
       "self": 0,
       "spouse": 0,
-      "investment": 1165860,
+      "investment": -1909307,
       "oneTime": 0,
       "publicPension": 2880000,
       "personalPension": 0
     },
-    "expense": 3000000,
+    "expense": 3700000,
     "expenseDetail": {
-      "living": 3000000,
+      "living": 3600000,
       "car": 0,
       "housing": 0,
       "marriage": 0,
       "children": 0,
-      "appliances": 0,
+      "appliances": 100000,
       "care": 0,
-      "retirementGap": 120000
+      "retirementGap": 720000
     },
-    "savings": 44465284,
+    "savings": 25572000,
     "nisa": {
-      "principal": 6300000,
-      "balance": 16217283
+      "principal": 18000000,
+      "balance": 50267480
     },
     "ideco": {
       "principal": 0,
       "balance": 0
     },
     "taxable": {
-      "principal": 0,
-      "balance": 0
+      "principal": 3000000,
+      "balance": 6346279
     },
-    "investmentPrincipal": 6300000,
-    "balance": -120000,
-    "totalAssets": 60682567,
+    "investmentPrincipal": 21000000,
+    "balance": -820000,
+    "totalAssets": 82185759,
     "investedAmount": 0,
     "assetAllocation": {
-      "cash": 44465284,
-      "investment": 0,
-      "nisa": 16217283,
+      "cash": 25572000,
+      "investment": 6346279,
+      "nisa": 50267480,
       "ideco": 0
     },
     "products": {
-      "trust-0": {
-        "principal": 6300000,
-        "balance": 16217283
+      "stocks-0": {
+        "principal": 3000000,
+        "balance": 6346279
+      },
+      "trust-1": {
+        "principal": 18000000,
+        "balance": 50267480
+      },
+      "ideco-2": {
+        "principal": 0,
+        "balance": 0
       }
     },
     "debug": {
       "replenishmentTriggered": false,
-      "savings_before_cashFlow": 44585283.82462873,
-      "savings_after_cashFlow": 44465283.82462873,
-      "savings_before_asset_growth": 44465283.82462873,
-      "savings_after_asset_growth": 44465283.82462873,
-      "totalInvestmentPrincipal_before_push": 6300000,
-      "savings_before_yearlyData_push": 44465283.82462873,
-      "savings_at_yearlyData_push_assignment": 44465283.82462873
+      "savings_before_cashFlow": 26392000.127278604,
+      "savings_after_cashFlow": 25572000.127278604,
+      "savings_before_asset_growth": 25572000.127278604,
+      "savings_after_asset_growth": 25572000.127278604,
+      "totalInvestmentPrincipal_before_push": 21000000,
+      "savings_before_yearlyData_push": 25572000.127278604,
+      "savings_at_yearlyData_push_assignment": 25572000.127278604
     }
   }
 ]

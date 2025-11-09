@@ -401,6 +401,57 @@ export const useFormState = () => {
           }
         }
 
+        // 住宅リフォームプランのコストが0または空になった場合、そのプランを削除
+        if (name.startsWith('houseRenovationPlans') && name.endsWith('.cost') && (value === '' || n(value) === 0)) {
+          const indices = name.match(/\d+/g);
+          if (indices) {
+            const index = parseInt(indices[0], 10);
+            newState.houseRenovationPlans = newState.houseRenovationPlans.filter((_, i) => i !== index);
+          }
+        }
+
+        // 介護プランのコストが0または空になった場合、そのプランを削除
+        if (name.startsWith('parentCarePlans') && name.endsWith('.monthly10kJPY') && (value === '' || n(value) === 0)) {
+          const indices = name.match(/\d+/g);
+          if (indices) {
+            const index = parseInt(indices[0], 10);
+            newState.parentCarePlans = newState.parentCarePlans.filter((_, i) => i !== index);
+          }
+        }
+
+        // その他一時金の名称が空になった場合、そのプランを削除
+        if ((name.startsWith('otherLumpSums') || name.startsWith('spouseOtherLumpSums')) && name.endsWith('.name') && value === '') {
+          const planType = name.startsWith('otherLumpSums') ? 'otherLumpSums' : 'spouseOtherLumpSums';
+          const indices = name.match(/\d+/g);
+          if (indices) {
+            const index = parseInt(indices[0], 10);
+            newState[planType] = newState[planType].filter((_, i) => i !== index);
+          }
+        }
+
+        // 家電プランの入力が変更され、名前が空になった場合、そのプランを削除
+        if (name.startsWith('appliances') && name.endsWith('.name') && value === '') {
+          const indices = name.match(/\d+/g);
+          if (indices) {
+            const index = parseInt(indices[0], 10);
+            newState.appliances = newState.appliances.filter((_, i) => i !== index);
+          }
+        }
+
+        // 個人年金の受け取り有無が変更された場合、プランをリセット
+        if (name === 'hasPersonalPension') {
+          if (value === false) {
+            newState.personalPensionPlans = [];
+          }
+        }
+
+        // 配偶者の個人年金の受け取り有無が変更された場合、プランをリセット
+        if (name === 'hasSpousePersonalPension') {
+          if (value === false) {
+            newState.spousePersonalPensionPlans = [];
+          }
+        }
+
         return newState;
       });
     }
