@@ -219,7 +219,7 @@ export const createApiParams = (formData: FormDataState): SimulationInputParams 
 
     postRetirementLiving10kJPY: n(formData.postRetirementLivingCost),
     pensionMonthly10kJPY: n(formData.pensionAmount),
-    spousePensionMonthly10kJPY: (formData.familyComposition === '既婚' || formData.planToMarry === 'する') ? n(formData.spousePensionAmount) : undefined,
+    spousePensionAmount: (formData.familyComposition === '既婚' || formData.planToMarry === 'する') ? n(formData.spousePensionAmount) : undefined,
 
     currentSavingsJPY: n(formData.currentSavings) * FC.YEN_PER_MAN,
     monthlySavingsJPY: n(formData.monthlySavings),

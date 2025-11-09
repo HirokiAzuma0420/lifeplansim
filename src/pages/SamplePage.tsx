@@ -137,7 +137,7 @@ export default function SamplePage() {
           cares: formData.parentCareAssumption === 'はい' ? formData.parentCarePlans.map(p => ({ id: p.id, parentCurrentAge: n(p.parentCurrentAge), parentCareStartAge: n(p.parentCareStartAge), years: n(p.years), monthly10kJPY: n(p.monthly10kJPY) })) : [],
           postRetirementLiving10kJPY: n(formData.postRetirementLivingCost),
           pensionMonthly10kJPY: n(formData.pensionAmount),
-          spousePensionMonthly10kJPY: formData.familyComposition === '既婚' ? n(formData.spousePensionAmount) : undefined,
+          spousePensionAmount: formData.familyComposition === '既婚' ? n(formData.spousePensionAmount) : undefined,
           currentSavingsJPY: n(formData.currentSavings) * 10000,
           monthlySavingsJPY: n(formData.monthlySavings),
           products: products,
