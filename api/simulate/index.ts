@@ -288,13 +288,13 @@ export function runSimulation(params: SimulationInputParams): YearlyData[] {
   const simulationYears = params.endAge - params.initialAge + 1;
 
   // --- 資産とリターンの初期化 ---
-  let savings = n(params.currentSavingsJPY);
   const productBalances: Record<string, AccountBucket> = {};
   productList.forEach((p, index) => {
     const productId = `${p.key}-${index}`;
     const current = n(p.currentJPY);
     productBalances[productId] = { principal: current, balance: current };
   });
+  let savings = n(params.currentSavingsJPY); // 現金預金のみで初期化
 
       let cumulativeNisaContribution = productList
         .filter(p => p.account === '非課税')
@@ -373,25 +373,25 @@ export function runSimulation(params: SimulationInputParams): YearlyData[] {
     // ★ 修正: 将来結婚する場合も考慮して配偶者の年齢を計算
     const spouseCurrentAge = (ageDiff !== undefined) ? currentAge - ageDiff : undefined;
 
-    // 59歳時点の年収を記録
-    if (currentAge === 59) {
-      selfGrossIncomeAt59 = currentSelfGrossIncome;
-    }
-    if (spouseCurrentAge === 59) {
-      spouseGrossIncomeAt59 = currentSpouseGrossIncome;
-    }
-
     // 収入の更新（昇給または再雇用による減給）
     if (i > 0) {
       // 本人の収入更新
-      if (params.reemployment && currentAge >= params.reemployment.startAge && currentAge < params.retirementAge) {
+      if (params.reemployment && currentAge > params.reemployment.startAge && currentAge < params.retirementAge) {
         // 再雇用期間中: 59歳時点の額面年収から減給
         if (selfGrossIncomeAt59 !== null) {
           currentSelfGrossIncome = selfGrossIncomeAt59 * (1 - params.reemployment.reductionRate);
         }
-      } else if (currentAge < params.retirementAge) {
+      } else if (currentAge < params.retirementAge) { // 60歳も昇給対象に含める
         // 通常の昇給
         currentSelfGrossIncome *= (1 + n(params.incomeGrowthRate));
+      }
+      // 59歳時点の年収を記録（昇給後）
+      if (currentAge === 59) {
+        selfGrossIncomeAt59 = currentSelfGrossIncome;
+        // 60歳から再雇用の場合、このタイミングで減給を適用
+        if (params.reemployment && params.reemployment.startAge === 60) {
+          currentSelfGrossIncome = selfGrossIncomeAt59 * (1 - params.reemployment.reductionRate);
+        }
       }
 
       // 配偶者の収入更新
@@ -401,10 +401,15 @@ export function runSimulation(params: SimulationInputParams): YearlyData[] {
         }
       } else if (params.marriage && currentAge === n(params.marriage.age)) {
         // 結婚した年に配偶者の収入を初期設定 (ネストされた spouse オブジェクトから取得)
-        currentSpouseGrossIncome = n(params.marriage.spouse?.customIncomeJPY); // 修正済み
+        currentSpouseGrossIncome = n(params.marriage.spouse?.incomeGross);
       } else if (spouseCurrentAge !== undefined && params.spouseRetirementAge && spouseCurrentAge < n(params.spouseRetirementAge) && currentSpouseGrossIncome > 0) {
         // 結婚後、退職前まで昇給
         currentSpouseGrossIncome *= (1 + (n(params.spouseIncomeGrowthRate) ?? 0));
+      }
+
+      // 配偶者の59歳時点の年収を記録（昇給後）
+      if (spouseCurrentAge === 59) {
+        spouseGrossIncomeAt59 = currentSpouseGrossIncome;
       }
     }
 
