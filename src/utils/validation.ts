@@ -21,13 +21,17 @@ const isAgeOrFutureAgeValid = (value: unknown, personAge: unknown) => isRequired
 
 const areAllAppliancesValid = (appliances: FormDataState['appliances']) => appliances.every(a => isRequired(a.name) && isPositiveNumber(a.cycle) && isPositiveNumber(a.cost) && isRequired(a.firstReplacementAfterYears) && isZeroOrGreater(a.firstReplacementAfterYears));
 
-export const validationRules: FieldValidationRules = {
-  // --- 家族構成 ---
+// --- セクションごとのバリデーションルール定義 ---
+
+// --- 家族構成 ---
+const familyCompositionRules: FieldValidationRules = {
   familyComposition: [
     { message: '家族構成を選択してください。', isValid: isRequired },
   ],
+};
 
-  // --- 現在の収入 ---
+// --- 現在の収入 ---
+const currentIncomeRules: FieldValidationRules = {
   personAge: [
     { message: `年齢は${FC.VALIDATION_MIN_AGE}歳から${FC.VALIDATION_MAX_AGE}歳の間で入力してください。`, isValid: isAgeValid },
   ],
@@ -40,15 +44,16 @@ export const validationRules: FieldValidationRules = {
   spouseMainIncome: [
     { message: '配偶者の本業年間収入（額面）を入力してください。', isValid: (v, fd) => fd.familyComposition !== '既婚' || isPositiveNumber(v) },
   ],
+};
 
-  // --- 現在の支出 ---
+// --- 現在の支出 ---
+const currentExpensesRules: FieldValidationRules = {
   expenseMethod: [
     { message: '支出の入力方法を選択してください。', isValid: isRequired },
   ],
   livingCostSimple: [
     { message: '月々の生活費を入力してください。', isValid: (v, fd) => fd.expenseMethod !== '簡単' || isPositiveNumber(v) },
   ],
-  // (詳細支出)
   utilitiesCost: [
     { message: '水道・光熱費を入力してください。', isValid: (v, fd) => fd.expenseMethod !== '詳細' || isPositiveNumber(v) },
   ],
@@ -70,8 +75,10 @@ export const validationRules: FieldValidationRules = {
   transportationCost: [
     { message: '交通費を入力してください。', isValid: (v, fd) => fd.expenseMethod !== '詳細' || isPositiveNumber(v) },
   ],
+};
 
-  // --- ライフイベント - 結婚 ---
+// --- ライフイベント - 結婚 ---
+const marriageRules: FieldValidationRules = {
   planToMarry: [
     { message: '結婚の予定を選択してください。', isValid: (v, fd) => fd.familyComposition !== '独身' || isRequired(v) },
   ],
@@ -93,8 +100,10 @@ export const validationRules: FieldValidationRules = {
   housingCostAfterMarriage: [
     { message: '結婚後の住居費を入力してください。', isValid: (v, fd) => fd.planToMarry !== 'する' || isPositiveNumber(v) },
   ],
+};
 
-  // --- ライフイベント - 子ども ---
+// --- ライフイベント - 子ども ---
+const childrenRules: FieldValidationRules = {
   hasChildren: [
     { message: 'お子さまの有無を選択してください。', isValid: isRequired },
   ],
@@ -107,8 +116,10 @@ export const validationRules: FieldValidationRules = {
   educationPattern: [
     { message: '教育方針を選択してください。', isValid: (v, fd) => fd.hasChildren !== 'はい' || isRequired(v) },
   ],
+};
 
-  // --- ライフイベント - 住宅 ---
+// --- ライフイベント - 住宅 ---
+const housingRules: FieldValidationRules = {
   housingType: [
     { message: '現在の住居タイプを選択してください。', isValid: isRequired },
   ],
@@ -124,7 +135,6 @@ export const validationRules: FieldValidationRules = {
   housePurchaseIntent: [
     { message: '住宅購入の意向を選択してください。', isValid: (v, fd) => fd.housingType !== '賃貸' || isRequired(v) },
   ],
-
   'housePurchasePlan.age': [
     { message: '購入予定年齢を入力してください。', isValid: (v, fd) => fd.housePurchaseIntent !== 'yes' || isAgeOrFutureAgeValid(v, fd.personAge) },
     { message: '購入予定年齢は現在の年齢以上に設定してください。', isValid: (v, fd) => fd.housePurchaseIntent !== 'yes' || isAgeOrFutureAgeValid(v, fd.personAge) },
@@ -141,7 +151,6 @@ export const validationRules: FieldValidationRules = {
   'housePurchasePlan.interestRate': [
     { message: '想定金利を入力してください。', isValid: (v, fd) => fd.housePurchaseIntent !== 'yes' || isZeroOrGreater(v) },
   ],
-
   'houseRenovationPlans.0.age': [
     { message: 'リフォームの実施予定年齢を入力してください。', isValid: (v, fd) => fd.houseRenovationPlans.length === 0 || isAgeOrFutureAgeValid(v, fd.personAge) },
     { message: '実施予定年齢は現在の年齢以上に設定してください。', isValid: (v, fd) => fd.houseRenovationPlans.length === 0 || isAgeOrFutureAgeValid(v, fd.personAge) },
@@ -149,9 +158,10 @@ export const validationRules: FieldValidationRules = {
   'houseRenovationPlans.0.cost': [
     { message: 'リフォーム費用を入力してください。', isValid: (v, fd) => fd.houseRenovationPlans.length === 0 || isPositiveNumber(v) },
   ],
+};
 
-
-  // --- ライフイベント - 車 ---
+// --- ライフイベント - 車 ---
+const carRules: FieldValidationRules = {
   carCurrentLoanInPayment: [
     { message: '現在のローン返済状況を選択してください。', isValid: isRequired },
   ],
@@ -179,13 +189,17 @@ export const validationRules: FieldValidationRules = {
   carLoanYears: [
     { message: 'ローン年数を入力してください。', isValid: (v, fd) => fd.carLoanUsage !== 'はい' || isPositiveNumber(v) },
   ],
+};
 
-  // --- ライフイベント - 介護 ---
+// --- ライフイベント - 介護 ---
+const careRules: FieldValidationRules = {
   parentCareAssumption: [
     { message: '親の介護費用の想定を選択してください。', isValid: isRequired },
   ],
+};
 
-  // --- 老後の計画 ---
+// --- 老後の計画・退職 ---
+const retirementPlanRules: FieldValidationRules = {
   retirementAge: [
     { message: '退職年齢を入力してください。', isValid: isRequired },
   ],
@@ -207,16 +221,16 @@ export const validationRules: FieldValidationRules = {
   spousePensionAmount: [
     { message: '配偶者の年金受給額（月々）を入力してください。', isValid: (v, fd) => fd.familyComposition !== '既婚' || isPositiveNumber(v) },
   ],
-
-  // --- 退職・年金 ---
   reemploymentReductionRate: [
     { message: '定年再雇用時の減給率を入力してください。', isValid: (v, fd) => !fd.assumeReemployment || isRequired(v) },
   ],
   spouseReemploymentReductionRate: [
     { message: '配偶者の定年再雇用時の減給率を入力してください。', isValid: (v, fd) => !fd.spouseAssumeReemployment || isRequired(v) },
   ],
+};
 
-  // --- 退職・年金（本人） ---
+// --- 退職・年金（本人） ---
+const retirementIncomeRules: FieldValidationRules = {
   'retirementIncome.amount': [
     { message: '退職金の受取額を入力してください。', isValid: (v, fd) => !fd.retirementIncome || isPositiveNumber(v) },
   ],
@@ -244,8 +258,10 @@ export const validationRules: FieldValidationRules = {
   'otherLumpSums.*.age': [
     { message: 'その他一時金の受取年齢を入力してください。', isValid: (v, fd) => isAgeOrFutureAgeValid(v, fd.personAge) },
   ],
+};
 
-  // --- 退職・年金（配偶者） ---
+// --- 退職・年金（配偶者） ---
+const spouseRetirementIncomeRules: FieldValidationRules = {
   'spouseRetirementIncome.amount': [
     { message: '配偶者の退職金の受取額を入力してください。', isValid: (v, fd) => !fd.spouseRetirementIncome || isPositiveNumber(v) },
   ],
@@ -273,16 +289,20 @@ export const validationRules: FieldValidationRules = {
   'spouseOtherLumpSums.*.age': [
     { message: '配偶者のその他一時金の受取年齢を入力してください。', isValid: (v, fd) => isAgeOrFutureAgeValid(v, fd.spouseAge) },
   ],
+};
 
-  // --- 現在の資産 ---
+// --- 現在の資産 ---
+const currentAssetsRules: FieldValidationRules = {
   currentSavings: [
     { message: '現在の預貯金額を入力してください。', isValid: isZeroOrGreater },
   ],
   emergencyFund: [
     { message: '生活防衛資金を入力してください。', isValid: isZeroOrGreater },
   ],
+};
 
-  // --- その他 ---
+// --- シミュレーション設定 ---
+const otherRules: FieldValidationRules = {
   simulationPeriodAge: [
     { message: 'シミュレーション終了年齢を入力してください。', isValid: (v, fd) => n(v) > n(fd.personAge) },
   ],
@@ -298,10 +318,25 @@ export const validationRules: FieldValidationRules = {
   fixedInterestRate: [
     { message: '固定利回りを入力してください。', isValid: (v, fd) => fd.interestRateScenario !== '固定利回り' || isRequired(v) },
   ],
-
-  // --- 任意項目（バリデーション不要なもの） ---
-  // sideJobIncome, spouseSideJobIncome, investment関連, appliances, retirementIncomeなど
 };
+
+export const validationRules: FieldValidationRules = {
+  ...familyCompositionRules,
+  ...currentIncomeRules,
+  ...currentExpensesRules,
+  ...marriageRules,
+  ...childrenRules,
+  ...housingRules,
+  ...carRules,
+  ...careRules,
+  ...retirementPlanRules,
+  ...retirementIncomeRules,
+  ...spouseRetirementIncomeRules,
+  ...currentAssetsRules,
+  ...otherRules,
+};
+
+// --- バリデーション実行関数 ---
 
 export const validate = (formData: FormDataState, fields: (keyof FormDataState | string)[]): { [key: string]: string } => {
   const errors: { [key: string]: string } = {};
