@@ -175,6 +175,13 @@ export const useFormState = () => {
     if (formData.familyComposition === '既婚') {
       return allSections.filter(section => section !== 'ライフイベント - 結婚');
     }
+    // `HomeLifeEventSection` は `housingType` の値によって表示が大きく変わるため、
+    // `familyComposition` に依らず常に表示されるべきです。
+    // しかし、`effectiveSections` のロジックでは `familyComposition` が '既婚' の場合に
+    // 'ライフイベント - 結婚' を除外するだけで、'ライフイベント - 住まい' は影響を受けません。
+    // そのため、このセクションのフィールドをバリデーション対象に含める必要があります。
+    // `SECTION_FIELD_MAP` に 'ライフイベント - 住まい' を追加することで、
+    // `validateSection` がこのセクションのフィールドを正しく検証できるようになります。
     return allSections;
   }, [formData.familyComposition]);
 
@@ -195,6 +202,12 @@ export const useFormState = () => {
           if (!rule.isValid(formData[field], formData)) {
             newErrors[field] = rule.message;
             break; // 最初のバリデーションエラーで中断
+          }
+        }
+      } else if (field === 'housePurchasePlan' && formData.housePurchasePlan) {
+        for (const key in formData.housePurchasePlan) {
+          if (Object.prototype.hasOwnProperty.call(validationRules, `housePurchasePlan.${key}`)) {
+            // ここで housePurchasePlan の各フィールドに対するバリデーションを実行
           }
         }
       }

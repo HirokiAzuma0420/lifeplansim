@@ -1,4 +1,4 @@
-﻿﻿import React, { useState, useEffect, useCallback } from 'react';
+﻿﻿﻿﻿import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { YearlyData, SimulationInputParams } from '@/types/simulation-types';
 import { createApiParams } from '@/utils/api-adapter';
@@ -205,7 +205,7 @@ export default function FormPage() {
       '現在の収入': <IncomeSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
       '現在の支出': <ExpenseSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
       'ライフイベント - 車': <CarLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
-      'ライフイベント - 家': <HomeLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} setFormData={setFormData} handleRenovationPlanChange={handleRenovationPlanChange} />,
+      'ライフイベント - 住宅': <HomeLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} setFormData={setFormData} handleRenovationPlanChange={handleRenovationPlanChange} />,
       'ライフイベント - 結婚': <MarriageLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
       'ライフイベント - 子供': <ChildrenLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
       'ライフイベント - 生活': <LivingLifeEventSection formData={formData} handleApplianceChange={handleApplianceChange} addAppliance={addAppliance} handleRemoveAppliance={handleRemoveAppliance} />,
