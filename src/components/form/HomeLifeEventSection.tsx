@@ -107,7 +107,7 @@ const HomeLifeEventSection: React.FC<HomeLifeEventSectionProps> = ({ formData, h
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="housePurchasePlan.age">購入予定年齢</label>
                 <div className="flex">
-                  <input type="number" id="housePurchasePlan.age" name="housePurchasePlan.age" value={formData.housePurchasePlan.age ?? ''} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.age'] ? 'border-red-500' : ''}`} />
+                  <input type="number" id="housePurchasePlan.age" name="housePurchasePlan.age" value={formData.housePurchasePlan.age ?? ''} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.age'] ? 'border-red-500' : ''}`} required />
                   <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">歳</span>
                 </div>
                 {errors['housePurchasePlan.age'] && <p className="text-red-500 text-xs italic mt-1">{errors['housePurchasePlan.age']}</p>}
@@ -115,7 +115,7 @@ const HomeLifeEventSection: React.FC<HomeLifeEventSectionProps> = ({ formData, h
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="housePurchasePlan.price">予定価格</label>
                 <div className="flex">
-                  <input type="number" id="housePurchasePlan.price" name="housePurchasePlan.price" value={formData.housePurchasePlan.price ?? ''} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.price'] ? 'border-red-500' : ''}`} />
+                  <input type="number" id="housePurchasePlan.price" name="housePurchasePlan.price" value={formData.housePurchasePlan.price ?? ''} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.price'] ? 'border-red-500' : ''}`} required />
                   <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
                 </div>
                 {errors['housePurchasePlan.price'] && <p className="text-red-500 text-xs italic mt-1">{errors['housePurchasePlan.price']}</p>}
@@ -123,7 +123,7 @@ const HomeLifeEventSection: React.FC<HomeLifeEventSectionProps> = ({ formData, h
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="housePurchasePlan.downPayment">頭金</label>
                 <div className="flex">
-                  <input type="number" id="housePurchasePlan.downPayment" name="housePurchasePlan.downPayment" value={formData.housePurchasePlan.downPayment ?? ''} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.downPayment'] ? 'border-red-500' : ''}`} />
+                  <input type="number" id="housePurchasePlan.downPayment" name="housePurchasePlan.downPayment" value={formData.housePurchasePlan.downPayment ?? ''} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.downPayment'] ? 'border-red-500' : ''}`} required />
                   <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
                 </div>
                 {errors['housePurchasePlan.downPayment'] && <p className="text-red-500 text-xs italic mt-1">{errors['housePurchasePlan.downPayment']}</p>}
@@ -131,7 +131,7 @@ const HomeLifeEventSection: React.FC<HomeLifeEventSectionProps> = ({ formData, h
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2">ローン年数</label>
                 <div className="flex">
-                  <input type="number" name="housePurchasePlan.loanYears" value={formData.housePurchasePlan.loanYears ?? ''} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.loanYears'] ? 'border-red-500' : ''}`} />
+                  <input type="number" name="housePurchasePlan.loanYears" value={formData.housePurchasePlan.loanYears ?? ''} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.loanYears'] ? 'border-red-500' : ''}`} required />
                   <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">年</span>
                 </div>
                 {errors['housePurchasePlan.loanYears'] && <p className="text-red-500 text-xs italic mt-1">{errors['housePurchasePlan.loanYears']}</p>}

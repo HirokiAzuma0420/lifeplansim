@@ -11,14 +11,13 @@ type ValidationRule = {
   isValid: (value: FormValue, formData: FormDataState) => boolean;
 };
 
-export type FieldValidationRules = {
-  [key in keyof FormDataState]?: ValidationRule[];
-};
+export type FieldValidationRules = { [key: string]: ValidationRule[] };
 
 const isRequired = (value: unknown) => value !== '' && value !== null && value !== undefined && String(value).trim().length > 0;
 const isPositiveNumber = (value: unknown) => isRequired(value) && n(value) > 0;
 const isZeroOrGreater = (value: unknown) => isRequired(value) && n(value) >= 0;
 const isAgeValid = (value: unknown) => isRequired(value) && n(value) >= FC.VALIDATION_MIN_AGE && n(value) <= FC.VALIDATION_MAX_AGE;
+const isAgeOrFutureAgeValid = (value: unknown, personAge: unknown) => isRequired(value) && n(value) >= n(personAge) && n(value) <= FC.VALIDATION_MAX_AGE;
 
 const areAllAppliancesValid = (appliances: FormDataState['appliances']) => appliances.every(a => isRequired(a.name) && isPositiveNumber(a.cycle) && isPositiveNumber(a.cost));
 
@@ -123,6 +122,21 @@ export const validationRules: FieldValidationRules = {
     { message: '住宅購入の意向を選択してください。', isValid: (v, fd) => fd.housingType !== '賃貸' || isRequired(v) },
   ],
 
+  'housePurchasePlan.age': [
+    { message: '購入予定年齢を入力してください。', isValid: (v, fd) => fd.housePurchaseIntent !== 'yes' || isRequired(v) },
+    { message: '購入予定年齢は現在の年齢以上に設定してください。', isValid: (v, fd) => fd.housePurchaseIntent !== 'yes' || isAgeOrFutureAgeValid(v, fd.personAge) },
+  ],
+  'housePurchasePlan.price': [
+    { message: '予定価格を入力してください。', isValid: (v, fd) => fd.housePurchaseIntent !== 'yes' || isPositiveNumber(v) },
+  ],
+  'housePurchasePlan.downPayment': [
+    { message: '頭金を入力してください。', isValid: (v, fd) => fd.housePurchaseIntent !== 'yes' || isZeroOrGreater(v) },
+  ],
+  'housePurchasePlan.loanYears': [
+    { message: 'ローン年数を入力してください。', isValid: (v, fd) => fd.housePurchaseIntent !== 'yes' || isPositiveNumber(v) },
+  ],
+
+
   // --- ライフイベント - 車 ---
   carPurchasePlan: [
     { message: '車の買い替え・購入予定を選択してください。', isValid: isRequired },
@@ -206,4 +220,31 @@ export const validationRules: FieldValidationRules = {
 
   // --- 任意項目（バリデーション不要なもの） ---
   // sideJobIncome, spouseSideJobIncome, investment関連, appliances, retirementIncomeなど
+};
+
+export const validate = (formData: FormDataState, fields: (keyof FormDataState | string)[]): { [key: string]: string } => {
+  const errors: { [key: string]: string } = {};
+
+  for (const field of fields) {
+    const rules = validationRules[field];
+    if (rules) {
+      // ネストされたプロパティの値を取得 (例: 'housePurchasePlan.age')
+      const value = field.includes('.')
+        ? field.split('.').reduce((obj: unknown, key: string) => {
+            if (typeof obj === 'object' && obj !== null && key in obj) {
+              return (obj as Record<string, unknown>)[key];
+            }
+            return undefined;
+          }, formData)
+        : formData[field as keyof FormDataState];
+
+      for (const rule of rules) {
+        if (!rule.isValid(value as FormValue, formData)) {
+          errors[field] = rule.message;
+          break; // 最初のバリデーションエラーでループを抜ける
+        }
+      }
+    }
+  }
+  return errors;
 };
