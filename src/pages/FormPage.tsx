@@ -1,4 +1,4 @@
-﻿﻿﻿﻿import React, { useState, useEffect, useCallback } from 'react';
+﻿﻿import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { YearlyData, SimulationInputParams } from '@/types/simulation-types';
 import { createApiParams } from '@/utils/api-adapter';
@@ -21,7 +21,7 @@ import SavingsSection from '@/components/form/SavingsSection';
 import RetirementIncomeSection from '@/components/form/RetirementIncomeSection';
 import InvestmentSection from '@/components/form/InvestmentSection';
 import SimulationSettingsSection from '@/components/form/SimulationSettingsSection';
-import { MASTER_SECTIONS } from '@/constants/financial_const';
+import { MASTER_SECTIONS, SECTION_NAMES } from '@/constants/financial_const';
 
 // --- Helper Components ---
 const formatYen = (value: number | string | undefined) => {
@@ -201,27 +201,27 @@ export default function FormPage() {
   const renderSection = () => {
     const sectionName = effectiveSections[currentSectionIndex];
     const components: { [key: string]: React.ReactElement } = {
-      '家族構成': <FamilySection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
-      '現在の収入': <IncomeSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
-      '現在の支出': <ExpenseSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
-      'ライフイベント - 車': <CarLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
-      'ライフイベント - 住宅': <HomeLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} setFormData={setFormData} handleRenovationPlanChange={handleRenovationPlanChange} />,
-      'ライフイベント - 結婚': <MarriageLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
-      'ライフイベント - 子供': <ChildrenLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
-      'ライフイベント - 生活': <LivingLifeEventSection formData={formData} handleApplianceChange={handleApplianceChange} addAppliance={addAppliance} handleRemoveAppliance={handleRemoveAppliance} />,
-      'ライフイベント - 親の介護': <ParentCareLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} handleCarePlanChange={handleCarePlanChange} addCarePlan={addCarePlan} removeCarePlan={removeCarePlan} totalCareCost={totalCareCost} />,
-      'ライフイベント - 退職・年金': <RetirementIncomeSection formData={formData} handleInputChange={handleInputChange} setFormData={setFormData} errors={errors} />,
-      'ライフイベント - 老後': <RetirementLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
-      '貯蓄': <SavingsSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
-      '投資': <InvestmentSection formData={formData} handleInputChange={handleInputChange} monthlyInvestmentAmounts={formData.monthlyInvestmentAmounts} />,
-      'シミュレーション設定': <SimulationSettingsSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
+      [SECTION_NAMES.FAMILY]: <FamilySection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
+      [SECTION_NAMES.INCOME]: <IncomeSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
+      [SECTION_NAMES.EXPENSE]: <ExpenseSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
+      [SECTION_NAMES.CAR]: <CarLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
+      [SECTION_NAMES.HOUSING]: <HomeLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} setFormData={setFormData} handleRenovationPlanChange={handleRenovationPlanChange} />,
+      [SECTION_NAMES.MARRIAGE]: <MarriageLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
+      [SECTION_NAMES.CHILDREN]: <ChildrenLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
+      [SECTION_NAMES.LIVING]: <LivingLifeEventSection formData={formData} handleApplianceChange={handleApplianceChange} addAppliance={addAppliance} handleRemoveAppliance={handleRemoveAppliance} />,
+      [SECTION_NAMES.PARENT_CARE]: <ParentCareLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} handleCarePlanChange={handleCarePlanChange} addCarePlan={addCarePlan} removeCarePlan={removeCarePlan} totalCareCost={totalCareCost} />,
+      [SECTION_NAMES.RETIREMENT_INCOME]: <RetirementIncomeSection formData={formData} handleInputChange={handleInputChange} setFormData={setFormData} errors={errors} />,
+      [SECTION_NAMES.RETIREMENT_PLAN]: <RetirementLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
+      [SECTION_NAMES.SAVINGS]: <SavingsSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
+      [SECTION_NAMES.INVESTMENT]: <InvestmentSection formData={formData} handleInputChange={handleInputChange} monthlyInvestmentAmounts={formData.monthlyInvestmentAmounts} />,
+      [SECTION_NAMES.SIMULATION_SETTINGS]: <SimulationSettingsSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
     };
     return components[sectionName] || null;
   };
 
   const progress = ((currentSectionIndex + 1) / effectiveSections.length) * 100;
 
-  const isHouseLoanSection = effectiveSections[currentSectionIndex] === 'ライフイベント - 家';
+  const isHouseLoanSection = effectiveSections[currentSectionIndex] === SECTION_NAMES.HOUSING;
   const shouldShowLoanBox = isHouseLoanSection &&
     (
       formData.housingLoanStatus === 'これから借りる' ||
