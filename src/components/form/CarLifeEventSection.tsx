@@ -19,11 +19,11 @@ const CarLifeEventSection: React.FC<CarLifeEventSectionProps> = ({ formData, han
         <label className="block text-gray-700 text-sm font-bold mb-2">現在ローン返済中ですか？</label>
         <div className="mt-2 flex flex-wrap gap-4">
           <label className="inline-flex items-center gap-2">
-            <input type="radio" className="custom-radio" name="carCurrentLoanInPayment" value="yes" checked={formData.carCurrentLoanInPayment === 'yes'} onChange={handleInputChange} />
+            <input type="radio" className="custom-radio" name="carCurrentLoanInPayment" value="yes" checked={formData.carCurrentLoanInPayment === 'yes'} onChange={handleInputChange} required />
             <span>はい</span>
           </label>
           <label className="inline-flex items-center gap-2">
-            <input type="radio" className="custom-radio" name="carCurrentLoanInPayment" value="no" checked={formData.carCurrentLoanInPayment === 'no'} onChange={handleInputChange} />
+            <input type="radio" className="custom-radio" name="carCurrentLoanInPayment" value="no" checked={formData.carCurrentLoanInPayment === 'no'} onChange={handleInputChange} required />
             <span>いいえ</span>
           </label>
           {errors.carCurrentLoanInPayment && <p className="text-red-500 text-xs italic mt-2">{errors.carCurrentLoanInPayment}</p>}
@@ -33,7 +33,7 @@ const CarLifeEventSection: React.FC<CarLifeEventSectionProps> = ({ formData, han
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carCurrentLoanMonthly">月々の返済額</label>
               <div className="flex">
-                <input type="number" id="carCurrentLoanMonthly" name="carCurrentLoanMonthly" value={formData.carCurrentLoanMonthly} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors.carCurrentLoanMonthly ? 'border-red-500' : ''}`} />
+                <input type="number" id="carCurrentLoanMonthly" name="carCurrentLoanMonthly" value={formData.carCurrentLoanMonthly} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors.carCurrentLoanMonthly ? 'border-red-500' : ''}`} required />
                 <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">円/月</span>
               </div>
               {errors.carCurrentLoanMonthly && <p className="text-red-500 text-xs italic mt-1">{errors.carCurrentLoanMonthly}</p>}
@@ -41,7 +41,7 @@ const CarLifeEventSection: React.FC<CarLifeEventSectionProps> = ({ formData, han
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="carCurrentLoanRemainingMonths">残り支払い回数</label>
               <div className="flex">
-                <input type="number" id="carCurrentLoanRemainingMonths" name="carCurrentLoanRemainingMonths" value={formData.carCurrentLoanRemainingMonths} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors.carCurrentLoanRemainingMonths ? 'border-red-500' : ''}`} />
+                <input type="number" id="carCurrentLoanRemainingMonths" name="carCurrentLoanRemainingMonths" value={formData.carCurrentLoanRemainingMonths} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors.carCurrentLoanRemainingMonths ? 'border-red-500' : ''}`} required />
                 <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">ヶ月</span>
               </div>
               {errors.carCurrentLoanRemainingMonths && <p className="text-red-500 text-xs italic mt-1">{errors.carCurrentLoanRemainingMonths}</p>}

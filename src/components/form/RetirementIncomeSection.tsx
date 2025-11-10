@@ -150,15 +150,15 @@ const PersonRetirementIncomeForm: React.FC<{
 
             {plan.type === 'lumpSum' ? (
               <>
-                <FormNumberInput unit="万円" name={`${pensionPlansKey}.${index}.amount`} value={plan.amount} onChange={(e) => handleListItemChange(pensionPlansKey, index, 'amount', e.target.value)} label="受取総額" />
-                <FormNumberInput unit="歳" name={`${pensionPlansKey}.${index}.startAge`} value={plan.startAge} onChange={(e) => handleListItemChange(pensionPlansKey, index, 'startAge', e.target.value)} label="受取年齢" />
+                <FormNumberInput unit="万円" name={`${pensionPlansKey}.${index}.amount`} value={plan.amount} onChange={(e) => handleListItemChange(pensionPlansKey, index, 'amount', e.target.value)} label="受取総額" error={errors[`${pensionPlansKey}.${index}.amount`] || (errors[pensionPlansKey] && !plan.amount ? '入力してください' : undefined)} />
+                <FormNumberInput unit="歳" name={`${pensionPlansKey}.${index}.startAge`} value={plan.startAge} onChange={(e) => handleListItemChange(pensionPlansKey, index, 'startAge', e.target.value)} label="受取年齢" error={errors[`${pensionPlansKey}.${index}.startAge`] || (errors[pensionPlansKey] && !plan.startAge ? '入力してください' : undefined)} />
               </>
             ) : (
               <>
-                <FormNumberInput unit="万円" name={`${pensionPlansKey}.${index}.amount`} value={plan.amount} onChange={(e) => handleListItemChange(pensionPlansKey, index, 'amount', e.target.value)} label="年間受給額" />
-                <FormNumberInput unit="歳" name={`${pensionPlansKey}.${index}.startAge`} value={plan.startAge} onChange={(e) => handleListItemChange(pensionPlansKey, index, 'startAge', e.target.value)} label="受給開始年齢" />
+                <FormNumberInput unit="万円" name={`${pensionPlansKey}.${index}.amount`} value={plan.amount} onChange={(e) => handleListItemChange(pensionPlansKey, index, 'amount', e.target.value)} label="年間受給額" error={errors[`${pensionPlansKey}.${index}.amount`] || (errors[pensionPlansKey] && !plan.amount ? '入力してください' : undefined)} />
+                <FormNumberInput unit="歳" name={`${pensionPlansKey}.${index}.startAge`} value={plan.startAge} onChange={(e) => handleListItemChange(pensionPlansKey, index, 'startAge', e.target.value)} label="受給開始年齢" error={errors[`${pensionPlansKey}.${index}.startAge`] || (errors[pensionPlansKey] && !plan.startAge ? '入力してください' : undefined)} />
                 {plan.type === 'fixedTerm' && (
-                  <FormNumberInput unit="年" name={`${pensionPlansKey}.${index}.duration`} value={plan.duration || ''} onChange={(e) => handleListItemChange(pensionPlansKey, index, 'duration', e.target.value)} label="受給期間" />
+                  <FormNumberInput unit="年" name={`${pensionPlansKey}.${index}.duration`} value={plan.duration || ''} onChange={(e) => handleListItemChange(pensionPlansKey, index, 'duration', e.target.value)} label="受給期間" error={errors[`${pensionPlansKey}.${index}.duration`] || (errors[pensionPlansKey] && !plan.duration ? '入力してください' : undefined)} />
                 )}
               </>
             )}
@@ -172,6 +172,7 @@ const PersonRetirementIncomeForm: React.FC<{
             <Plus size={16} className="mr-1" /> 個人年金プランを追加
           </button>
         )}
+        {errors[pensionPlansKey] && !hasPersonalPension && <p className="text-red-500 text-xs italic mt-2">{errors[pensionPlansKey]}</p>}
       </div>
 
       {/* その他一時金 */}
@@ -184,9 +185,9 @@ const PersonRetirementIncomeForm: React.FC<{
         {hasOtherLumpSums && formData[otherLumpSumsKey].map((item, index) => (
           <div key={item.id} className="mt-4 space-y-4 pl-4 border-l-2 relative pb-10">
             <h4 className="font-semibold text-gray-700">一時金 {index + 1}</h4>
-            <FormInput type="text" name={`${otherLumpSumsKey}.${index}.name`} value={item.name} onChange={(e) => handleListItemChange(otherLumpSumsKey, index, 'name', e.target.value)} label="名称" placeholder="例：財形貯蓄" />
-            <FormNumberInput unit="万円" name={`${otherLumpSumsKey}.${index}.amount`} value={item.amount} onChange={(e) => handleListItemChange(otherLumpSumsKey, index, 'amount', e.target.value)} label="受取額" />
-            <FormNumberInput unit="歳" name={`${otherLumpSumsKey}.${index}.age`} value={item.age} onChange={(e) => handleListItemChange(otherLumpSumsKey, index, 'age', e.target.value)} label="受取年齢" />
+            <FormInput type="text" name={`${otherLumpSumsKey}.${index}.name`} value={item.name} onChange={(e) => handleListItemChange(otherLumpSumsKey, index, 'name', e.target.value)} label="名称" placeholder="例：財形貯蓄" error={errors[`${otherLumpSumsKey}.${index}.name`] || (errors[otherLumpSumsKey] && !item.name ? '入力してください' : undefined)} />
+            <FormNumberInput unit="万円" name={`${otherLumpSumsKey}.${index}.amount`} value={item.amount} onChange={(e) => handleListItemChange(otherLumpSumsKey, index, 'amount', e.target.value)} label="受取額" error={errors[`${otherLumpSumsKey}.${index}.amount`] || (errors[otherLumpSumsKey] && !item.amount ? '入力してください' : undefined)} />
+            <FormNumberInput unit="歳" name={`${otherLumpSumsKey}.${index}.age`} value={item.age} onChange={(e) => handleListItemChange(otherLumpSumsKey, index, 'age', e.target.value)} label="受取年齢" error={errors[`${otherLumpSumsKey}.${index}.age`] || (errors[otherLumpSumsKey] && !item.age ? '入力してください' : undefined)} />
             <button type="button" onClick={() => removeListItem(otherLumpSumsKey, index)} className="absolute bottom-2 right-2 text-red-500 hover:text-red-700">
               <Trash2 size={18} />
             </button>
@@ -197,6 +198,7 @@ const PersonRetirementIncomeForm: React.FC<{
             <Plus size={16} className="mr-1" /> その他一時金を追加
           </button>
         )}
+        {errors[otherLumpSumsKey] && !hasOtherLumpSums && <p className="text-red-500 text-xs italic mt-2">{errors[otherLumpSumsKey]}</p>}
       </div>
     </div>
   );

@@ -195,15 +195,16 @@ export const SECTION_FIELD_MAP: { section: string; fields: (keyof FormDataState)
   { section: SECTION_NAMES.INCOME, fields: ['personAge', 'spouseAge', 'mainIncome', 'spouseMainIncome', 'sideJobIncome', 'spouseSideJobIncome', 'annualRaiseRate', 'spouseAnnualRaiseRate'] as const },
   { section: SECTION_NAMES.EXPENSE, fields: ['expenseMethod', 'livingCostSimple', 'utilitiesCost', 'communicationCost', 'insuranceCost', 'educationCost', 'otherFixedCost', 'foodCost', 'dailyNecessitiesCost', 'transportationCost', 'clothingBeautyCost', 'socializingCost', 'hobbyEntertainmentCost', 'otherVariableCost'] as const },
   { section: SECTION_NAMES.CAR, fields: ['carPurchasePlan', 'carPrice', 'carFirstReplacementAfterYears', 'carReplacementFrequency', 'carLoanUsage', 'carLoanYears'] as const },
-  { section: SECTION_NAMES.HOUSING, fields: ['housingType', 'currentRentLoanPayment', 'loanRemainingYears', 'housePurchaseIntent', 'housePurchasePlan'] as const },
+  { section: SECTION_NAMES.HOUSING, fields: ['housingType', 'currentRentLoanPayment', 'loanMonthlyPayment', 'loanRemainingYears', 'housePurchaseIntent', 'housePurchasePlan'] as const },
   { section: SECTION_NAMES.MARRIAGE, fields: ['planToMarry', 'marriageAge', 'spouseAgeAtMarriage', 'spouseIncomePattern', 'spouseCustomIncome', 'livingCostAfterMarriage', 'housingCostAfterMarriage'] as const },
   { section: SECTION_NAMES.CHILDREN, fields: ['hasChildren', 'numberOfChildren', 'firstBornAge', 'educationPattern'] as const },
+  { section: SECTION_NAMES.LIVING, fields: ['appliances'] as const },
   { section: SECTION_NAMES.PARENT_CARE, fields: ['parentCareAssumption', 'parentCarePlans'] as const },
   { section: SECTION_NAMES.RETIREMENT_PLAN, fields: ['retirementAge', 'spouseRetirementAge', 'postRetirementLivingCost', 'pensionStartAge', 'pensionAmount', 'spousePensionStartAge', 'spousePensionAmount'] as const },
   { section: SECTION_NAMES.RETIREMENT_INCOME, fields: ['retirementIncome', 'spouseRetirementIncome', 'personalPensionPlans', 'spousePersonalPensionPlans', 'otherLumpSums', 'spouseOtherLumpSums', 'assumeReemployment', 'reemploymentReductionRate', 'spouseAssumeReemployment', 'spouseReemploymentReductionRate'] as const },
   { section: SECTION_NAMES.SAVINGS, fields: ['currentSavings', 'emergencyFund', 'hasInvestment', 'investmentStocksCurrent', 'investmentTrustCurrent', 'investmentBondsCurrent', 'investmentIdecoCurrent', 'investmentCryptoCurrent', 'investmentOtherCurrent'] as const },
   { section: SECTION_NAMES.INVESTMENT, fields: ['monthlyInvestmentAmounts', 'investmentStocksAnnualSpot', 'investmentTrustAnnualSpot', 'investmentBondsAnnualSpot', 'investmentIdecoAnnualSpot', 'investmentCryptoAnnualSpot', 'investmentOtherAnnualSpot', 'investmentStocksRate', 'investmentTrustRate', 'investmentBondsRate', 'investmentIdecoRate', 'investmentCryptoRate', 'investmentOtherRate', 'useSpouseNisa'] as const },
-  { section: SECTION_NAMES.SIMULATION_SETTINGS, fields: ['simulationPeriodAge', 'interestRateScenario', 'fixedInterestRate', 'appliances'] as const },
+  { section: SECTION_NAMES.SIMULATION_SETTINGS, fields: ['simulationPeriodAge', 'interestRateScenario', 'appliances'] as const },
 ];
 
 // =================================================================================

@@ -1,4 +1,4 @@
-﻿﻿import React, { useState, useEffect, useCallback } from 'react';
+﻿﻿﻿﻿import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { YearlyData, SimulationInputParams } from '@/types/simulation-types';
 import { createApiParams } from '@/utils/api-adapter';
@@ -208,7 +208,7 @@ export default function FormPage() {
       [SECTION_NAMES.HOUSING]: <HomeLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} setFormData={setFormData} handleRenovationPlanChange={handleRenovationPlanChange} />,
       [SECTION_NAMES.MARRIAGE]: <MarriageLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
       [SECTION_NAMES.CHILDREN]: <ChildrenLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
-      [SECTION_NAMES.LIVING]: <LivingLifeEventSection formData={formData} handleApplianceChange={handleApplianceChange} addAppliance={addAppliance} handleRemoveAppliance={handleRemoveAppliance} />,
+      [SECTION_NAMES.LIVING]: <LivingLifeEventSection formData={formData} handleApplianceChange={handleApplianceChange} errors={errors} addAppliance={addAppliance} handleRemoveAppliance={handleRemoveAppliance} />,
       [SECTION_NAMES.PARENT_CARE]: <ParentCareLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} handleCarePlanChange={handleCarePlanChange} addCarePlan={addCarePlan} removeCarePlan={removeCarePlan} totalCareCost={totalCareCost} />,
       [SECTION_NAMES.RETIREMENT_INCOME]: <RetirementIncomeSection formData={formData} handleInputChange={handleInputChange} setFormData={setFormData} errors={errors} />,
       [SECTION_NAMES.RETIREMENT_PLAN]: <RetirementLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,

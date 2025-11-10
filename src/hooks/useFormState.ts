@@ -4,7 +4,7 @@ import type { FormDataState, FormLocationState, InvestmentMonthlyAmounts } from 
 import type { CarePlan } from '@/types/simulation-types';
 import * as FC from '@/constants/financial_const';
 import { computeNetAnnual, calculateLoanPayment, n } from '@/utils/financial';
-import { validationRules, type FieldValidationRules } from '@/utils/validation';
+import { validate } from '@/utils/validation';
 
 const LIFE_PLAN_FORM_CACHE_KEY = 'lifePlanFormDataCache';
 
@@ -185,40 +185,86 @@ export const useFormState = () => {
     return allSections;
   }, [formData.familyComposition]);
 
-  const getFieldsForSection = (sectionName: string): (keyof FormDataState)[] => {
-    const section = FC.SECTION_FIELD_MAP.find(s => s.section === sectionName);
-    return section ? section.fields : [];
-  };
-
   const validateSection = useCallback((sectionIndex: number) => {
     const sectionName = effectiveSections[sectionIndex];
-    const fieldsToValidate = getFieldsForSection(sectionName);
-    const newErrors: { [key: string]: string } = {};
+    const section = FC.SECTION_FIELD_MAP.find(s => s.section === sectionName);
+    const fieldsToValidate: (keyof FormDataState | string)[] = section ? [...section.fields] : [];
 
-    fieldsToValidate.forEach(field => {
-      const rules = validationRules[field as keyof FieldValidationRules];
-      if (rules) {
-        for (const rule of rules) {
-          if (!rule.isValid(formData[field], formData)) {
-            newErrors[field] = rule.message;
-            break; // 最初のバリデーションエラーで中断
-          }
-        }
-      } else if (field === 'housePurchasePlan' && formData.housePurchasePlan) {
-        for (const key in formData.housePurchasePlan) {
-          if (Object.prototype.hasOwnProperty.call(validationRules, `housePurchasePlan.${key}`)) {
-            // ここで housePurchasePlan の各フィールドに対するバリデーションを実行
-          }
-        }
+    if (sectionName === 'ライフイベント - 住宅') {
+      if (formData.housePurchaseIntent === 'yes') {
+        fieldsToValidate.push(
+          'housePurchasePlan.age',
+          'housePurchasePlan.price',
+          'housePurchasePlan.downPayment',
+          'housePurchasePlan.loanYears',
+          'housePurchasePlan.interestRate'
+        );
       }
-    });
+      if (formData.houseRenovationPlans.length > 0) {
+        fieldsToValidate.push('houseRenovationPlans.0.age');
+        fieldsToValidate.push('houseRenovationPlans.0.cost');
+      }
+    } else if (sectionName === 'ライフイベント - 車') {
+      if (formData.carPurchasePlan === 'yes') {
+        fieldsToValidate.push(
+          'carFirstReplacementAfterYears',
+          'carPrice',
+          'carReplacementFrequency',
+          'carLoanUsage',
+          'carLoanYears'
+        );
+      }
+      if (formData.carCurrentLoanInPayment === 'yes') {
+        fieldsToValidate.push('carCurrentLoanMonthly', 'carCurrentLoanRemainingMonths');
+      }
+      // Also validate the base fields for this section
+      fieldsToValidate.push('carCurrentLoanInPayment', 'carPurchasePlan');
+    } else if (sectionName === FC.SECTION_NAMES.RETIREMENT_INCOME) {
+      // --- 本人 ---
+      if (formData.retirementIncome) {
+        fieldsToValidate.push('retirementIncome.amount', 'retirementIncome.age', 'retirementIncome.yearsOfService');
+      }
+      if (formData.personalPensionPlans.length > 0) {
+        formData.personalPensionPlans.forEach((_, index) => {
+          fieldsToValidate.push(`personalPensionPlans.${index}.amount`, `personalPensionPlans.${index}.startAge`);
+          if (formData.personalPensionPlans[index].type === 'fixedTerm') {
+            fieldsToValidate.push(`personalPensionPlans.${index}.duration`);
+          }
+        });
+      }
+      if (formData.otherLumpSums.length > 0) {
+        formData.otherLumpSums.forEach((_, index) => {
+          fieldsToValidate.push(`otherLumpSums.${index}.name`, `otherLumpSums.${index}.amount`, `otherLumpSums.${index}.age`);
+        });
+      }
 
-    // 現在のセクションのエラーのみを更新し、他のセクションのエラーは保持する
-    setErrors(prevErrors => {
-      const updatedErrors = { ...prevErrors };
-      fieldsToValidate.forEach(field => delete updatedErrors[field]);
-      return { ...updatedErrors, ...newErrors };
-    });
+      // --- 配偶者 ---
+      if (formData.spouseRetirementIncome) {
+        fieldsToValidate.push('spouseRetirementIncome.amount', 'spouseRetirementIncome.age', 'spouseRetirementIncome.yearsOfService');
+      }
+      if (formData.spousePersonalPensionPlans.length > 0) {
+        formData.spousePersonalPensionPlans.forEach((_, index) => {
+          fieldsToValidate.push(`spousePersonalPensionPlans.${index}.amount`, `spousePersonalPensionPlans.${index}.startAge`);
+          if (formData.spousePersonalPensionPlans[index].type === 'fixedTerm') {
+            fieldsToValidate.push(`spousePersonalPensionPlans.${index}.duration`);
+          }
+        });
+      }
+      if (formData.spouseOtherLumpSums.length > 0) {
+        formData.spouseOtherLumpSums.forEach((_, index) => {
+          fieldsToValidate.push(`spouseOtherLumpSums.${index}.name`, `spouseOtherLumpSums.${index}.amount`, `spouseOtherLumpSums.${index}.age`);
+        });
+      }
+    } else if (sectionName === FC.SECTION_NAMES.SIMULATION_SETTINGS) {
+      // シミュレーション設定セクションの条件付きバリデーション
+      if (formData.interestRateScenario === '固定利回り') {
+        fieldsToValidate.push('fixedInterestRate'); // この行は変更なし、financial_const.tsの修正が重要
+      }
+    }
+
+    const newErrors = validate(formData, fieldsToValidate);
+
+    setErrors(newErrors);
 
     return Object.keys(newErrors).length === 0;
   }, [effectiveSections, formData]);
@@ -336,6 +382,12 @@ export const useFormState = () => {
       }
 
       setFormData(prev => {
+        // エラーを修正した際に即座にボタンを活性化させるための処理
+        setErrors(currentErrors => {
+          const newErrors = { ...currentErrors };
+          delete newErrors[name];
+          return newErrors;
+        });
         const newState = { ...prev, [name]: value };
 
         if (name === 'livingCostAfterMarriage') {

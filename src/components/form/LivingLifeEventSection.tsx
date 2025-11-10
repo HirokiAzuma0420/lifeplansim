@@ -6,6 +6,7 @@ import * as FC from '@/constants/financial_const';
 interface LivingLifeEventSectionProps {
   formData: FormDataState;
   handleApplianceChange: (index: number, field: string, value: string) => void;
+  errors: { [key: string]: string };
   addAppliance: () => void;
   handleRemoveAppliance: (index: number) => void;
 }
@@ -15,7 +16,7 @@ const isPresetAppliance = (name: string) => {
   return FC.DEFAULT_APPLIANCES.some(app => app.name === name);
 };
 
-const LivingLifeEventSection: React.FC<LivingLifeEventSectionProps> = ({ formData, handleApplianceChange, addAppliance, handleRemoveAppliance }) => {
+const LivingLifeEventSection: React.FC<LivingLifeEventSectionProps> = ({ formData, handleApplianceChange, errors, addAppliance, handleRemoveAppliance }) => {
   const formRef = useRef<HTMLFormElement>(null);
 
   const focusNext = (currentIndex: number) => {
@@ -146,6 +147,7 @@ const LivingLifeEventSection: React.FC<LivingLifeEventSectionProps> = ({ formDat
               ))}
             </tbody>
           </table>
+          {errors.appliances && <p className="text-red-500 text-xs italic mt-2">{errors.appliances}</p>}
         </form>
 
         <div className="pt-3">

@@ -53,7 +53,7 @@ const HomeLifeEventSection: React.FC<HomeLifeEventSectionProps> = ({ formData, h
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="loanMonthlyPayment">月額返済</label>
               <div className="flex">
-                <input type="number" id="loanMonthlyPayment" name="loanMonthlyPayment" value={formData.loanMonthlyPayment} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors.loanMonthlyPayment ? 'border-red-500' : ''}`} />
+                <input type="number" id="loanMonthlyPayment" name="loanMonthlyPayment" value={formData.loanMonthlyPayment} onChange={handleInputChange} className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors.loanMonthlyPayment ? 'border-red-500' : ''}`} required />
                 <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">円/月</span>
               </div>
               {errors.loanMonthlyPayment && <p className="text-red-500 text-xs italic mt-1">{errors.loanMonthlyPayment}</p>}
@@ -86,7 +86,7 @@ const HomeLifeEventSection: React.FC<HomeLifeEventSectionProps> = ({ formData, h
                 onChange={() => {
                 setFormData(prev => ({
                   ...prev,
-                  housePurchaseIntent: 'yes',
+                  housePurchaseIntent: 'yes',                  
                   housePurchasePlan: prev.housePurchasePlan === null 
                     ? { age: '', price: '', downPayment: '', loanYears: '', interestRate: '' } 
                     : prev.housePurchasePlan
@@ -199,11 +199,12 @@ const HomeLifeEventSection: React.FC<HomeLifeEventSectionProps> = ({ formData, h
                 <div>
                   <label className="block text-gray-700 text-sm font-bold mb-2">実施予定年齢</label>
                   <input
-                    type="number" 
+                    type="number"
                     value={plan?.age ?? ''}
                     onChange={(e) => handleRenovationPlanChange(0, 'age', e.target.value)}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${errors['houseRenovationPlans.0.age'] ? 'border-red-500' : ''}`}
                   />
+                  {errors['houseRenovationPlans.0.age'] && <p className="text-red-500 text-xs italic mt-1">{errors['houseRenovationPlans.0.age']}</p>}
                 </div>
                 <div>
                   <label className="block text-gray-700 text-sm font-bold mb-2">費用[万円]</label>
@@ -211,8 +212,9 @@ const HomeLifeEventSection: React.FC<HomeLifeEventSectionProps> = ({ formData, h
                     type="number"
                     value={plan?.cost ?? ''}
                     onChange={(e) => handleRenovationPlanChange(0, 'cost', e.target.value)}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${errors['houseRenovationPlans.0.cost'] ? 'border-red-500' : ''}`}
                   />
+                  {errors['houseRenovationPlans.0.cost'] && <p className="text-red-500 text-xs italic mt-1">{errors['houseRenovationPlans.0.cost']}</p>}
                 </div>
                 <div>
                   <label className="block text-gray-700 text-sm font-bold mb-2">繰り返し頻度[年]</label>
