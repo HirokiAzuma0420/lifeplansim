@@ -123,7 +123,7 @@ export const validationRules: FieldValidationRules = {
   ],
 
   'housePurchasePlan.age': [
-    { message: '購入予定年齢を入力してください。', isValid: (v, fd) => fd.housePurchaseIntent !== 'yes' || isRequired(v) },
+    { message: '購入予定年齢を入力してください。', isValid: (v, fd) => fd.housePurchaseIntent !== 'yes' || isAgeOrFutureAgeValid(v, fd.personAge) },
     { message: '購入予定年齢は現在の年齢以上に設定してください。', isValid: (v, fd) => fd.housePurchaseIntent !== 'yes' || isAgeOrFutureAgeValid(v, fd.personAge) },
   ],
   'housePurchasePlan.price': [
@@ -134,6 +134,9 @@ export const validationRules: FieldValidationRules = {
   ],
   'housePurchasePlan.loanYears': [
     { message: 'ローン年数を入力してください。', isValid: (v, fd) => fd.housePurchaseIntent !== 'yes' || isPositiveNumber(v) },
+  ],
+  'housePurchasePlan.interestRate': [
+    { message: '想定金利を入力してください。', isValid: (v, fd) => fd.housePurchaseIntent !== 'yes' || isZeroOrGreater(v) },
   ],
 
 

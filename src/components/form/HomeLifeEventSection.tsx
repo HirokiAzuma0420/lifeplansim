@@ -96,7 +96,13 @@ const HomeLifeEventSection: React.FC<HomeLifeEventSectionProps> = ({ formData, h
               <span className="ml-2">はい</span>
             </label>
             <label className="inline-flex items-center">
-            <input type="radio" className="custom-radio" name="housePurchaseIntent" value="no" checked={formData.housePurchaseIntent === 'no'} onChange={handleInputChange} />
+            <input type="radio" className="custom-radio" name="housePurchaseIntent" value="no" checked={formData.housePurchaseIntent === 'no'} onChange={() => {
+                setFormData(prev => ({
+                  ...prev,
+                  housePurchaseIntent: 'no',
+                  housePurchasePlan: null
+                }));
+              }} />
               <span className="ml-2">いいえ</span>
             </label>
           </div>
@@ -139,7 +145,7 @@ const HomeLifeEventSection: React.FC<HomeLifeEventSectionProps> = ({ formData, h
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2">想定金利（%）</label>
                 <div className="flex">
-                  <input type="number" name="housePurchasePlan.interestRate" value={formData.housePurchasePlan.interestRate ?? ''} onChange={handleInputChange} step="0.1" className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.interestRate'] ? 'border-red-500' : ''}`} />
+                  <input type="number" name="housePurchasePlan.interestRate" value={formData.housePurchasePlan.interestRate ?? ''} onChange={handleInputChange} step="0.1" className={`shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 ${errors['housePurchasePlan.interestRate'] ? 'border-red-500' : ''}`} required />
                   <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">%</span>
                 </div>
                 {errors['housePurchasePlan.interestRate'] && <p className="text-red-500 text-xs italic mt-1">{errors['housePurchasePlan.interestRate']}</p>}
