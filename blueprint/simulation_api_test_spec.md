@@ -380,6 +380,102 @@
 
 ---
 
+## 4.8 境界条件テスト
+
+### 4.8.1 退職年・年金開始年
+
+- TC-BOUND-001: 退職年境界（退職前年・退職年・退職翌年）の給与停止
+  - 条件:
+    - `initialAge = 59`, `endAge = 61`, `retirementAge = 60`。
+    - 本人の給与を一定額で設定し、年金は開始しない（`pensionStartAge` を十分大きく設定）。
+  - 期待結果:
+    - 59 歳までは `incomeDetail.self > 0`（給与収入あり）。
+    - 60 歳以降は `incomeDetail.self === 0`（給与収入停止）。
+- TC-BOUND-002: 年金開始年境界（開始前年・開始年・開始翌年）
+  - 条件:
+    - `initialAge = 64`, `endAge = 66`, `retirementAge = 60`。
+    - `pensionStartAge = 65`, `pensionMonthly10kJPY` に正の値を設定。
+  - 期待結果:
+    - 64 歳までは `incomeDetail.publicPension === 0`。
+    - 65 歳以降は `incomeDetail.publicPension > 0`。
+
+### 4.8.2 NISA・iDeCo 境界
+
+- TC-BOUND-003: NISA 生涯枠上限付近（principal の最大値検証）
+  - 条件:
+    - 非課税口座（NISA）に対し、大きな `recurringJPY` を設定し、長期間シミュレーション（`interestScenario = '固定利回り'`）。
+  - 期待結果:
+    - 各年の `nisa.principal` の最大値が `NISA_LIFETIME_CAP`（単身の場合）または `NISA_LIFETIME_CAP * NISA_COUPLE_MULTIPLIER`（夫婦利用の場合）の範囲内に収まる（ロジック上の終端年で生涯枠を超えない）。
+- TC-BOUND-004: iDeCo 拠出可能年齢の上限付近
+  - 条件:
+    - `initialAge` を `IDECO_MAX_CONTRIBUTION_AGE - 5` 程度に設定し、`endAge` を `IDECO_MAX_CONTRIBUTION_AGE + 5` 程度に設定。
+    - iDeCo 口座に対して毎年一定額を拠出できるよう、収入と生活費を調整し黒字状態を維持する。
+  - 期待結果:
+    - `age < IDECO_MAX_CONTRIBUTION_AGE` のいずれかの年で `ideco.principal` が増加している。
+    - `age >= IDECO_MAX_CONTRIBUTION_AGE` の年以降は `ideco.principal` の増加が見られない（新規拠出が行われない）。
+
+---
+
+## 4.9 プロパティテスト的チェック
+
+### 4.9.1 資産収支恒等式（近似）の検証
+
+- TC-PROP-001: 「初期資産＋全収入−全支出≒最終資産＋取り崩し総額」の近似検証
+  - 条件:
+    - 複数のランダムシナリオについて `runSimulation` を呼び出すプロパティテスト風テストを実装する。
+    - パラメータ生成:
+      - `initialAge = 30`, `endAge = 60〜80` の範囲でランダムに設定。
+      - 収入（給与・副業・年金）と生活費を乱数で設定しつつ、現実的な範囲（例: 0〜2,000 万円/年）に収める。
+      - 投資商品（課税・NISA・iDeCo）も乱数で構成し、利回りは `expectedReturn` の範囲内で設定。
+    - テスト側で `Math.random` をシード付き擬似乱数でモックし、テスト実行ごとにシミュレーションの乱数系列が再現可能になるようにする。
+  - 期待結果:
+    - 各シナリオについて以下の式が「おおむね」成り立つこと（丸め・内部ロジックの差異を考慮し、許容誤差を設ける）:
+      - 初期資産: `initialAssets = currentSavingsJPY + Σ products.currentJPY`
+      - 年次収入: `incomeTotalYear = yearly.income + yearly.incomeDetail.investment`
+      - 年次支出: `expenseYear = yearly.expense`
+      - 年次取り崩し: `withdrawYear = debug.savings_after_withdrawToCoverShortfall - debug.savings_before_withdrawToCoverShortfall`（赤字補填が発動した年のみ）
+      - 左辺: `initialAssets + Σ incomeTotalYear − Σ expenseYear`
+      - 右辺: `finalTotalAssets + Σ withdrawYear`（`finalTotalAssets = 最終年の yearlyData.totalAssets`）
+    - 左辺と右辺の差分が、各シナリオで「総資産の数パーセント程度以下」の範囲に収まる（丸め・内部計算の影響を考慮した許容範囲内である）。
+
+---
+
+## 4.10 異常値・極端値テスト
+
+### 4.10.1 超高所得・ほぼ無収入
+
+- TC-EXTREME-001: 超高所得（極端に大きな収入）があってもクラッシュしない
+  - 条件:
+    - 本人・配偶者の年収を 1 億円以上に設定し、`initialAge = 30`, `endAge = 65` 程度の期間でシミュレーション。
+    - ライフイベントや投資も適度に設定するが、極端な収入でも `Number` の範囲内に収まるよう調整。
+  - 期待結果:
+    - `runSimulation` が例外を投げずに完了し、`yearlyData` の各年について主要な数値フィールド（`income`, `expense`, `savings`, `totalAssets` など）が有限数値（NaN/Infinity ではない）になっている。
+- TC-EXTREME-002: ほぼ無収入（極端に低い収入）でもクラッシュしない
+  - 条件:
+    - 本人・配偶者の年収を 0〜数十万円程度に設定し、生活費は一定額に設定（多くの年で赤字が発生する想定）。
+    - 適度な初期資産・投資残高を設定し、赤字補填ロジックが頻繁に発動する状況を作る。
+  - 期待結果:
+    - `runSimulation` が例外を投げずに完了し、`yearlyData` において `totalAssets` が徐々に減少する一方で、NaN/Infinity が発生しない。
+
+### 4.10.2 極端な利回り・超長寿
+
+- TC-EXTREME-003: 極端な利回り（非常に高い expectedReturn）での挙動
+  - 条件:
+    - `interestScenario = 'ランダム変動'` を選択し、投資商品の `expectedReturn` に高い値（例: 50〜100%/年）を設定。
+    - 複数の商品に分散投資し、30〜40 年程度の期間をシミュレート。
+  - 期待結果:
+    - 投資残高や `totalAssets` が大きく増減しても、`runSimulation` がクラッシュせず、`yearlyData` の数値が有限の範囲内に収まる。
+- TC-EXTREME-004: 超長寿シナリオ（90 歳〜100 歳超までシミュレート）
+  - 条件:
+    - `initialAge = 20`, `endAge = 110` 程度の長期間でシミュレーション。
+    - 収入・支出・投資は適度な値に設定し、現実的ではあるが長期にわたるシナリオを構成する。
+  - 期待結果:
+    - `yearlyData.length` が `endAge - initialAge + 1` に一致する（約 90 年分）。
+    - 全期間で `yearlyData` の主要数値フィールドが有限数値であり、指数的に発散して Infinity になるような挙動がない。
+
+
+---
+
 ## 5. 今後のテスト実装方針メモ
 
 - 単体テスト

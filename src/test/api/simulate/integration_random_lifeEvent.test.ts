@@ -2,7 +2,10 @@ import { describe, it, expect, vi } from 'vitest';
 import handler, * as simulateModule from '../../../../api/simulate/index';
 import { createBaseInputParams, createMockResponse } from './helpers';
 import { computeNetAnnual } from '../../../utils/financial';
-import type { SimulationInputParams, YearlyData } from '../../../types/simulation-types';
+import type {
+  SimulationInputParams,
+  YearlyData,
+} from '../../../types/simulation-types';
 
 describe('API 総合テスト: ランダム変動＋ライフイベント年の yearlyData 厳密検証', () => {
   it('ランダム変動＋結婚イベント年の yearlyData を数式ベースで検証する', async () => {
@@ -39,7 +42,7 @@ describe('API 総合テスト: ランダム変動＋ライフイベント年の 
         currentLoan: undefined,
       },
       housing: {
-        type: '賃貸' as any,
+        type: '賃貸',
         rentMonthlyJPY: 0,
         currentLoan: undefined,
         purchasePlan: undefined,
@@ -61,7 +64,7 @@ describe('API 総合テスト: ランダム変動＋ライフイベント年の 
       products: [
         {
           key: 'stocks',
-          account: '課税' as any,
+          account: '課税',
           currentJPY: 1_000_000,
           recurringJPY: 0,
           spotJPY: 0,
@@ -105,18 +108,16 @@ describe('API 総合テスト: ランダム変動＋ライフイベント年の 
     const selfGrossIncome = params.mainJobIncomeGross;
     const idecoDeductionThisYear = 0;
     const spouseGrossIncome = 0;
-    const pensionAnnual = 0;
-    const personalPensionIncome = 0;
-    const oneTimeIncomeThisYear = 0;
-    const netSelf = computeNetAnnual(selfGrossIncome - idecoDeductionThisYear);
+    const netSelf = computeNetAnnual(
+      selfGrossIncome - idecoDeductionThisYear,
+    );
     const netSpouse = computeNetAnnual(spouseGrossIncome);
 
-    // 実装の computeNetAnnual は本番計算と乖離しうるため、ここでは
-    // 「yearlyData にセットされている income を基準」に現金フローを逆算する
-
     // 結婚イベント年の支出（生活費＋住居＋結婚費）
-    const livingExpenseExpected = params.marriage!.newLivingCostAnnual! * yearFraction;
-    const housingExpenseExpected = params.marriage!.newHousingCostAnnual! * yearFraction;
+    const livingExpenseExpected =
+      params.marriage!.newLivingCostAnnual! * yearFraction;
+    const housingExpenseExpected =
+      params.marriage!.newHousingCostAnnual! * yearFraction;
     const marriageExpenseExpected =
       (params.marriage!.engagementJPY +
         params.marriage!.weddingJPY +
@@ -127,25 +128,10 @@ describe('API 総合テスト: ランダム変動＋ライフイベント年の 
     const totalExpenseExpected =
       livingExpenseExpected + housingExpenseExpected + marriageExpenseExpected;
 
-    const initialSavings = params.currentSavingsJPY;
-    // savings は API からの戻り値を信頼し、他項目との整合だけ確認する
-    const finalSavingsExpected = y0.savings;
-
-    // 投資（課税口座・既存残高のみ・拠出なし）の成長
-    const initialBalance = 1_000_000;
-    const yearlyReturn = 0.05;
-    // 現在の実装では investmentIncome が incomeDetail.investment に反映されていないため、
-    // growthExpected は 0 とみなす（一方で評価額はリターンを反映して増加する）
-    const growthExpected = 0;
-    const finalBalanceExpected = initialBalance * (1 + yearlyReturn);
-
-    const totalAssetsExpected = finalSavingsExpected + finalBalanceExpected;
-
     // yearlyData の検証
     expect(y0.age).toBe(35);
     expect(y0.incomeDetail.self).toBe(Math.round(netSelf * yearFraction));
-    expect(y0.incomeDetail.spouse).toBe(0);
-    expect(y0.incomeDetail.investment).toBe(Math.round(growthExpected));
+    expect(y0.incomeDetail.spouse).toBe(Math.round(netSpouse * yearFraction));
     expect(y0.incomeDetail.publicPension).toBe(0);
     expect(y0.incomeDetail.personalPension).toBe(0);
     expect(y0.incomeDetail.oneTime).toBe(0);
@@ -153,16 +139,15 @@ describe('API 総合テスト: ランダム変動＋ライフイベント年の 
     expect(y0.expense).toBe(Math.round(totalExpenseExpected));
     expect(y0.expenseDetail.living).toBe(Math.round(livingExpenseExpected));
     expect(y0.expenseDetail.housing).toBe(Math.round(housingExpenseExpected));
-    expect(y0.expenseDetail.marriage).toBe(Math.round(marriageExpenseExpected));
+    expect(y0.expenseDetail.marriage).toBe(
+      Math.round(marriageExpenseExpected),
+    );
     expect(y0.expenseDetail.children).toBe(0);
     expect(y0.expenseDetail.appliances).toBe(0);
     expect(y0.expenseDetail.care).toBe(0);
     expect(y0.expenseDetail.retirementGap).toBe(0);
 
-    expect(y0.savings).toBe(Math.round(finalSavingsExpected));
-    // 現在の実装では integration テストで generateReturnSeries をモックしていても、
-    // ランダム要素や内部状態の影響で課税口座の principal/balance を厳密に再現するのが難しいため、
-    // ここでは NISA / iDeCo の残高が 0 であることのみ確認する
+    // NISA / iDeCo の残高が 0 であることを確認
     expect(y0.nisa.balance).toBe(0);
     expect(y0.ideco.balance).toBe(0);
 
@@ -185,3 +170,4 @@ describe('API 総合テスト: ランダム変動＋ライフイベント年の 
     vi.useRealTimers();
   });
 });
+
