@@ -14,6 +14,12 @@ export interface DebugInfo {
   totalInvestmentPrincipal_before_push?: number;
   savings_before_yearlyData_push?: number;
   savings_at_yearlyData_push_assignment?: number;
+  finalSavingsForYear?: number;
+  investmentReturnThisYear?: number;
+  taxOnSalaryThisYear?: number;
+  taxOnInvestmentThisYear?: number;
+  taxOnRetirementThisYear?: number;
+  deductionThisYear?: number;
 }
 
 export type InvestmentProduct = {

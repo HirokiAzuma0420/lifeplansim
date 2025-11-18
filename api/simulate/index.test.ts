@@ -58,7 +58,7 @@ describe('api/simulate/index.ts', () => {
       };
 
       // 実行
-      const { newSavings, newProductBalances, nisaRecycleAmount } = withdrawToCoverShortfall(
+      const { newSavings, newProductBalances, nisaRecycleAmount, taxPaid } = withdrawToCoverShortfall(
         shortfall,
         savings,
         productList,
@@ -85,6 +85,7 @@ describe('api/simulate/index.ts', () => {
       expect(newSavings).toBeCloseTo(savings + netFromTaxable + remainingShortfall);
       // NISAの売却元本分がリサイクル枠になる
       expect(nisaRecycleAmount).toBeCloseTo(nisaPrincipalWithdrawn);
+      expect(taxPaid).toBeCloseTo(tax);
     });
   });
 

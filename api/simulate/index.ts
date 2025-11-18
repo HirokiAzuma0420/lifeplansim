@@ -29,6 +29,11 @@ type DebugInfo = {
   savings_before_yearlyData_push?: number;
   savings_at_yearlyData_push_assignment?: number;
   finalSavingsForYear?: number;
+  investmentReturnThisYear?: number;
+  taxOnSalaryThisYear?: number;
+  taxOnInvestmentThisYear?: number;
+  taxOnRetirementThisYear?: number;
+  deductionThisYear?: number;
 };
 
 // ユーティリティ関数
@@ -197,9 +202,10 @@ export function withdrawToCoverShortfall(
   savings: number,
   productList: InvestmentProduct[],
   productBalances: Record<string, AccountBucket>
-): { newSavings: number; newProductBalances: Record<string, AccountBucket>; nisaRecycleAmount: number } {
+): { newSavings: number; newProductBalances: Record<string, AccountBucket>; nisaRecycleAmount: number; taxPaid: number } {
   const withdrawalOrder: ('課税' | '非課税')[] = ['課税', '非課税'];
   let totalNisaRecycled = 0;
+  let totalTaxPaid = 0;
 
   for (const accountType of withdrawalOrder) {
     if (shortfall <= 0) break; // shortfallが0以下になったらループを抜ける
@@ -230,6 +236,7 @@ export function withdrawToCoverShortfall(
       const grossWithdrawal = Math.min(totalBalanceInAccount, requiredGross);
       const tax = grossWithdrawal * gainRatio * FC.SPECIFIC_ACCOUNT_TAX_RATE;
       const netProceeds = grossWithdrawal - tax;
+      totalTaxPaid += tax;
 
       // 各商品から按分して取り崩し
       productsInAccount.forEach(p => {
@@ -270,7 +277,7 @@ export function withdrawToCoverShortfall(
   }
 
   // 更新された残高とリサイクル額を返す
-  return { newSavings: savings, newProductBalances: productBalances, nisaRecycleAmount: totalNisaRecycled };
+  return { newSavings: savings, newProductBalances: productBalances, nisaRecycleAmount: totalNisaRecycled, taxPaid: totalTaxPaid };
 }
 
 export function runSimulation(params: SimulationInputParams): YearlyData[] {
@@ -419,6 +426,7 @@ export function runSimulation(params: SimulationInputParams): YearlyData[] {
     // --- 0. 一時金収入の処理 ---
     // その年に発生するすべての一時金収入をまず集計する
     const oneTimeIncomes: { type: 'retirement' | 'lumpSum', amount: number, yearsOfService?: number }[] = [];
+    let retirementTaxThisYear = 0;
 
     // iDeCo
     if (currentAge === idecoCashOutAge) {
@@ -449,7 +457,9 @@ export function runSimulation(params: SimulationInputParams): YearlyData[] {
     if (retirementIncomes.length > 0) {
       const totalRetirementIncome = retirementIncomes.reduce((sum, income) => sum + income.amount, 0);
       const maxYearsOfService = retirementIncomes.reduce((max, income) => Math.max(max, income.yearsOfService || 0), 0);
-      const netTotalRetirementIncome = totalRetirementIncome - calculateRetirementIncomeTax(totalRetirementIncome, maxYearsOfService);
+      const retirementTax = calculateRetirementIncomeTax(totalRetirementIncome, maxYearsOfService);
+      retirementTaxThisYear += retirementTax;
+      const netTotalRetirementIncome = totalRetirementIncome - retirementTax;
       oneTimeIncomeThisYear += netTotalRetirementIncome;
     }
 
@@ -513,7 +523,21 @@ export function runSimulation(params: SimulationInputParams): YearlyData[] {
         idecoDeductionThisYear += (n(p.recurringJPY) + n(p.spotJPY)) * yearFraction;
       });
     }
-  let annualIncome = (computeNetAnnual(selfGrossIncome - idecoDeductionThisYear) + computeNetAnnual(spouseGrossIncome)) * yearFraction + pensionAnnual + personalPensionIncome + oneTimeIncomeThisYear;
+    debugInfo.deductionThisYear = idecoDeductionThisYear;
+
+    const grossSelf = selfGrossIncome;
+    const grossSpouse = spouseGrossIncome;
+    const netSelfAnnual = computeNetAnnual(grossSelf - idecoDeductionThisYear);
+    const netSpouseAnnual = computeNetAnnual(grossSpouse);
+    const netSelf = netSelfAnnual * yearFraction;
+    const netSpouse = netSpouseAnnual * yearFraction;
+
+    const grossSelfYear = grossSelf * yearFraction;
+    const grossSpouseYear = grossSpouse * yearFraction;
+    const taxOnSalaryThisYear = (grossSelfYear + grossSpouseYear) - (netSelf + netSpouse);
+    debugInfo.taxOnSalaryThisYear = taxOnSalaryThisYear;
+
+    let annualIncome = netSelf + netSpouse + pensionAnnual + personalPensionIncome + oneTimeIncomeThisYear;
     // --- Test Override ---
     if (params._testOverrides?.income?.[currentAge]) {
       annualIncome = params._testOverrides.income[currentAge];
@@ -738,6 +762,7 @@ export function runSimulation(params: SimulationInputParams): YearlyData[] {
       debugInfo.savings_after_withdrawToCoverShortfall = savings;
 
       nisaRecycleAmountForNextYear += result.nisaRecycleAmount;
+      debugInfo.taxOnInvestmentThisYear = (debugInfo.taxOnInvestmentThisYear ?? 0) + result.taxPaid;
     }
 
     // --- 4. 資産の成長 (利回り反映) ---
@@ -793,14 +818,16 @@ export function runSimulation(params: SimulationInputParams): YearlyData[] {
     debugInfo.totalInvestmentPrincipal_before_push = totalInvestmentPrincipal;
     debugInfo.savings_before_yearlyData_push = savings;
     debugInfo.savings_at_yearlyData_push_assignment = savings;
+    debugInfo.investmentReturnThisYear = investmentIncome;
+    debugInfo.taxOnRetirementThisYear = retirementTaxThisYear;
 
     yearlyData.push({
       year,
       age: currentAge,
       income: Math.round(annualIncome),
       incomeDetail: {
-        self: Math.round(computeNetAnnual(selfGrossIncome - idecoDeductionThisYear) * yearFraction),
-        spouse: Math.round(computeNetAnnual(spouseGrossIncome) * yearFraction),
+        self: Math.round(netSelf),
+        spouse: Math.round(netSpouse),
         investment: Math.round(investmentIncome),
         oneTime: Math.round(oneTimeIncomeThisYear),
         publicPension: Math.round(pensionAnnual),
