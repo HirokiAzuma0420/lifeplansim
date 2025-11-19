@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import type { FormDataState, InvestmentMonthlyAmounts } from '@/types/form-types';
-import type { InvestmentAssetKey, InvestmentAccountTypeField } from '@/types/investment';
+import type { FormDataState, InvestmentMonthlyAmounts, InvestmentAssetKey, InvestmentAccountTypeField } from '@/types/form-types';
 
 interface InvestmentSectionProps {
   formData: FormDataState;
@@ -18,7 +17,7 @@ interface AssetAccordionProps {
   assetName: string;
   assetKey: InvestmentAssetKey;
   accountTypeFieldName?: InvestmentAccountTypeField;
-  children: React.ReactNode;
+  children: (isNisa: boolean) => React.ReactNode;
 }
 
 const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, handleInputChange, monthlyInvestmentAmounts }) => {
@@ -32,7 +31,8 @@ const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, handleI
 
   const renderAssetAccordion = ({ assetName, assetKey, accountTypeFieldName, children }: AssetAccordionProps) => {
     const isOpen = openAccordions.includes(assetKey);
-    const accountTypeValue = formData[accountTypeFieldName || 'investmentStocksAccountType'];
+    const accountTypeValue = accountTypeFieldName ? formData[accountTypeFieldName] : 'taxable';
+    const isNisa = accountTypeValue === 'nisa';
 
     return (
       <div className="border border-gray-200 rounded-lg mb-2">
@@ -64,7 +64,7 @@ const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, handleI
                         type="radio"
                         name={accountTypeFieldName}
                         value={option.value}
-                        checked={(accountTypeValue ?? 'taxable') === option.value}
+                        checked={accountTypeValue === option.value}
                         onChange={handleInputChange}
                         className="h-4 w-4"
                       />
@@ -74,7 +74,7 @@ const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, handleI
                 </div>
               </div>
             )}
-            {children}
+            {children(isNisa)}
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`${assetKey}Monthly`}>
                 月額積立
@@ -135,6 +135,54 @@ const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, handleI
     );
   };
 
+  const renderNisaFields = (assetKey: InvestmentAssetKey) => {
+    const gainLossSignKey = `${assetKey}GainLossSign` as keyof FormDataState;
+    const gainLossRateKey = `${assetKey}GainLossRate` as keyof FormDataState;
+
+    return (
+      <div className="mb-4">
+        <label className="block text-gray-700 text-sm font-bold mb-2">評価損益率</label>
+        <div className="flex items-center">
+          <div className="flex">
+            <label className="inline-flex items-center">
+              <input
+                type="radio"
+                name={gainLossSignKey}
+                value="+"
+                checked={formData[gainLossSignKey] === '+'}
+                onChange={handleInputChange}
+                className="form-radio h-4 w-4 text-blue-600"
+              />
+              <span className="ml-2 text-gray-700">+</span>
+            </label>
+            <label className="inline-flex items-center ml-4">
+              <input
+                type="radio"
+                name={gainLossSignKey}
+                value="-"
+                checked={formData[gainLossSignKey] === '-'}
+                onChange={handleInputChange}
+                className="form-radio h-4 w-4 text-red-600"
+              />
+              <span className="ml-2 text-gray-700">-</span>
+            </label>
+          </div>
+          <div className="flex ml-4">
+            <input
+              type="number"
+              name={gainLossRateKey}
+              value={formData[gainLossRateKey] as string | number}
+              onChange={handleInputChange}
+              className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700"
+              step="0.1"
+            />
+            <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">%</span>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="p-4">
       {/* Image placeholder */}
@@ -147,34 +195,40 @@ const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, handleI
           assetName: '株式',
           assetKey: 'investmentStocks',
           accountTypeFieldName: 'investmentStocksAccountType',
-          children: (
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">現在の評価額</label>
-              <div className="flex">
-                <input type="number" name="investmentStocksCurrent" value={formData.investmentStocksCurrent} onChange={handleInputChange} className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700" />
-                <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
+          children: (isNisa) => (
+            <>
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2">{isNisa ? '現在の評価総額' : '現在の評価額'}</label>
+                <div className="flex">
+                  <input type="number" name="investmentStocksCurrent" value={formData.investmentStocksCurrent} onChange={handleInputChange} className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700" />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
+                </div>
               </div>
-            </div>
+              {isNisa && renderNisaFields('investmentStocks')}
+            </>
           ),
         })}
         {renderAssetAccordion({
           assetName: '投資信託',
           assetKey: 'investmentTrust',
           accountTypeFieldName: 'investmentTrustAccountType',
-          children: (
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">現在の評価額</label>
-              <div className="flex">
-                <input type="number" name="investmentTrustCurrent" value={formData.investmentTrustCurrent} onChange={handleInputChange} className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700" />
-                <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
+          children: (isNisa) => (
+            <>
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2">{isNisa ? '現在の評価総額' : '現在の評価額'}</label>
+                <div className="flex">
+                  <input type="number" name="investmentTrustCurrent" value={formData.investmentTrustCurrent} onChange={handleInputChange} className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700" />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
+                </div>
               </div>
-            </div>
+              {isNisa && renderNisaFields('investmentTrust')}
+            </>
           ),
         })}
         {renderAssetAccordion({
           assetName: '債券',
           assetKey: 'investmentBonds',
-          children: (
+          children: () => (
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">現在の評価額</label>
               <div className="flex">
@@ -187,7 +241,7 @@ const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, handleI
         {renderAssetAccordion({
           assetName: 'iDeCo',
           assetKey: 'investmentIdeco',
-          children: (
+          children: () => (
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">現在の評価額</label>
               <div className="flex">
@@ -200,7 +254,7 @@ const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, handleI
         {renderAssetAccordion({
           assetName: '仮想通貨',
           assetKey: 'investmentCrypto',
-          children: (
+          children: () => (
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">現在の評価額</label>
               <div className="flex">
@@ -214,16 +268,17 @@ const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, handleI
           assetName: 'その他',
           assetKey: 'investmentOther',
           accountTypeFieldName: 'investmentOtherAccountType',
-          children: (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2">現在の評価額</label>
-              <div className="flex">
-                <input type="number" name="investmentOtherCurrent" value={formData.investmentOtherCurrent} onChange={handleInputChange} className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700" />
-                <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
+          children: (isNisa) => (
+            <>
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2">{isNisa ? '現在の評価総額' : '現在の評価額'}</label>
+                <div className="flex">
+                  <input type="number" name="investmentOtherCurrent" value={formData.investmentOtherCurrent} onChange={handleInputChange} className="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700" />
+                  <span className="inline-flex items-center px-3 rounded-r border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">万円</span>
+                </div>
               </div>
-            </div>
-          </div>
+              {isNisa && renderNisaFields('investmentOther')}
+            </>
           ),
         })}
       </div>

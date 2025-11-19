@@ -304,13 +304,19 @@ export function runSimulation(params: SimulationInputParams): YearlyData[] {
   productList.forEach((p, index) => {
     const productId = `${p.key}-${index}`;
     const current = n(p.currentJPY);
-    productBalances[productId] = { principal: current, balance: current };
+    // initialPrincipal が渡された場合（NISAの元本入力）、それを元本として設定
+    const principal = p.initialPrincipal !== undefined && p.initialPrincipal >= 0 ? p.initialPrincipal : current;
+    productBalances[productId] = { principal, balance: current };
   });
   let savings = n(params.currentSavingsJPY); // 現金預金のみで初期化
 
       let cumulativeNisaContribution = productList
         .filter(p => p.account === '非課税')
-        .reduce((sum, p) => sum + n(p.currentJPY), 0);
+        .reduce((sum, p) => {
+          // initialPrincipal があればそれを、なければ評価額を元本とみなす
+          const principal = p.initialPrincipal !== undefined && p.initialPrincipal >= 0 ? p.initialPrincipal : n(p.currentJPY);
+          return sum + principal;
+        }, 0);
       let nisaRecycleAmountForNextYear = 0; // NISA枠復活対応：翌年に復活する売却元本額
   
       const idecoCashOutAge = Math.min(params.retirementAge, FC.IDECO_MAX_CASHOUT_AGE);

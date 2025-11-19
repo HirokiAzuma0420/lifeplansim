@@ -1,7 +1,17 @@
-import type { SimulationInputParams } from '@/types/simulation-types';
+import type { SimulationInputParams, InvestmentProduct } from '@/types/simulation-types';
 import type { FormDataState } from '@/types/form-types';
 import * as FC from '@/constants/financial_const';
 import { n } from './financial';
+
+const calculateInitialPrincipal = (totalAmount: string | number, sign: '+' | '-' | undefined, rate: string | number | undefined): number | undefined => {
+  const totalAmountYen = n(totalAmount) * FC.YEN_PER_MAN;
+  if (totalAmountYen === 0) return 0;
+
+  const gainLossRate = n(rate) / 100 * (sign === '+' ? 1 : -1);
+  if (gainLossRate === -1) return 0; // 評価額0で損失率-100%の場合
+
+  return Math.round(totalAmountYen / (1 + gainLossRate));
+};
 
 export const createApiParams = (formData: FormDataState): SimulationInputParams => {
   const mainJobIncomeGross = n(formData.mainIncome) * FC.YEN_PER_MAN;
@@ -39,86 +49,43 @@ export const createApiParams = (formData: FormDataState): SimulationInputParams 
     n(formData.otherVariableCost);
   const detailedVariableAnnual = monthlyVariableExpense * FC.MONTHS_PER_YEAR;
 
-  const stocksCurrentYen = n(formData.investmentStocksCurrent) * FC.YEN_PER_MAN;
-  const trustCurrentYen = n(formData.investmentTrustCurrent) * FC.YEN_PER_MAN;
-  const bondsCurrentYen = n(formData.investmentBondsCurrent) * FC.YEN_PER_MAN;
-  const idecoCurrentYen = n(formData.investmentIdecoCurrent) * FC.YEN_PER_MAN;
-  const cryptoCurrentYen = n(formData.investmentCryptoCurrent) * FC.YEN_PER_MAN;
-  const otherOnlyCurrentYen = n(formData.investmentOtherCurrent) * FC.YEN_PER_MAN;
+  const assetKeys: { key: 'stocks'; current: keyof FormDataState; accountType: keyof FormDataState; gainLossSign: keyof FormDataState; gainLossRate: keyof FormDataState; recurring: keyof FormDataState['monthlyInvestmentAmounts']; spot: keyof FormDataState; rate: keyof FormDataState; }[] = [
+    { key: 'stocks', current: 'investmentStocksCurrent', accountType: 'investmentStocksAccountType', gainLossSign: 'investmentStocksGainLossSign', gainLossRate: 'investmentStocksGainLossRate', recurring: 'investmentStocksMonthly', spot: 'investmentStocksAnnualSpot', rate: 'investmentStocksRate' },
+    { key: 'trust', current: 'investmentTrustCurrent', accountType: 'investmentTrustAccountType', gainLossSign: 'investmentTrustGainLossSign', gainLossRate: 'investmentTrustGainLossRate', recurring: 'investmentTrustMonthly', spot: 'investmentTrustAnnualSpot', rate: 'investmentTrustRate' },
+    { key: 'other', current: 'investmentOtherCurrent', accountType: 'investmentOtherAccountType', gainLossSign: 'investmentOtherGainLossSign', gainLossRate: 'investmentOtherGainLossRate', recurring: 'investmentOtherMonthly', spot: 'investmentOtherAnnualSpot', rate: 'investmentOtherRate' },
+  ];
 
-  const yearlyStocksRecurringYen = n(formData.monthlyInvestmentAmounts.investmentStocksMonthly) * FC.MONTHS_PER_YEAR;
-  const yearlyTrustRecurringYen = n(formData.monthlyInvestmentAmounts.investmentTrustMonthly) * FC.MONTHS_PER_YEAR;
-  const yearlyBondsRecurringYen = n(formData.monthlyInvestmentAmounts.investmentBondsMonthly) * FC.MONTHS_PER_YEAR;
-  const yearlyIdecoRecurringYen = n(formData.monthlyInvestmentAmounts.investmentIdecoMonthly) * FC.MONTHS_PER_YEAR;
-  const yearlyCryptoRecurringYen = n(formData.monthlyInvestmentAmounts.investmentCryptoMonthly) * FC.MONTHS_PER_YEAR;
-  const yearlyOtherOnlyRecurringYen = n(formData.monthlyInvestmentAmounts.investmentOtherMonthly) * FC.MONTHS_PER_YEAR;
+  const nisaEligibleProducts: InvestmentProduct[] = assetKeys.map(asset => {
+    const accountType = formData[asset.accountType] as 'nisa' | 'taxable';
+    const currentJPY = n(formData[asset.current]) * FC.YEN_PER_MAN;
+    let initialPrincipal: number | undefined;
 
-  const stocksSpotYen = n(formData.investmentStocksAnnualSpot);
-  const trustSpotYen = n(formData.investmentTrustAnnualSpot);
-  const bondsSpotYen = n(formData.investmentBondsAnnualSpot);
-  const idecoSpotYen = n(formData.investmentIdecoAnnualSpot);
-  const cryptoSpotYen = n(formData.investmentCryptoAnnualSpot);
-  const otherOnlySpotYen = n(formData.investmentOtherAnnualSpot);
+    if (accountType === 'nisa') {
+      initialPrincipal = calculateInitialPrincipal(
+        formData[asset.current] as string | number,
+        formData[asset.gainLossSign] as '+' | '-',
+        formData[asset.gainLossRate] as string | number
+      );
+    }
 
-  const stocksRate = n(formData.investmentStocksRate) / 100;
-  const trustRate = n(formData.investmentTrustRate) / 100;
-  const bondsRate = n(formData.investmentBondsRate) / 100;
-  const idecoRate = n(formData.investmentIdecoRate) / 100;
-  const cryptoRate = n(formData.investmentCryptoRate) / 100;
-  const otherRate = n(formData.investmentOtherRate) / 100;
+    return {
+      key: asset.key,
+      account: accountType === 'nisa' ? '非課税' : '課税',
+      currentJPY,
+      initialPrincipal,
+      recurringJPY: n(formData.monthlyInvestmentAmounts[asset.recurring]) * FC.MONTHS_PER_YEAR,
+      spotJPY: n(formData[asset.spot]),
+      expectedReturn: n(formData[asset.rate]) / 100,
+    };
+  });
 
-  // `as const` を配列リテラルに適用し、各オブジェクトの `key` をリテラル型として推論させます。
-  // これにより、`InvestmentProduct` 型との互換性が保たれます。
-  const products = ([
-    {
-      key: 'stocks',
-      account: formData.investmentStocksAccountType === 'nisa' ? '非課税' : '課税',
-      currentJPY: stocksCurrentYen,
-      recurringJPY: yearlyStocksRecurringYen,
-      spotJPY: stocksSpotYen,
-      expectedReturn: stocksRate,
-    },
-    {
-      key: 'trust',
-      account: formData.investmentTrustAccountType === 'nisa' ? '非課税' : '課税',
-      currentJPY: trustCurrentYen,
-      recurringJPY: yearlyTrustRecurringYen,
-      spotJPY: trustSpotYen,
-      expectedReturn: trustRate,
-    },
-    {
-      key: 'bonds',
-      account: '課税',
-      currentJPY: bondsCurrentYen,
-      recurringJPY: yearlyBondsRecurringYen,
-      spotJPY: bondsSpotYen,
-      expectedReturn: bondsRate,
-    },
-    {
-      key: 'crypto',
-      account: '課税',
-      currentJPY: cryptoCurrentYen,
-      recurringJPY: yearlyCryptoRecurringYen,
-      spotJPY: cryptoSpotYen,
-      expectedReturn: cryptoRate,
-    },
-    {
-      key: 'other',
-      account: formData.investmentOtherAccountType === 'nisa' ? '非課税' : '課税',
-      currentJPY: otherOnlyCurrentYen,
-      recurringJPY: yearlyOtherOnlyRecurringYen,
-      spotJPY: otherOnlySpotYen,
-      expectedReturn: otherRate,
-    },
-    {
-      key: 'ideco',
-      account: 'iDeCo',
-      currentJPY: idecoCurrentYen,
-      recurringJPY: yearlyIdecoRecurringYen,
-      spotJPY: idecoSpotYen,
-      expectedReturn: idecoRate,
-    },
-  ] as const).filter(p => p.currentJPY > 0 || p.recurringJPY > 0 || p.spotJPY > 0);
+  const otherProducts: InvestmentProduct[] = [
+    { key: 'bonds', currentJPY: n(formData.investmentBondsCurrent) * FC.YEN_PER_MAN, recurringJPY: n(formData.monthlyInvestmentAmounts.investmentBondsMonthly) * FC.MONTHS_PER_YEAR, spotJPY: n(formData.investmentBondsAnnualSpot), expectedReturn: n(formData.investmentBondsRate) / 100, account: '課税' },
+    { key: 'crypto', currentJPY: n(formData.investmentCryptoCurrent) * FC.YEN_PER_MAN, recurringJPY: n(formData.monthlyInvestmentAmounts.investmentCryptoMonthly) * FC.MONTHS_PER_YEAR, spotJPY: n(formData.investmentCryptoAnnualSpot), expectedReturn: n(formData.investmentCryptoRate) / 100, account: '課税' },
+    { key: 'ideco', currentJPY: n(formData.investmentIdecoCurrent) * FC.YEN_PER_MAN, recurringJPY: n(formData.monthlyInvestmentAmounts.investmentIdecoMonthly) * FC.MONTHS_PER_YEAR, spotJPY: n(formData.investmentIdecoAnnualSpot), expectedReturn: n(formData.investmentIdecoRate) / 100, account: 'iDeCo' },
+  ];
+
+  const products = [...nisaEligibleProducts, ...otherProducts].filter(p => p.currentJPY > 0 || p.recurringJPY > 0 || p.spotJPY > 0);
 
   const params: SimulationInputParams = {
     initialAge: n(formData.personAge),
@@ -184,7 +151,7 @@ export const createApiParams = (formData: FormDataState): SimulationInputParams 
       spouse: {
         ageAtMarriage: n(formData.spouseAgeAtMarriage),
         incomeGross: spouseIncomeForSim,
-        customIncomeJPY: spouseIncomeForSim, // ★ 追加: 結婚後のカスタム収入をJPYで渡す
+        customIncomeJPY: spouseIncomeForSim,
       },
       newLivingCostAnnual: n(formData.livingCostAfterMarriage) * FC.MONTHS_PER_YEAR,
       newHousingCostAnnual: n(formData.housingCostAfterMarriage) * FC.MONTHS_PER_YEAR,
@@ -237,8 +204,6 @@ export const createApiParams = (formData: FormDataState): SimulationInputParams 
     useSpouseNisa: formData.useSpouseNisa,
   };
 
-  // 退職金・一時金（本人）をパラメータに反映
-  // フォームは万円入力のため、円に変換して設定する
   if (formData.retirementIncome &&
       formData.retirementIncome.amount !== undefined &&
       formData.retirementIncome.age !== undefined &&
@@ -250,7 +215,6 @@ export const createApiParams = (formData: FormDataState): SimulationInputParams 
     };
   }
 
-  // 退職金・一時金（配偶者）をパラメータに反映（配偶者がいる場合のみ）
   if (formData.spouseRetirementIncome &&
       (formData.familyComposition === '既婚' || formData.planToMarry === 'する')) {
     const s = formData.spouseRetirementIncome;
@@ -263,10 +227,8 @@ export const createApiParams = (formData: FormDataState): SimulationInputParams 
     }
   }
 
-  // 個人年金（本人）: 一括受取は oneTime、年金形式は personalPension として扱うためそのまま送る
   if (Array.isArray(formData.personalPensionPlans)) {
     params.personalPensionPlans = formData.personalPensionPlans.map(p => ({
-      id: p.id,
       type: p.type,
       amountJPY: n(p.amount) * FC.YEN_PER_MAN,
       startAge: n(p.startAge),
@@ -274,11 +236,9 @@ export const createApiParams = (formData: FormDataState): SimulationInputParams 
     }));
   }
 
-  // 個人年金（配偶者）
   if (Array.isArray(formData.spousePersonalPensionPlans) &&
       (formData.familyComposition === '既婚' || formData.planToMarry === 'する')) {
     params.spousePersonalPensionPlans = formData.spousePersonalPensionPlans.map(p => ({
-      id: p.id,
       type: p.type,
       amountJPY: n(p.amount) * FC.YEN_PER_MAN,
       startAge: n(p.startAge),
@@ -286,7 +246,6 @@ export const createApiParams = (formData: FormDataState): SimulationInputParams 
     }));
   }
 
-  // その他一時金（本人）
   if (Array.isArray(formData.otherLumpSums)) {
     params.otherLumpSums = formData.otherLumpSums.map(p => ({
       name: String(p.name ?? ''),
@@ -295,7 +254,6 @@ export const createApiParams = (formData: FormDataState): SimulationInputParams 
     }));
   }
 
-  // その他一時金（配偶者）
   if (Array.isArray(formData.spouseOtherLumpSums) &&
       (formData.familyComposition === '既婚' || formData.planToMarry === 'する')) {
     params.spouseOtherLumpSums = formData.spouseOtherLumpSums.map(p => ({
@@ -305,7 +263,6 @@ export const createApiParams = (formData: FormDataState): SimulationInputParams 
     }));
   }
 
-  // 定年再雇用
   if (formData.assumeReemployment) {
     params.reemployment = {
       startAge: 60,
@@ -315,20 +272,6 @@ export const createApiParams = (formData: FormDataState): SimulationInputParams 
   if (formData.spouseAssumeReemployment) {
     params.spouseReemployment = {
       startAge: 60,
-      reductionRate: n(formData.spouseReemploymentReductionRate) / 100,
-    };
-  }
-
-  // 定年再雇用
-  if (formData.assumeReemployment) {
-    params.reemployment = {
-      startAge: 60, // 再雇用開始は60歳固定
-      reductionRate: n(formData.reemploymentReductionRate) / 100,
-    };
-  }
-  if (formData.spouseAssumeReemployment) {
-    params.spouseReemployment = {
-      startAge: 60, // パートナーの再雇用開始も60歳固定
       reductionRate: n(formData.spouseReemploymentReductionRate) / 100,
     };
   }

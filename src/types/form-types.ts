@@ -146,6 +146,12 @@ export interface FormDataState {
   investmentStocksAccountType: 'nisa' | 'taxable';
   investmentTrustAccountType: 'nisa' | 'taxable';
   investmentOtherAccountType: 'nisa' | 'taxable';
+  investmentStocksGainLossSign?: '+' | '-';
+  investmentStocksGainLossRate?: string | number;
+  investmentTrustGainLossSign?: '+' | '-';
+  investmentTrustGainLossRate?: string | number;
+  investmentOtherGainLossSign?: '+' | '-';
+  investmentOtherGainLossRate?: string | number;
   monthlyInvestmentAmounts: InvestmentMonthlyAmounts;
   investmentStocksAnnualSpot: string;
   investmentTrustAnnualSpot: string;
