@@ -138,36 +138,38 @@ const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, handleI
   const renderNisaFields = (assetKey: InvestmentAssetKey) => {
     const gainLossSignKey = `${assetKey}GainLossSign` as keyof FormDataState;
     const gainLossRateKey = `${assetKey}GainLossRate` as keyof FormDataState;
+    const gainLossSignOptions = [
+      { value: '+', label: '+' },
+      { value: '-', label: '-' },
+    ];
 
     return (
       <div className="mb-4">
         <label className="block text-gray-700 text-sm font-bold mb-2">評価損益率</label>
-        <div className="flex items-center">
-          <div className="flex">
-            <label className="inline-flex items-center">
-              <input
-                type="radio"
-                name={gainLossSignKey}
-                value="+"
-                checked={formData[gainLossSignKey] === '+'}
-                onChange={handleInputChange}
-                className="form-radio h-4 w-4 text-blue-600"
-              />
-              <span className="ml-2 text-gray-700">+</span>
-            </label>
-            <label className="inline-flex items-center ml-4">
-              <input
-                type="radio"
-                name={gainLossSignKey}
-                value="-"
-                checked={formData[gainLossSignKey] === '-'}
-                onChange={handleInputChange}
-                className="form-radio h-4 w-4 text-red-600"
-              />
-              <span className="ml-2 text-gray-700">-</span>
-            </label>
+        <div className="flex items-center gap-x-4">
+          <div className="flex items-center gap-x-2">
+            {gainLossSignOptions.map(opt => (
+              <label
+                key={opt.value}
+                className={`cursor-pointer border rounded-md shadow-sm px-4 py-2 transition-colors duration-200 ${
+                  formData[gainLossSignKey] === opt.value
+                    ? 'bg-blue-600 text-white border-blue-600'
+                    : 'bg-white hover:bg-gray-50'
+                }`}
+              >
+                <input
+                  type="radio"
+                  name={gainLossSignKey}
+                  value={opt.value}
+                  checked={formData[gainLossSignKey] === opt.value}
+                  onChange={handleInputChange}
+                  className="sr-only"
+                />
+                {opt.label}
+              </label>
+            ))}
           </div>
-          <div className="flex ml-4">
+          <div className="flex">
             <input
               type="number"
               name={gainLossRateKey}

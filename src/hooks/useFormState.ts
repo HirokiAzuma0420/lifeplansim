@@ -290,7 +290,7 @@ export const useFormState = () => {
     const cachedData = localStorage.getItem(LIFE_PLAN_FORM_CACHE_KEY);
     if (cachedData) {
       const { data } = JSON.parse(cachedData);
-      setFormData(data);
+      setFormData({ ...createDefaultFormData(), ...data });
     }
     setIsReady(true);
     setShowRestoreModal(false);
@@ -317,7 +317,7 @@ export const useFormState = () => {
       try {
         const { timestamp, data } = JSON.parse(cachedData);
         if (Date.now() - timestamp < FC.FORM_CACHE_EXPIRATION_MS) {
-          setFormData(data);
+          setFormData({ ...createDefaultFormData(), ...data });
           setShowRestoreModal(true); // Show modal to ask user to restore
         } else {
           // Cache expired, clear it
