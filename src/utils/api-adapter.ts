@@ -49,7 +49,7 @@ export const createApiParams = (formData: FormDataState): SimulationInputParams 
     n(formData.otherVariableCost);
   const detailedVariableAnnual = monthlyVariableExpense * FC.MONTHS_PER_YEAR;
 
-  const assetKeys: { key: 'stocks'; current: keyof FormDataState; accountType: keyof FormDataState; gainLossSign: keyof FormDataState; gainLossRate: keyof FormDataState; recurring: keyof FormDataState['monthlyInvestmentAmounts']; spot: keyof FormDataState; rate: keyof FormDataState; }[] = [
+  const assetKeys: { key: 'stocks' | 'trust' | 'other'; current: keyof FormDataState; accountType: keyof FormDataState; gainLossSign: keyof FormDataState; gainLossRate: keyof FormDataState; recurring: keyof FormDataState['monthlyInvestmentAmounts']; spot: keyof FormDataState; rate: keyof FormDataState; }[] = [
     { key: 'stocks', current: 'investmentStocksCurrent', accountType: 'investmentStocksAccountType', gainLossSign: 'investmentStocksGainLossSign', gainLossRate: 'investmentStocksGainLossRate', recurring: 'investmentStocksMonthly', spot: 'investmentStocksAnnualSpot', rate: 'investmentStocksRate' },
     { key: 'trust', current: 'investmentTrustCurrent', accountType: 'investmentTrustAccountType', gainLossSign: 'investmentTrustGainLossSign', gainLossRate: 'investmentTrustGainLossRate', recurring: 'investmentTrustMonthly', spot: 'investmentTrustAnnualSpot', rate: 'investmentTrustRate' },
     { key: 'other', current: 'investmentOtherCurrent', accountType: 'investmentOtherAccountType', gainLossSign: 'investmentOtherGainLossSign', gainLossRate: 'investmentOtherGainLossRate', recurring: 'investmentOtherMonthly', spot: 'investmentOtherAnnualSpot', rate: 'investmentOtherRate' },
