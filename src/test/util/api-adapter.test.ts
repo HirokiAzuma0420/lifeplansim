@@ -4,8 +4,8 @@ import type { FormDataState } from '../../types/form-types';
 import { createDefaultFormData } from '../../hooks/useFormState';
 import * as FC from '../../constants/financial_const';
 
-describe('createApiParams for NISA principal calculation', () => {
-  it('should calculate initialPrincipal for Stocks when it is a NISA account', () => {
+describe('NISA元本計算のためのcreateApiParams', () => {
+  it('NISA口座の場合、株式のinitialPrincipal（元本）を計算できる', () => {
     const formData: FormDataState = {
       ...createDefaultFormData(),
       investmentStocksAccountType: 'nisa',
@@ -24,7 +24,7 @@ describe('createApiParams for NISA principal calculation', () => {
     expect(stocksProduct?.currentJPY).toBe(120 * FC.YEN_PER_MAN);
   });
 
-  it('should calculate initialPrincipal for Investment Trust when it is a NISA account', () => {
+  it('NISA口座の場合、投資信託のinitialPrincipal（元本）を計算できる', () => {
     const formData: FormDataState = {
       ...createDefaultFormData(),
       investmentTrustAccountType: 'nisa',
@@ -43,7 +43,7 @@ describe('createApiParams for NISA principal calculation', () => {
     expect(trustProduct?.currentJPY).toBe(80 * FC.YEN_PER_MAN);
   });
 
-  it('should not calculate initialPrincipal for taxable accounts', () => {
+  it('課税口座の場合はinitialPrincipal（元本）を計算しない', () => {
     const formData: FormDataState = {
       ...createDefaultFormData(),
       investmentStocksAccountType: 'taxable',
@@ -59,7 +59,7 @@ describe('createApiParams for NISA principal calculation', () => {
     expect(stocksProduct?.currentJPY).toBe(120 * FC.YEN_PER_MAN);
   });
 
-  it('should handle both stocks and trust as NISA accounts', () => {
+  it('株式と投資信託の両方がNISA口座の場合を処理できる', () => {
     const formData: FormDataState = {
       ...createDefaultFormData(),
       investmentStocksAccountType: 'nisa',
@@ -88,7 +88,7 @@ describe('createApiParams for NISA principal calculation', () => {
     expect(trustProduct?.initialPrincipal).toBe(expectedTrustPrincipal);
   });
 
-  it('should handle zero gain/loss rate', () => {
+  it('評価損益率がゼロの場合を処理できる', () => {
     const formData: FormDataState = {
       ...createDefaultFormData(),
       investmentStocksAccountType: 'nisa',
