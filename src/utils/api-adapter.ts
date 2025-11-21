@@ -75,13 +75,13 @@ const legacyToProducts = (formData: FormDataState) => {
 
   return configs
     .map((cfg, idx) => {
-      const current = n((formData as any)[cfg.currentKey]);
-      const monthlyVal = cfg.monthlyKey ? n((monthly as any)[cfg.monthlyKey]) : 0;
-      const spot = cfg.annualSpotKey ? n((formData as any)[cfg.annualSpotKey]) : 0;
+      const current = n(formData[cfg.currentKey]);
+      const monthlyVal = cfg.monthlyKey ? n(monthly[cfg.monthlyKey]) : 0;
+      const spot = cfg.annualSpotKey ? n(formData[cfg.annualSpotKey]) : 0;
       const hasAny = current > 0 || monthlyVal > 0 || spot > 0;
       if (!hasAny) return undefined;
 
-      const accountType = (cfg.accountKey ? (formData as any)[cfg.accountKey] : 'taxable') as 'nisa' | 'taxable';
+      const accountType = (cfg.accountKey ? formData[cfg.accountKey] : 'taxable') as 'nisa' | 'taxable';
       return {
         id: Date.now() + idx,
         category: cfg.key,
@@ -90,9 +90,9 @@ const legacyToProducts = (formData: FormDataState) => {
         currentValue: String(current),
         monthlyInvestment: String(monthlyVal),
         annualSpot: String(spot),
-        expectedRate: String((formData as any)[cfg.rateKey] ?? cfg.defaultRate),
-        gainLossSign: cfg.gainLossSignKey ? (formData as any)[cfg.gainLossSignKey] : '+',
-        gainLossRate: cfg.gainLossRateKey ? (formData as any)[cfg.gainLossRateKey] : '0',
+        expectedRate: String((cfg.rateKey ? formData[cfg.rateKey] : undefined) ?? cfg.defaultRate),
+        gainLossSign: cfg.gainLossSignKey ? formData[cfg.gainLossSignKey] : '+',
+        gainLossRate: cfg.gainLossRateKey ? formData[cfg.gainLossRateKey] : '0',
       };
     })
     .filter(Boolean) as Required<FormDataState>['investmentProducts'];
