@@ -1,4 +1,4 @@
-﻿﻿﻿﻿import { useMemo, useCallback, useState, useEffect } from 'react';
+﻿﻿﻿﻿import { useMemo, useCallback, useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import IncomePositionChart from '../components/dashboard/IncomePositionChart';
 import SavingsPositionChart from '../components/dashboard/SavingsPositionChart';
@@ -16,6 +16,7 @@ import type { FormDataState } from '../types/form-types';
 import { useOrientation } from '../hooks/useOrientation';
 import { computeNetAnnual } from '../utils/financial'; // 共通関数をインポート
 import { MASTER_SECTIONS } from '@/constants/financial_const';
+import { exportToExcel, exportToPdf } from '../utils/export';
 
 const COLORS = {
   現金: '#3B82F6',
@@ -58,6 +59,9 @@ export default function ResultPage() {
   const percentileData = state?.percentileData;
   const dataset = useMemo(() => buildDashboardDataset(yearlyData, inputParams, percentileData), [yearlyData, inputParams, percentileData]);
 
+  const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
+  const exportMenuRef = useRef<HTMLDivElement>(null);
+
   const handleSaveOutput = useCallback(() => {
     if (!yearlyData.length || typeof window === 'undefined') {
       return;
@@ -77,6 +81,18 @@ export default function ResultPage() {
       console.error('failed to export simulation result', error);
     }
   }, [yearlyData]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (exportMenuRef.current && !exportMenuRef.current.contains(event.target as Node)) {
+        setIsExportMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   if (!inputParams || dataset.enrichedData.length === 0) {
     return (
@@ -190,14 +206,58 @@ export default function ResultPage() {
             <p className="text-gray-600 mt-1">フォーム入力をもとに {dataset.firstYear?.year ?? '-'} 年から {dataset.latestYear?.year ?? '-'} 年までの推移を可視化しました。</p>
           </div>
           <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={handleSaveOutput}
-              className={`px-4 py-2 rounded text-white ${yearlyData.length ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-gray-300 cursor-not-allowed'}`}
-              disabled={!yearlyData.length}
-            >
-              結果を保存
-            </button>
+            <div ref={exportMenuRef} className="relative">
+              <button
+                type="button"
+                onClick={() => setIsExportMenuOpen(prev => !prev)}
+                className={`px-4 py-2 rounded text-white inline-flex items-center ${yearlyData.length ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-gray-300 cursor-not-allowed'}`}
+                disabled={!yearlyData.length}
+              >
+                結果を保存
+                <svg className="fill-current h-4 w-4 ml-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.516 7.548c.436-.446 1.043-.481 1.576 0L10 10.405l2.908-2.857c.533-.481 1.141-.446 1.574 0 .436.445.408 1.197 0 1.615L10 13.232l-4.484-4.069c-.408-.418-.436-1.17 0-1.615z"/></svg>
+              </button>
+              {isExportMenuOpen && (
+                <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+                  <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                    <button
+                      onClick={() => {
+                        setIsExportMenuOpen(false);
+                        exportToPdf([
+                          'pdf-summary-section',
+                          'pdf-total-asset-chart',
+                          'pdf-timeline',
+                          'pdf-peer-comparison-charts',
+                          'pdf-investment-charts',
+                        ]);
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      role="menuitem"
+                    >
+                      レポートを保存 (PDF)
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsExportMenuOpen(false);
+                        if (inputParams) {
+                          exportToExcel(yearlyData, inputParams);
+                        }
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      role="menuitem"
+                    >
+                      詳細データを保存 (Excel)
+                    </button>
+                    <button
+                      onClick={() => { handleSaveOutput(); setIsExportMenuOpen(false); }}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      role="menuitem"
+                    >
+                      生データを保存 (JSON)
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
             <button
               type="button"
               onClick={() => setShowSectionModal(true)}
@@ -216,7 +276,7 @@ export default function ResultPage() {
         </div>
 
         <div className="grid lg:grid-cols-4 gap-6 mb-8">
-          <div className="lg:col-span-1 space-y-4">
+          <div id="pdf-summary-section" className="lg:col-span-1 space-y-4">
             {summaryCards.map((card) => (
               <div key={card.label} className="bg-white rounded-xl shadow p-4">
                 <p className="text-sm text-gray-500">{card.label}</p>
@@ -238,7 +298,7 @@ export default function ResultPage() {
           <div className="lg:col-span-3 space-y-6">
             {/* モバイルではアコーディオンになるカード群 */}
             <AccordionCard title="総資産推移">
-              <div className="bg-white rounded-xl shadow p-3 mb-6 relative">
+              <div id="pdf-total-asset-chart" className="bg-white rounded-xl shadow p-3 mb-6 relative">
                 <TotalAssetChart
                   enrichedData={dataset.enrichedData}
                   rankInfo={rankInfo}
@@ -252,19 +312,21 @@ export default function ResultPage() {
 
             {rawFormData && (
               <AccordionCard title="ライフプラン・タイムライン">
-                <LifePlanTimeline rawFormData={rawFormData as unknown as FormDataState} yearlyData={yearlyData} />
+                <div id="pdf-timeline">
+                  <LifePlanTimeline rawFormData={rawFormData as unknown as FormDataState} yearlyData={yearlyData} />
+                </div>
               </AccordionCard>
             )}
 
             <AccordionCard title="収入・貯蓄の同世代比較">
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+              <div id="pdf-peer-comparison-charts" className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                 <IncomePositionChart age={currentAge} income={selfGrossIncome} />
                 <SavingsPositionChart age={currentAge} income={totalGrossIncome} savings={savingsForChart} />
               </div>
             </AccordionCard>
 
             <AccordionCard title="投資の状況">
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 ">
+              <div id="pdf-investment-charts" className="grid grid-cols-1 xl:grid-cols-2 gap-6 ">
                 <div className="bg-white rounded-xl shadow p-4">
                   <InvestmentPrincipalChart enrichedData={dataset.enrichedData} COLORS={COLORS} age={currentAge} retireAge={retireAge} />
                 </div>
