@@ -213,7 +213,7 @@ export default function FormPage() {
       [SECTION_NAMES.RETIREMENT_INCOME]: <RetirementIncomeSection formData={formData} handleInputChange={handleInputChange} setFormData={setFormData} errors={errors} />,
       [SECTION_NAMES.RETIREMENT_PLAN]: <RetirementLifeEventSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
       [SECTION_NAMES.SAVINGS]: <SavingsSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
-      [SECTION_NAMES.INVESTMENT]: <InvestmentSection formData={formData} handleInputChange={handleInputChange} monthlyInvestmentAmounts={formData.monthlyInvestmentAmounts} />,
+      [SECTION_NAMES.INVESTMENT]: <InvestmentSection formData={formData} setFormData={setFormData} />,
       [SECTION_NAMES.SIMULATION_SETTINGS]: <SimulationSettingsSection formData={formData} handleInputChange={handleInputChange} errors={errors} />,
     };
     return components[sectionName] || null;

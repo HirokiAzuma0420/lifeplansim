@@ -1,21 +1,12 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useLocation, type Location } from 'react-router-dom';
-import type { FormDataState, FormLocationState, InvestmentMonthlyAmounts } from '@/types/form-types';
+import type { FormDataState, FormLocationState, InvestmentProduct } from '@/types/form-types';
 import type { CarePlan } from '@/types/simulation-types';
 import * as FC from '@/constants/financial_const';
 import { computeNetAnnual, calculateLoanPayment, n } from '@/utils/financial';
 import { validate } from '@/utils/validation';
 
 const LIFE_PLAN_FORM_CACHE_KEY = 'lifePlanFormDataCache';
-
-const initialMonthlyInvestmentAmounts: InvestmentMonthlyAmounts = {
-  investmentStocksMonthly: '0',
-  investmentTrustMonthly: '0',
-  investmentBondsMonthly: '0',
-  investmentIdecoMonthly: '0',
-  investmentCryptoMonthly: '0',
-  investmentOtherMonthly: '0',
-};
 
 const createDefaultCarePlan = (): Omit<CarePlan, 'id'> & { id: number } => ({
   id: Date.now(),
@@ -111,16 +102,17 @@ export const createDefaultFormData = (): FormDataState => ({
   investmentIdecoCurrent: '',
   investmentCryptoCurrent: '',
   investmentOtherCurrent: '',
-  investmentStocksAccountType: 'taxable' as 'nisa' | 'taxable',
-  investmentTrustAccountType: 'taxable' as 'nisa' | 'taxable',
-  investmentOtherAccountType: 'taxable' as 'nisa' | 'taxable',
-  investmentStocksGainLossSign: '+',
-  investmentStocksGainLossRate: '0',
-  investmentTrustGainLossSign: '+',
-  investmentTrustGainLossRate: '0',
-  investmentOtherGainLossSign: '+',
-  investmentOtherGainLossRate: '0',
-  monthlyInvestmentAmounts: { ...initialMonthlyInvestmentAmounts },
+  investmentStocksAccountType: 'taxable',
+  investmentTrustAccountType: 'taxable',
+  investmentOtherAccountType: 'taxable',
+  monthlyInvestmentAmounts: {
+    investmentStocksMonthly: '0',
+    investmentTrustMonthly: '0',
+    investmentBondsMonthly: '0',
+    investmentIdecoMonthly: '0',
+    investmentCryptoMonthly: '0',
+    investmentOtherMonthly: '0',
+  },
   investmentStocksAnnualSpot: '0',
   investmentTrustAnnualSpot: '0',
   investmentBondsAnnualSpot: '0',
@@ -133,6 +125,11 @@ export const createDefaultFormData = (): FormDataState => ({
   investmentIdecoRate: String(FC.DEFAULT_INVESTMENT_RATE.IDECO),
   investmentCryptoRate: String(FC.DEFAULT_INVESTMENT_RATE.CRYPTO),
   investmentOtherRate: String(FC.DEFAULT_INVESTMENT_RATE.OTHER),
+  investmentStocksGainLossSign: '+',
+  investmentStocksGainLossRate: '0',
+  investmentTrustGainLossSign: '+',
+  investmentTrustGainLossRate: '0',
+  investmentProducts: [] as InvestmentProduct[],
   simulationPeriodAge: String(FC.DEFAULT_SIMULATION_END_AGE),
   interestRateScenario: 'ランダム変動',
   fixedInterestRate: String(FC.DEFAULT_FIXED_INTEREST_RATE_PERCENT),
@@ -361,15 +358,6 @@ export const useFormState = () => {
           ...(prev.housePurchasePlan || { age: 0, price: 0, downPayment: 0, loanYears: 0, interestRate: 0 }),
           [field]: value === '' ? '' : Number(value)
         },
-      }));
-    } else if (name.startsWith('investment') && name.endsWith('Monthly')) {
-      const value = e.target.value;
-      setFormData(prev => ({
-        ...prev,
-        monthlyInvestmentAmounts: {
-          ...prev.monthlyInvestmentAmounts,
-          [name]: value
-        }
       }));
     } else {
       let value: string | boolean;
@@ -691,9 +679,9 @@ export const useFormState = () => {
     return Math.ceil(totalPayment);
   }, [formData.carPrice, formData.carLoanUsage, formData.carLoanYears, formData.carLoanType]);
   const totalInvestment = useMemo(() => {
-    const monthlyTotal = Object.values(formData.monthlyInvestmentAmounts).reduce((acc: number, val) => acc + Number(val), 0);
+    const monthlyTotal = formData.investmentProducts.reduce((acc, product) => acc + Number(product.monthlyInvestment || 0), 0);
     return { monthly: monthlyTotal };
-  }, [formData.monthlyInvestmentAmounts]);
+  }, [formData.investmentProducts]);
   const { estimatedAnnualLoanPayment, estimatedTotalLoanPayment } = useMemo(() => {
     const housingLoanStatus = formData.housingLoanStatus;
     let annualPayment = 0;

@@ -65,7 +65,7 @@
 `react-hook-form` の `useFieldArray` を利用して、動的なフォームを実現する。
 
 1.  **カテゴリごとの管理**: UIを「株式」「投資信託」などのカテゴリでグループ化する。
-2.  **動的な追加機能**: 各カテゴリ内に「（株式/投資信託など）を追加」ボタンを設置する。このボタンをクリックすると、`useFieldArray` の `append` 関数を呼び出し、対応する `category` を持つ新しい `InvestmentProduct` オブジェクトを `investmentProducts` 配列に追加する。
+2.  **動的な追加機能**: 各カテゴリ内に「口座を追加」ボタンを設置する。このボタンをクリックすると、`useFieldArray` の `append` 関数を呼び出し、対応する `category` を持つ新しい `InvestmentProduct` オブジェクトを `investmentProducts` 配列に追加する。
 3.  **動的なフォーム生成**: `investmentProducts` 配列を `filter` と `map` でループ処理し、各カテゴリに対応するフォームセットを動的に描画する。
 4.  **削除機能**: 各フォームセットに「削除」ボタンを設置し、`useFieldArray` の `remove` 関数を呼び出して特定の商品を配列から削除できるようにする。
 5.  **コンポーネントの再利用**: 口座種別（NISA/特定）、評価額、評価損益率などの入力フィールドは、再利用可能なサブコンポーネントとして実装することを検討する。
@@ -76,7 +76,20 @@
     `createDefaultFormData` 関数内の `investment...` 関連の初期値を削除し、`investmentProducts: []` を設定する。
 
 2.  **APIアダプタの修正 (`src/utils/api-adapter.ts`)**:
-    `createApiParams` 関数を修正する。新しい `investmentProducts` 配列を走査し、シミュレーションAPIが要求するデータ形式（`products` 配列）に正しく変換するロジックを実装する。特に、NISA口座の元本計算ロジックが新しいデータ構造でも正しく機能するように注意する。
+    `createApiParams` 関数を修正する。新しい `investmentProducts` 配列を走査し、シミュレーションAPIが要求するデータ形式（`products` 配列）に正しく変換するロジックを実装する。
+    **特に、NISA口座 (`accountType: 'nisa'`) の場合、フォーム入力の評価額 (`currentValue`) と評価損益率 (`gainLossRate`) から、APIが必要とする元本 (`initialPrincipal`) を計算するロジックを正確に実装する必要がある。**
+
+### 2.4. バックエンド(API)の確認
+
+`api/simulate/index.ts` のシミュレーションロジックを確認した結果、以下の点が判明した。
+
+-   **NISA/課税口座の分離計算に既に対応済み**:
+    APIの入力パラメータ `SimulationInputParams.products` 配列内の各商品オブジェクトが `account: '非課税'` または `account: '課税'` プロパティを持つことで、シミュレーションエンジンは両者を区別して計算を実行する。
+    -   投資実行時には、NISAの非課税枠（年間・生涯）が考慮される。
+    -   資産売却（赤字補填）時には、課税口座が優先され、その売却益に対しては正しく課税計算が行われる。
+
+-   **結論**:
+    **`api-adapter.ts` がAPIの要求するデータ形式を正しく生成すれば、`api/simulate/index.ts` 自体に大規模な改修は不要である。** 影響範囲はフロントエンドとAPIアダプタに限定される。
 
 ## 3. 影響範囲
 
@@ -84,6 +97,7 @@
 -   `src/components/form/InvestmentSection.tsx`
 -   `src/hooks/useFormState.ts`
 -   `src/utils/api-adapter.ts`
+-   `api/simulate/index.ts` (**大規模な変更は不要**)
 -   上記変更に伴うすべての関連テストファイル（例: `src/test/util/api-adapter.test.ts`）
 
 ## 4. 実装ステップ

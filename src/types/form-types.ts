@@ -1,4 +1,5 @@
 import type { CarePlan, SimulationNavigationState } from './simulation-types';
+import type { InvestmentMonthlyAmounts } from './investment';
 
 export interface RetirementIncome {
   amount: string | number;
@@ -23,29 +24,23 @@ export interface OtherLumpSum {
   age: string | number;
 }
 
-export type InvestmentAssetKey =
-  | 'investmentStocks'
-  | 'investmentTrust'
-  | 'investmentBonds'
-  | 'investmentIdeco'
-  | 'investmentCrypto'
-  | 'investmentOther';
+export type InvestmentCategory = 'stocks' | 'trust' | 'bonds' | 'ideco' | 'crypto' | 'other';
 
-export type InvestmentValueField =
-  | `${InvestmentAssetKey}Current`
-  | `${InvestmentAssetKey}AnnualSpot`
-  | `${InvestmentAssetKey}Rate`;
-
-export type InvestmentAccountTypeField =
-  | 'investmentStocksAccountType'
-  | 'investmentTrustAccountType'
-  | 'investmentOtherAccountType';
-
-export type InvestmentMonthlyField = `${InvestmentAssetKey}Monthly`;
-
-export type InvestmentFormValues = Record<InvestmentValueField, string>;
-
-export type InvestmentMonthlyAmounts = Record<InvestmentMonthlyField, string>;
+export interface InvestmentProduct {
+  id: number; // useFieldArrayのためのユニークID
+  category: InvestmentCategory;
+  // 'bonds', 'ideco', 'crypto' では 'taxable' 固定
+  accountType: 'nisa' | 'taxable';
+  // ユーザーが任意で設定できる名前
+  name: string;
+  currentValue: string | number;
+  monthlyInvestment: string | number;
+  annualSpot: string | number;
+  expectedRate: string | number;
+  // NISA口座の場合のみ入力
+  gainLossSign?: '+' | '-';
+  gainLossRate?: string | number;
+}
 
 export interface FormDataState {
   familyComposition: '' | '独身' | '既婚';
@@ -137,34 +132,38 @@ export interface FormDataState {
   currentSavings: string | number;
   monthlySavings: string | number;
   hasInvestment: '' | 'はい' | 'いいえ';
-  investmentStocksCurrent: string | number;
-  investmentTrustCurrent: string | number;
-  investmentBondsCurrent: string | number;
-  investmentIdecoCurrent: string | number;
-  investmentCryptoCurrent: string | number;
-  investmentOtherCurrent: string | number;
-  investmentStocksAccountType: 'nisa' | 'taxable';
-  investmentTrustAccountType: 'nisa' | 'taxable';
-  investmentOtherAccountType: 'nisa' | 'taxable';
+
+  // 旧構成の投資フィールド（後方互換用）
+  investmentStocksCurrent?: string | number;
+  investmentTrustCurrent?: string | number;
+  investmentBondsCurrent?: string | number;
+  investmentIdecoCurrent?: string | number;
+  investmentCryptoCurrent?: string | number;
+  investmentOtherCurrent?: string | number;
+  investmentStocksAccountType?: 'nisa' | 'taxable';
+  investmentTrustAccountType?: 'nisa' | 'taxable';
+  investmentOtherAccountType?: 'nisa' | 'taxable';
+  monthlyInvestmentAmounts: InvestmentMonthlyAmounts;
+  investmentStocksAnnualSpot?: string | number;
+  investmentTrustAnnualSpot?: string | number;
+  investmentBondsAnnualSpot?: string | number;
+  investmentIdecoAnnualSpot?: string | number;
+  investmentCryptoAnnualSpot?: string | number;
+  investmentOtherAnnualSpot?: string | number;
+  investmentStocksRate?: string | number;
+  investmentTrustRate?: string | number;
+  investmentBondsRate?: string | number;
+  investmentIdecoRate?: string | number;
+  investmentCryptoRate?: string | number;
+  investmentOtherRate?: string | number;
   investmentStocksGainLossSign?: '+' | '-';
   investmentStocksGainLossRate?: string | number;
   investmentTrustGainLossSign?: '+' | '-';
   investmentTrustGainLossRate?: string | number;
-  investmentOtherGainLossSign?: '+' | '-';
-  investmentOtherGainLossRate?: string | number;
-  monthlyInvestmentAmounts: InvestmentMonthlyAmounts;
-  investmentStocksAnnualSpot: string;
-  investmentTrustAnnualSpot: string;
-  investmentBondsAnnualSpot: string;
-  investmentIdecoAnnualSpot: string;
-  investmentCryptoAnnualSpot: string;
-  investmentOtherAnnualSpot: string;
-  investmentStocksRate: string;
-  investmentTrustRate: string;
-  investmentBondsRate: string;
-  investmentIdecoRate: string;
-  investmentCryptoRate: string;
-  investmentOtherRate: string;
+
+  // 新構成: 配列ベース
+  investmentProducts: InvestmentProduct[];
+
   simulationPeriodAge: string;
   interestRateScenario: '固定利回り' | 'ランダム変動';
   fixedInterestRate: string;

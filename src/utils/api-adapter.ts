@@ -1,7 +1,102 @@
-import type { SimulationInputParams, InvestmentProduct } from '@/types/simulation-types';
+import type { SimulationInputParams, InvestmentProduct as ApiInvestmentProduct } from '@/types/simulation-types';
 import type { FormDataState } from '@/types/form-types';
 import * as FC from '@/constants/financial_const';
 import { n } from './financial';
+
+const legacyToProducts = (formData: FormDataState) => {
+  const monthly = formData.monthlyInvestmentAmounts ?? {};
+  const configs: {
+    key: ApiInvestmentProduct['key'];
+    currentKey: keyof FormDataState;
+    accountKey?: keyof FormDataState;
+    rateKey?: keyof FormDataState;
+    annualSpotKey?: keyof FormDataState;
+    monthlyKey?: keyof typeof monthly;
+    gainLossSignKey?: keyof FormDataState;
+    gainLossRateKey?: keyof FormDataState;
+    defaultRate: number;
+  }[] = [
+    {
+      key: 'stocks',
+      currentKey: 'investmentStocksCurrent',
+      accountKey: 'investmentStocksAccountType',
+      rateKey: 'investmentStocksRate',
+      annualSpotKey: 'investmentStocksAnnualSpot',
+      monthlyKey: 'investmentStocksMonthly',
+      gainLossSignKey: 'investmentStocksGainLossSign',
+      gainLossRateKey: 'investmentStocksGainLossRate',
+      defaultRate: FC.DEFAULT_INVESTMENT_RATE.STOCKS,
+    },
+    {
+      key: 'trust',
+      currentKey: 'investmentTrustCurrent',
+      accountKey: 'investmentTrustAccountType',
+      rateKey: 'investmentTrustRate',
+      annualSpotKey: 'investmentTrustAnnualSpot',
+      monthlyKey: 'investmentTrustMonthly',
+      gainLossSignKey: 'investmentTrustGainLossSign',
+      gainLossRateKey: 'investmentTrustGainLossRate',
+      defaultRate: FC.DEFAULT_INVESTMENT_RATE.TRUST,
+    },
+    {
+      key: 'bonds',
+      currentKey: 'investmentBondsCurrent',
+      rateKey: 'investmentBondsRate',
+      annualSpotKey: 'investmentBondsAnnualSpot',
+      monthlyKey: 'investmentBondsMonthly',
+      defaultRate: FC.DEFAULT_INVESTMENT_RATE.BONDS,
+    },
+    {
+      key: 'ideco',
+      currentKey: 'investmentIdecoCurrent',
+      rateKey: 'investmentIdecoRate',
+      annualSpotKey: 'investmentIdecoAnnualSpot',
+      monthlyKey: 'investmentIdecoMonthly',
+      defaultRate: FC.DEFAULT_INVESTMENT_RATE.IDECO,
+    },
+    {
+      key: 'crypto',
+      currentKey: 'investmentCryptoCurrent',
+      rateKey: 'investmentCryptoRate',
+      annualSpotKey: 'investmentCryptoAnnualSpot',
+      monthlyKey: 'investmentCryptoMonthly',
+      defaultRate: FC.DEFAULT_INVESTMENT_RATE.CRYPTO,
+    },
+    {
+      key: 'other',
+      currentKey: 'investmentOtherCurrent',
+      accountKey: 'investmentOtherAccountType',
+      rateKey: 'investmentOtherRate',
+      annualSpotKey: 'investmentOtherAnnualSpot',
+      monthlyKey: 'investmentOtherMonthly',
+      defaultRate: FC.DEFAULT_INVESTMENT_RATE.OTHER,
+    },
+  ];
+
+  return configs
+    .map((cfg, idx) => {
+      const current = n((formData as any)[cfg.currentKey]);
+      const monthlyVal = cfg.monthlyKey ? n((monthly as any)[cfg.monthlyKey]) : 0;
+      const spot = cfg.annualSpotKey ? n((formData as any)[cfg.annualSpotKey]) : 0;
+      const hasAny = current > 0 || monthlyVal > 0 || spot > 0;
+      if (!hasAny) return undefined;
+
+      const accountType = (cfg.accountKey ? (formData as any)[cfg.accountKey] : 'taxable') as 'nisa' | 'taxable';
+      return {
+        id: Date.now() + idx,
+        category: cfg.key,
+        accountType,
+        name: '',
+        currentValue: String(current),
+        monthlyInvestment: String(monthlyVal),
+        annualSpot: String(spot),
+        expectedRate: String((formData as any)[cfg.rateKey] ?? cfg.defaultRate),
+        gainLossSign: cfg.gainLossSignKey ? (formData as any)[cfg.gainLossSignKey] : '+',
+        gainLossRate: cfg.gainLossRateKey ? (formData as any)[cfg.gainLossRateKey] : '0',
+      };
+    })
+    .filter(Boolean) as Required<FormDataState>['investmentProducts'];
+};
 
 const calculateInitialPrincipal = (totalAmount: string | number, sign: '+' | '-' | undefined, rate: string | number | undefined): number | undefined => {
   const totalAmountYen = n(totalAmount) * FC.YEN_PER_MAN;
@@ -49,43 +144,34 @@ export const createApiParams = (formData: FormDataState): SimulationInputParams 
     n(formData.otherVariableCost);
   const detailedVariableAnnual = monthlyVariableExpense * FC.MONTHS_PER_YEAR;
 
-  const assetKeys: { key: 'stocks' | 'trust' | 'other'; current: keyof FormDataState; accountType: keyof FormDataState; gainLossSign: keyof FormDataState; gainLossRate: keyof FormDataState; recurring: keyof FormDataState['monthlyInvestmentAmounts']; spot: keyof FormDataState; rate: keyof FormDataState; }[] = [
-    { key: 'stocks', current: 'investmentStocksCurrent', accountType: 'investmentStocksAccountType', gainLossSign: 'investmentStocksGainLossSign', gainLossRate: 'investmentStocksGainLossRate', recurring: 'investmentStocksMonthly', spot: 'investmentStocksAnnualSpot', rate: 'investmentStocksRate' },
-    { key: 'trust', current: 'investmentTrustCurrent', accountType: 'investmentTrustAccountType', gainLossSign: 'investmentTrustGainLossSign', gainLossRate: 'investmentTrustGainLossRate', recurring: 'investmentTrustMonthly', spot: 'investmentTrustAnnualSpot', rate: 'investmentTrustRate' },
-    { key: 'other', current: 'investmentOtherCurrent', accountType: 'investmentOtherAccountType', gainLossSign: 'investmentOtherGainLossSign', gainLossRate: 'investmentOtherGainLossRate', recurring: 'investmentOtherMonthly', spot: 'investmentOtherAnnualSpot', rate: 'investmentOtherRate' },
-  ];
+  const sourceProducts = formData.investmentProducts.length > 0
+    ? formData.investmentProducts
+    : legacyToProducts(formData);
 
-  const nisaEligibleProducts: InvestmentProduct[] = assetKeys.map(asset => {
-    const accountType = formData[asset.accountType] as 'nisa' | 'taxable';
-    const currentJPY = n(formData[asset.current]) * FC.YEN_PER_MAN;
+  const products: ApiInvestmentProduct[] = sourceProducts.map(p => {
     let initialPrincipal: number | undefined;
+    if (p.accountType === 'nisa') {
+      initialPrincipal = calculateInitialPrincipal(p.currentValue, p.gainLossSign, p.gainLossRate);
+    }
 
-    if (accountType === 'nisa') {
-      initialPrincipal = calculateInitialPrincipal(
-        formData[asset.current] as string | number,
-        formData[asset.gainLossSign] as '+' | '-',
-        formData[asset.gainLossRate] as string | number
-      );
+    let account: '非課税' | '課税' | 'iDeCo' = '課税';
+    if (p.category === 'ideco') {
+      account = 'iDeCo';
+    } else if (p.accountType === 'nisa') {
+      account = '非課税';
     }
 
     return {
-      key: asset.key,
-      account: accountType === 'nisa' ? '非課税' : '課税',
-      currentJPY,
+      key: p.category,
+      account,
+      currentJPY: n(p.currentValue) * FC.YEN_PER_MAN,
       initialPrincipal,
-      recurringJPY: n(formData.monthlyInvestmentAmounts[asset.recurring]) * FC.MONTHS_PER_YEAR,
-      spotJPY: n(formData[asset.spot]),
-      expectedReturn: n(formData[asset.rate]) / 100,
+      recurringJPY: n(p.monthlyInvestment) * FC.MONTHS_PER_YEAR,
+      spotJPY: n(p.annualSpot),
+      expectedReturn: n(p.expectedRate) / 100,
     };
-  });
+  }).filter(p => p.currentJPY > 0 || p.recurringJPY > 0 || p.spotJPY > 0);
 
-  const otherProducts: InvestmentProduct[] = [
-    { key: 'bonds', currentJPY: n(formData.investmentBondsCurrent) * FC.YEN_PER_MAN, recurringJPY: n(formData.monthlyInvestmentAmounts.investmentBondsMonthly) * FC.MONTHS_PER_YEAR, spotJPY: n(formData.investmentBondsAnnualSpot), expectedReturn: n(formData.investmentBondsRate) / 100, account: '課税' },
-    { key: 'crypto', currentJPY: n(formData.investmentCryptoCurrent) * FC.YEN_PER_MAN, recurringJPY: n(formData.monthlyInvestmentAmounts.investmentCryptoMonthly) * FC.MONTHS_PER_YEAR, spotJPY: n(formData.investmentCryptoAnnualSpot), expectedReturn: n(formData.investmentCryptoRate) / 100, account: '課税' },
-    { key: 'ideco', currentJPY: n(formData.investmentIdecoCurrent) * FC.YEN_PER_MAN, recurringJPY: n(formData.monthlyInvestmentAmounts.investmentIdecoMonthly) * FC.MONTHS_PER_YEAR, spotJPY: n(formData.investmentIdecoAnnualSpot), expectedReturn: n(formData.investmentIdecoRate) / 100, account: 'iDeCo' },
-  ];
-
-  const products = [...nisaEligibleProducts, ...otherProducts].filter(p => p.currentJPY > 0 || p.recurringJPY > 0 || p.spotJPY > 0);
 
   const params: SimulationInputParams = {
     initialAge: n(formData.personAge),

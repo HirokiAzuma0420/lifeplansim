@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { createApiParams } from '@/utils/api-adapter';
 import { createDefaultFormData } from '@/hooks/useFormState';
 import type { SimulationInputParams } from '@/types/simulation-types';
-import type { FormDataState } from '@/types/form-types';
+import type { FormDataState, InvestmentProduct } from '@/types/form-types';
 import * as FC from '@/constants/financial_const';
 
 // このテストファイルは、フォーム入力値（FormDataState）が
@@ -186,3 +186,95 @@ describe('TC-FORM-110: 結婚・住宅・介護ライフイベントの変換', 
   });
 });
 
+describe('TC-FORM-120: 投資商品の変換', () => {
+  it('investmentProducts 配列が正しく変換され、NISAの元本が計算される', () => {
+    const base: FormDataState = createDefaultFormData();
+
+    const investmentProducts: InvestmentProduct[] = [
+      // NISA口座（株式）: 評価額120万、評価益+20% → 元本100万
+      {
+        id: 1,
+        category: 'stocks',
+        accountType: 'nisa',
+        name: 'NISA Stocks',
+        currentValue: '120', // 万円
+        monthlyInvestment: '50000', // 円
+        annualSpot: '100000', // 円
+        expectedRate: '5', // %
+        gainLossSign: '+',
+        gainLossRate: '20', // %
+      },
+      // 課税口座（投資信託）
+      {
+        id: 2,
+        category: 'trust',
+        accountType: 'taxable',
+        name: 'Taxable Trust',
+        currentValue: '50', // 万円
+        monthlyInvestment: '30000', // 円
+        annualSpot: '0', // 円
+        expectedRate: '4', // %
+      },
+      // iDeCo
+      {
+        id: 3,
+        category: 'ideco',
+        accountType: 'taxable', // UI上は選択不可だが、データとしてはtaxable
+        name: 'My iDeCo',
+        currentValue: '200', // 万円
+        monthlyInvestment: '23000', // 円
+        annualSpot: '0', // 円
+        expectedRate: '3.5', // %
+      },
+    ];
+
+    const formData: FormDataState = {
+      ...base,
+      investmentProducts,
+    };
+
+    const params: SimulationInputParams = createApiParams(formData);
+    const products = params.products ?? [];
+
+    expect(products).toBeDefined();
+    expect(products.length).toBe(3);
+
+    // 1. NISA口座の検証
+    const nisaProduct = products.find(p => p.key === 'stocks');
+    expect(nisaProduct).toBeDefined();
+    if (nisaProduct) {
+      expect(nisaProduct.account).toBe('非課税');
+      expect(nisaProduct.currentJPY).toBe(120 * FC.YEN_PER_MAN);
+      expect(nisaProduct.recurringJPY).toBe(50000 * FC.MONTHS_PER_YEAR);
+      expect(nisaProduct.spotJPY).toBe(100000);
+      expect(nisaProduct.expectedReturn).toBeCloseTo(0.05);
+      // 元本計算の検証: 120万 / (1 + 0.20) = 100万
+      expect(nisaProduct.initialPrincipal).toBe(100 * FC.YEN_PER_MAN);
+    }
+
+    // 2. 課税口座の検証
+    const taxableProduct = products.find(p => p.key === 'trust');
+    expect(taxableProduct).toBeDefined();
+    if (taxableProduct) {
+      expect(taxableProduct.account).toBe('課税');
+      expect(taxableProduct.currentJPY).toBe(50 * FC.YEN_PER_MAN);
+      expect(taxableProduct.recurringJPY).toBe(30000 * FC.MONTHS_PER_YEAR);
+      expect(taxableProduct.spotJPY).toBe(0);
+      expect(taxableProduct.expectedReturn).toBeCloseTo(0.04);
+      // 課税口座なので元本は計算されない
+      expect(taxableProduct.initialPrincipal).toBeUndefined();
+    }
+
+    // 3. iDeCo口座の検証
+    const idecoProduct = products.find(p => p.key === 'ideco');
+    expect(idecoProduct).toBeDefined();
+    if (idecoProduct) {
+      expect(idecoProduct.account).toBe('iDeCo');
+      expect(idecoProduct.currentJPY).toBe(200 * FC.YEN_PER_MAN);
+      expect(idecoProduct.recurringJPY).toBe(23000 * FC.MONTHS_PER_YEAR);
+      expect(idecoProduct.spotJPY).toBe(0);
+      expect(idecoProduct.expectedReturn).toBeCloseTo(0.035);
+      expect(idecoProduct.initialPrincipal).toBeUndefined();
+    }
+  });
+});
