@@ -1,10 +1,11 @@
 .container {
-  display: none;
   position: absolute;
-  left: -9999px;
+  left: -12000px;
   top: 0;
   font-family: 'Noto Sans JP', 'Noto Sans', sans-serif;
   color: #111827;
+  opacity: 0; /* 画面には出さないがレイアウトは維持 */
+  pointer-events: none;
 }
 
 .page {
