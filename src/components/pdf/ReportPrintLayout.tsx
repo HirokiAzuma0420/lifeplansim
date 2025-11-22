@@ -61,10 +61,7 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
   const growthAmount = latestTotal - firstYearTotal || 0;
   const peakAssetValue = Math.max(
     0,
-    ...dataset.enrichedData.map(entry => {
-      const currentTotal = calculateDisplayTotal(entry);
-      return currentTotal;
-    })
+    ...dataset.enrichedData.map(entry => calculateDisplayTotal(entry))
   );
 
   const selfGrossIncome = (inputParams.mainJobIncomeGross ?? 0) + (inputParams.sideJobIncomeGross ?? 0);
@@ -238,16 +235,18 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="border rounded-lg p-3 bg-gray-50">
-            <p className="text-sm text-gray-500">iDeCo元本（売却直前）</p>
-            <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireIdecoPrincipal)}</p>
+            <p className="text-sm text-gray-500 mb-2">iDeCoサマリー（売却直前）</p>
+            <div className="space-y-1">
+              <div className="flex justify-between text-sm text-gray-600">
+                <span>元本</span>
+                <span className="text-gray-900 font-semibold">{formatCurrency(retireIdecoPrincipal)}</span>
+              </div>
+              <div className="flex justify-between text-sm text-gray-600">
+                <span>評価額</span>
+                <span className="text-gray-900 font-semibold">{formatCurrency(retireIdecoBalance)}</span>
+              </div>
+            </div>
           </div>
-          <div className="border rounded-lg p-3 bg-gray-50">
-            <p className="text-sm text-gray-500">iDeCo評価額（売却直前）</p>
-            <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireIdecoBalance)}</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="border rounded-lg p-3 bg-gray-50">
             <p className="text-sm text-gray-500 mb-2">NISAサマリー</p>
             <div className="space-y-1">
@@ -265,6 +264,9 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="border rounded-lg p-3 bg-gray-50">
             <p className="text-sm text-gray-500 mb-2">課税口座サマリー</p>
             <div className="space-y-1">
