@@ -177,38 +177,53 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
           yAxisMax={peakAssetValue}
         />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <div className="border rounded-lg p-3 bg-gray-50">
-          <p className="text-sm text-gray-500">退職年齢時点の総資産額</p>
-          <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireTotalAssets)}</p>
+      <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="border rounded-lg p-3 bg-gray-50">
+            <p className="text-sm text-gray-500">退職年齢時点の総資産額</p>
+            <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireTotalAssets)}</p>
+          </div>
+          <div className="border rounded-lg p-3 bg-gray-50">
+            <p className="text-sm text-gray-500">現金保有額</p>
+            <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireCash)}</p>
+          </div>
+          <div className="border rounded-lg p-3 bg-gray-50">
+            <p className="text-sm text-gray-500">iDeCo最終残高</p>
+            <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireIdecoBalance)}</p>
+          </div>
         </div>
-        <div className="border rounded-lg p-3 bg-gray-50">
-          <p className="text-sm text-gray-500">現金保有額</p>
-          <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireCash)}</p>
-        </div>
-        <div className="border rounded-lg p-3 bg-gray-50">
-          <p className="text-sm text-gray-500">iDeCo最終残高</p>
-          <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireIdecoBalance)}</p>
-        </div>
-        <div className="border rounded-lg p-3 bg-gray-50">
-          <p className="text-sm text-gray-500">NISA保有額</p>
-          <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireNisaBalance)}</p>
-        </div>
-        <div className="border rounded-lg p-3 bg-gray-50">
-          <p className="text-sm text-gray-500">NISA評価損益額</p>
-          <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireNisaPnl)}</p>
-        </div>
-        <div className="border rounded-lg p-3 bg-gray-50">
-          <p className="text-sm text-gray-500">NISA元本</p>
-          <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireNisaPrincipal)}</p>
-        </div>
-        <div className="border rounded-lg p-3 bg-gray-50">
-          <p className="text-sm text-gray-500">課税口座保有額</p>
-          <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireTaxableBalance)}</p>
-        </div>
-        <div className="border rounded-lg p-3 bg-gray-50">
-          <p className="text-sm text-gray-500">課税口座評価損益額</p>
-          <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireTaxablePnl)}</p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="border rounded-lg p-3 bg-gray-50">
+            <p className="text-sm text-gray-500 mb-2">NISAサマリー</p>
+            <div className="space-y-1">
+              <div className="flex justify-between text-sm text-gray-600">
+                <span>保有額</span>
+                <span className="text-gray-900 font-semibold">{formatCurrency(retireNisaBalance)}</span>
+              </div>
+              <div className="flex justify-between text-sm text-gray-600">
+                <span>元本</span>
+                <span className="text-gray-900 font-semibold">{formatCurrency(retireNisaPrincipal)}</span>
+              </div>
+              <div className="flex justify-between text-sm text-gray-600">
+                <span>評価損益額</span>
+                <span className="text-gray-900 font-semibold">{formatCurrency(retireNisaPnl)}</span>
+              </div>
+            </div>
+          </div>
+          <div className="border rounded-lg p-3 bg-gray-50">
+            <p className="text-sm text-gray-500 mb-2">課税口座サマリー</p>
+            <div className="space-y-1">
+              <div className="flex justify-between text-sm text-gray-600">
+                <span>保有額</span>
+                <span className="text-gray-900 font-semibold">{formatCurrency(retireTaxableBalance)}</span>
+              </div>
+              <div className="flex justify-between text-sm text-gray-600">
+                <span>評価損益額</span>
+                <span className="text-gray-900 font-semibold">{formatCurrency(retireTaxablePnl)}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
