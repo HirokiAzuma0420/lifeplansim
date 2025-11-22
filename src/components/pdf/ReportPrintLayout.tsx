@@ -10,6 +10,7 @@ import LifePlanTimeline from '../dashboard/LifePlanTimeline';
 import IncomePositionChart from '../dashboard/IncomePositionChart';
 import SavingsPositionChart from '../dashboard/SavingsPositionChart';
 import { getAssetGrade } from '../../assets/getAssetGrade';
+import { computeNetAnnual } from '../../utils/financial';
 import { extractLifePlanEvents, chunkEvents } from '../dashboard/life-plan-events';
 import { buildAssumptionItems } from './assumption-helper';
 
@@ -69,6 +70,7 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
   const selfGrossIncome = (inputParams.mainJobIncomeGross ?? 0) + (inputParams.sideJobIncomeGross ?? 0);
   const totalGrossIncome =
     selfGrossIncome + ((inputParams.spouseMainJobIncomeGross ?? 0) + (inputParams.spouseSideJobIncomeGross ?? 0));
+  const totalNetAnnualIncome = computeNetAnnual(totalGrossIncome);
   const savingsForChart = dataset.firstYear?.totalAssets ?? 0;
 
   const retireData = React.useMemo(() => {
@@ -76,9 +78,15 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
     return exact ?? yearlyData[yearlyData.length - 1] ?? null;
   }, [yearlyData, retireAge]);
 
+  const idecoSnapshot = React.useMemo(() => {
+    const before = [...yearlyData].reverse().find(d => d.age < retireAge && (d.ideco?.balance ?? 0) > 0);
+    return before ?? yearlyData.find(d => d.age === retireAge) ?? yearlyData[yearlyData.length - 1] ?? null;
+  }, [yearlyData, retireAge]);
+
   const retireTotalAssets = retireData?.totalAssets ?? 0;
   const retireCash = retireData?.savings ?? 0;
-  const retireIdecoBalance = retireData?.ideco?.balance ?? 0;
+  const retireIdecoBalance = idecoSnapshot?.ideco?.balance ?? 0;
+  const retireIdecoPrincipal = idecoSnapshot?.ideco?.principal ?? 0;
   const retireNisaPrincipal = retireData?.nisa?.principal ?? 0;
   const retireNisaBalance = retireData?.nisa?.balance ?? 0;
   const retireNisaPnl = retireNisaBalance - retireNisaPrincipal;
@@ -100,7 +108,7 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
       : 0;
 
   const timelineEvents = rawFormData ? extractLifePlanEvents(rawFormData) : [];
-  const timelineChunks = chunkEvents(timelineEvents, 3); // 3件/ページで分割
+  const timelineChunks = chunkEvents(timelineEvents, 3);
 
   const assumptionItems = buildAssumptionItems(inputParams);
   const assumptionSections = ['基本情報', '収入・貯蓄', '生活費', '住宅', '自動車', '退職後', '年金', '投資・リスク', '投資商品']
@@ -109,7 +117,6 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
       items: assumptionItems.filter(i => i.category === category),
     }))
     .filter(section => section.items.length > 0);
-
   const assumptionSectionChunks: { category: string; items: typeof assumptionItems }[][] = [];
   const maxSectionsPerPage = 3;
   for (let i = 0; i < assumptionSections.length; i += maxSectionsPerPage) {
@@ -191,6 +198,16 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
           </div>
         ))}
       </div>
+
+      <h3 className="text-xl font-semibold mb-3">シミュレーション前提条件</h3>
+      <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
+        <li>現在年齢: {currentAge} 歳</li>
+        <li>退職予定: {retireAge} 歳</li>
+        <li>年間収入(世帯／手取り): {formatCurrency(totalNetAnnualIncome)}</li>
+        <li>初期資産額: {formatCurrency(savingsForChart)}</li>
+        <li>運用利回り: {formatPercent(inputParams.expectedReturn ?? 0)}</li>
+        <li>ストレス耐性: {inputParams.stressTest.enabled ? '有効' : '無効'}</li>
+      </ul>
     </div>
   );
 
@@ -217,8 +234,15 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
             <p className="text-sm text-gray-500">現金保有額</p>
             <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireCash)}</p>
           </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="border rounded-lg p-3 bg-gray-50">
-            <p className="text-sm text-gray-500">iDeCo最終残高</p>
+            <p className="text-sm text-gray-500">iDeCo元本（売却直前）</p>
+            <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireIdecoPrincipal)}</p>
+          </div>
+          <div className="border rounded-lg p-3 bg-gray-50">
+            <p className="text-sm text-gray-500">iDeCo評価額（売却直前）</p>
             <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireIdecoBalance)}</p>
           </div>
         </div>
