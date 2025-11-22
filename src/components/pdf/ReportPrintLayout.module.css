@@ -75,3 +75,9 @@
   font-weight: 600;
   color: #111827;
 }
+
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}

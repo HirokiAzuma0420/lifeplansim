@@ -106,7 +106,7 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
   const timelineChunks = chunkEvents(timelineEvents, 3);
 
   const assumptionItems = buildAssumptionItems(inputParams);
-  const assumptionSections = ['基本情報', '収入・貯蓄', '生活費', '住宅', '自動車', '退職後', '年金', '投資・リスク', '投資商品']
+  const assumptionSections = ['基本情報', '収入・貯蓄', '生活費', '住宅', '自動車', '退職後', '年金', '投資・リスク']
     .map(category => ({
       category,
       items: assumptionItems.filter(i => i.category === category),
@@ -116,6 +116,13 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
   const maxSectionsPerPage = 3;
   for (let i = 0; i < assumptionSections.length; i += maxSectionsPerPage) {
     assumptionSectionChunks.push(assumptionSections.slice(i, i + maxSectionsPerPage));
+  }
+
+  const productChunks: InvestmentProduct[][] = [];
+  const products = inputParams.products ?? [];
+  const productCardsPerPage = 2;
+  for (let i = 0; i < products.length; i += productCardsPerPage) {
+    productChunks.push(products.slice(i, i + productCardsPerPage));
   }
 
   const summaryCards = [
@@ -170,6 +177,42 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
               </div>
             </div>
           ))}
+        </div>
+      </div>
+    );
+  });
+
+  productChunks.forEach((chunk, idx) => {
+    pages.push(
+      <div className={styles.pageContent} key={`products-${idx}`}>
+        <h2 className="text-2xl font-bold mb-4">投資商品（{idx + 1}/{productChunks.length}）</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {chunk.map((p: InvestmentProduct, i: number) => {
+            const monthlyRecurring = (p.recurringJPY ?? 0) / 12;
+            return (
+              <div key={`${p.account}-${i}`} className={styles.assumptionSection}>
+                <div className={styles.assumptionHeader}>商品{idx * productCardsPerPage + i + 1}（口座: {p.account}）</div>
+                <div className={styles.assumptionList}>
+                  <div>
+                    <p className={styles.assumptionItemLabel}>評価額</p>
+                    <p className={styles.assumptionItemValue}>{formatCurrency(p.currentJPY ?? 0)}</p>
+                  </div>
+                  <div>
+                    <p className={styles.assumptionItemLabel}>月額積立</p>
+                    <p className={styles.assumptionItemValue}>{`${formatCurrency(monthlyRecurring)} / 月`}</p>
+                  </div>
+                  <div>
+                    <p className={styles.assumptionItemLabel}>スポット（年額）</p>
+                    <p className={styles.assumptionItemValue}>{formatCurrency(p.spotJPY ?? 0)}</p>
+                  </div>
+                  <div>
+                    <p className={styles.assumptionItemLabel}>想定利回り</p>
+                    <p className={styles.assumptionItemValue}>{formatPercent(p.expectedReturn ?? 0)}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     );
@@ -305,6 +348,42 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
       );
     });
   }
+
+  productChunks.forEach((chunk: InvestmentProduct[], idx: number) => {
+    pages.push(
+      <div className={styles.pageContent} key={`products-${idx}`}>
+        <h2 className="text-2xl font-bold mb-4">投資商品（{idx + 1}/{productChunks.length}）</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {chunk.map((p: InvestmentProduct, i: number) => {
+            const monthlyRecurring = (p.recurringJPY ?? 0) / 12;
+            return (
+              <div key={`${p.account}-${i}`} className={styles.assumptionSection}>
+                <div className={styles.assumptionHeader}>商品{idx * productCardsPerPage + i + 1}（口座: {p.account}）</div>
+                <div className={styles.assumptionList}>
+                  <div>
+                    <p className={styles.assumptionItemLabel}>評価額</p>
+                    <p className={styles.assumptionItemValue}>{formatCurrency(p.currentJPY ?? 0)}</p>
+                  </div>
+                  <div>
+                    <p className={styles.assumptionItemLabel}>月額積立</p>
+                    <p className={styles.assumptionItemValue}>{`${formatCurrency(monthlyRecurring)} / 月`}</p>
+                  </div>
+                  <div>
+                    <p className={styles.assumptionItemLabel}>スポット（年額）</p>
+                    <p className={styles.assumptionItemValue}>{formatCurrency(p.spotJPY ?? 0)}</p>
+                  </div>
+                  <div>
+                    <p className={styles.assumptionItemLabel}>想定利回り</p>
+                    <p className={styles.assumptionItemValue}>{formatPercent(p.expectedReturn ?? 0)}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  });
 
   pages.push(
     <div className={styles.pageContent}>
