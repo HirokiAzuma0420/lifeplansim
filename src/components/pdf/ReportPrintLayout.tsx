@@ -105,7 +105,7 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
   const timelineChunks = chunkEvents(timelineEvents, 3); // 3件/ページで分割
 
   const assumptionItems = buildAssumptionItems(inputParams);
-  const assumptionSections = ['基本情報', '収入・貯蓄', '生活費', '住宅', '自動車', '退職後', '年金', '投資・リスク']
+  const assumptionSections = ['基本情報', '収入・貯蓄', '生活費', '住宅', '自動車', '退職後', '年金', '投資・リスク', '投資商品']
     .map(category => ({
       category,
       items: assumptionItems.filter(i => i.category === category),
