@@ -384,7 +384,7 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
         本シミュレーション結果により生じたいかなる損害についても、当社は一切の責任を負いません。
         ご自身の判断と責任においてご活用ください。
       </p>
-      <p className="text-sm mt-8 text-gray-500">Copyright © {new Date().getFullYear()} [Your Company Name]. All rights reserved.</p>
+      <p className="text-sm mt-8 text-gray-500">Copyright © {new Date().getFullYear()} Hiroki Azuma. All rights reserved.</p>
     </div>
   );
 
