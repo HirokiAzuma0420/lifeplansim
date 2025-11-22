@@ -12,6 +12,7 @@ import SavingsPositionChart from '../dashboard/SavingsPositionChart';
 import { getAssetGrade } from '../../assets/getAssetGrade';
 import { computeNetAnnual } from '../../utils/financial';
 import { extractLifePlanEvents, chunkEvents } from '../dashboard/life-plan-events';
+import { buildAssumptionItems, chunkAssumptions } from './assumption-helper';
 
 interface ReportPrintLayoutProps {
   yearlyData: YearlyData[];
@@ -102,6 +103,9 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
 
   const timelineEvents = rawFormData ? extractLifePlanEvents(rawFormData) : [];
   const timelineChunks = chunkEvents(timelineEvents, 3); // 3件/ページで分割
+
+  const assumptionItems = buildAssumptionItems(inputParams);
+  const assumptionChunks = chunkAssumptions(assumptionItems, 12);
 
   const summaryCards = [
     { label: '初年度の総資産', value: formatCurrency(firstYearTotal), note: `開始年: ${dataset.firstYear?.year ?? '-'}年` },
@@ -295,6 +299,23 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
       <p className="text-sm mt-8 text-gray-500">Copyright © {new Date().getFullYear()} [Your Company Name]. All rights reserved.</p>
     </div>
   );
+
+  assumptionChunks.forEach((chunk, idx) => {
+    pages.push(
+      <div className={styles.pageContent} key={`assumption-${idx}`}>
+        <h2 className="text-2xl font-bold mb-4">シミュレーション前提条件（{idx + 1}/{assumptionChunks.length}）</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {chunk.map((item, i) => (
+            <div key={`${item.label}-${i}`} className="border rounded-lg p-3 bg-gray-50">
+              <p className="text-xs text-gray-500 mb-1">{item.category}</p>
+              <p className="text-sm text-gray-700">{item.label}</p>
+              <p className="text-lg font-semibold text-gray-900">{item.value}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  });
 
   return (
     <div id="pdf-render-target" className={styles.container}>
