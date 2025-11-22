@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { generatePdfReport } from '../../utils/pdfGenerator';
-import jsPDFMock, { mockAddPage, mockAddImage, mockSave, mockSetFontSize, mockText } from '../__mocks__/jspdf';
+import jsPDFMock, { mockAddPage, mockAddImage, mockSave } from '../__mocks__/jspdf';
 import html2canvasMock, { MockCanvas } from '../__mocks__/html2canvas';
 
 vi.mock('jspdf', async () => await import('../__mocks__/jspdf'));
@@ -36,7 +36,15 @@ describe('generatePdfReport', () => {
     });
   });
 
-  it('jsPDFインスタンスを生成して保存する', async () => {
+  it('キャプチャ時のオプションにscaleが指定される', async () => {
+    await generatePdfReport();
+    html2canvasMocked.mock.calls.forEach((call) => {
+      const options = (call as unknown[])[1] as { scale?: number } | undefined;
+      expect(options?.scale).toBeGreaterThanOrEqual(2);
+    });
+  });
+
+  it('jsPDFが生成され保存される', async () => {
     await generatePdfReport();
 
     expect(jsPDFMockedConstructor).toHaveBeenCalledTimes(1);
@@ -48,17 +56,6 @@ describe('generatePdfReport', () => {
 
     expect(mockAddImage).toHaveBeenCalledTimes(3);
     expect(mockAddPage).toHaveBeenCalledTimes(2);
-  });
-
-  it('ヘッダーとフッターのテキストが描画される', async () => {
-    await generatePdfReport();
-
-    const headerCalls = mockText.mock.calls.filter(call => typeof call[0] === 'string' && call[0].includes('ライフプラン'));
-    const footerCalls = mockText.mock.calls.filter(call => typeof call[0] === 'string' && call[0].includes('ページ'));
-
-    expect(mockSetFontSize).toHaveBeenCalled();
-    expect(headerCalls.length).toBe(3);
-    expect(footerCalls.length).toBe(3);
   });
 
   it('生成中ローダーが表示され完了後に消える', async () => {

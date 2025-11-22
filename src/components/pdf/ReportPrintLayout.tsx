@@ -9,8 +9,6 @@ import AssetPieChart from '../dashboard/AssetPieChart';
 import LifePlanTimeline from '../dashboard/LifePlanTimeline';
 import IncomePositionChart from '../dashboard/IncomePositionChart';
 import SavingsPositionChart from '../dashboard/SavingsPositionChart';
-import AssetTable from '../dashboard/AssetTable';
-import CashFlowTable from '../dashboard/CashFlowTable';
 import { getAssetGrade } from '../../assets/getAssetGrade';
 import { computeNetAnnual } from '../../utils/financial';
 
@@ -33,7 +31,7 @@ const COLORS = {
   その他: '#6B7280',
 };
 
-const formatCurrency = (value: number): string => `¥${Math.round(value).toLocaleString()}`;
+const formatCurrency = (value: number): string => `¥${Math.round(value).toLocaleString('ja-JP')}`;
 const formatPercent = (value: number): string => `${(value * 100).toFixed(1)}%`;
 
 export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
@@ -107,133 +105,139 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
     });
   }
 
+  const pages: React.ReactNode[] = [];
+
+  pages.push(
+    <div className={styles.pageContent}>
+      <div className="flex flex-col items-center justify-center h-full text-center">
+        <img src="/Topview.png" alt="キービジュアル" className="w-64 mb-8" />
+        <h1 className="text-4xl font-bold mb-4">ライフプラン シミュレーションレポート</h1>
+        <p className="text-xl mb-2">作成日: {new Date().toLocaleDateString('ja-JP')}</p>
+        <p className="text-lg">このレポートは、お客様の入力情報に基づき作成された試算です。</p>
+      </div>
+    </div>
+  );
+
+  pages.push(
+    <div className={styles.pageContent}>
+      <h2 className="text-2xl font-bold mb-4">レポートサマリー</h2>
+      <p className="mb-6">
+        ご入力いただいた情報に基づいてシミュレーションを実施した結果、お客様のライフプランは以下のようになりました。
+        今後の資産推移をご確認ください。
+      </p>
+
+      <h3 className="text-xl font-semibold mb-3">主要指標サマリー</h3>
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        {summaryCards.map(card => (
+          <div key={card.label} className="border p-3 rounded-lg bg-gray-50">
+            <p className="text-sm text-gray-500">{card.label}</p>
+            <p className="text-lg font-semibold text-gray-900">{card.value}</p>
+            <p className="text-xs text-gray-500 mt-1">{card.note}</p>
+          </div>
+        ))}
+      </div>
+
+      <h3 className="text-xl font-semibold mb-3">シミュレーション前提条件</h3>
+      <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
+        <li>現在年齢: {currentAge} 歳</li>
+        <li>退職予定: {retireAge} 歳</li>
+        <li>年間収入(世帯／手取り): {formatCurrency(totalNetAnnualIncome)}</li>
+        <li>初期資産額: {formatCurrency(savingsForChart)}</li>
+        <li>運用利回り: {formatPercent(inputParams.expectedReturn ?? 0)}</li>
+        <li>ストレス耐性: {inputParams.stressTest.enabled ? '有効' : '無効'}</li>
+      </ul>
+    </div>
+  );
+
+  pages.push(
+    <div className={styles.pageContent}>
+      <h2 className="text-2xl font-bold mb-4">総資産推移</h2>
+      <div className="p-3 mb-6 relative border rounded-lg">
+        <TotalAssetChart
+          enrichedData={dataset.enrichedData}
+          rankInfo={rankInfo}
+          COLORS={COLORS}
+          age={currentAge}
+          retireAge={retireAge}
+          yAxisMax={peakAssetValue}
+        />
+      </div>
+      <p className="text-sm text-gray-600 mt-4">
+        退職年齢の{retireAge}歳に向けて資産は順調に増加し、その後は資産を取り崩しながら生活する様子が分かります。
+        （免責事項: このグラフは試算であり、将来の結果を保証するものではありません。）
+      </p>
+    </div>
+  );
+
+  pages.push(
+    <div className={styles.pageContent}>
+      <h2 className="text-2xl font-bold mb-4">投資の状況</h2>
+      <div className="grid grid-cols-1 gap-6 mb-6">
+        <div className="p-3 border rounded-lg">
+          <InvestmentPrincipalChart enrichedData={dataset.enrichedData} COLORS={COLORS} age={currentAge} retireAge={retireAge} />
+        </div>
+        <div className="p-3 border rounded-lg">
+          <AssetPieChart pieData={dataset.pieData} />
+        </div>
+      </div>
+      <p className="text-sm text-gray-600 mt-4">
+        投資元本と評価額の推移、および現在の資産構成を示しています。リスク分散の状況などをご確認ください。
+      </p>
+    </div>
+  );
+
+  if (rawFormData) {
+    pages.push(
+      <div className={styles.pageContent}>
+        <h2 className="text-2xl font-bold mb-4">ライフイベント・タイムライン</h2>
+        <div className={`${styles.timelineBox} p-3 border rounded-lg`}>
+          <LifePlanTimeline rawFormData={rawFormData as FormDataState} yearlyData={yearlyData} />
+        </div>
+        <p className="text-sm text-gray-600 mt-4">
+          ご入力いただいたライフイベントと、それらが資産に与える影響のタイミングを一覧で表示しています。
+        </p>
+      </div>
+    );
+  }
+
+  pages.push(
+    <div className={styles.pageContent}>
+      <h2 className="text-2xl font-bold mb-4">収入・貯蓄の同世代比較</h2>
+      <div className="grid grid-cols-1 gap-6 mb-6">
+        <div className="p-3 border rounded-lg">
+          <IncomePositionChart age={currentAge} income={inputParams.mainJobIncomeGross + (inputParams.sideJobIncomeGross ?? 0)} />
+        </div>
+        <div className="p-3 border rounded-lg">
+          <SavingsPositionChart age={currentAge} income={totalGrossIncome} savings={savingsForChart} />
+        </div>
+      </div>
+      <p className="text-sm text-gray-600 mt-4">
+        現在の収入と貯蓄が同世代と比較してどの位置にあるかを示しています。
+      </p>
+    </div>
+  );
+
+  pages.push(
+    <div className={styles.pageContent}>
+      <h2 className="text-2xl font-bold mb-4">免責事項</h2>
+      <p className="text-md mb-4">
+        本レポートは、ご入力いただいた情報に基づき試算されたものであり、将来の経済状況や個人の状況変化を保証するものではありません。
+        表示される結果は将来を約束するものではなく、投資判断やその他の意思決定を行う際の唯一の根拠とすべきではありません。
+        本シミュレーション結果により生じたいかなる損害についても、当社は一切の責任を負いません。
+        ご自身の判断と責任においてご活用ください。
+      </p>
+      <p className="text-sm mt-8 text-gray-500">Copyright © {new Date().getFullYear()} [Your Company Name]. All rights reserved.</p>
+    </div>
+  );
+
   return (
     <div id="pdf-render-target" className={styles.container}>
-      <div className={`${styles.page} pdf-page`}>
-        <div className="flex flex-col items-center justify-center h-full text-center">
-          <img src="/Topview.png" alt="キービジュアル" className="w-64 mb-8" />
-          <h1 className="text-4xl font-bold mb-4">ライフプラン シミュレーションレポート</h1>
-          <p className="text-xl mb-2">作成日: {new Date().toLocaleDateString('ja-JP')}</p>
-          <p className="text-lg">このレポートは、お客様の入力情報に基づき作成された試算です。</p>
+      {pages.map((content, index) => (
+        <div className={`${styles.page} pdf-page`} key={index}>
+          <div className={styles.pageInner}>{content}</div>
+          <div className={styles.pageFooter}>ページ {index + 1} / {pages.length}</div>
         </div>
-      </div>
-
-      <div className={`${styles.page} pdf-page`}>
-        <h2 className="text-2xl font-bold mb-4">レポートサマリー</h2>
-        <p className="mb-6">
-          ご入力いただいた情報に基づいてシミュレーションを実施した結果、お客様のライフプランは以下のようになりました。
-          今後の資産推移をご確認ください。
-        </p>
-
-        <h3 className="text-xl font-semibold mb-3">主要指標サマリー</h3>
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          {summaryCards.map(card => (
-            <div key={card.label} className="border p-3 rounded-lg bg-gray-50">
-              <p className="text-sm text-gray-500">{card.label}</p>
-              <p className="text-lg font-semibold text-gray-900">{card.value}</p>
-              <p className="text-xs text-gray-500 mt-1">{card.note}</p>
-            </div>
-          ))}
-        </div>
-
-        <h3 className="text-xl font-semibold mb-3">シミュレーション前提条件</h3>
-        <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
-          <li>現在年齢: {currentAge} 歳</li>
-          <li>退職予定: {retireAge} 歳</li>
-          <li>年間収入(世帯／手取り): {formatCurrency(totalNetAnnualIncome)}</li>
-          <li>初期資産額: {formatCurrency(savingsForChart)}</li>
-          <li>運用利回り: {formatPercent(inputParams.expectedReturn ?? 0)}</li>
-          <li>ストレス耐性: {inputParams.stressTest.enabled ? '有効' : '無効'}</li>
-        </ul>
-      </div>
-
-      <div className={`${styles.page} pdf-page`}>
-        <h2 className="text-2xl font-bold mb-4">総資産推移</h2>
-        <div className="p-3 mb-6 relative border rounded-lg">
-          <TotalAssetChart
-            enrichedData={dataset.enrichedData}
-            rankInfo={rankInfo}
-            COLORS={COLORS}
-            age={currentAge}
-            retireAge={retireAge}
-            yAxisMax={peakAssetValue}
-          />
-        </div>
-        <p className="text-sm text-gray-600 mt-4">
-          退職年齢の{retireAge}歳に向けて資産は順調に増加し、その後は資産を取り崩しながら生活する様子が分かります。
-          （免責事項: このグラフは試算であり、将来の結果を保証するものではありません。）
-        </p>
-      </div>
-
-      <div className={`${styles.page} pdf-page`}>
-        <h2 className="text-2xl font-bold mb-4">投資の状況</h2>
-        <div className="grid grid-cols-1 gap-6 mb-6">
-          <div className="p-3 border rounded-lg">
-            <InvestmentPrincipalChart enrichedData={dataset.enrichedData} COLORS={COLORS} age={currentAge} retireAge={retireAge} />
-          </div>
-          <div className="p-3 border rounded-lg">
-            <AssetPieChart pieData={dataset.pieData} />
-          </div>
-        </div>
-        <p className="text-sm text-gray-600 mt-4">
-          投資元本と評価額の推移、および現在の資産構成を示しています。リスク分散の状況などをご確認ください。
-        </p>
-      </div>
-
-      {rawFormData && (
-        <div className={`${styles.page} pdf-page`}>
-          <h2 className="text-2xl font-bold mb-4">ライフイベント・タイムライン</h2>
-          <div className="p-3 border rounded-lg">
-            <LifePlanTimeline rawFormData={rawFormData as FormDataState} yearlyData={yearlyData} />
-          </div>
-          <p className="text-sm text-gray-600 mt-4">
-            ご入力いただいたライフイベントと、それらが資産に与える影響のタイミングを一覧で表示しています。
-          </p>
-        </div>
-      )}
-
-      <div className={`${styles.page} pdf-page`}>
-        <h2 className="text-2xl font-bold mb-4">収入・貯蓄の同世代比較</h2>
-        <div className="grid grid-cols-1 gap-6 mb-6">
-          <div className="p-3 border rounded-lg">
-            <IncomePositionChart age={currentAge} income={inputParams.mainJobIncomeGross + (inputParams.sideJobIncomeGross ?? 0)} />
-          </div>
-          <div className="p-3 border rounded-lg">
-            <SavingsPositionChart age={currentAge} income={totalGrossIncome} savings={savingsForChart} />
-          </div>
-        </div>
-        <p className="text-sm text-gray-600 mt-4">
-          現在の収入と貯蓄が同世代と比較してどの位置にあるかを示しています。
-        </p>
-      </div>
-
-      <div className={`${styles.page} pdf-page`}>
-        <h2 className="text-2xl font-bold mb-4">資産・収支詳細</h2>
-        <div className="mb-6">
-          <h3 className="text-xl font-semibold mb-2">資産詳細テーブル</h3>
-          <AssetTable enrichedData={dataset.enrichedData} />
-        </div>
-        <div>
-          <h3 className="text-xl font-semibold mb-2">年間収支詳細テーブル</h3>
-          <CashFlowTable enrichedData={dataset.enrichedData} />
-        </div>
-        <p className="text-sm text-gray-600 mt-4">
-          年ごとの詳細な資産と収支の推移です。特定の年の内訳を確認するのに役立ちます。
-        </p>
-      </div>
-
-      <div className={`${styles.page} pdf-page`}>
-        <div className="flex flex-col items-center justify-center h-full text-center">
-          <h2 className="text-2xl font-bold mb-4">免責事項</h2>
-          <p className="text-md mb-4">
-            本レポートは、ご入力いただいた情報に基づき試算されたものであり、将来の経済状況や個人の状況変化を保証するものではありません。
-            表示される結果は将来を約束するものではなく、投資判断やその他の意思決定を行う際の唯一の根拠とすべきではありません。
-            本シミュレーション結果により生じたいかなる損害についても、当社は一切の責任を負いません。
-            ご自身の判断と責任においてご活用ください。
-          </p>
-          <p className="text-sm mt-8">Copyright © {new Date().getFullYear()} [Your Company Name]. All rights reserved.</p>
-        </div>
-      </div>
+      ))}
     </div>
   );
 };

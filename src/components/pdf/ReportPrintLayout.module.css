@@ -1,15 +1,42 @@
 .container {
-  display: none; /* 通常は非表示 */
+  display: none;
   position: absolute;
   left: -9999px;
   top: 0;
-  font-family: 'Noto Sans JP', sans-serif;
+  font-family: 'Noto Sans JP', 'Noto Sans', sans-serif;
+  color: #111827;
 }
+
 .page {
-  width: 595pt;
-  height: 842pt;
-  padding: 40pt;
+  width: 794px; /* A4: 210mm -> 約794px @96dpi */
+  height: 1123px; /* A4: 297mm -> 約1123px @96dpi */
+  padding: 48px;
   box-sizing: border-box;
-  background-color: white;
-  page-break-after: always; /* ページ区切り */
+  background-color: #ffffff;
+  page-break-after: always;
+  position: relative;
+  overflow: hidden;
+}
+
+.pageInner {
+  height: calc(100% - 32px);
+}
+
+.pageFooter {
+  position: absolute;
+  bottom: 12px;
+  right: 24px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.pageContent {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.timelineBox {
+  max-height: 900px;
+  overflow: hidden;
 }

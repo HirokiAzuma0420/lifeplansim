@@ -18,7 +18,7 @@ type JsPdfConstructor = new (
 
 type JsPdfMockType = ReturnType<typeof vi.fn> & JsPdfConstructor;
 
-// jsPDFコンストラクタのモック関数。mockClearなどのメソッドを型安全に利用できるよう型を付与。
+// jsPDFコンストラクタのモック。ReturnType<typeof vi.fn> を併用し mockClear などを型安全に扱う。
 const jsPDFMock = vi.fn(function (this: jsPDF) {
   this.addPage = mockAddPage;
   this.addImage = mockAddImage;

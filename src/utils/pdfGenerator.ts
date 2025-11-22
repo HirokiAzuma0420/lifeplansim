@@ -20,7 +20,7 @@ export const generatePdfReport = async () => {
   loader.id = loaderId;
   loader.innerHTML = `
     <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column;">
-      <div style="color: white; font-size: 18px; margin-bottom: 12px;">PDFを生成しています...</div>
+      <div style="color: white; font-size: 18px; margin-bottom: 12px;">PDFを生成しています...（数秒〜1分かかる場合があります）</div>
       <div style="border: 4px solid #f3f3f3; border-top: 4px solid #10B981; border-radius: 50%; width: 42px; height: 42px; animation: codex-spin 1.2s linear infinite;"></div>
       <style>
         @keyframes codex-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -37,37 +37,38 @@ export const generatePdfReport = async () => {
   target.style.left = '-9999px';
 
   try {
-    const pdf = new jsPDF('p', 'pt', 'a4');
+    const pdf = new jsPDF({ orientation: 'p', unit: 'pt', format: 'a4', compressPdf: false });
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = pdf.internal.pageSize.getHeight();
-    const margin = 24;
-    const headerHeight = 28;
-    const footerHeight = 24;
-    const maxContentHeight = pdfHeight - headerHeight - footerHeight - margin * 2;
+    const margin = 16;
+    const maxContentHeight = pdfHeight - margin * 2;
     const contentWidth = pdfWidth - margin * 2;
+
+    const captureScale = Math.min(3, Math.max(2, window.devicePixelRatio || 2));
 
     for (let i = 0; i < pages.length; i++) {
       const page = pages[i];
-      const canvas = await html2canvas(page, { scale: 2 });
+      const canvas = await html2canvas(page, {
+        scale: captureScale,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+      });
       const imgData = canvas.toDataURL('image/png');
 
-      const scale = Math.min(contentWidth / canvas.width, maxContentHeight / canvas.height);
-      const renderWidth = canvas.width * scale;
-      const renderHeight = canvas.height * scale;
+      const widthRatio = contentWidth / canvas.width;
+      const heightRatio = maxContentHeight / canvas.height;
+      const renderScale = Math.min(1, widthRatio, heightRatio);
+      const renderWidth = canvas.width * renderScale;
+      const renderHeight = canvas.height * renderScale;
       const offsetX = (pdfWidth - renderWidth) / 2;
-      const offsetY = margin + headerHeight;
+      const offsetY = (pdfHeight - renderHeight) / 2;
 
       if (i > 0) {
         pdf.addPage();
       }
 
-      pdf.setFontSize(12);
-      pdf.text('ライフプラン シミュレーションレポート', margin, margin + 10);
-
-      pdf.addImage(imgData, 'PNG', offsetX, offsetY, renderWidth, renderHeight);
-
-      pdf.setFontSize(10);
-      pdf.text(`ページ ${i + 1} / ${pages.length}`, pdfWidth - margin - 60, pdfHeight - margin);
+      pdf.addImage(imgData, 'PNG', offsetX, offsetY, renderWidth, renderHeight, undefined, 'NONE');
     }
 
     pdf.save('simulation_report.pdf');
