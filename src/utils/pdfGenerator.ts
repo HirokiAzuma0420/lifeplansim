@@ -2,82 +2,65 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
 export const generatePdfReport = async () => {
-  const pdf = new jsPDF('p', 'pt', 'a4');
-  const pdfWidth = pdf.internal.pageSize.getWidth();
-  const pdfHeight = pdf.internal.pageSize.getHeight();
-  const margin = 20; // ページの余白
-  let yPos = margin; // 現在のY座標
-
-  // 複数の要素を処理するためのヘルパー関数
-  const addElementToPdf = async (elementId: string, pageTitle: string = '') => {
-    const element = document.getElementById(elementId);
-    if (element) {
-      // 既存のコンテンツがある場合のみページを追加
-      if (yPos !== margin) {
-        pdf.addPage();
-        yPos = margin;
-      }
-
-      // ページタイトルを追加
-      if (pageTitle) {
-        pdf.setFontSize(16);
-        pdf.text(pageTitle, margin, yPos);
-        yPos += 30; // タイトルの高さ分Y座標を移動
-      }
-
-      const canvas = await html2canvas(element, { scale: 2 });
-      const imgData = canvas.toDataURL('image/png');
-      const imgWidth = pdfWidth - 2 * margin; // 画像の幅はPDFの幅から左右のマージンを引いたもの
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-      let heightLeft = imgHeight;
-      let currentY = 0;
-
-      // 初回描画
-      if (yPos + imgHeight > pdfHeight - margin) { // 最初の画像がページに収まらない場合
-        // 画像を分割して追加
-        while (heightLeft > 0) {
-          const sHeight = Math.min(heightLeft, pdfHeight - margin - yPos);
-          const imgSlice = canvas.toDataURL('image/png'); // スライスごとにキャプチャし直す必要がある場合は工夫が必要
-
-          pdf.addImage(
-            imgSlice,
-            'PNG',
-            margin,
-            yPos,
-            imgWidth,
-            sHeight,
-            undefined,
-            'FAST',
-            currentY / (canvas.height / sHeight) // この行はhtml2canvasのimgDataURIオプションの代わり
-          ); // imgDataURIでcropする機能がないため、このままでは正しいスライスができない
-          heightLeft -= sHeight;
-          currentY += sHeight;
-          if (heightLeft > 0) {
-            pdf.addPage();
-            yPos = margin;
-          }
-        }
-      } else {
-        pdf.addImage(imgData, 'PNG', margin, yPos, imgWidth, imgHeight);
-        yPos += imgHeight + 20; // 画像の下に余白
-      }
-    }
-  };
-
-  // ページタイトルと対応する要素IDのマップ
-  const sectionsToCapture = [
-    { id: 'pdf-summary-section', title: 'サマリー' },
-    { id: 'pdf-total-asset-chart', title: '総資産推移' },
-    { id: 'pdf-timeline', title: 'ライフプラン・タイムライン' },
-    { id: 'pdf-peer-comparison-charts', title: '収入・貯蓄の同世代比較' },
-    { id: 'pdf-investment-charts', title: '投資の状況' },
-    // TODO: AssetTableとCashFlowTableはIDがないため、直接キャプチャするには追加のDOM操作かID付与が必要
-  ];
-
-  for (const section of sectionsToCapture) {
-    await addElementToPdf(section.id, section.title);
+  const target = document.getElementById('pdf-render-target');
+  if (!target) {
+    console.warn('PDFレイアウトが見つかりません');
+    return;
   }
 
-  pdf.save('simulation_report.pdf');
+  const pages = Array.from(target.getElementsByClassName('pdf-page')) as HTMLElement[];
+  if (pages.length === 0) {
+    console.warn('PDF化対象のページ要素が存在しません');
+    return;
+  }
+
+  const prevDisplay = target.style.display;
+  const prevPosition = target.style.position;
+  const prevLeft = target.style.left;
+  target.style.display = 'block';
+  target.style.position = 'absolute';
+  target.style.left = '-9999px';
+
+  try {
+    const pdf = new jsPDF('p', 'pt', 'a4');
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    const margin = 24;
+    const headerHeight = 28;
+    const footerHeight = 24;
+    const maxContentHeight = pdfHeight - headerHeight - footerHeight - margin * 2;
+    const contentWidth = pdfWidth - margin * 2;
+
+    for (let i = 0; i < pages.length; i++) {
+      const page = pages[i];
+      const canvas = await html2canvas(page, { scale: 2 });
+      const imgData = canvas.toDataURL('image/png');
+
+      const scale = Math.min(contentWidth / canvas.width, maxContentHeight / canvas.height);
+      const renderWidth = canvas.width * scale;
+      const renderHeight = canvas.height * scale;
+      const offsetX = (pdfWidth - renderWidth) / 2;
+      const offsetY = margin + headerHeight;
+
+      if (i > 0) {
+        pdf.addPage();
+      }
+
+      pdf.setFontSize(12);
+      pdf.text('ライフプラン シミュレーションレポート', margin, margin + 10);
+
+      pdf.addImage(imgData, 'PNG', offsetX, offsetY, renderWidth, renderHeight);
+
+      pdf.setFontSize(10);
+      pdf.text(`ページ ${i + 1} / ${pages.length}`, pdfWidth - margin - 60, pdfHeight - margin);
+    }
+
+    pdf.save('simulation_report.pdf');
+  } catch (error) {
+    console.error('PDF生成に失敗しました', error);
+  } finally {
+    target.style.display = prevDisplay;
+    target.style.position = prevPosition;
+    target.style.left = prevLeft;
+  }
 };

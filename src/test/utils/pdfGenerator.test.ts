@@ -19,65 +19,45 @@ describe('generatePdfReport', () => {
     jsPDFMockedConstructor.mockClear();
 
     document.body.innerHTML = `
-      <div id="pdf-summary-section">Summary Content</div>
-      <div id="pdf-total-asset-chart">Total Asset Chart Content</div>
-      <div id="pdf-timeline">Timeline Content</div>
-      <div id="pdf-peer-comparison-charts">Peer Comparison Content</div>
-      <div id="pdf-investment-charts">Investment Chart Content</div>
+      <div id="pdf-render-target">
+        <div class="pdf-page" id="page-1">Page 1</div>
+        <div class="pdf-page" id="page-2">Page 2</div>
+        <div class="pdf-page" id="page-3">Page 3</div>
+      </div>
     `;
   });
 
-  it('各セクションに対してhtml2canvasが呼び出される', async () => {
+  it('各ページを順番にキャプチャする', async () => {
     await generatePdfReport();
 
-    const expectedSectionIds = [
-      'pdf-summary-section',
-      'pdf-total-asset-chart',
-      'pdf-timeline',
-      'pdf-peer-comparison-charts',
-      'pdf-investment-charts',
-    ];
-
-    expect(html2canvasMocked).toHaveBeenCalledTimes(expectedSectionIds.length);
-    expectedSectionIds.forEach(id => {
+    expect(html2canvasMocked).toHaveBeenCalledTimes(3);
+    ['page-1', 'page-2', 'page-3'].forEach(id => {
       expect(html2canvasMocked).toHaveBeenCalledWith(document.getElementById(id), expect.any(Object));
     });
   });
 
-  it('jsPDFが生成され保存される', async () => {
+  it('jsPDFインスタンスを生成して保存する', async () => {
     await generatePdfReport();
 
     expect(jsPDFMockedConstructor).toHaveBeenCalledTimes(1);
     expect(mockSave).toHaveBeenCalledWith('simulation_report.pdf');
   });
 
-  it('各セクションがPDFに描画される', async () => {
+  it('各ページをPDFに追加しページ間でaddPageが呼ばれる', async () => {
     await generatePdfReport();
 
-    expect(mockAddImage).toHaveBeenCalledTimes(5);
-    expect(mockSetFontSize).toHaveBeenCalledTimes(5);
-    expect(mockText).toHaveBeenCalledTimes(5);
-    expect(mockAddImage).toHaveBeenCalledWith(
-      'data:image/png;base64,mockImageData',
-      'PNG',
-      expect.any(Number),
-      expect.any(Number),
-      expect.any(Number),
-      expect.any(Number)
-    );
+    expect(mockAddImage).toHaveBeenCalledTimes(3);
+    expect(mockAddPage).toHaveBeenCalledTimes(2);
   });
 
-  it('コンテンツが1ページに収まらない場合にページ追加が行われる', async () => {
-    html2canvasMocked.mockImplementation(() =>
-      Promise.resolve({
-        width: 1000,
-        height: 2000,
-        toDataURL: vi.fn(() => 'data:image/png;base64,mockImageData'),
-      })
-    );
-
+  it('ヘッダーとフッターのテキストが描画される', async () => {
     await generatePdfReport();
 
-    expect(mockAddPage).toHaveBeenCalled();
+    const headerCalls = mockText.mock.calls.filter(call => typeof call[0] === 'string' && call[0].includes('ライフプラン'));
+    const footerCalls = mockText.mock.calls.filter(call => typeof call[0] === 'string' && call[0].includes('ページ'));
+
+    expect(mockSetFontSize).toHaveBeenCalled();
+    expect(headerCalls.length).toBe(3);
+    expect(footerCalls.length).toBe(3);
   });
 });
