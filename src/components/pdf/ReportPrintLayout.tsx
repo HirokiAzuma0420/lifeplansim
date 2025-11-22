@@ -10,7 +10,6 @@ import LifePlanTimeline from '../dashboard/LifePlanTimeline';
 import IncomePositionChart from '../dashboard/IncomePositionChart';
 import SavingsPositionChart from '../dashboard/SavingsPositionChart';
 import { getAssetGrade } from '../../assets/getAssetGrade';
-import { computeNetAnnual } from '../../utils/financial';
 import { extractLifePlanEvents, chunkEvents } from '../dashboard/life-plan-events';
 import { buildAssumptionItems } from './assumption-helper';
 
@@ -70,7 +69,6 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
   const selfGrossIncome = (inputParams.mainJobIncomeGross ?? 0) + (inputParams.sideJobIncomeGross ?? 0);
   const totalGrossIncome =
     selfGrossIncome + ((inputParams.spouseMainJobIncomeGross ?? 0) + (inputParams.spouseSideJobIncomeGross ?? 0));
-  const totalNetAnnualIncome = computeNetAnnual(totalGrossIncome);
   const savingsForChart = dataset.firstYear?.totalAssets ?? 0;
 
   const retireData = React.useMemo(() => {
@@ -193,16 +191,6 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
           </div>
         ))}
       </div>
-
-      <h3 className="text-xl font-semibold mb-3">シミュレーション前提条件</h3>
-      <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
-        <li>現在年齢: {currentAge} 歳</li>
-        <li>退職予定: {retireAge} 歳</li>
-        <li>年間収入(世帯／手取り): {formatCurrency(totalNetAnnualIncome)}</li>
-        <li>初期資産額: {formatCurrency(savingsForChart)}</li>
-        <li>運用利回り: {formatPercent(inputParams.expectedReturn ?? 0)}</li>
-        <li>ストレス耐性: {inputParams.stressTest.enabled ? '有効' : '無効'}</li>
-      </ul>
     </div>
   );
 
