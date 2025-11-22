@@ -7,7 +7,7 @@ export type AssumptionItem = {
 };
 
 const formatYen = (value?: number) => `¥${Math.round(value ?? 0).toLocaleString('ja-JP')}`;
-const formatPercent = (value?: number) => `${(((value ?? 0) * 100).toFixed(2))}%`;
+const formatPercent = (value?: number) => `${((value ?? 0) * 100).toFixed(2)}%`;
 
 export const buildAssumptionItems = (inputParams: SimulationInputParams): AssumptionItem[] => {
   const items: AssumptionItem[] = [];
@@ -35,7 +35,7 @@ export const buildAssumptionItems = (inputParams: SimulationInputParams): Assump
   items.push({ category: '収入・貯蓄', label: '現在の預金額', value: formatYen(inputParams.currentSavingsJPY) });
   items.push({ category: '収入・貯蓄', label: '毎月の積立額', value: formatYen(inputParams.monthlySavingsJPY) });
 
-  // 生活費・支出
+  // 生活費
   if (inputParams.expenseMode === 'simple') {
     items.push({ category: '生活費', label: '年間生活費（シンプル）', value: formatYen(inputParams.livingCostSimpleAnnual) });
   } else {
@@ -43,7 +43,7 @@ export const buildAssumptionItems = (inputParams: SimulationInputParams): Assump
     items.push({ category: '生活費', label: '年間変動費（詳細）', value: formatYen(inputParams.detailedVariableAnnual) });
   }
 
-// 住宅・車
+  // 住宅
   if (inputParams.housing) {
     items.push({ category: '住宅', label: '住居形態', value: inputParams.housing.type });
     if (inputParams.housing.rentMonthlyJPY !== undefined) {
@@ -73,6 +73,8 @@ export const buildAssumptionItems = (inputParams: SimulationInputParams): Assump
       });
     }
   }
+
+  // 自動車
   if (inputParams.car) {
     items.push({ category: '自動車', label: '車両価格', value: formatYen(inputParams.car.priceJPY) });
     items.push({ category: '自動車', label: '初回買い替え（年）', value: `${inputParams.car.firstAfterYears} 年後` });
@@ -84,12 +86,17 @@ export const buildAssumptionItems = (inputParams: SimulationInputParams): Assump
   }
 
   // 退職後・年金
-  items.push({ category: '退職後', label: '退職後生活費', value: `${inputParams.postRetirementLiving10kJPY} 万円` });
+  items.push({ category: '退職後', label: '退職後生活費（月額10k）', value: `${inputParams.postRetirementLiving10kJPY} 万円` });
   items.push({ category: '年金', label: '年金開始年齢', value: `${inputParams.pensionStartAge} 歳` });
-  items.push({ category: '年金', label: '年金受給額', value: `${inputParams.pensionMonthly10kJPY} 万円` });
+  items.push({ category: '年金', label: '年金受給額（月額10k）', value: `${inputParams.pensionMonthly10kJPY} 万円` });
   if (inputParams.spousePensionStartAge !== undefined) {
     items.push({ category: '年金', label: '配偶者年金開始年齢', value: `${inputParams.spousePensionStartAge} 歳` });
   }
+  if (inputParams.spousePensionAmount !== undefined) {
+    items.push({ category: '年金', label: '配偶者年金額（月額10k）', value: `${inputParams.spousePensionAmount} 万円` });
+  }
+
+  // 退職金
   if (inputParams.retirementIncome) {
     items.push({ category: '退職金', label: '退職金受給年齢', value: `${inputParams.retirementIncome.age} 歳` });
     items.push({ category: '退職金', label: '退職金額', value: formatYen(inputParams.retirementIncome.amountJPY) });
@@ -101,6 +108,7 @@ export const buildAssumptionItems = (inputParams: SimulationInputParams): Assump
     items.push({ category: '退職金', label: '配偶者勤続年数', value: `${inputParams.spouseRetirementIncome.yearsOfService} 年` });
   }
 
+  // 個人年金
   if (inputParams.personalPensionPlans) {
     inputParams.personalPensionPlans.forEach((plan, idx) => {
       items.push({
@@ -119,9 +127,6 @@ export const buildAssumptionItems = (inputParams: SimulationInputParams): Assump
       });
     });
   }
-  if (inputParams.spousePensionAmount !== undefined) {
-    items.push({ category: '年金', label: '配偶者年金額', value: `formatYen(inputParams.spousePensionAmount)万円` });
-  }
 
   // 投資・リスク
   if ((inputParams.expectedReturn ?? 0) !== 0) {
@@ -131,12 +136,13 @@ export const buildAssumptionItems = (inputParams: SimulationInputParams): Assump
   items.push({ category: '投資・リスク', label: 'ストレステスト', value: inputParams.stressTest.enabled ? '有効' : '無効' });
   items.push({ category: '投資・リスク', label: '利回りシナリオ', value: inputParams.interestScenario });
 
+  // 投資商品
   if (inputParams.products && inputParams.products.length > 0) {
     inputParams.products.forEach((p, idx) => {
       items.push({
         category: '投資商品',
-        label: `商品${idx + 1} (${p.account})`,
-        value: `拠出: ${formatYen(p.recurringJPY)} / スポット: ${formatYen(p.spotJPY)} / 想定利回り: ${formatPercent(p.expectedReturn)}`,
+        label: `商品${idx + 1}（口座: ${p.account}）`,
+        value: `評価額: ${formatYen(p.currentJPY)} / 月額積立: ${formatYen(p.recurringJPY)} / スポット: ${formatYen(p.spotJPY)} / 想定利回り: ${formatPercent(p.expectedReturn)}`,
       });
     });
   }
