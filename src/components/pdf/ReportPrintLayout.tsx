@@ -187,11 +187,20 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
       <div className={styles.pageContent} key={`products-${idx}`}>
         <h2 className="text-2xl font-bold mb-4">投資商品（{idx + 1}/{productChunks.length}）</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {chunk.map((p: InvestmentProduct, i: number) => {
+          {chunk.map((p: InvestmentProduct) => {
             const monthlyRecurring = (p.recurringJPY ?? 0) / 12;
+            const productCategoryMap: Record<string, string> = {
+              stocks: '株式',
+              trust: '投資信託',
+              bonds: '債券',
+              ideco: 'iDeCo',
+              crypto: '仮想通貨',
+              other: 'その他',
+            };
+            const categoryName = productCategoryMap[p.key] || '商品';
             return (
-              <div key={`${p.account}-${i}`} className={styles.assumptionSection}>
-                <div className={styles.assumptionHeader}>商品{idx * productCardsPerPage + i + 1}（口座: {p.account}）</div>
+              <div key={`${p.key}-${p.account}`} className={styles.assumptionSection}>
+                <div className={styles.assumptionHeader}>{categoryName}（口座: {p.account}）</div>
                 <div className={styles.assumptionList}>
                   <div>
                     <p className={styles.assumptionItemLabel}>評価額</p>
@@ -354,11 +363,20 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
       <div className={styles.pageContent} key={`products-${idx}`}>
         <h2 className="text-2xl font-bold mb-4">投資商品（{idx + 1}/{productChunks.length}）</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {chunk.map((p: InvestmentProduct, i: number) => {
+          {chunk.map((p: InvestmentProduct) => {
             const monthlyRecurring = (p.recurringJPY ?? 0) / 12;
+            const productCategoryMap: Record<string, string> = {
+              stocks: '株式',
+              trust: '投資信託',
+              bonds: '債券',
+              ideco: 'iDeCo',
+              crypto: '仮想通貨',
+              other: 'その他',
+            };
+            const categoryName = productCategoryMap[p.key] || '商品';
             return (
-              <div key={`${p.account}-${i}`} className={styles.assumptionSection}>
-                <div className={styles.assumptionHeader}>商品{idx * productCardsPerPage + i + 1}（口座: {p.account}）</div>
+              <div key={`${p.key}-${p.account}`} className={styles.assumptionSection}>
+                <div className={styles.assumptionHeader}>{categoryName}（口座: {p.account}）</div>
                 <div className={styles.assumptionList}>
                   <div>
                     <p className={styles.assumptionItemLabel}>評価額</p>
