@@ -43,7 +43,7 @@ export const buildAssumptionItems = (inputParams: SimulationInputParams): Assump
     items.push({ category: '生活費', label: '年間変動費（詳細）', value: formatYen(inputParams.detailedVariableAnnual) });
   }
 
-  // 住宅・車
+// 住宅・車
   if (inputParams.housing) {
     items.push({ category: '住宅', label: '住居形態', value: inputParams.housing.type });
     if (inputParams.housing.rentMonthlyJPY !== undefined) {
@@ -53,9 +53,24 @@ export const buildAssumptionItems = (inputParams: SimulationInputParams): Assump
       items.push({ category: '住宅', label: '住宅ローン（月額）', value: formatYen(inputParams.housing.currentLoan.monthlyPaymentJPY) });
     }
     if (inputParams.housing.purchasePlan) {
+      if (inputParams.housing.purchasePlan.age !== undefined) {
+        items.push({ category: '住宅', label: '住宅購入予定年齢', value: `${inputParams.housing.purchasePlan.age} 歳` });
+      }
       items.push({ category: '住宅', label: '住宅購入価格', value: formatYen(inputParams.housing.purchasePlan.priceJPY) });
       items.push({ category: '住宅', label: '頭金', value: formatYen(inputParams.housing.purchasePlan.downPaymentJPY) });
       items.push({ category: '住宅', label: 'ローン期間', value: `${inputParams.housing.purchasePlan.years} 年` });
+      if (inputParams.housing.purchasePlan.rate !== undefined) {
+        items.push({ category: '住宅', label: 'ローン金利', value: formatPercent(inputParams.housing.purchasePlan.rate) });
+      }
+    }
+    if (inputParams.housing.renovations) {
+      inputParams.housing.renovations.forEach((reno, idx) => {
+        items.push({
+          category: '住宅リフォーム',
+          label: `リフォーム${idx + 1}（年齢: ${reno.age} 歳）`,
+          value: `${formatYen(reno.costJPY)} / 周期: ${reno.cycleYears ? `${reno.cycleYears}年ごと` : '単発'}`,
+        });
+      });
     }
   }
   if (inputParams.car) {
@@ -63,6 +78,9 @@ export const buildAssumptionItems = (inputParams: SimulationInputParams): Assump
     items.push({ category: '自動車', label: '初回買い替え（年）', value: `${inputParams.car.firstAfterYears} 年後` });
     items.push({ category: '自動車', label: '買い替え頻度', value: `${inputParams.car.frequencyYears} 年ごと` });
     items.push({ category: '自動車', label: 'ローン利用', value: inputParams.car.loan.use ? '利用する' : '利用しない' });
+    if (inputParams.car.loan.use && inputParams.car.loan.years !== undefined) {
+      items.push({ category: '自動車', label: '自動車ローン期間', value: `${inputParams.car.loan.years} 年` });
+    }
   }
 
   // 退職後・年金
@@ -72,15 +90,56 @@ export const buildAssumptionItems = (inputParams: SimulationInputParams): Assump
   if (inputParams.spousePensionStartAge !== undefined) {
     items.push({ category: '年金', label: '配偶者年金開始年齢', value: `${inputParams.spousePensionStartAge} 歳` });
   }
+  if (inputParams.retirementIncome) {
+    items.push({ category: '退職金', label: '退職金受給年齢', value: `${inputParams.retirementIncome.age} 歳` });
+    items.push({ category: '退職金', label: '退職金額', value: formatYen(inputParams.retirementIncome.amountJPY) });
+    items.push({ category: '退職金', label: '勤続年数', value: `${inputParams.retirementIncome.yearsOfService} 年` });
+  }
+  if (inputParams.spouseRetirementIncome) {
+    items.push({ category: '退職金', label: '配偶者退職金受給年齢', value: `${inputParams.spouseRetirementIncome.age} 歳` });
+    items.push({ category: '退職金', label: '配偶者退職金額', value: formatYen(inputParams.spouseRetirementIncome.amountJPY) });
+    items.push({ category: '退職金', label: '配偶者勤続年数', value: `${inputParams.spouseRetirementIncome.yearsOfService} 年` });
+  }
+
+  if (inputParams.personalPensionPlans) {
+    inputParams.personalPensionPlans.forEach((plan, idx) => {
+      items.push({
+        category: '個人年金',
+        label: `本人個人年金${idx + 1}`,
+        value: `開始: ${plan.startAge} 歳 / 金額: ${formatYen(plan.amountJPY)} / 種別: ${plan.type}${plan.duration ? ` (${plan.duration}年)` : ''}`,
+      });
+    });
+  }
+  if (inputParams.spousePersonalPensionPlans) {
+    inputParams.spousePersonalPensionPlans.forEach((plan, idx) => {
+      items.push({
+        category: '個人年金',
+        label: `配偶者個人年金${idx + 1}`,
+        value: `開始: ${plan.startAge} 歳 / 金額: ${formatYen(plan.amountJPY)} / 種別: ${plan.type}${plan.duration ? ` (${plan.duration}年)` : ''}`,
+      });
+    });
+  }
   if (inputParams.spousePensionAmount !== undefined) {
     items.push({ category: '年金', label: '配偶者年金額', value: formatYen(inputParams.spousePensionAmount) });
   }
 
   // 投資・リスク
-  items.push({ category: '投資・リスク', label: '期待利回り', value: formatPercent(inputParams.expectedReturn ?? 0) });
+  if ((inputParams.expectedReturn ?? 0) !== 0) {
+    items.push({ category: '投資・リスク', label: '期待利回り', value: formatPercent(inputParams.expectedReturn) });
+  }
   items.push({ category: '投資・リスク', label: '緊急予備資金', value: formatYen(inputParams.emergencyFundJPY) });
   items.push({ category: '投資・リスク', label: 'ストレステスト', value: inputParams.stressTest.enabled ? '有効' : '無効' });
   items.push({ category: '投資・リスク', label: '利回りシナリオ', value: inputParams.interestScenario });
+
+  if (inputParams.products && inputParams.products.length > 0) {
+    inputParams.products.forEach((p, idx) => {
+      items.push({
+        category: '投資商品',
+        label: `商品${idx + 1} (${p.account})`,
+        value: `拠出: ${formatYen(p.recurringJPY)} / スポット: ${formatYen(p.spotJPY)} / 想定利回り: ${formatPercent(p.expectedReturn)}`,
+      });
+    });
+  }
 
   return items;
 };
