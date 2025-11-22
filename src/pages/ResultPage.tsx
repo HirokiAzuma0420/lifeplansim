@@ -1,4 +1,4 @@
-﻿﻿﻿﻿import { useMemo, useCallback, useState, useEffect, useRef } from 'react';
+import { useMemo, useCallback, useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import IncomePositionChart from '../components/dashboard/IncomePositionChart';
 import SavingsPositionChart from '../components/dashboard/SavingsPositionChart';
@@ -16,7 +16,9 @@ import type { FormDataState } from '../types/form-types';
 import { useOrientation } from '../hooks/useOrientation';
 import { computeNetAnnual } from '../utils/financial'; // 共通関数をインポート
 import { MASTER_SECTIONS } from '@/constants/financial_const';
-import { exportToExcel, exportToPdf } from '../utils/export';
+import { exportToExcel } from '../utils/export';
+import { generatePdfReport } from '../utils/pdfGenerator';
+import { ReportPrintLayout } from '../components/pdf/ReportPrintLayout';
 
 const COLORS = {
   現金: '#3B82F6',
@@ -29,8 +31,7 @@ const COLORS = {
   その他: '#6B7280',
 };
 
-const formatCurrency = (value: number): string => `¥${Math.round(value).toLocaleString()}`;
-const formatPercent = (value: number): string => `${(value * 100).toFixed(1)}%`;
+import { formatCurrency, formatPercent } from '../utils/number';
 
 export default function ResultPage() {
   const navigate = useNavigate();
@@ -50,7 +51,7 @@ export default function ResultPage() {
   const state = location.state as SimulationNavigationState | undefined;
   const [showSectionModal, setShowSectionModal] = useState(false);
   const rawYearlyData = state?.yearlyData as YearlyData[] | undefined;
-  const rawFormData = state?.rawFormData as Record<string, unknown> | undefined;
+  const rawFormData = state?.rawFormData;
   // SimulationInputParams に products を追加
   const yearlyData = useMemo(() => rawYearlyData ?? [], [rawYearlyData]);
   const inputParams = state?.inputParams as (SimulationInputParams & { products?: InvestmentProduct[] }) | undefined;
@@ -192,7 +193,15 @@ export default function ResultPage() {
 
 
   return (
-    <div className="min-h-screen bg-gray-100 py-10">
+    <>
+      <ReportPrintLayout
+        yearlyData={yearlyData}
+        inputParams={inputParams}
+        summary={summary}
+        rawFormData={rawFormData as FormDataState}
+        percentileData={percentileData}
+      />
+      <div className="min-h-screen bg-gray-100 py-10">
       <div
         className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 transition-transform duration-300 ease-in-out"
         style={{
@@ -220,15 +229,9 @@ export default function ResultPage() {
                 <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
                   <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                     <button
-                      onClick={() => {
+                      onClick={async () => {
                         setIsExportMenuOpen(false);
-                        exportToPdf([
-                          'pdf-summary-section',
-                          'pdf-total-asset-chart',
-                          'pdf-timeline',
-                          'pdf-peer-comparison-charts',
-                          'pdf-investment-charts',
-                        ]);
+                        await generatePdfReport();
                       }}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       role="menuitem"
@@ -392,5 +395,6 @@ export default function ResultPage() {
         </div>
       )}
     </div>
+    </>
   );
 }

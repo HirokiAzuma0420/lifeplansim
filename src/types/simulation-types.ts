@@ -1,3 +1,5 @@
+import type { FormDataState } from './form-types';
+
 export interface DebugInfo {
   replenishmentTriggered: boolean;
   savings_before_cashFlow?: number;
@@ -216,5 +218,5 @@ export interface SimulationNavigationState {
   percentileData?: PercentileData;
   summary?: { bankruptcyRate: number };
   inputParams: SimulationInputParams;
-  rawFormData?: Record<string, unknown>;
+  rawFormData?: FormDataState;
 }

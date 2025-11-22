@@ -1,3 +1,11 @@
+export interface RankInfo {
+  rank: string;
+  color: string;
+  commenttitle: string;
+  comment: string;
+  image: string;
+}
+
 export function getAssetGrade(totalAsset: number) {
   if (totalAsset >= 50000000) {
     return {

@@ -105,3 +105,179 @@ JSONのデータ構造に準拠し、可能な限り詳細な情報を保持す�
     - `yearlyData` を整形し、Excelファイルを生成するロジックの作成。
 4.  `ResultPage.tsx` に新機能の呼び出し処理を統合。
 5.  単体テストおよび結合テストの実施。
+
+## 6. PDFレポートの品質向上計画
+
+現状のPDF出力は、画面上のコンポーネントを画像として配置する基本的な実装となっている。レポートとしての完成度と提供価値を高めるため、以下の改善を行う。
+
+### 6.1. デザイン・レイアウトの改善
+
+単に情報を並べるだけでなく、文書としての体裁を整え、可読性を向上させる。
+
+1.  **ヘッダーとフッターの追加**:
+    - **ヘッダー**: レポートタイトル（例: 「ライフプラン シミュレーションレポート」）や企業のロゴを配置する。
+    - **フッター**: ページ番号やシミュレーション実行日、著作権表示などを記載する。
+2.  **表紙の作成**:
+    - 1ページ目に独立した表紙を設ける。
+    - レポートタイトル、対象者名（もしあれば）、作成日を大きく表示する。
+    - `TopPage.tsx` で使用されているキービジュアル（例: `/Topview.png`）をアイキャッチとして配置し、アプリケーションとの一貫性を演出する。
+3.  **レイアウトの最適化**:
+    - `html2canvas` でコンポーネントをそのままキャプチャするのではなく、PDF生成専用のレイアウトを定義する。
+    - 各グラフや表の間に適切な余白（マージン）を設け、情報が詰め込まれすぎないように調整する。
+4.  **フォントの統一**:
+    - レポート内で使用するフォントを、Webサイト全体で使用しているWebフォント（例: Noto Sans JP）に統一し、ブランドイメージを維持する。
+    - `jspdf` は標準で日本語フォントをサポートしていないため、フォントファイルを読み込んで登録する処理が必要となる。
+    
+### 6.2. コンテンツの拡充
+
+グラフだけでなく、そのグラフが何を意味するのかを補足するテキスト情報を追加し、ユーザーの理解を促進する。
+
+1.  **サマリーと解説文の追加**:
+    - **総合的な結論**: 1ページ目のサマリーに、「シミュレーション結果の要約」として、プランの持続可能性や注意すべき点などを文章で記述する。（例: 「ご入力いただいたプランでは、XX歳で資産がピークを迎え、退職後も安定した資産を維持できる見込みです。ただし、XX歳頃の支出増には注意が必要です。」）
+    - **グラフへの注釈**: 各グラフの下に、そのグラフから読み取れる主要なポイントをキャプションとして追加する。（例: 「総資産推移グラフ」の下に「退職年齢のXX歳に向けて資産は順調に増加し、その後は資産を取り崩しながら生活する様子が分かります。」など）
+2.  **重要データの表形式での提示**:
+    - **キャッシュフローサマリー表**: 5年ごとや10年ごとなど、節目となる年の「年間収入」「年間支出」「年間収支」「期末総資産」を抜粋した表を追加する。これにより、資産推移の具体的な数値を把握しやすくなる。
+    - **ライフイベント一覧**: タイムラインだけでなく、主要なライフイベント（住宅購入、子の進学など）とその発生年、費用をまとめた表を掲載する。
+3.  **前提条件の明記**:
+    - シミュレーションの基となった主要な入力パラメータ（収入、生活費、運用利回り、退職年齢など）を「シミュレーションの前提条件」として一覧表で明記する。これにより、レポートの透明性と信頼性が向上する。
+4.  **免責事項の記載**:
+    - レポートの最終ページに、「本レポートはご入力いただいた情報に基づく試算であり、将来の結果を保証するものではありません。」といった注意書き（免責事項）を追加する。
+
+### 6.3. 実装方針の再検討
+
+- **PDF生成専用コンポーネントの作成**:
+  - 画面表示用の `ResultPage.tsx` とは別に、印刷・PDF化に最適化されたレイアウトを持つ `ReportPrintLayout.tsx` のようなコンポーネントを新規に作成する。
+  - このコンポーネントは非表示（`display: none` など）にしておき、PDF生成時のみレンダリングして `html2canvas` の対象とする。
+  - これにより、画面のUIに影響を与えることなく、自由にPDFのレイアウトを調整できる。
+- **ライブラリの活用**:
+  - `jspdf` と `html2canvas` の組み合わせは有効だが、より複雑なレイアウトやヘッダー/フッターの制御を行いたい場合、`@react-pdf/renderer` のような、Reactコンポーネントから直接PDFを生成するライブラリの導入も検討する。これは学習コストがかかるが、最終的なレポートの品質を大きく向上させることができる。
+
+## 7. PDF品質向上機能 詳細開発計画
+
+第6章で定義した品質向上計画を、AI開発エージェントが実装可能な粒度まで分解した詳細な開発タスクを以下に示す。
+
+### 7.1. 準備作業: アセットとユーティリティの準備
+
+1.  **フォントファイルの準備**:
+    - **タスク**: Webサイトで使用しているWebフォント「Noto Sans JP」の `.ttf` ファイルを取得する。
+    - **配置**: 取得したフォントファイル（例: `NotoSansJP-Regular.ttf`）を `/public/fonts/` ディレクトリに配置する。
+    - **理由**: `jspdf` で日本語フォントを埋め込むために、フォントファイルそのものが必要となるため。
+
+2.  **画像アセットの確認**:
+    - **タスク**: 表紙で使用するキービジュアルのパスを確認する。
+    - **パス**: `TopPage.tsx` で使用されている `/Topview.png` が `/public` ディレクトリ直下に存在することを確認する。
+
+3.  **PDF生成ユーティリティの作成**:
+    - **ファイル作成**: `src/utils/pdfGenerator.ts` を新規作成する。
+    - **目的**: PDF生成に関する複雑なロジック（フォントの登録、複数ページの処理、ヘッダー/フッターの描画など）を `ResultPage.tsx` から分離し、再利用可能にする。
+    - **初期実装**:
+        ```typescript
+        import jsPDF from 'jspdf';
+        import html2canvas from 'html2canvas';
+        
+        // Noto Sans JPのフォントファイルをBase64で読み込む（後述のStepで実装）
+        // import { notoSansJpRegular } from './fonts/noto-sans-jp';
+
+        export const generatePdfReport = async () => {
+          const pdf = new jsPDF('p', 'pt', 'a4');
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const pdfHeight = pdf.internal.pageSize.getHeight();
+
+          // TODO: フォントの登録処理
+          // pdf.addFileToVFS('NotoSansJP-Regular.ttf', notoSansJpRegular);
+          // pdf.addFont('NotoSansJP-Regular.ttf', 'NotoSansJP', 'normal');
+          // pdf.setFont('NotoSansJP');
+
+          // TODO: html2canvasによるDOMのキャプチャとページ追加処理
+
+          pdf.save('simulation_report.pdf');
+        };
+        ```
+
+### 7.2. Step 1: PDF専用レイアウトコンポーネントの作成
+
+1.  **ファイル作成**: `src/components/pdf/ReportPrintLayout.tsx` を新規作成する。
+2.  **目的**: 画面表示に影響されず、A4用紙サイズに最適化された印刷専用のHTML構造を定義する。
+3.  **コンポーネント設計**:
+    - `ResultPage` から受け取るシミュレーション結果（`yearlyData`, `summary`, `inputParams`）を `props` として受け取る。
+    - 内部は複数のページコンポーネント（例: `<CoverPage>`, `<SummaryPage>`）を子要素として持つ。
+    - スタイルはCSS Modules (`ReportPrintLayout.module.css`) を使用し、A4サイズ（幅: 595pt, 高さ: 842pt）を基準としたレイアウトを定義する。
+    - **`ReportPrintLayout.tsx` のスケルトン**:
+        ```tsx
+        import styles from './ReportPrintLayout.module.css';
+        // ... propsの型定義
+
+        export const ReportPrintLayout = ({ ...props }) => {
+          return (
+            <div id="pdf-render-target" className={styles.container}>
+              {/* ここに各ページコンポーネントを配置 */}
+              {/* <CoverPage /> */}
+              {/* <SummaryPage /> */}
+            </div>
+          );
+        };
+        ```
+    - **`ReportPrintLayout.module.css` のスケルトン**:
+        ```css
+        .container {
+          display: none; /* 通常は非表示 */
+          position: absolute;
+          left: -9999px;
+          top: 0;
+          font-family: 'Noto Sans JP', sans-serif;
+        }
+        .page {
+          width: 595pt;
+          height: 842pt;
+          padding: 40pt;
+          box-sizing: border-box;
+          background-color: white;
+          page-break-after: always; /* ページ区切り */
+        }
+        ```
+4.  **`ResultPage.tsx` への統合**:
+    - `ReportPrintLayout` コンポーネントを `ResultPage.tsx` の中でレンダリングする。
+    - PDF出力ボタンの `onClick` ハンドラから `generatePdfReport` を呼び出すように変更する。
+
+### 7.3. Step 2: 表紙とコンテンツページの作成
+
+1.  **表紙コンポーネント作成**: `src/components/pdf/CoverPage.tsx` を作成する。
+    - レポートタイトル、作成日、対象者名などを `props` で受け取り表示する。
+    - `/Topview.png` を表示する。
+    - `ReportPrintLayout.module.css` の `.page` スタイルを適用する。
+
+2.  **サマリーページコンポーネント作成**: `src/components/pdf/SummaryPage.tsx` を作成する。
+    - 「シミュレーション結果の要約」テキスト、主要指標の表、総資産推移グラフ (`TotalAssetChart`) を配置する。
+    - グラフは `ResultPage` で使用しているものを再利用するが、PDF用にサイズやスタイルを調整する。
+
+3.  **詳細ページコンポーネント作成**: `src/components/pdf/DetailPage.tsx` を作成する。
+    - 投資元本と評価額グラフ、資産構成パイチャート、キャッシュフローサマリー表、前提条件一覧などを配置する。
+
+4.  **`ReportPrintLayout.tsx` でページを組み立て**:
+    - 作成した各ページコンポーネントを `ReportPrintLayout.tsx` 内で順番に配置する。
+
+### 7.4. Step 3: PDF生成ロジックの実装
+
+1.  **フォントのBase64エンコードと登録**:
+    - `jspdf` はブラウザ環境で直接 `.ttf` を読めないため、フォントをBase64文字列に変換するスクリプトを用意するか、手動で変換する。
+    - 変換したBase64文字列を `src/utils/fonts/noto-sans-jp.ts` のようなファイルに定数として保存する。
+    - `pdfGenerator.ts` 内で、`addFileToVFS` と `addFont` を使ってPDFにフォントを登録し、`setFont` でデフォルトフォントに設定する。
+
+2.  **複数ページ生成ロジックの実装**:
+    - `pdfGenerator.ts` の `generatePdfReport` を修正する。
+    - `html2canvas` を使って、`ReportPrintLayout.tsx` 内の各ページ要素（`.page` クラスを持つ要素）を一つずつキャプチャする。
+    - ループ処理で各ページをキャプチャし、`pdf.addImage()` で画像として追加した後、`pdf.addPage()` で新しいページを追加する。
+    - 最初のページ以外は `addPage` を先に行う。
+
+3.  **ヘッダーとフッターの描画**:
+    - ページを追加するループの中で、`pdf.text()` や `pdf.line()` を使用して、各ページの上部と下部にヘッダー（レポートタイトル）とフッター（ページ番号）を描画する。
+    - ページ番号はループカウンタを利用して動的に生成する。
+
+### 7.5. Step 4: 最終調整とテスト
+
+1.  **表示確認**: 生成された `simulation_report.pdf` を開き、以下の点を確認する。
+    - レイアウト崩れがないか。
+    - 日本語フォントが正しく表示されているか（文字化けしていないか）。
+    - 全てのページが正しく生成されているか。
+    - ヘッダーとフッターが全ページに表示されているか。
+2.  **リファクタリング**: `pdfGenerator.ts` や各コンポーネントのコードを整理し、可読性と保守性を高める。

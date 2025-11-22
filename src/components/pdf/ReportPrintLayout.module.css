@@ -1,0 +1,15 @@
+.container {
+  display: none; /* 通常は非表示 */
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+.page {
+  width: 595pt;
+  height: 842pt;
+  padding: 40pt;
+  box-sizing: border-box;
+  background-color: white;
+  page-break-after: always; /* ページ区切り */
+}
