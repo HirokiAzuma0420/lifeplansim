@@ -37,7 +37,7 @@ export const generatePdfReport = async () => {
   target.style.left = '-9999px';
 
   try {
-    const pdf = new jsPDF({ orientation: 'p', unit: 'pt', format: 'a4', compressPdf: false });
+    const pdf = new jsPDF({ orientation: 'p', unit: 'pt', format: 'a4', compressPdf: true });
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = pdf.internal.pageSize.getHeight();
     const margin = 16;
@@ -54,7 +54,7 @@ export const generatePdfReport = async () => {
         backgroundColor: '#ffffff',
         logging: false,
       });
-      const imgData = canvas.toDataURL('image/png');
+      const imgData = canvas.toDataURL('image/jpeg', 0.85);
 
       const widthRatio = contentWidth / canvas.width;
       const heightRatio = maxContentHeight / canvas.height;
@@ -68,7 +68,7 @@ export const generatePdfReport = async () => {
         pdf.addPage();
       }
 
-      pdf.addImage(imgData, 'PNG', offsetX, offsetY, renderWidth, renderHeight, undefined, 'NONE');
+      pdf.addImage(imgData, 'JPEG', offsetX, offsetY, renderWidth, renderHeight, undefined, 'MEDIUM');
     }
 
     pdf.save('simulation_report.pdf');

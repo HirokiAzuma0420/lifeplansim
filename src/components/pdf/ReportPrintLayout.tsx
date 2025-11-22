@@ -12,7 +12,7 @@ import SavingsPositionChart from '../dashboard/SavingsPositionChart';
 import { getAssetGrade } from '../../assets/getAssetGrade';
 import { computeNetAnnual } from '../../utils/financial';
 import { extractLifePlanEvents, chunkEvents } from '../dashboard/life-plan-events';
-import { buildAssumptionItems, chunkAssumptions } from './assumption-helper';
+import { buildAssumptionItems } from './assumption-helper';
 
 interface ReportPrintLayoutProps {
   yearlyData: YearlyData[];
@@ -105,7 +105,18 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
   const timelineChunks = chunkEvents(timelineEvents, 3); // 3件/ページで分割
 
   const assumptionItems = buildAssumptionItems(inputParams);
-  const assumptionChunks = chunkAssumptions(assumptionItems, 12);
+  const assumptionSections = ['基本情報', '収入・貯蓄', '生活費', '住宅', '自動車', '退職後', '年金', '投資・リスク']
+    .map(category => ({
+      category,
+      items: assumptionItems.filter(i => i.category === category),
+    }))
+    .filter(section => section.items.length > 0);
+
+  const assumptionSectionChunks: { category: string; items: typeof assumptionItems }[][] = [];
+  const maxSectionsPerPage = 3;
+  for (let i = 0; i < assumptionSections.length; i += maxSectionsPerPage) {
+    assumptionSectionChunks.push(assumptionSections.slice(i, i + maxSectionsPerPage));
+  }
 
   const summaryCards = [
     { label: '初年度の総資産', value: formatCurrency(firstYearTotal), note: `開始年: ${dataset.firstYear?.year ?? '-'}年` },
@@ -140,6 +151,29 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
       </div>
     </div>
   );
+
+  assumptionSectionChunks.forEach((chunk, idx) => {
+    pages.push(
+      <div className={styles.pageContent} key={`assumption-${idx}`}>
+        <h2 className="text-2xl font-bold mb-4">シミュレーション前提条件（{idx + 1}/{assumptionSectionChunks.length}）</h2>
+        <div className="space-y-4">
+          {chunk.map(section => (
+            <div key={section.category} className={styles.assumptionSection}>
+              <div className={styles.assumptionHeader}>{section.category}</div>
+              <div className={styles.assumptionList}>
+                {section.items.map((item, i) => (
+                  <div key={`${item.label}-${i}`}>
+                    <p className={styles.assumptionItemLabel}>{item.label}</p>
+                    <p className={styles.assumptionItemValue}>{item.value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  });
 
   pages.push(
     <div className={styles.pageContent}>
@@ -299,23 +333,6 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
       <p className="text-sm mt-8 text-gray-500">Copyright © {new Date().getFullYear()} [Your Company Name]. All rights reserved.</p>
     </div>
   );
-
-  assumptionChunks.forEach((chunk, idx) => {
-    pages.push(
-      <div className={styles.pageContent} key={`assumption-${idx}`}>
-        <h2 className="text-2xl font-bold mb-4">シミュレーション前提条件（{idx + 1}/{assumptionChunks.length}）</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {chunk.map((item, i) => (
-            <div key={`${item.label}-${i}`} className="border rounded-lg p-3 bg-gray-50">
-              <p className="text-xs text-gray-500 mb-1">{item.category}</p>
-              <p className="text-sm text-gray-700">{item.label}</p>
-              <p className="text-lg font-semibold text-gray-900">{item.value}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  });
 
   return (
     <div id="pdf-render-target" className={styles.container}>

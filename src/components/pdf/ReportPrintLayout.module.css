@@ -41,3 +41,37 @@
   max-height: 900px;
   overflow: hidden;
 }
+
+.assumptionSection {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  background-color: #f9fafb;
+}
+
+.assumptionHeader {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.assumptionList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px 16px;
+}
+
+.assumptionItemLabel {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.assumptionItemValue {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
