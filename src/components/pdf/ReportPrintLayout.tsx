@@ -11,6 +11,7 @@ import IncomePositionChart from '../dashboard/IncomePositionChart';
 import SavingsPositionChart from '../dashboard/SavingsPositionChart';
 import { getAssetGrade } from '../../assets/getAssetGrade';
 import { computeNetAnnual } from '../../utils/financial';
+import { extractLifePlanEvents, chunkEvents } from '../dashboard/life-plan-events';
 
 interface ReportPrintLayoutProps {
   yearlyData: YearlyData[];
@@ -98,6 +99,9 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
           0
         ) ?? 0) / totalAnnualInvestment
       : 0;
+
+  const timelineEvents = rawFormData ? extractLifePlanEvents(rawFormData) : [];
+  const timelineChunks = chunkEvents(timelineEvents, 3); // 3件/ページで分割
 
   const summaryCards = [
     { label: '初年度の総資産', value: formatCurrency(firstYearTotal), note: `開始年: ${dataset.firstYear?.year ?? '-'}年` },
@@ -246,18 +250,20 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
     </div>
   );
 
-  if (rawFormData) {
-    pages.push(
-      <div className={styles.pageContent}>
-        <h2 className="text-2xl font-bold mb-4">ライフイベント・タイムライン</h2>
-        <div className={`${styles.timelineBox} p-3 border rounded-lg`}>
-          <LifePlanTimeline rawFormData={rawFormData as FormDataState} yearlyData={yearlyData} />
+  if (rawFormData && timelineChunks.length > 0) {
+    timelineChunks.forEach((chunk, idx) => {
+      pages.push(
+        <div className={styles.pageContent} key={`timeline-${idx}`}>
+          <h2 className="text-2xl font-bold mb-4">ライフイベント・タイムライン（{idx + 1}/{timelineChunks.length}）</h2>
+          <div className="p-3 border rounded-lg">
+            <LifePlanTimeline rawFormData={rawFormData as FormDataState} yearlyData={yearlyData} eventsOverride={chunk} />
+          </div>
+          <p className="text-sm text-gray-600 mt-4">
+            ご入力いただいたライフイベントと、それらが資産に与える影響のタイミングを一覧で表示しています。
+          </p>
         </div>
-        <p className="text-sm text-gray-600 mt-4">
-          ご入力いただいたライフイベントと、それらが資産に与える影響のタイミングを一覧で表示しています。
-        </p>
-      </div>
-    );
+      );
+    });
   }
 
   pages.push(

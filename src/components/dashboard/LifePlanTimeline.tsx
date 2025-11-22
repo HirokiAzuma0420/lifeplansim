@@ -21,6 +21,7 @@ import {
   Wrench,
 } from 'lucide-react';
 import { n } from '../../utils/financial';
+import { extractLifePlanEvents } from './life-plan-events';
 
 const formatYen = (value: number | string | undefined, sign = false) => {
   const num = Number(value);
@@ -54,8 +55,9 @@ const EventIcon: React.FC<{ iconKey: string }> = ({ iconKey }) => {
   return <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-4">{iconMap[iconKey] || <Activity size={20} />}</div>;
 };
 
-const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: YearlyData[] }> = ({ rawFormData, yearlyData }) => {
+const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: YearlyData[], eventsOverride?: ReturnType<typeof extractLifePlanEvents> }> = ({ rawFormData, yearlyData, eventsOverride }) => {
   const events = React.useMemo(() => {
+    if (eventsOverride) return eventsOverride;
     const allEvents: { age: number, iconKey: string, title: string, details: { label: string, value: React.ReactNode }[] }[] = [];
     const formData = rawFormData;
 
@@ -288,7 +290,7 @@ const LifePlanTimeline: React.FC<{ rawFormData: FormDataState, yearlyData: Yearl
     }
 
     return allEvents.sort((a, b) => a.age - b.age);
-  }, [rawFormData]);
+  }, [eventsOverride, rawFormData]);
 
   const yearlyDataByAge = React.useMemo(() => {
     const map = new Map<number, YearlyData>();
