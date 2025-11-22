@@ -14,6 +14,21 @@ export const generatePdfReport = async () => {
     return;
   }
 
+  // 生成中のローダーを表示
+  const loaderId = 'pdf-loader-overlay';
+  const loader = document.createElement('div');
+  loader.id = loaderId;
+  loader.innerHTML = `
+    <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+      <div style="color: white; font-size: 18px; margin-bottom: 12px;">PDFを生成しています...</div>
+      <div style="border: 4px solid #f3f3f3; border-top: 4px solid #10B981; border-radius: 50%; width: 42px; height: 42px; animation: codex-spin 1.2s linear infinite;"></div>
+      <style>
+        @keyframes codex-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+      </style>
+    </div>
+  `;
+  document.body.appendChild(loader);
+
   const prevDisplay = target.style.display;
   const prevPosition = target.style.position;
   const prevLeft = target.style.left;
@@ -62,5 +77,9 @@ export const generatePdfReport = async () => {
     target.style.display = prevDisplay;
     target.style.position = prevPosition;
     target.style.left = prevLeft;
+    const appendedLoader = document.getElementById(loaderId);
+    if (appendedLoader?.parentElement) {
+      appendedLoader.parentElement.removeChild(appendedLoader);
+    }
   }
 };

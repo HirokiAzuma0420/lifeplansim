@@ -60,4 +60,10 @@ describe('generatePdfReport', () => {
     expect(headerCalls.length).toBe(3);
     expect(footerCalls.length).toBe(3);
   });
+
+  it('生成中ローダーが表示され完了後に消える', async () => {
+    expect(document.getElementById('pdf-loader-overlay')).toBeNull();
+    await generatePdfReport();
+    expect(document.getElementById('pdf-loader-overlay')).toBeNull();
+  });
 });
