@@ -71,6 +71,21 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
   const totalNetAnnualIncome = computeNetAnnual(totalGrossIncome);
   const savingsForChart = dataset.firstYear?.totalAssets ?? 0;
 
+  const retireData = React.useMemo(() => {
+    const exact = yearlyData.find(d => d.age === retireAge);
+    return exact ?? yearlyData[yearlyData.length - 1] ?? null;
+  }, [yearlyData, retireAge]);
+
+  const retireTotalAssets = retireData?.totalAssets ?? 0;
+  const retireCash = retireData?.savings ?? 0;
+  const retireIdecoBalance = retireData?.ideco?.balance ?? 0;
+  const retireNisaPrincipal = retireData?.nisa?.principal ?? 0;
+  const retireNisaBalance = retireData?.nisa?.balance ?? 0;
+  const retireNisaPnl = retireNisaBalance - retireNisaPrincipal;
+  const retireTaxablePrincipal = retireData?.taxable?.principal ?? 0;
+  const retireTaxableBalance = retireData?.taxable?.balance ?? 0;
+  const retireTaxablePnl = retireTaxableBalance - retireTaxablePrincipal;
+
   const rankInfo = getAssetGrade(latestTotal);
 
   const totalAnnualInvestment =
@@ -162,10 +177,40 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
           yAxisMax={peakAssetValue}
         />
       </div>
-      <p className="text-sm text-gray-600 mt-4">
-        退職年齢の{retireAge}歳に向けて資産は順調に増加し、その後は資産を取り崩しながら生活する様子が分かります。
-        （免責事項: このグラフは試算であり、将来の結果を保証するものではありません。）
-      </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="border rounded-lg p-3 bg-gray-50">
+          <p className="text-sm text-gray-500">退職年齢時点の総資産額</p>
+          <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireTotalAssets)}</p>
+        </div>
+        <div className="border rounded-lg p-3 bg-gray-50">
+          <p className="text-sm text-gray-500">現金保有額</p>
+          <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireCash)}</p>
+        </div>
+        <div className="border rounded-lg p-3 bg-gray-50">
+          <p className="text-sm text-gray-500">iDeCo最終残高</p>
+          <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireIdecoBalance)}</p>
+        </div>
+        <div className="border rounded-lg p-3 bg-gray-50">
+          <p className="text-sm text-gray-500">NISA保有額</p>
+          <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireNisaBalance)}</p>
+        </div>
+        <div className="border rounded-lg p-3 bg-gray-50">
+          <p className="text-sm text-gray-500">NISA評価損益額</p>
+          <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireNisaPnl)}</p>
+        </div>
+        <div className="border rounded-lg p-3 bg-gray-50">
+          <p className="text-sm text-gray-500">NISA元本</p>
+          <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireNisaPrincipal)}</p>
+        </div>
+        <div className="border rounded-lg p-3 bg-gray-50">
+          <p className="text-sm text-gray-500">課税口座保有額</p>
+          <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireTaxableBalance)}</p>
+        </div>
+        <div className="border rounded-lg p-3 bg-gray-50">
+          <p className="text-sm text-gray-500">課税口座評価損益額</p>
+          <p className="text-lg font-semibold text-gray-900">{formatCurrency(retireTaxablePnl)}</p>
+        </div>
+      </div>
     </div>
   );
 
