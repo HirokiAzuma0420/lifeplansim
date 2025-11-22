@@ -84,9 +84,9 @@ export const buildAssumptionItems = (inputParams: SimulationInputParams): Assump
   }
 
   // 退職後・年金
-  items.push({ category: '退職後', label: '退職後生活費（月額10k）', value: `${inputParams.postRetirementLiving10kJPY} 万円` });
+  items.push({ category: '退職後', label: '退職後生活費', value: `${inputParams.postRetirementLiving10kJPY} 万円` });
   items.push({ category: '年金', label: '年金開始年齢', value: `${inputParams.pensionStartAge} 歳` });
-  items.push({ category: '年金', label: '年金受給額（月額10k）', value: `${inputParams.pensionMonthly10kJPY} 万円` });
+  items.push({ category: '年金', label: '年金受給額', value: `${inputParams.pensionMonthly10kJPY} 万円` });
   if (inputParams.spousePensionStartAge !== undefined) {
     items.push({ category: '年金', label: '配偶者年金開始年齢', value: `${inputParams.spousePensionStartAge} 歳` });
   }
@@ -120,7 +120,7 @@ export const buildAssumptionItems = (inputParams: SimulationInputParams): Assump
     });
   }
   if (inputParams.spousePensionAmount !== undefined) {
-    items.push({ category: '年金', label: '配偶者年金額', value: formatYen(inputParams.spousePensionAmount) });
+    items.push({ category: '年金', label: '配偶者年金額', value: `formatYen(inputParams.spousePensionAmount)万円` });
   }
 
   // 投資・リスク
