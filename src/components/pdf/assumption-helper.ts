@@ -139,10 +139,26 @@ export const buildAssumptionItems = (inputParams: SimulationInputParams): Assump
   // 投資商品
   if (inputParams.products && inputParams.products.length > 0) {
     inputParams.products.forEach((p, idx) => {
+      const monthlyRecurring = p.recurringJPY / 12;
       items.push({
         category: '投資商品',
         label: `商品${idx + 1}（口座: ${p.account}）`,
-        value: `評価額: ${formatYen(p.currentJPY)} / 月額積立: ${formatYen(p.recurringJPY)} / スポット: ${formatYen(p.spotJPY)} / 想定利回り: ${formatPercent(p.expectedReturn)}`,
+        value: `評価額: ${formatYen(p.currentJPY)}`,
+      });
+      items.push({
+        category: '投資商品',
+        label: `商品${idx + 1} 月額積立`,
+        value: `${formatYen(monthlyRecurring)} / 月`,
+      });
+      items.push({
+        category: '投資商品',
+        label: `商品${idx + 1} スポット（年額）`,
+        value: formatYen(p.spotJPY),
+      });
+      items.push({
+        category: '投資商品',
+        label: `商品${idx + 1} 想定利回り`,
+        value: formatPercent(p.expectedReturn),
       });
     });
   }
