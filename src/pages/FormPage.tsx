@@ -1,4 +1,4 @@
-﻿﻿﻿﻿import React, { useState, useEffect, useCallback } from 'react';
+﻿﻿import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { YearlyData, SimulationInputParams } from '@/types/simulation-types';
 import { createApiParams } from '@/utils/api-adapter';
@@ -587,8 +587,8 @@ export default function FormPage() {
         <div className="w-full md:w-1/3 space-y-6">
           <ConfirmationSection title="👤 プロフィール">
             <ConfirmationItem label="家族構成" value={formData.familyComposition} />
-            <ConfirmationItem label="あなたの年齢" value={`${formData.personAge} 歳`} />
-            {formData.familyComposition === '既婚' && <ConfirmationItem label="配偶者の年齢" value={`${formData.spouseAge} 歳`} />}
+            <ConfirmationItem label="あなたの年齢" value={`${n(formData.personAge)} 歳`} />
+            {formData.familyComposition === '既婚' && <ConfirmationItem label="配偶者の年齢" value={`${n(formData.spouseAge)} 歳`} />}
           </ConfirmationSection>
           <ConfirmationSection title="💰 現在の収支（年間）">
             <ConfirmationItem label="世帯の手取り年収" value={formatYen(currentTotalNetAnnualIncome)} />
@@ -603,9 +603,9 @@ export default function FormPage() {
             />
           </ConfirmationSection>
           <ConfirmationSection title="🏦 現在の資産">
-            <ConfirmationItem label="総資産" value={formatYen(n(formData.currentSavings) * FC.YEN_PER_MAN + n(formData.investmentStocksCurrent) * FC.YEN_PER_MAN + n(formData.investmentTrustCurrent) * FC.YEN_PER_MAN + n(formData.investmentBondsCurrent) * FC.YEN_PER_MAN + n(formData.investmentIdecoCurrent) * FC.YEN_PER_MAN + n(formData.investmentCryptoCurrent) * FC.YEN_PER_MAN + n(formData.investmentOtherCurrent) * FC.YEN_PER_MAN)} />
+            <ConfirmationItem label="総資産" value={formatYen(n(formData.currentSavings) * FC.YEN_PER_MAN + totalInvestment.current)} />
             <ConfirmationItem label="預貯金" value={formatManYen(formData.currentSavings)} />
-            <ConfirmationItem label="投資額" value={formatManYen(n(formData.investmentStocksCurrent) + n(formData.investmentTrustCurrent) + n(formData.investmentBondsCurrent) + n(formData.investmentIdecoCurrent) + n(formData.investmentCryptoCurrent) + n(formData.investmentOtherCurrent))} />
+            <ConfirmationItem label="投資額" value={formatYen(totalInvestment.current)} />
           </ConfirmationSection>
         </div>
         <div className="w-full md:w-2/3">

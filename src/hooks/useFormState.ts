@@ -679,8 +679,13 @@ export const useFormState = () => {
     return Math.ceil(totalPayment);
   }, [formData.carPrice, formData.carLoanUsage, formData.carLoanYears, formData.carLoanType]);
   const totalInvestment = useMemo(() => {
-    const monthlyTotal = formData.investmentProducts.reduce((acc, product) => acc + Number(product.monthlyInvestment || 0), 0);
-    return { monthly: monthlyTotal };
+    const currentTotal = formData.investmentProducts.reduce((acc, product) => {
+      return acc + n(product.currentValue);
+    }, 0);
+    const monthlyTotal = formData.investmentProducts.reduce((acc, product) => {
+      return acc + n(product.monthlyInvestment);
+    }, 0);
+    return { current: currentTotal, monthly: monthlyTotal };
   }, [formData.investmentProducts]);
   const { estimatedAnnualLoanPayment, estimatedTotalLoanPayment } = useMemo(() => {
     const housingLoanStatus = formData.housingLoanStatus;
