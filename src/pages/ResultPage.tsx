@@ -1,4 +1,6 @@
 import { useMemo, useCallback, useState, useEffect, useRef } from 'react';
+import type { CSSProperties } from 'react';
+import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import IncomePositionChart from '../components/dashboard/IncomePositionChart';
 import SavingsPositionChart from '../components/dashboard/SavingsPositionChart';
@@ -31,6 +33,12 @@ const COLORS = {
   その他: '#6B7280',
 };
 
+// メニュー表示の調整に使う定数
+const MENU_WIDTH = 224;
+const MENU_HORIZONTAL_MARGIN = 16;
+const MENU_VERTICAL_MARGIN = 8;
+const MENU_ESTIMATED_HEIGHT = 200;
+
 import { formatCurrency, formatPercent } from '../utils/number';
 
 export default function ResultPage() {
@@ -62,6 +70,45 @@ export default function ResultPage() {
 
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
   const exportMenuRef = useRef<HTMLDivElement>(null);
+  const exportMenuPortalRef = useRef<HTMLDivElement>(null);
+  const [exportMenuStyle, setExportMenuStyle] = useState<CSSProperties | null>(null);
+
+  // エクスポートメニューの位置を計算
+  const calculateExportMenuStyle = useCallback(() => {
+    if (!exportMenuRef.current || typeof window === 'undefined') {
+      setExportMenuStyle(null);
+      return;
+    }
+    const triggerRect = exportMenuRef.current.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const horizontalMax = Math.max(viewportWidth - MENU_WIDTH - MENU_HORIZONTAL_MARGIN, MENU_HORIZONTAL_MARGIN);
+    const desiredLeft = triggerRect.right - MENU_WIDTH;
+    const left = Math.min(Math.max(desiredLeft, MENU_HORIZONTAL_MARGIN), horizontalMax);
+    const viewportHeight = window.innerHeight;
+    const hasSpaceBelow = viewportHeight - triggerRect.bottom >= MENU_ESTIMATED_HEIGHT + MENU_VERTICAL_MARGIN;
+    const top = hasSpaceBelow
+      ? triggerRect.bottom + MENU_VERTICAL_MARGIN
+      : Math.max(MENU_VERTICAL_MARGIN, triggerRect.top - MENU_ESTIMATED_HEIGHT - MENU_VERTICAL_MARGIN);
+    setExportMenuStyle({
+      position: 'fixed',
+      top,
+      left,
+      width: MENU_WIDTH,
+      zIndex: 2000,
+    });
+  }, []);
+
+  const handleExportMenuToggle = useCallback(() => {
+    setIsExportMenuOpen(prev => {
+      const next = !prev;
+      if (next) {
+        calculateExportMenuStyle();
+      } else {
+        setExportMenuStyle(null);
+      }
+      return next;
+    });
+  }, [calculateExportMenuStyle]);
 
   const handleSaveOutput = useCallback(() => {
     if (!yearlyData.length || typeof window === 'undefined') {
@@ -85,15 +132,41 @@ export default function ResultPage() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (exportMenuRef.current && !exportMenuRef.current.contains(event.target as Node)) {
-        setIsExportMenuOpen(false);
+      if (!isExportMenuOpen) {
+        return;
       }
+      const target = event.target as Node;
+      if (
+        exportMenuRef.current?.contains(target) ||
+        exportMenuPortalRef.current?.contains(target)
+      ) {
+        return;
+      }
+      setIsExportMenuOpen(false);
+      setExportMenuStyle(null);
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
+  }, [isExportMenuOpen]);
+
+  useEffect(() => {
+    if (!isExportMenuOpen) {
+      return;
+    }
+    calculateExportMenuStyle();
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const handleReposition = () => calculateExportMenuStyle();
+    window.addEventListener('resize', handleReposition);
+    window.addEventListener('scroll', handleReposition, true);
+    return () => {
+      window.removeEventListener('resize', handleReposition);
+      window.removeEventListener('scroll', handleReposition, true);
+    };
+  }, [isExportMenuOpen, calculateExportMenuStyle]);
 
   if (!inputParams || dataset.enrichedData.length === 0) {
     return (
@@ -218,49 +291,54 @@ export default function ResultPage() {
             <div ref={exportMenuRef} className="relative">
               <button
                 type="button"
-                onClick={() => setIsExportMenuOpen(prev => !prev)}
+                onClick={handleExportMenuToggle}
                 className={`px-4 py-2 rounded text-white inline-flex items-center ${yearlyData.length ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-gray-300 cursor-not-allowed'}`}
                 disabled={!yearlyData.length}
               >
                 結果を保存
                 <svg className="fill-current h-4 w-4 ml-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.516 7.548c.436-.446 1.043-.481 1.576 0L10 10.405l2.908-2.857c.533-.481 1.141-.446 1.574 0 .436.445.408 1.197 0 1.615L10 13.232l-4.484-4.069c-.408-.418-.436-1.17 0-1.615z"/></svg>
               </button>
-              {isExportMenuOpen && (
-                <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
-                  <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                    <button
-                      onClick={async () => {
-                        setIsExportMenuOpen(false);
-                        await generatePdfReport();
-                      }}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      role="menuitem"
-                    >
-                      レポートを保存 (PDF)
-                    </button>
-                    <button
-                      onClick={() => {
-                        setIsExportMenuOpen(false);
-                        if (inputParams) {
-                          exportToExcel(yearlyData, inputParams);
-                        }
-                      }}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      role="menuitem"
-                    >
-                      詳細データを保存 (Excel)
-                    </button>
-                    <button
-                      onClick={() => { handleSaveOutput(); setIsExportMenuOpen(false); }}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      role="menuitem"
-                    >
-                      生データを保存 (JSON)
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
+            {isExportMenuOpen && exportMenuStyle && createPortal(
+              <div
+                ref={exportMenuPortalRef}
+                style={exportMenuStyle}
+                className="rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 max-h-60 overflow-y-auto"
+              >
+                <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                  <button
+                    onClick={async () => {
+                      setIsExportMenuOpen(false);
+                      await generatePdfReport();
+                    }}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    role="menuitem"
+                  >
+                    レポートを保存(PDF)
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsExportMenuOpen(false);
+                      if (inputParams) {
+                        exportToExcel(yearlyData, inputParams);
+                      }
+                    }}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    role="menuitem"
+                  >
+                    詳細データを保存(Excel)
+                  </button>
+                  <button
+                    onClick={() => { handleSaveOutput(); setIsExportMenuOpen(false); }}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    role="menuitem"
+                  >
+                    生データを保存(JSON)
+                  </button>
+                </div>
+              </div>,
+              document.body
+            )}
             <button
               type="button"
               onClick={() => setShowSectionModal(true)}
