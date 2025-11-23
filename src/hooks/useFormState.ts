@@ -681,10 +681,10 @@ export const useFormState = () => {
   const totalInvestment = useMemo(() => {
     const currentTotal = formData.investmentProducts.reduce((acc, product) => {
       return acc + n(product.currentValue);
-    }, 0);
+    }, 0) * FC.YEN_PER_MAN;
     const monthlyTotal = formData.investmentProducts.reduce((acc, product) => {
       return acc + n(product.monthlyInvestment);
-    }, 0);
+    }, 0) * FC.YEN_PER_MAN;
     return { current: currentTotal, monthly: monthlyTotal };
   }, [formData.investmentProducts]);
   const { estimatedAnnualLoanPayment, estimatedTotalLoanPayment } = useMemo(() => {
