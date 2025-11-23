@@ -259,6 +259,7 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
           age={currentAge}
           retireAge={retireAge}
           yAxisMax={peakAssetValue}
+          isForPdf={true}
         />
       </div>
       <div className="space-y-4">
@@ -330,10 +331,10 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
       <h2 className="text-2xl font-bold mb-4">投資の状況</h2>
       <div className="grid grid-cols-1 gap-6 mb-6">
         <div className="p-3 border rounded-lg">
-          <InvestmentPrincipalChart enrichedData={dataset.enrichedData} COLORS={COLORS} age={currentAge} retireAge={retireAge} />
+          <InvestmentPrincipalChart enrichedData={dataset.enrichedData} COLORS={COLORS} age={currentAge} retireAge={retireAge} isForPdf={true} />
         </div>
         <div className="p-3 border rounded-lg">
-          <AssetPieChart pieData={dataset.pieData} />
+          <AssetPieChart pieData={dataset.pieData} isForPdf={true} />
         </div>
       </div>
       <p className="text-sm text-gray-600 mt-4">
@@ -348,7 +349,7 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
         <div className={styles.pageContent} key={`timeline-${idx}`}>
           <h2 className="text-2xl font-bold mb-4">ライフイベント・タイムライン（{idx + 1}/{timelineChunks.length}）</h2>
           <div className="p-3 border rounded-lg">
-            <LifePlanTimeline rawFormData={rawFormData as FormDataState} yearlyData={yearlyData} eventsOverride={chunk} />
+            <LifePlanTimeline rawFormData={rawFormData as FormDataState} yearlyData={yearlyData} eventsOverride={chunk} isForPdf={true} />
           </div>
           <p className="text-sm text-gray-600 mt-4">
             ご入力いただいたライフイベントと、それらが資産に与える影響のタイミングを一覧で表示しています。
@@ -363,10 +364,10 @@ export const ReportPrintLayout: React.FC<ReportPrintLayoutProps> = ({
       <h2 className="text-2xl font-bold mb-4">収入・貯蓄の同世代比較</h2>
       <div className="grid grid-cols-1 gap-6 mb-6">
         <div className="p-3 border rounded-lg">
-          <IncomePositionChart age={currentAge} income={inputParams.mainJobIncomeGross + (inputParams.sideJobIncomeGross ?? 0)} />
+          <IncomePositionChart age={currentAge} income={inputParams.mainJobIncomeGross + (inputParams.sideJobIncomeGross ?? 0)} isForPdf={true} />
         </div>
         <div className="p-3 border rounded-lg">
-          <SavingsPositionChart age={currentAge} income={totalGrossIncome} savings={savingsForChart} />
+          <SavingsPositionChart age={currentAge} income={totalGrossIncome} savings={savingsForChart} isForPdf={true} />
         </div>
       </div>
       <p className="text-sm text-gray-600 mt-4">

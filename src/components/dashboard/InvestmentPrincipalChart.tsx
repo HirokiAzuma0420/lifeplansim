@@ -1,16 +1,18 @@
-﻿import { useMemo, useState, useEffect } from 'react';
+﻿﻿import { useMemo, useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useOrientation } from '../../hooks/useOrientation';
 import RotatePrompt from './RotatePrompt';
+import type { EnrichedYearlyAsset } from '../../utils/dashboard-helper';
 
 interface InvestmentPrincipalChartProps {
-  enrichedData: { year: number; [key: string]: any }[];
+  enrichedData: EnrichedYearlyAsset[];
   COLORS: Record<string, string>;
   age: number;
   retireAge: number;
+  isForPdf?: boolean;
 }
 
-export default function InvestmentPrincipalChart({ enrichedData, COLORS, age, retireAge }: InvestmentPrincipalChartProps) {
+export default function InvestmentPrincipalChart({ enrichedData, COLORS, age, retireAge, isForPdf = false }: InvestmentPrincipalChartProps) {
   const orientation = useOrientation();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [showRotatePrompt, setShowRotatePrompt] = useState(isMobile && orientation === 'portrait');
@@ -41,7 +43,7 @@ export default function InvestmentPrincipalChart({ enrichedData, COLORS, age, re
 
   return (
     <div className="relative">
-      {isMobile && orientation === 'portrait' && showRotatePrompt && (
+      {!isForPdf && isMobile && orientation === 'portrait' && showRotatePrompt && (
         <RotatePrompt onClose={() => setShowRotatePrompt(false)} />
       )}
       <h3 className="text-lg font-semibold mb-2">積立元本推移（〜{retirementYear}年）</h3>

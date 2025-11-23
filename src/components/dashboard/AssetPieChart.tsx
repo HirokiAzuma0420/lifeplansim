@@ -16,9 +16,10 @@ const COLORS = {
 
 interface AssetPieChartProps {
   pieData: { name: string; value: number }[];
+  isForPdf?: boolean;
 }
 
-export default function AssetPieChart({ pieData }: AssetPieChartProps) {
+export default function AssetPieChart({ pieData}: AssetPieChartProps) {
   const pieColors = [COLORS.現金, COLORS.NISA, COLORS.iDeCo];
 
   return (

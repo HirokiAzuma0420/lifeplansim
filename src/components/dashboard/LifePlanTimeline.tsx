@@ -53,9 +53,10 @@ type LifePlanTimelineProps = {
   rawFormData: FormDataState;
   yearlyData: YearlyData[];
   eventsOverride?: TimelineEvent[];
+  isForPdf?: boolean;
 };
 
-const LifePlanTimeline: React.FC<LifePlanTimelineProps> = ({ rawFormData, yearlyData, eventsOverride }) => {
+const LifePlanTimeline: React.FC<LifePlanTimelineProps> = ({ rawFormData, yearlyData, eventsOverride}) => {
   const events = React.useMemo(
     () => eventsOverride ?? extractLifePlanEvents(rawFormData),
     [eventsOverride, rawFormData]

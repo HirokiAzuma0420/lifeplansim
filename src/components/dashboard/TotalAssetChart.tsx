@@ -13,6 +13,7 @@ interface TotalAssetChartProps {
   age: number;
   retireAge: number;
   yAxisMax: number;
+  isForPdf?: boolean;
 }
 
 // Rechartsから渡されるカスタムラベルのprops型
@@ -91,7 +92,7 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameT
   return null;
 };
 
-export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, retireAge, yAxisMax }: TotalAssetChartProps) {
+export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, retireAge, yAxisMax, isForPdf = false }: TotalAssetChartProps) {
   const orientation = useOrientation();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [showRotatePrompt, setShowRotatePrompt] = useState(isMobile && orientation === 'portrait');
@@ -182,7 +183,7 @@ export default function TotalAssetChart({ enrichedData, rankInfo, COLORS, age, r
 
   return (
     <div className="relative">
-      {isMobile && orientation === 'portrait' && showRotatePrompt && (
+      {!isForPdf && isMobile && orientation === 'portrait' && showRotatePrompt && (
         <RotatePrompt onClose={() => setShowRotatePrompt(false)} />
       )}
       <ResponsiveContainer width="100%" height={400}>

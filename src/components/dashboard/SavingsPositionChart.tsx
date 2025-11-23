@@ -172,9 +172,10 @@ interface SavingsPositionChartProps {
   age: number;
   income: number;
   savings: number;
+  isForPdf?: boolean;
 }
 
-export default function SavingsPositionChart({ age, income, savings }: SavingsPositionChartProps) {
+export default function SavingsPositionChart({ age, income, savings}: SavingsPositionChartProps) {
   const ageBracket = getSavingsAgeBracket(age);
   const incomeBracket = getIncomeBracketForSavings(income);
   

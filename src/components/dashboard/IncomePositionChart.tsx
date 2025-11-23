@@ -126,9 +126,10 @@ function CustomIncomeMarker({ xAxis, yAxis, xValue, yValue, deviation}: CustomIn
 interface IncomePositionChartProps {
   age: number;
   income: number;
+  isForPdf?: boolean;
 }
 
-export default function IncomePositionChart({ age, income }: IncomePositionChartProps) {
+export default function IncomePositionChart({ age, income}: IncomePositionChartProps) {
   const bracketKey = getAgeBracket(age);
   const dist = (incomeDistribution as IncomeDistribution)[bracketKey];
   if (!dist) return <div>該当年齢の分布データがありません</div>;
