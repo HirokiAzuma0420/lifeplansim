@@ -124,15 +124,15 @@ const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, setForm
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700">現在の評価額</label>
-                        <div className="mt-1 flex rounded-md shadow-sm border border-gray-300 overflow-hidden">
+                        <div className="mt-1 flex rounded-md shadow-sm border border-gray-300 overflow-hidden min-w-0">
                           <input
                             type="number"
                             min="0"
                             value={product.currentValue}
                             onChange={e => handleChange(globalIndex, 'currentValue', e.target.value)}
-                            className="flex-1 border-0 focus:ring-0 px-3 py-2 bg-white"
+                            className="flex-1 border-0 focus:ring-0 px-3 py-2 bg-white min-w-0"
                           />
-                          <span className="inline-flex items-center px-3 bg-gray-50 text-sm text-gray-600 border-l border-gray-300">万円</span>
+                          <span className="inline-flex items-center px-3 bg-gray-50 text-sm text-gray-600 border-l border-gray-300 flex-shrink-0 whitespace-nowrap">万円</span>
                         </div>
                       </div>
 
@@ -169,44 +169,44 @@ const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, setForm
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700">月額積立</label>
-                        <div className="mt-1 flex rounded-md shadow-sm border border-gray-300 overflow-hidden">
+                        <div className="mt-1 flex rounded-md shadow-sm border border-gray-300 overflow-hidden min-w-0">
                           <input
                             type="number"
                             min="0"
                             value={product.monthlyInvestment}
                             onChange={e => handleChange(globalIndex, 'monthlyInvestment', e.target.value)}
-                            className="flex-1 border-0 focus:ring-0 px-3 py-2 bg-white"
+                            className="flex-1 border-0 focus:ring-0 px-3 py-2 bg-white min-w-0"
                           />
-                          <span className="inline-flex items-center px-3 bg-gray-50 text-sm text-gray-600 border-l border-gray-300">万円</span>
+                          <span className="inline-flex items-center px-3 bg-gray-50 text-sm text-gray-600 border-l border-gray-300 flex-shrink-0 whitespace-nowrap">万円</span>
                         </div>
                       </div>
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700">年間スポット購入</label>
-                        <div className="mt-1 flex rounded-md shadow-sm border border-gray-300 overflow-hidden">
+                        <div className="mt-1 flex rounded-md shadow-sm border border-gray-300 overflow-hidden min-w-0">
                           <input
                             type="number"
                             min="0"
                             value={product.annualSpot}
                             onChange={e => handleChange(globalIndex, 'annualSpot', e.target.value)}
-                            className="flex-1 border-0 focus:ring-0 px-3 py-2 bg-white"
+                            className="flex-1 border-0 focus:ring-0 px-3 py-2 bg-white min-w-0"
                           />
-                          <span className="inline-flex items-center px-3 bg-gray-50 text-sm text-gray-600 border-l border-gray-300">万円</span>
+                          <span className="inline-flex items-center px-3 bg-gray-50 text-sm text-gray-600 border-l border-gray-300 flex-shrink-0 whitespace-nowrap">万円</span>
                         </div>
                       </div>
 
                       <div className="md:col-span-2">
                         <label className="block text-sm font-medium text-gray-700">期待利回り（年率）</label>
-                        <div className="mt-1 flex rounded-md shadow-sm border border-gray-300 overflow-hidden">
+                        <div className="mt-1 flex rounded-md shadow-sm border border-gray-300 overflow-hidden min-w-0">
                           <input
                             type="number"
                             min="0"
                             step="0.1"
                             value={product.expectedRate}
                             onChange={e => handleChange(globalIndex, 'expectedRate', e.target.value)}
-                            className="flex-1 border-0 focus:ring-0 px-3 py-2 bg-white"
+                            className="flex-1 border-0 focus:ring-0 px-3 py-2 bg-white min-w-0"
                           />
-                          <span className="inline-flex items-center px-3 bg-gray-50 text-sm text-gray-600 border-l border-gray-300">%</span>
+                          <span className="inline-flex items-center px-3 bg-gray-50 text-sm text-gray-600 border-l border-gray-300 flex-shrink-0 whitespace-nowrap">%</span>
                         </div>
                       </div>
                     </div>
