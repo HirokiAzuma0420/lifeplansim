@@ -567,7 +567,7 @@ export default function FormPage() {
 
     events.sort((a, b) => a.age - b.age);
 
-    const totalInvestmentInYen = totalInvestment.current * FC.YEN_PER_MAN;
+    const totalInvestmentInYen = totalInvestment.current;
     let summaryAnnualExpense = 0;
     if (formData.expenseMethod === '簡単') {
       summaryAnnualExpense += n(formData.livingCostSimple) * FC.MONTHS_PER_YEAR;
@@ -725,7 +725,7 @@ export default function FormPage() {
             {renderFloatingBox(totalCarLoanCost, currentSectionIndex === effectiveSections.indexOf('ライフイベント - 車') && totalCarLoanCost > 0, '車ローン総額')}
             {renderFloatingBox(totalCareCost * 10000, currentSectionIndex === effectiveSections.indexOf('ライフイベント - 親の介護') && totalCareCost > 0, '介護費用総額')}
             {renderFloatingBox(totalRetirementMonthly * 10000, currentSectionIndex === effectiveSections.indexOf('ライフイベント - 老後') && totalRetirementMonthly > 0, '老後の不足額')}
-            {renderFloatingBox(totalInvestment.monthly * FC.YEN_PER_MAN, currentSectionIndex === effectiveSections.indexOf('投資') && totalInvestment.monthly > 0, "月間投資総額")}
+            {renderFloatingBox(totalInvestment.monthly, currentSectionIndex === effectiveSections.indexOf('投資') && totalInvestment.monthly > 0, "月間投資総額")}
             {renderFloatingBox(displayTotalApplianceCost * FC.YEN_PER_MAN, currentSectionIndex === effectiveSections.indexOf('ライフイベント - 生活') && displayTotalApplianceCost > 0, "家電買い替え総額")}
             {renderFloatingBox(totalMarriageCost, currentSectionIndex === effectiveSections.indexOf('ライフイベント - 結婚') && totalMarriageCost > 0, "結婚費用総額")}
           </div>

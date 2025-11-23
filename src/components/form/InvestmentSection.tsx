@@ -132,7 +132,7 @@ const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, setForm
                             onChange={e => handleChange(globalIndex, 'currentValue', e.target.value)}
                             className="flex-1 border-0 focus:ring-0 px-3 py-2 bg-white min-w-0"
                           />
-                          <span className="inline-flex items-center px-3 bg-gray-50 text-sm text-gray-600 border-l border-gray-300 flex-shrink-0 whitespace-nowrap">万円</span>
+                          <span className="inline-flex items-center px-3 bg-gray-50 text-sm text-gray-600 border-l border-gray-300 flex-shrink-0 whitespace-nowrap">円</span>
                         </div>
                       </div>
 
@@ -177,7 +177,7 @@ const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, setForm
                             onChange={e => handleChange(globalIndex, 'monthlyInvestment', e.target.value)}
                             className="flex-1 border-0 focus:ring-0 px-3 py-2 bg-white min-w-0"
                           />
-                          <span className="inline-flex items-center px-3 bg-gray-50 text-sm text-gray-600 border-l border-gray-300 flex-shrink-0 whitespace-nowrap">万円</span>
+                          <span className="inline-flex items-center px-3 bg-gray-50 text-sm text-gray-600 border-l border-gray-300 flex-shrink-0 whitespace-nowrap">円</span>
                         </div>
                       </div>
 
@@ -191,7 +191,7 @@ const InvestmentSection: React.FC<InvestmentSectionProps> = ({ formData, setForm
                             onChange={e => handleChange(globalIndex, 'annualSpot', e.target.value)}
                             className="flex-1 border-0 focus:ring-0 px-3 py-2 bg-white min-w-0"
                           />
-                          <span className="inline-flex items-center px-3 bg-gray-50 text-sm text-gray-600 border-l border-gray-300 flex-shrink-0 whitespace-nowrap">万円</span>
+                          <span className="inline-flex items-center px-3 bg-gray-50 text-sm text-gray-600 border-l border-gray-300 flex-shrink-0 whitespace-nowrap">円</span>
                         </div>
                       </div>
 
